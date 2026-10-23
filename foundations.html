@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Early Number Foundations: Pre-Derived Fact Master</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Fredoka & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+    }
+    .font-kids {
+      font-family: 'Fredoka', cursive, sans-serif;
+    }
+    @keyframes popIn {
+      0% { transform: scale(0.6); opacity: 0; }
+      70% { transform: scale(1.1); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .animate-pop {
+      animation: popIn 0.28s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+    @keyframes flashPulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.35; }
+    }
+    .flash-pulse {
+      animation: flashPulse 0.4s ease-in-out;
+    }
+    /* Subitising Dice Face */
+    .dice-card {
+      width: 170px;
+      height: 170px;
+      background: #0f172a;
+      border: 4px solid #38bdf8;
+      border-radius: 2rem;
+      padding: 1rem;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(3, 1fr);
+      gap: 0.5rem;
+      box-shadow: inset 0 3px 10px rgba(0,0,0,0.5), 0 8px 20px rgba(56, 189, 248, 0.25);
+    }
+    .dice-pip {
+      width: 100%;
+      height: 100%;
+      border-radius: 9999px;
+      background: #38bdf8;
+      box-shadow: inset 0 -3px 5px rgba(0,0,0,0.4), 0 3px 6px rgba(0,0,0,0.4);
+    }
+    /* Frame Cells */
+    .frame-cell {
+      aspect-ratio: 1 / 1;
+      border: 2.5px dashed rgba(255, 255, 255, 0.25);
+      border-radius: 9999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+    .frame-counter {
+      width: 86%;
+      height: 86%;
+      border-radius: 9999px;
+      box-shadow: inset 0 -3px 5px rgba(0,0,0,0.35), 0 3px 6px rgba(0,0,0,0.35);
+      transition: transform 0.2s ease;
+    }
+  </style>
+</head>
+<body class="bg-slate-900 text-white min-h-screen flex flex-col justify-between p-2 sm:p-4 selection:bg-amber-400 selection:text-slate-950">
+
+  <!-- TOP HEADER & PERSISTENT 3-MODULE NAVIGATION -->
+  <header class="max-w-5xl w-full mx-auto flex flex-col md:flex-row items-center justify-between gap-3 pb-3 border-b border-slate-800">
+    <div class="flex items-center gap-3">
+      <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-amber-500 via-rose-500 to-indigo-500 flex items-center justify-center font-kids font-bold text-slate-950 text-2xl shadow-lg">
+        0-1
+      </div>
+      <div>
+        <h1 class="font-kids text-xl sm:text-2xl font-bold tracking-wide text-amber-400 leading-tight">
+          Early Number Foundations
+        </h1>
+        <p class="text-xs text-slate-400 font-medium">Pre-Derived Fact Interventions • CCEA Early Numeracy</p>
+      </div>
+    </div>
+
+    <!-- MAIN 3-STAGE STRATEGY TABS -->
+    <nav class="flex items-center bg-slate-800/90 p-1.5 rounded-2xl border border-slate-700 text-xs sm:text-sm font-semibold flex-wrap gap-1">
+      <button id="navModuleSubitise" onclick="switchModule('subitise')" class="px-3.5 py-1.5 rounded-xl font-bold transition-all bg-amber-500 text-slate-950 shadow-md">
+        1. Flash Subitising
+      </button>
+      <button id="navModuleFive" onclick="switchModule('five')" class="px-3.5 py-1.5 rounded-xl font-bold transition-all text-slate-300 hover:text-white">
+        2. Five-and-a-Bit Anchor
+      </button>
+      <button id="navModuleNeighbours" onclick="switchModule('neighbours')" class="px-3.5 py-1.5 rounded-xl font-bold transition-all text-slate-300 hover:text-white">
+        3. Number Neighbours
+      </button>
+    </nav>
+  </header>
+
+  <!-- SUB-BAR: MODULE-SPECIFIC CONTROLS & LIVE STATS -->
+  <section class="max-w-5xl w-full mx-auto my-2 flex flex-wrap items-center justify-between gap-2.5 text-xs sm:text-sm bg-slate-800/60 p-3 rounded-2xl border border-slate-800">
+    
+    <!-- SUBITISING OPTIONS BAR -->
+    <div id="subitiseControls" class="flex items-center gap-2 flex-wrap">
+      <span class="text-slate-400 font-semibold">Flash Speed:</span>
+      <button onclick="setFlashSpeed(500)" class="flash-speed-btn px-2.5 py-1 rounded-lg font-bold bg-slate-700 hover:bg-slate-600 text-white">0.5s</button>
+      <button onclick="setFlashSpeed(1000)" class="flash-speed-btn px-2.5 py-1 rounded-lg font-bold bg-amber-500 text-slate-950">1.0s</button>
+      <button onclick="setFlashSpeed(1500)" class="flash-speed-btn px-2.5 py-1 rounded-lg font-bold bg-slate-700 hover:bg-slate-600 text-white">1.5s</button>
+      <button onclick="setFlashSpeed('always')" class="flash-speed-btn px-2.5 py-1 rounded-lg font-bold bg-slate-700 hover:bg-slate-600 text-white">Always Visible</button>
+
+      <span class="text-slate-500 ml-2">|</span>
+      <span class="text-slate-400 font-semibold ml-1">Pattern:</span>
+      <button onclick="setSubitisePattern('dice')" class="pattern-btn px-2.5 py-1 rounded-lg font-bold bg-amber-500 text-slate-950">Dice (1-6)</button>
+      <button onclick="setSubitisePattern('fiveframe')" class="pattern-btn px-2.5 py-1 rounded-lg font-bold bg-slate-700 hover:bg-slate-600 text-white">5-Frame</button>
+      <button onclick="setSubitisePattern('tenframe')" class="pattern-btn px-2.5 py-1 rounded-lg font-bold bg-slate-700 hover:bg-slate-600 text-white">Ten-Frame (1-10)</button>
+    </div>
+
+    <!-- FIVE-AND-A-BIT OPTIONS BAR (Hidden by default) -->
+    <div id="fiveControls" class="hidden flex items-center gap-2 flex-wrap">
+      <span class="text-slate-400 font-semibold">Strategy Tier:</span>
+      <button onclick="setFiveSubMode('within5')" class="five-btn px-3 py-1 rounded-lg font-bold bg-amber-500 text-slate-950">Bonds within 5 (e.g. 5 = 3 + ?)</button>
+      <button onclick="setFiveSubMode('fiveAndBit')" class="five-btn px-3 py-1 rounded-lg font-bold bg-slate-700 hover:bg-slate-600 text-white">Five & Some More (6 - 10)</button>
+    </div>
+
+    <!-- NEIGHBOURS OPTIONS BAR (Hidden by default) -->
+    <div id="neighboursControls" class="hidden flex items-center gap-2 flex-wrap">
+      <span class="text-slate-400 font-semibold">Step Type:</span>
+      <button onclick="setNeighbourStep('one')" class="step-btn px-2.5 py-1 rounded-lg font-bold bg-amber-500 text-slate-950">+1 / -1 Neighbours</button>
+      <button onclick="setNeighbourStep('two')" class="step-btn px-2.5 py-1 rounded-lg font-bold bg-slate-700 hover:bg-slate-600 text-white">+2 / -2 Skip-Step</button>
+      <button onclick="setNeighbourStep('mixed')" class="step-btn px-2.5 py-1 rounded-lg font-bold bg-slate-700 hover:bg-slate-600 text-white">Mixed</button>
+      
+      <span class="text-slate-500 ml-2">|</span>
+      <span class="text-slate-400 font-semibold ml-1">Range:</span>
+      <button onclick="setNeighbourRange('10')" class="range-btn px-2.5 py-1 rounded-lg font-bold bg-amber-500 text-slate-950">Within 10</button>
+      <button onclick="setNeighbourRange('20')" class="range-btn px-2.5 py-1 rounded-lg font-bold bg-slate-700 hover:bg-slate-600 text-white">Within 20</button>
+    </div>
+
+    <!-- LIVE PERFORMANCE METRICS -->
+    <div class="flex items-center gap-4 font-kids ml-auto">
+      <div class="flex items-center gap-1.5 text-amber-400 font-bold">
+        <span>Streak:</span>
+        <span id="streakDisplay">🔥 0</span>
+      </div>
+      <div class="flex items-center gap-1.5 text-emerald-400 font-bold">
+        <span>Score:</span>
+        <span id="scoreDisplay">0</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAIN INTERACTIVE STAGE -->
+  <main class="max-w-3xl w-full mx-auto bg-slate-800/80 rounded-3xl border border-slate-700/80 shadow-2xl p-4 sm:p-6 flex flex-col items-center justify-between gap-4 flex-grow my-1 relative overflow-hidden">
+    
+    <!-- QUESTION & GUIDED PROMPT PANEL -->
+    <div class="w-full flex flex-col items-center">
+      <div id="equationScreen" class="bg-slate-900/90 border-2 border-slate-700 px-6 sm:px-8 py-3 rounded-2xl flex items-center justify-center gap-3 font-kids text-4xl sm:text-5xl font-bold tracking-wider shadow-inner text-amber-300 min-h-[80px]">
+        <!-- Dynamic math prompt -->
+      </div>
+      <div id="pedagogicalHint" class="mt-2 text-sm sm:text-base font-semibold text-slate-300 text-center min-h-[26px]">
+        Look quickly! See the pattern, don't count!
+      </div>
+    </div>
+
+    <!-- DYNAMIC VISUALIZER STAGE -->
+    <div id="visualDisplayStage" class="w-full bg-slate-950/80 border border-slate-800 rounded-2xl p-4 sm:p-6 flex flex-col items-center justify-center min-h-[220px] shadow-inner relative">
+      <!-- Injected: Dice, 5-frame, Hungarian bead array, or spotlight number track -->
+    </div>
+
+    <!-- QUICK RE-FLASH / REVEAL TRIGGER (FOR SUBITISING) -->
+    <div id="flashHelperRow" class="flex gap-2 text-xs">
+      <button onclick="triggerFlash()" class="px-4 py-1.5 bg-slate-800 hover:bg-slate-700 text-amber-300 font-bold rounded-xl border border-slate-700 transition flex items-center gap-1.5">
+        <span>👁️ Flash Again</span>
+      </button>
+      <button onclick="revealCurtain()" class="px-4 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl border border-slate-700 transition flex items-center gap-1.5">
+        <span>🔓 Reveal Dots</span>
+      </button>
+    </div>
+
+    <!-- NUMPAD & INPUT CONTROLS -->
+    <div class="w-full max-w-md flex flex-col items-center gap-2">
+      <!-- Input Display Bar -->
+      <div class="w-full flex items-center justify-between gap-3">
+        <div id="inputBox" class="flex-grow h-14 bg-slate-950 border-2 border-amber-400/80 rounded-xl flex items-center justify-center font-kids text-3xl font-bold text-amber-400 shadow-inner tracking-widest">
+          ?
+        </div>
+        <button onclick="clearCurrentInput()" class="px-5 h-14 bg-slate-700 hover:bg-slate-600 rounded-xl text-xs font-bold text-slate-200 uppercase tracking-wider active:scale-95 transition-all">
+          Clear
+        </button>
+      </div>
+
+      <!-- Keypad Grid (Numbers 1-10 + 0) -->
+      <div class="grid grid-cols-11 gap-1.5 w-full">
+        <button onclick="pressDigit(1)" class="h-12 bg-slate-700/90 hover:bg-slate-600 text-white font-kids font-bold text-xl rounded-lg shadow active:scale-95 transition">1</button>
+        <button onclick="pressDigit(2)" class="h-12 bg-slate-700/90 hover:bg-slate-600 text-white font-kids font-bold text-xl rounded-lg shadow active:scale-95 transition">2</button>
+        <button onclick="pressDigit(3)" class="h-12 bg-slate-700/90 hover:bg-slate-600 text-white font-kids font-bold text-xl rounded-lg shadow active:scale-95 transition">3</button>
+        <button onclick="pressDigit(4)" class="h-12 bg-slate-700/90 hover:bg-slate-600 text-white font-kids font-bold text-xl rounded-lg shadow active:scale-95 transition">4</button>
+        <button onclick="pressDigit(5)" class="h-12 bg-slate-700/90 hover:bg-slate-600 text-white font-kids font-bold text-xl rounded-lg shadow active:scale-95 transition">5</button>
+        <button onclick="pressDigit(6)" class="h-12 bg-slate-700/90 hover:bg-slate-600 text-white font-kids font-bold text-xl rounded-lg shadow active:scale-95 transition">6</button>
+        <button onclick="pressDigit(7)" class="h-12 bg-slate-700/90 hover:bg-slate-600 text-white font-kids font-bold text-xl rounded-lg shadow active:scale-95 transition">7</button>
+        <button onclick="pressDigit(8)" class="h-12 bg-slate-700/90 hover:bg-slate-600 text-white font-kids font-bold text-xl rounded-lg shadow active:scale-95 transition">8</button>
+        <button onclick="pressDigit(9)" class="h-12 bg-slate-700/90 hover:bg-slate-600 text-white font-kids font-bold text-xl rounded-lg shadow active:scale-95 transition">9</button>
+        <button onclick="pressDigit(10)" class="h-12 bg-amber-600 hover:bg-amber-500 text-white font-kids font-bold text-lg rounded-lg shadow active:scale-95 transition">10</button>
+        <button onclick="pressDigit(0)" class="h-12 bg-slate-700/90 hover:bg-slate-600 text-white font-kids font-bold text-xl rounded-lg shadow active:scale-95 transition">0</button>
+      </div>
+
+      <!-- Action Button -->
+      <button id="submitActionBtn" onclick="submitCurrentAnswer()" class="w-full h-14 py-3 mt-1 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 font-kids text-2xl font-bold text-slate-950 rounded-xl shadow-lg active:scale-98 transition-all flex items-center justify-center gap-2">
+        <span>Check Answer</span>
+        <span>✨</span>
+      </button>
+    </div>
+
+    <!-- FEEDBACK BANNER -->
+    <div id="feedbackBox" class="w-full text-center text-base sm:text-lg font-bold min-h-[26px]"></div>
+  </main>
+
+  <footer class="max-w-5xl w-full mx-auto text-center text-xs text-slate-500 pt-1">
+    Interactive Whiteboard & Tablet Friendly • Tap numpad or press 0-9, 10 & Enter on keyboard
+  </footer>
+
+  <!-- CORE LOGIC & WEB AUDIO SCRIPT -->
+  <script>
+    /* =====================================================================
+       WEB AUDIO SYNTHESIZER
+       ===================================================================== */
+    let audioCtx = null;
+    function getAudioCtx() {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      return audioCtx;
+    }
+
+    function playSound(type) {
+      try {
+        const ctx = getAudioCtx();
+        const now = ctx.currentTime;
+        if (type === 'pop') {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(320, now);
+          osc.frequency.exponentialRampToValueAtTime(640, now + 0.08);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.linearRampToValueAtTime(0, now + 0.08);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.09);
+        } else if (type === 'correct') {
+          [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, now + i * 0.07);
+            gain.gain.setValueAtTime(0.25, now + i * 0.07);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.07 + 0.35);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now + i * 0.07);
+            osc.stop(now + i * 0.07 + 0.36);
+          });
+        } else if (type === 'tryAgain') {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(220, now);
+          osc.frequency.exponentialRampToValueAtTime(146, now + 0.25);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.linearRampToValueAtTime(0, now + 0.25);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.26);
+        }
+      } catch (e) {
+        console.warn('Audio play error:', e);
+      }
+    }
+
+    /* =====================================================================
+       STATE MANAGEMENT
+       ===================================================================== */
+    let activeModule = 'subitise'; // 'subitise', 'five', 'neighbours'
+    
+    // Subitising state
+    let flashDuration = 1000;      // 500, 1000, 1500, or 'always'
+    let subitisePattern = 'dice';   // 'dice', 'fiveframe', 'tenframe'
+    let isCovered = false;
+    let flashTimer = null;
+
+    // Five-and-a-bit state
+    let fiveSubMode = 'within5';   // 'within5' or 'fiveAndBit'
+
+    // Neighbours state
+    let neighbourStep = 'one';     // 'one', 'two', or 'mixed'
+    let neighbourRange = '10';     // '10' or '20'
+
+    // Shared play state
+    let currentInput = '';
+    let streak = 0;
+    let score = 0;
+    let questionData = {};
+    let isProcessing = false;
+
+    window.addEventListener('DOMContentLoaded', () => {
+      generateQuestion();
+      setupKeyboardListeners();
+    });
+
+    /* =====================================================================
+       MODULE SWITCHING
+       ===================================================================== */
+    function switchModule(mod) {
+      playSound('pop');
+      activeModule = mod;
+      
+      // Update Tab Styles
+      ['navModuleSubitise', 'navModuleFive', 'navModuleNeighbours'].forEach(id => {
+        document.getElementById(id).className = 'px-3.5 py-1.5 rounded-xl font-bold transition-all text-slate-300 hover:text-white';
+      });
+
+      // Update Sub-controls visibility
+      document.getElementById('subitiseControls').classList.add('hidden');
+      document.getElementById('fiveControls').classList.add('hidden');
+      document.getElementById('neighboursControls').classList.add('hidden');
+      document.getElementById('flashHelperRow').classList.add('hidden');
+
+      if (mod === 'subitise') {
+        document.getElementById('navModuleSubitise').className = 'px-3.5 py-1.5 rounded-xl font-bold transition-all bg-amber-500 text-slate-950 shadow-md';
+        document.getElementById('subitiseControls').classList.remove('hidden');
+        document.getElementById('flashHelperRow').classList.remove('hidden');
+      } else if (mod === 'five') {
+        document.getElementById('navModuleFive').className = 'px-3.5 py-1.5 rounded-xl font-bold transition-all bg-amber-500 text-slate-950 shadow-md';
+        document.getElementById('fiveControls').classList.remove('hidden');
+      } else if (mod === 'neighbours') {
+        document.getElementById('navModuleNeighbours').className = 'px-3.5 py-1.5 rounded-xl font-bold transition-all bg-amber-500 text-slate-950 shadow-md';
+        document.getElementById('neighboursControls').classList.remove('hidden');
+      }
+
+      streak = 0;
+      updateMetrics();
+      generateQuestion();
+    }
+
+    /* Sub-option handlers */
+    function setFlashSpeed(speed) {
+      playSound('pop');
+      flashDuration = speed;
+      document.querySelectorAll('.flash-speed-btn').forEach(btn => {
+        btn.className = 'flash-speed-btn px-2.5 py-1 rounded-lg font-bold bg-slate-700 hover:bg-slate-600 text-white';
+      });
+      event.target.className = 'flash-speed-btn px-2.5 py-1 rounded-lg font-bold bg-amber-500 text-slate-950';
+      triggerFlash();
+    }
+
+    function setSubitisePattern(pat) {
+      playSound('pop');
+      subitisePattern = pat;
+      document.querySelectorAll('.pattern-btn').forEach(btn => {
+        btn.className = 'pattern-btn px-2.5 py-1 rounded-lg font-bold bg-slate-700 hover:bg-slate-600 text-white';
+      });
+      event.target.className = 'pattern-btn px-2.5 py-1 rounded-lg font-bold bg-amber-500 text-slate-950';
+      generateQuestion();
+    }
+
+    function setFiveSubMode(mode) {
+      playSound('pop');
+      fiveSubMode = mode;
+      document.querySelectorAll('.five-btn').forEach(btn => {
+        btn.className = 'five-btn px-3 py-1 rounded-lg font-bold bg-slate-700 hover:bg-slate-600 text-white';
+      });
+      event.target.className = 'five-btn px-3 py-1 rounded-lg font-bold bg-amber-500 text-slate-950';
+      generateQuestion();
+    }
+
+    function setNeighbourStep(step) {
+      playSound('pop');
+      neighbourStep = step;
+      document.querySelectorAll('.step-btn').forEach(btn => {
+        btn.className = 'step-btn px-2.5 py-1 rounded-lg font-bold bg-slate-700 hover:bg-slate-600 text-white';
+      });
+      event.target.className = 'step-btn px-2.5 py-1 rounded-lg font-bold bg-amber-500 text-slate-950';
+      generateQuestion();
+    }
+
+    function setNeighbourRange(rng) {
+      playSound('pop');
+      neighbourRange = rng;
+      document.querySelectorAll('.range-btn').forEach(btn => {
+        btn.className = 'range-btn px-2.5 py-1 rounded-lg font-bold bg-slate-700 hover:bg-slate-600 text-white';
+      });
+      event.target.className = 'range-btn px-2.5 py-1 rounded-lg font-bold bg-amber-500 text-slate-950';
+      generateQuestion();
+    }
+
+    /* =====================================================================
+       QUESTION GENERATOR
+       ===================================================================== */
+    function generateQuestion() {
+      clearCurrentInput();
+      clearFeedback();
+      clearTimeout(flashTimer);
+      isCovered = false;
+
+      if (activeModule === 'subitise') {
+        let count;
+        if (subitisePattern === 'dice') {
+          count = Math.floor(Math.random() * 6) + 1; // 1-6
+        } else if (subitisePattern === 'fiveframe') {
+          count = Math.floor(Math.random() * 5) + 1; // 1-5
+        } else {
+          count = Math.floor(Math.random() * 10) + 1; // 1-10
+        }
+
+        questionData = {
+          type: 'subitise',
+          count: count,
+          pattern: subitisePattern,
+          correctAnswer: count
+        };
+
+        renderSubitiseUI();
+      } else if (activeModule === 'five') {
+        if (fiveSubMode === 'within5') {
+          // Bonds to 5: 5 = part1 + ?
+          const whole = 5;
+          const part1 = Math.floor(Math.random() * 4) + 1; // 1-4
+          const part2 = whole - part1;
+          questionData = {
+            type: 'five_bonds',
+            whole: 5,
+            part1: part1,
+            correctAnswer: part2
+          };
+        } else {
+          // Five and some more: e.g. 8 is 5 and ? more
+          const whole = Math.floor(Math.random() * 5) + 6; // 6 to 10
+          const addOn = whole - 5;
+          questionData = {
+            type: 'five_and_bit',
+            whole: whole,
+            base: 5,
+            correctAnswer: addOn
+          };
+        }
+        renderFiveUI();
+      } else if (activeModule === 'neighbours') {
+        const max = parseInt(neighbourRange, 10);
+        let step = 1;
+        if (neighbourStep === 'two') step = 2;
+        else if (neighbourStep === 'mixed') step = Math.random() < 0.5 ? 1 : 2;
+
+        const isPlus = Math.random() < 0.5;
+        let baseNum;
+
+        if (isPlus) {
+          // base + step <= max
+          baseNum = Math.floor(Math.random() * (max - step)) + 1;
+        } else {
+          // base - step >= 0
+          baseNum = Math.floor(Math.random() * (max - step)) + 1 + step;
+        }
+
+        const answer = isPlus ? (baseNum + step) : (baseNum - step);
+
+        questionData = {
+          type: 'neighbours',
+          base: baseNum,
+          step: step,
+          isPlus: isPlus,
+          maxRange: max,
+          correctAnswer: answer
+        };
+
+        renderNeighboursUI();
+      }
+
+      renderVisualizer();
+    }
+
+    /* =====================================================================
+       PROMPT & HEADER RENDERING
+       ===================================================================== */
+    function renderSubitiseUI() {
+      document.getElementById('equationScreen').innerHTML = `
+        <span class="text-sky-400">See, Don't Count:</span>
+        <span class="text-amber-300 underline decoration-dashed">?</span>
+      `;
+      document.getElementById('pedagogicalHint').innerHTML = 
+        `How many dots did you see in the snapshot pattern?`;
+    }
+
+    function renderFiveUI() {
+      const eq = document.getElementById('equationScreen');
+      if (questionData.type === 'five_bonds') {
+        eq.innerHTML = `
+          <span class="text-amber-400 font-bold">5</span>
+          <span class="text-slate-400">=</span>
+          <span class="text-sky-400">${questionData.part1}</span>
+          <span class="text-slate-400">+</span>
+          <span class="text-emerald-400 underline decoration-dashed">?</span>
+        `;
+        document.getElementById('pedagogicalHint').innerHTML = 
+          `What goes with <span class="text-sky-400 font-bold">${questionData.part1}</span> to fill the 5-frame?`;
+      } else {
+        eq.innerHTML = `
+          <span class="text-amber-400 font-bold">${questionData.whole}</span>
+          <span class="text-slate-400">is</span>
+          <span class="text-sky-400 font-bold">5</span>
+          <span class="text-slate-400">and</span>
+          <span class="text-rose-400 underline decoration-dashed">?</span>
+          <span class="text-slate-400 text-2xl">more</span>
+        `;
+        document.getElementById('pedagogicalHint').innerHTML = 
+          `<span class="text-amber-400 font-bold">${questionData.whole}</span> is a full hand of 5 plus how many extra loose counters?`;
+      }
+    }
+
+    function renderNeighboursUI() {
+      const q = questionData;
+      const opSymbol = q.isPlus ? `+${q.step}` : `-${q.step}`;
+      const wordDesc = q.step === 1 ? (q.isPlus ? '1 More' : '1 Less') : (q.isPlus ? '2 More (+2)' : '2 Less (-2)');
+
+      document.getElementById('equationScreen').innerHTML = `
+        <span class="text-sky-400 font-bold">${q.base}</span>
+        <span class="text-amber-400 font-bold mx-2">${opSymbol}</span>
+        <span class="text-slate-400">=</span>
+        <span class="text-emerald-400 underline decoration-dashed ml-2">?</span>
+      `;
+      document.getElementById('pedagogicalHint').innerHTML = 
+        `Ordinal Step: What is <span class="text-amber-400 font-bold">${wordDesc}</span> than <span class="text-sky-400 font-bold">${q.base}</span>?`;
+    }
+
+    /* =====================================================================
+       DYNAMIC VISUALIZERS (Dice, Frames, Beads, Spotlight Tracks)
+       ===================================================================== */
+    function renderVisualizer(isCompleted = false) {
+      const container = document.getElementById('visualDisplayStage');
+      container.innerHTML = '';
+
+      if (activeModule === 'subitise') {
+        renderSubitisePatternDisplay(container);
+      } else if (activeModule === 'five') {
+        renderFiveAnchorDisplay(container, isCompleted);
+      } else if (activeModule === 'neighbours') {
+        renderNeighbourTrackDisplay(container, isCompleted);
+      }
+    }
+
+    /* 1. Subitising Renderer with Curtain Flash */
+    function renderSubitisePatternDisplay(container) {
+      let patternHTML = '';
+      const count = questionData.count;
+
+      if (questionData.pattern === 'dice') {
+        // Standard Dice Pips Matrix 3x3
+        const pipsMatrix = {
+          1: [4],
+          2: [0, 8],
+          3: [0, 4, 8],
+          4: [0, 2, 6, 8],
+          5: [0, 2, 4, 6, 8],
+          6: [0, 2, 3, 5, 6, 8]
+        };
+        const activeIndices = pipsMatrix[count] || [4];
+        let pips = '';
+        for (let i = 0; i < 9; i++) {
+          if (activeIndices.includes(i)) {
+            pips += `<div class="dice-pip"></div>`;
+          } else {
+            pips += `<div></div>`;
+          }
+        }
+        patternHTML = `<div class="dice-card animate-pop">${pips}</div>`;
+      } else if (questionData.pattern === 'fiveframe') {
+        // Horizontal 5-Frame
+        let cells = '';
+        for (let i = 0; i < 5; i++) {
+          if (i < count) {
+            cells += `<div class="frame-cell bg-slate-950 border-sky-500/60"><div class="frame-counter bg-sky-400 animate-pop"></div></div>`;
+          } else {
+            cells += `<div class="frame-cell bg-slate-950/40 border-slate-700"></div>`;
+          }
+        }
+        patternHTML = `
+          <div class="flex flex-col items-center gap-2">
+            <span class="text-xs font-kids text-slate-400">5-Frame Array</span>
+            <div class="grid grid-cols-5 gap-2 bg-slate-950/90 p-3 rounded-2xl border-2 border-slate-700 w-72 sm:w-80 shadow-2xl">
+              ${cells}
+            </div>
+          </div>`;
+      } else if (questionData.pattern === 'tenframe') {
+        // Standard Pairwise / 5-Wise Ten Frame
+        let cells = '';
+        for (let i = 0; i < 10; i++) {
+          if (i < count) {
+            const color = i < 5 ? 'bg-sky-400' : 'bg-rose-400';
+            cells += `<div class="frame-cell bg-slate-950 border-slate-600"><div class="frame-counter ${color} animate-pop"></div></div>`;
+          } else {
+            cells += `<div class="frame-cell bg-slate-950/40 border-slate-700/60"></div>`;
+          }
+        }
+        patternHTML = `
+          <div class="flex flex-col items-center gap-2">
+            <span class="text-xs font-kids text-slate-400">Ten-Frame (Five-and-a-Bit)</span>
+            <div class="grid grid-cols-5 grid-rows-2 gap-2 bg-slate-950/90 p-3 rounded-2xl border-2 border-slate-700 w-72 sm:w-80 shadow-2xl">
+              ${cells}
+            </div>
+          </div>`;
+      }
+
+      container.innerHTML = `
+        <div id="flashContentArea" class="relative flex items-center justify-center min-h-[180px] w-full">
+          <div id="actualPattern">${patternHTML}</div>
+          <div id="curtainOverlay" class="hidden absolute inset-0 bg-slate-900/95 border-2 border-dashed border-amber-400/60 rounded-2xl flex flex-col items-center justify-center gap-2 shadow-2xl">
+            <span class="text-4xl animate-bounce">🙈</span>
+            <span class="font-kids text-amber-300 font-bold text-lg">Pattern Hidden!</span>
+            <span class="text-xs text-slate-400">How many did you see? Tap your answer!</span>
+          </div>
+        </div>
+      `;
+
+      if (flashDuration !== 'always') {
+        startCurtainTimer();
+      }
+    }
+
+    function startCurtainTimer() {
+      clearTimeout(flashTimer);
+      const curtain = document.getElementById('curtainOverlay');
+      if (!curtain) return;
+      curtain.classList.add('hidden');
+
+      flashTimer = setTimeout(() => {
+        curtain.classList.remove('hidden');
+        curtain.classList.add('animate-pop');
+        isCovered = true;
+      }, flashDuration);
+    }
+
+    function triggerFlash() {
+      playSound('pop');
+      const curtain = document.getElementById('curtainOverlay');
+      if (curtain) {
+        curtain.classList.add('hidden');
+        if (flashDuration !== 'always') {
+          startCurtainTimer();
+        }
+      }
+    }
+
+    function revealCurtain() {
+      playSound('pop');
+      clearTimeout(flashTimer);
+      const curtain = document.getElementById('curtainOverlay');
+      if (curtain) curtain.classList.add('hidden');
+    }
+
+    /* 2. Five-and-a-Bit Renderer (5-Frame and Hungarian Dual-Bead Visualizer) */
+    function renderFiveAnchorDisplay(container, completed) {
+      if (questionData.type === 'five_bonds') {
+        // Bonds to 5 visualizer
+        const p1 = questionData.part1;
+        const p2 = completed ? questionData.correctAnswer : 0;
+        let cells = '';
+
+        for (let i = 0; i < 5; i++) {
+          if (i < p1) {
+            cells += `<div class="frame-cell bg-slate-950 border-sky-500/60"><div class="frame-counter bg-sky-400 animate-pop"></div></div>`;
+          } else if (i < (p1 + p2)) {
+            cells += `<div class="frame-cell bg-slate-950 border-emerald-500/60"><div class="frame-counter bg-emerald-400 animate-pop"></div></div>`;
+          } else {
+            cells += `<div class="frame-cell bg-slate-950/40 border-slate-700"></div>`;
+          }
+        }
+
+        container.innerHTML = `
+          <div class="flex flex-col items-center gap-3">
+            <div class="text-xs font-kids text-amber-400 font-bold">5-Frame Target Anchor: 5</div>
+            <div class="grid grid-cols-5 gap-2 bg-slate-950 p-3 rounded-2xl border-2 border-slate-700 w-72 sm:w-80 shadow-2xl">
+              ${cells}
+            </div>
+            <div class="flex items-center gap-4 text-xs font-kids mt-1">
+              <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-sky-400"></span> Given: ${p1}</span>
+              <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-emerald-400"></span> Missing: ${completed ? questionData.correctAnswer : '?'}</span>
+            </div>
+          </div>
+        `;
+      } else {
+        // Five and some more (6-10) using Hungarian 5-block color structure
+        const whole = questionData.whole;
+        const addOn = completed ? questionData.correctAnswer : 0;
+        let beadCells = '';
+
+        for (let i = 0; i < 10; i++) {
+          if (i < 5) {
+            // Anchor 5 in solid Cyan
+            beadCells += `
+              <div class="flex flex-col items-center">
+                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-cyan-400 shadow-md border-2 border-cyan-300 animate-pop"></div>
+              </div>`;
+          } else if (i < (5 + addOn)) {
+            // Loose add-ons in Rose Coral
+            beadCells += `
+              <div class="flex flex-col items-center">
+                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-rose-500 shadow-md border-2 border-rose-300 animate-pop"></div>
+              </div>`;
+          } else if (i < whole) {
+            // Unrevealed placeholders up to whole
+            beadCells += `
+              <div class="flex flex-col items-center">
+                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-slate-800/80 border-2 border-dashed border-rose-500/40 flex items-center justify-center text-xs font-kids text-rose-400">?</div>
+              </div>`;
+          } else {
+            // Beyond target whole
+            beadCells += `
+              <div class="flex flex-col items-center opacity-25">
+                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-slate-900 border-2 border-dashed border-slate-700"></div>
+              </div>`;
+          }
+        }
+
+        container.innerHTML = `
+          <div class="flex flex-col items-center gap-3 w-full">
+            <div class="text-xs font-kids text-slate-300">Hungarian Bead-Bar: Solid Anchor of 5 + Extra Loose Counters</div>
+            
+            <div class="flex items-center gap-2 p-3 bg-slate-950 rounded-2xl border-2 border-slate-700 overflow-x-auto shadow-2xl max-w-full">
+              <!-- 5 Block Container -->
+              <div class="flex items-center gap-1.5 p-1.5 bg-cyan-950/50 rounded-xl border border-cyan-500/40">
+                ${beadCells.split('</div>').slice(0, 5).join('</div>') + '</div>'}
+              </div>
+              <span class="text-xl font-bold text-slate-500 font-kids">+</span>
+              <!-- Loose Add-on Block Container -->
+              <div class="flex items-center gap-1.5 p-1.5 bg-rose-950/50 rounded-xl border border-rose-500/40">
+                ${beadCells.split('</div>').slice(5).join('</div>')}
+              </div>
+            </div>
+
+            <div class="text-xs font-kids font-bold text-slate-400">
+              <span class="text-cyan-400">5 Solid</span> + <span class="text-rose-400">${completed ? questionData.correctAnswer : '?'} Loose</span> = <span class="text-amber-400">${whole}</span>
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    /* 3. Number Neighbours Interactive Spotlight Number Track */
+    function renderNeighbourTrackDisplay(container, completed) {
+      const q = questionData;
+      const max = q.maxRange;
+      
+      // Build a 10 or 20 cell spotlight number track
+      let trackCells = '';
+      for (let i = 1; i <= max; i++) {
+        let cellClass = 'bg-slate-900 text-slate-400 border-slate-800';
+        let badge = '';
+
+        if (i === q.base) {
+          cellClass = 'bg-sky-500 text-slate-950 border-sky-300 font-bold scale-110 shadow-lg z-10';
+          badge = '<span class="absolute -top-3 px-1.5 py-0.2 text-[9px] bg-sky-300 text-slate-950 rounded-full font-bold">START</span>';
+        } else if (i === q.correctAnswer && completed) {
+          cellClass = 'bg-emerald-500 text-slate-950 border-emerald-300 font-bold scale-110 shadow-lg animate-pop z-10';
+          badge = '<span class="absolute -top-3 px-1.5 py-0.2 text-[9px] bg-emerald-300 text-slate-950 rounded-full font-bold">TARGET</span>';
+        }
+
+        trackCells += `
+          <div class="relative flex flex-col items-center justify-center w-8 h-12 sm:w-10 sm:h-14 rounded-xl border-2 text-sm sm:text-base font-kids transition-all ${cellClass}">
+            ${badge}
+            <span>${i}</span>
+          </div>`;
+      }
+
+      const jumpDir = q.isPlus ? `Jump RIGHT (+${q.step})` : `Jump LEFT (-${q.step})`;
+      const jumpColor = q.isPlus ? 'text-emerald-400' : 'text-rose-400';
+
+      container.innerHTML = `
+        <div class="flex flex-col items-center gap-3 w-full">
+          <div class="text-xs font-kids text-slate-300">
+            Number Track Jump: <span class="font-bold ${jumpColor}">${jumpDir}</span> from <span class="text-sky-300 font-bold">${q.base}</span>
+          </div>
+
+          <div class="flex items-center gap-1 sm:gap-1.5 p-2.5 bg-slate-950 rounded-2xl border-2 border-slate-700 overflow-x-auto max-w-full shadow-inner">
+            ${trackCells}
+          </div>
+
+          <!-- Step Pointer Indicator -->
+          <div class="flex items-center gap-3 text-xs font-kids text-slate-400 mt-1">
+            <span>Ordinal Step: <strong>${q.isPlus ? 'Forward' : 'Backward'} ${q.step}</strong></span>
+            ${completed ? `<span class="text-emerald-400 font-bold">Landed on ${q.correctAnswer}!</span>` : ''}
+          </div>
+        </div>
+      `;
+    }
+
+    /* =====================================================================
+       INPUT & SUBMISSION HANDLING
+       ===================================================================== */
+    function pressDigit(num) {
+      if (isProcessing) return;
+      playSound('pop');
+      if (currentInput.length < 3) {
+        currentInput += num.toString();
+        updateInputScreen();
+      }
+    }
+
+    function clearCurrentInput() {
+      currentInput = '';
+      updateInputScreen();
+    }
+
+    function updateInputScreen() {
+      const box = document.getElementById('inputBox');
+      box.textContent = currentInput === '' ? '?' : currentInput;
+    }
+
+    function submitCurrentAnswer() {
+      if (isProcessing || currentInput === '') return;
+      const userVal = parseInt(currentInput, 10);
+
+      if (userVal === questionData.correctAnswer) {
+        handleSuccess(`⭐ Perfect! That's correct!`, () => {
+          renderVisualizer(true);
+        });
+      } else {
+        handleMistake(`Not quite. Have another look!`);
+      }
+    }
+
+    function handleSuccess(msg, visualCallback) {
+      isProcessing = true;
+      playSound('correct');
+      streak++;
+      score += 10;
+      updateMetrics();
+      flashFeedback(msg, true);
+      if (visualCallback) visualCallback();
+
+      setTimeout(() => {
+        isProcessing = false;
+        generateQuestion();
+      }, 1300);
+    }
+
+    function handleMistake(msg) {
+      playSound('tryAgain');
+      streak = 0;
+      updateMetrics();
+      flashFeedback(msg, false);
+      clearCurrentInput();
+    }
+
+    function flashFeedback(msg, isSuccess) {
+      const fb = document.getElementById('feedbackBox');
+      fb.textContent = msg;
+      fb.className = `w-full text-center text-base sm:text-lg font-bold min-h-[26px] transition-all ${
+        isSuccess ? 'text-emerald-400 animate-pop' : 'text-rose-400'
+      }`;
+    }
+
+    function clearFeedback() {
+      document.getElementById('feedbackBox').textContent = '';
+    }
+
+    function updateMetrics() {
+      document.getElementById('streakDisplay').textContent = `🔥 ${streak}`;
+      document.getElementById('scoreDisplay').textContent = score;
+    }
+
+    function setupKeyboardListeners() {
+      window.addEventListener('keydown', (e) => {
+        if (e.key >= '0' && e.key <= '9') {
+          pressDigit(parseInt(e.key, 10));
+        } else if (e.key === 'Enter') {
+          submitCurrentAnswer();
+        } else if (e.key === 'Backspace' || e.key === 'Escape') {
+          clearCurrentInput();
+        }
+      });
+    }
+  </script>
+</body>
+</html>
