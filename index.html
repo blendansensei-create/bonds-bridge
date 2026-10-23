@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Number Bonds & Bridge to 10: Mental Maths Master</title>
+  <title>Bonds & Bridge to 10: Mental Maths Master</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Google Fonts: Inter & Fredoka -->
@@ -36,7 +36,7 @@
     }
     .counter-cell {
       aspect-ratio: 1 / 1;
-      border: 2.5px dashed rgba(255, 255, 255, 0.25);
+      border: 2.5px dashed rgba(255, 255, 255, 0.22);
       border-radius: 9999px;
       display: flex;
       align-items: center;
@@ -52,7 +52,7 @@
     }
   </style>
 </head>
-<body class="bg-slate-900 text-white min-h-screen flex flex-col justify-between p-2 sm:p-4 selection:bg-amber-400 selection:text-slate-900">
+<body class="bg-slate-900 text-white min-h-screen flex flex-col justify-between p-2 sm:p-4 selection:bg-amber-400 selection:text-slate-950">
 
   <!-- TOP HEADER & PRIMARY NAVIGATION -->
   <header class="max-w-4xl w-full mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 pb-2 border-b border-slate-800">
@@ -68,7 +68,7 @@
 
     <!-- PRIMARY MODES SELECTOR -->
     <nav class="flex items-center bg-slate-800/90 p-1 rounded-xl border border-slate-700 text-xs sm:text-sm font-semibold">
-      <button id="navModeBonds" onclick="switchMainMode('bonds')" class="px-3 py-1.5 rounded-lg transition-all bg-amber-500 text-slate-950 shadow">
+      <button id="navModeBonds" onclick="switchMainMode('bonds')" class="px-3 py-1.5 rounded-lg transition-all bg-amber-500 text-slate-950 shadow font-bold">
         1. Bonds Within 10
       </button>
       <button id="navModeBridge" onclick="switchMainMode('bridge')" class="px-3 py-1.5 rounded-lg transition-all text-slate-300 hover:text-white">
@@ -133,7 +133,7 @@
       </div>
     </div>
 
-    <!-- VISUAL REPRESENTATION TOGGLE BAR -->
+    <!-- 3-WAY VISUAL REPRESENTATION TOGGLE BAR -->
     <div class="w-full flex items-center justify-between text-xs px-2 text-slate-400">
       <div class="flex items-center gap-1.5">
         <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
@@ -146,12 +146,15 @@
         <button id="toggleFrameBtn" onclick="switchVisualRep('frame')" class="px-3 py-1.5 rounded text-xs font-bold transition-all text-slate-400 hover:text-white">
           Ten-Frame
         </button>
+        <button id="toggleLineBtn" onclick="switchVisualRep('line')" class="px-3 py-1.5 rounded text-xs font-bold transition-all text-slate-400 hover:text-white">
+          Jump Line
+        </button>
       </div>
     </div>
 
-    <!-- DYNAMIC VISUAL CONTAINER - ENLARGED -->
+    <!-- DYNAMIC VISUAL CONTAINER -->
     <div id="visualDisplayArea" class="w-full bg-slate-900/70 border border-slate-700/70 rounded-xl p-4 sm:p-6 flex items-center justify-center min-h-[220px]">
-      <!-- Visuals injected here (Large SVG Cherry Diagram or Large Ten-Frame) -->
+      <!-- Visuals injected here (Large Cherry SVG, Ten-Frame, or Jump Line) -->
     </div>
 
     <!-- INPUT & NUMPAD CONTROLS -->
@@ -199,12 +202,8 @@
   <script>
     let audioCtx = null;
     function getAudioCtx() {
-      if (!audioCtx) {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      }
-      if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
-      }
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
       return audioCtx;
     }
 
@@ -262,7 +261,7 @@
     let currentMode = 'bonds';
     let bondsTarget = 7;
     let bridgeTier = 'single';
-    let activeVisual = 'cherry';
+    let activeVisual = 'cherry'; // 'cherry', 'frame', or 'line'
 
     let currentInput = '';
     let streak = 0;
@@ -334,13 +333,19 @@
     function switchVisualRep(rep) {
       playSound('pop');
       activeVisual = rep;
-      if (rep === 'cherry') {
-        document.getElementById('toggleCherryBtn').className = 'px-3 py-1.5 rounded text-xs font-bold transition-all bg-slate-700 text-white';
-        document.getElementById('toggleFrameBtn').className = 'px-3 py-1.5 rounded text-xs font-bold transition-all text-slate-400 hover:text-white';
-      } else {
-        document.getElementById('toggleCherryBtn').className = 'px-3 py-1.5 rounded text-xs font-bold transition-all text-slate-400 hover:text-white';
-        document.getElementById('toggleFrameBtn').className = 'px-3 py-1.5 rounded text-xs font-bold transition-all bg-slate-700 text-white';
-      }
+      
+      const cBtn = document.getElementById('toggleCherryBtn');
+      const fBtn = document.getElementById('toggleFrameBtn');
+      const lBtn = document.getElementById('toggleLineBtn');
+
+      [cBtn, fBtn, lBtn].forEach(b => {
+        b.className = 'px-3 py-1.5 rounded text-xs font-bold transition-all text-slate-400 hover:text-white';
+      });
+
+      if (rep === 'cherry') cBtn.className = 'px-3 py-1.5 rounded text-xs font-bold transition-all bg-slate-700 text-white';
+      else if (rep === 'frame') fBtn.className = 'px-3 py-1.5 rounded text-xs font-bold transition-all bg-slate-700 text-white';
+      else if (rep === 'line') lBtn.className = 'px-3 py-1.5 rounded text-xs font-bold transition-all bg-slate-700 text-white';
+
       renderVisualizer();
     }
 
@@ -503,7 +508,7 @@
     }
 
     /* =====================================================================
-       ENLARGED HIGH-VISIBILITY VISUALIZERS
+       DYNAMIC VISUALIZERS (Cherry Diagram, Ten-Frames & Empty Number Line)
        ===================================================================== */
     function renderVisualizer(isCompleted = false) {
       const container = document.getElementById('visualDisplayArea');
@@ -516,46 +521,45 @@
 
         if (activeVisual === 'cherry') {
           container.innerHTML = renderLargeCherrySVG(whole, p1, p2, isCompleted);
-        } else {
+        } else if (activeVisual === 'frame') {
           container.innerHTML = renderLargeTenFrameBonds(whole, p1, isCompleted ? questionData.part2 : 0);
+        } else if (activeVisual === 'line') {
+          container.innerHTML = renderBondsNumberLine(whole, p1, p2, isCompleted);
         }
       } else {
         const q = questionData;
         if (activeVisual === 'cherry') {
           container.innerHTML = renderLargeBridgeCherrySVG(q, bridgeStep, isCompleted);
-        } else {
+        } else if (activeVisual === 'frame') {
           container.innerHTML = renderLargeDoubleTenFrame(q, bridgeStep, isCompleted);
+        } else if (activeVisual === 'line') {
+          container.innerHTML = renderBridgeNumberLine(q, bridgeStep, isCompleted);
         }
       }
     }
 
-    // ENLARGED Part-Part-Whole Cherry Diagram
+    // Cherry Diagram
     function renderLargeCherrySVG(whole, part1, part2, completed) {
       return `
         <svg viewBox="0 0 360 200" class="w-full max-w-sm h-48 sm:h-52">
-          <!-- Thicker Connector Lines -->
           <line x1="180" y1="52" x2="85" y2="145" stroke="#64748b" stroke-width="6" stroke-linecap="round"/>
           <line x1="180" y1="52" x2="275" y2="145" stroke="#64748b" stroke-width="6" stroke-linecap="round"/>
           
-          <!-- Whole Circle (Top) -->
           <circle cx="180" cy="50" r="38" fill="#1e293b" stroke="#f59e0b" stroke-width="5" />
           <text x="180" y="61" font-size="28" font-family="Fredoka, sans-serif" font-weight="bold" fill="#f59e0b" text-anchor="middle">${whole}</text>
           
-          <!-- Part 1 Circle (Left) -->
           <circle cx="85" cy="148" r="34" fill="#1e293b" stroke="#f43f5e" stroke-width="4.5" />
           <text x="85" y="158" font-size="26" font-family="Fredoka, sans-serif" font-weight="bold" fill="#f43f5e" text-anchor="middle">${part1}</text>
           
-          <!-- Part 2 Circle (Right) -->
           <circle cx="275" cy="148" r="34" fill="#1e293b" stroke="${completed ? '#10b981' : '#38bdf8'}" stroke-width="4.5" class="${completed ? 'animate-pop' : ''}" />
           <text x="275" y="159" font-size="${part2 === '?' ? '30' : '26'}" font-family="Fredoka, sans-serif" font-weight="bold" fill="${completed ? '#10b981' : '#38bdf8'}" text-anchor="middle">${part2}</text>
         </svg>
       `;
     }
 
-    // ENLARGED Part-Whole Ten Frame (Uniform Slots, Non-spoiler)
+    // Ten Frame (Uniform Slots)
     function renderLargeTenFrameBonds(whole, part1, answeredPart2) {
       let cellsHTML = '';
-      
       for (let i = 0; i < 10; i++) {
         if (i < part1) {
           cellsHTML += `
@@ -583,7 +587,35 @@
       `;
     }
 
-    // ENLARGED Bridging Cherry Diagram (Decomposing the addend)
+    // Empty Number Line for Bonds
+    function renderBondsNumberLine(whole, part1, part2, completed) {
+      const jumpLabel = completed ? `+${part2}` : `+?`;
+      return `
+        <div class="flex flex-col items-center w-full max-w-md">
+          <div class="text-xs font-kids text-slate-300 mb-2">Jump along the number line to reach <span class="text-amber-400 font-bold">${whole}</span></div>
+          <svg viewBox="0 0 360 140" class="w-full h-36">
+            <!-- Base Line -->
+            <line x1="40" y1="100" x2="320" y2="100" stroke="#94a3b8" stroke-width="4" stroke-linecap="round"/>
+            
+            <!-- Ticks -->
+            <line x1="70" y1="90" x2="70" y2="110" stroke="#f43f5e" stroke-width="4"/>
+            <text x="70" y="130" font-size="22" font-family="Fredoka" font-weight="bold" fill="#f43f5e" text-anchor="middle">${part1}</text>
+            
+            <line x1="290" y1="90" x2="290" y2="110" stroke="#f59e0b" stroke-width="4"/>
+            <text x="290" y="130" font-size="22" font-family="Fredoka" font-weight="bold" fill="#f59e0b" text-anchor="middle">${whole}</text>
+            
+            <!-- Jump Arc -->
+            <path d="M 70 90 Q 180 20 290 90" fill="none" stroke="${completed ? '#10b981' : '#38bdf8'}" stroke-width="4" stroke-dasharray="${completed ? 'none' : '6,6'}"/>
+            
+            <!-- Jump Label -->
+            <rect x="155" y="24" width="50" height="30" rx="8" fill="#1e293b" stroke="${completed ? '#10b981' : '#38bdf8'}" stroke-width="2"/>
+            <text x="180" y="45" font-size="18" font-family="Fredoka" font-weight="bold" fill="${completed ? '#10b981' : '#38bdf8'}" text-anchor="middle">${jumpLabel}</text>
+          </svg>
+        </div>
+      `;
+    }
+
+    // Bridging Cherry SVG
     function renderLargeBridgeCherrySVG(q, step, completed) {
       const p1 = step >= 2 ? q.bondNeeded : '?';
       const p2 = step >= 3 ? q.leftover : '?';
@@ -595,15 +627,12 @@
             <line x1="170" y1="45" x2="90" y2="130" stroke="#64748b" stroke-width="5" stroke-linecap="round"/>
             <line x1="170" y1="45" x2="250" y2="130" stroke="#64748b" stroke-width="5" stroke-linecap="round"/>
             
-            <!-- Addend Top -->
             <circle cx="170" cy="42" r="32" fill="#1e293b" stroke="#f59e0b" stroke-width="4.5"/>
             <text x="170" y="52" font-size="24" font-family="Fredoka" font-weight="bold" fill="#f59e0b" text-anchor="middle">${q.num2}</text>
             
-            <!-- Bond Needed to Next 10 -->
             <circle cx="90" cy="132" r="28" fill="#1e293b" stroke="#10b981" stroke-width="4"/>
             <text x="90" y="141" font-size="22" font-family="Fredoka" font-weight="bold" fill="#10b981" text-anchor="middle">${p1}</text>
             
-            <!-- Leftover Remainder -->
             <circle cx="250" cy="132" r="28" fill="#1e293b" stroke="#c084fc" stroke-width="4"/>
             <text x="250" y="141" font-size="22" font-family="Fredoka" font-weight="bold" fill="#c084fc" text-anchor="middle">${p2}</text>
           </svg>
@@ -611,18 +640,14 @@
       `;
     }
 
-    // ENLARGED Double Ten-Frame for Bridging
+    // Double Ten-Frame for Bridging
     function renderLargeDoubleTenFrame(q, step, completed) {
       const units1 = q.num1 % 10;
       let frame1Counters = units1;
       let frame2Counters = 0;
 
-      if (step >= 2) {
-        frame1Counters = 10;
-      }
-      if (step >= 3) {
-        frame2Counters = q.leftover;
-      }
+      if (step >= 2) frame1Counters = 10;
+      if (step >= 3) frame2Counters = q.leftover;
 
       function buildCells(filledCount, colorClass) {
         let html = '';
@@ -651,6 +676,46 @@
               ${buildCells(frame2Counters, 'bg-purple-400')}
             </div>
           </div>
+        </div>
+      `;
+    }
+
+    // Empty Number Line for Bridging (Two Distinct Jumps)
+    function renderBridgeNumberLine(q, step, completed) {
+      const jump1Label = step >= 2 ? `+${q.bondNeeded}` : `+?`;
+      const jump2Label = step >= 3 ? `+${q.leftover}` : `+?`;
+      const midPoint = q.nextTen;
+      const endPoint = step >= 3 ? q.finalSum : '?';
+
+      return `
+        <div class="flex flex-col items-center w-full max-w-lg">
+          <div class="text-xs font-kids text-slate-300 mb-2">Bridge to <span class="text-emerald-400 font-bold">${midPoint}</span>, then add the rest!</div>
+          <svg viewBox="0 0 420 150" class="w-full h-38">
+            <!-- Base Line -->
+            <line x1="30" y1="105" x2="390" y2="105" stroke="#94a3b8" stroke-width="4" stroke-linecap="round"/>
+            
+            <!-- Start Tick -->
+            <line x1="50" y1="95" x2="50" y2="115" stroke="#60a5fa" stroke-width="4"/>
+            <text x="50" y="135" font-size="20" font-family="Fredoka" font-weight="bold" fill="#60a5fa" text-anchor="middle">${q.num1}</text>
+            
+            <!-- Mid Milestone Tick (Friendly Ten) -->
+            <line x1="210" y1="95" x2="210" y2="115" stroke="#10b981" stroke-width="4"/>
+            <text x="210" y="135" font-size="20" font-family="Fredoka" font-weight="bold" fill="#10b981" text-anchor="middle">${midPoint}</text>
+            
+            <!-- End Tick (Final Total) -->
+            <line x1="370" y1="95" x2="370" y2="115" stroke="#f59e0b" stroke-width="4"/>
+            <text x="370" y="135" font-size="20" font-family="Fredoka" font-weight="bold" fill="#f59e0b" text-anchor="middle">${endPoint}</text>
+            
+            <!-- Jump 1 Arc -->
+            <path d="M 50 95 Q 130 30 210 95" fill="none" stroke="${step >= 2 ? '#10b981' : '#38bdf8'}" stroke-width="4" stroke-dasharray="${step >= 2 ? 'none' : '5,5'}"/>
+            <rect x="105" y="32" width="50" height="26" rx="6" fill="#1e293b" stroke="${step >= 2 ? '#10b981' : '#38bdf8'}" stroke-width="2"/>
+            <text x="130" y="50" font-size="16" font-family="Fredoka" font-weight="bold" fill="${step >= 2 ? '#10b981' : '#38bdf8'}" text-anchor="middle">${jump1Label}</text>
+            
+            <!-- Jump 2 Arc -->
+            <path d="M 210 95 Q 290 30 370 95" fill="none" stroke="${step >= 3 ? '#c084fc' : '#64748b'}" stroke-width="4" stroke-dasharray="${step >= 3 ? 'none' : '5,5'}"/>
+            <rect x="265" y="32" width="50" height="26" rx="6" fill="#1e293b" stroke="${step >= 3 ? '#c084fc' : '#64748b'}" stroke-width="2"/>
+            <text x="290" y="50" font-size="16" font-family="Fredoka" font-weight="bold" fill="${step >= 3 ? '#c084fc' : '#64748b'}" text-anchor="middle">${jump2Label}</text>
+          </svg>
         </div>
       `;
     }
