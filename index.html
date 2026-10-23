@@ -28,22 +28,15 @@
     .animate-pop {
       animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
     }
-    @keyframes pulseGlow {
-      0%, 100% { box-shadow: 0 0 15px rgba(59, 130, 246, 0.5); }
-      50% { box-shadow: 0 0 25px rgba(59, 130, 246, 0.9); }
-    }
-    .pulse-glow {
-      animation: pulseGlow 1.8s infinite;
-    }
     .ten-frame-grid {
       display: grid;
       grid-template-columns: repeat(5, minmax(0, 1fr));
       grid-template-rows: repeat(2, minmax(0, 1fr));
-      gap: 0.5rem;
+      gap: 0.65rem;
     }
     .counter-cell {
       aspect-ratio: 1 / 1;
-      border: 2px dashed rgba(255, 255, 255, 0.25);
+      border: 2.5px dashed rgba(255, 255, 255, 0.25);
       border-radius: 9999px;
       display: flex;
       align-items: center;
@@ -51,10 +44,10 @@
       transition: all 0.2s ease;
     }
     .counter-circle {
-      width: 82%;
-      height: 82%;
+      width: 86%;
+      height: 86%;
       border-radius: 9999px;
-      box-shadow: inset 0 -3px 5px rgba(0,0,0,0.3), 0 3px 6px rgba(0,0,0,0.3);
+      box-shadow: inset 0 -3px 5px rgba(0,0,0,0.35), 0 3px 6px rgba(0,0,0,0.35);
       transition: transform 0.25s ease;
     }
   </style>
@@ -130,12 +123,12 @@
     
     <!-- QUESTION DISPLAY PANEL -->
     <div class="w-full flex flex-col items-center">
-      <div id="equationBox" class="bg-slate-900/90 border-2 border-slate-700 px-6 py-3 rounded-2xl flex items-center justify-center gap-3 font-kids text-4xl sm:text-5xl font-bold tracking-wider shadow-inner text-amber-300 min-h-[76px]">
+      <div id="equationBox" class="bg-slate-900/90 border-2 border-slate-700 px-8 py-3 rounded-2xl flex items-center justify-center gap-3.5 font-kids text-5xl sm:text-6xl font-bold tracking-wider shadow-inner text-amber-300 min-h-[85px]">
         <!-- Dynamic math equation -->
       </div>
       
       <!-- Guided Step Prompt -->
-      <div id="promptGuidance" class="mt-2 text-sm sm:text-base font-semibold text-slate-300 text-center min-h-[24px]">
+      <div id="promptGuidance" class="mt-2 text-base sm:text-lg font-semibold text-slate-200 text-center min-h-[26px]">
         What goes with 4 to make 7?
       </div>
     </div>
@@ -143,32 +136,32 @@
     <!-- VISUAL REPRESENTATION TOGGLE BAR -->
     <div class="w-full flex items-center justify-between text-xs px-2 text-slate-400">
       <div class="flex items-center gap-1.5">
-        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-        <span id="visualTitle">Visualizer</span>
+        <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
+        <span id="visualTitle" class="font-semibold text-slate-300">Classroom Visualizer</span>
       </div>
       <div class="flex items-center gap-1 bg-slate-900/80 p-0.5 rounded-lg border border-slate-700">
-        <button id="toggleCherryBtn" onclick="switchVisualRep('cherry')" class="px-2.5 py-1 rounded text-xs font-bold transition-all bg-slate-700 text-white">
+        <button id="toggleCherryBtn" onclick="switchVisualRep('cherry')" class="px-3 py-1.5 rounded text-xs font-bold transition-all bg-slate-700 text-white">
           Cherry Diagram
         </button>
-        <button id="toggleFrameBtn" onclick="switchVisualRep('frame')" class="px-2.5 py-1 rounded text-xs font-bold transition-all text-slate-400 hover:text-white">
+        <button id="toggleFrameBtn" onclick="switchVisualRep('frame')" class="px-3 py-1.5 rounded text-xs font-bold transition-all text-slate-400 hover:text-white">
           Ten-Frame
         </button>
       </div>
     </div>
 
-    <!-- DYNAMIC VISUAL CONTAINER -->
-    <div id="visualDisplayArea" class="w-full bg-slate-900/70 border border-slate-700/70 rounded-xl p-3 sm:p-4 flex items-center justify-center min-h-[160px]">
-      <!-- Visuals injected here (SVG Cherry Diagram or Ten-Frame) -->
+    <!-- DYNAMIC VISUAL CONTAINER - ENLARGED -->
+    <div id="visualDisplayArea" class="w-full bg-slate-900/70 border border-slate-700/70 rounded-xl p-4 sm:p-6 flex items-center justify-center min-h-[220px]">
+      <!-- Visuals injected here (Large SVG Cherry Diagram or Large Ten-Frame) -->
     </div>
 
     <!-- INPUT & NUMPAD CONTROLS -->
     <div class="w-full max-w-md flex flex-col items-center gap-2">
       <!-- Input Display Screen -->
       <div class="w-full flex items-center justify-between gap-3">
-        <div id="activeInputScreen" class="flex-grow h-14 bg-slate-950 border-2 border-amber-400/80 rounded-xl flex items-center justify-center font-kids text-3xl font-bold text-amber-400 shadow-inner tracking-widest">
+        <div id="activeInputScreen" class="flex-grow h-15 py-2 bg-slate-950 border-2 border-amber-400/80 rounded-xl flex items-center justify-center font-kids text-4xl font-bold text-amber-400 shadow-inner tracking-widest">
           ?
         </div>
-        <button onclick="clearCurrentInput()" class="px-4 h-14 bg-slate-700 hover:bg-slate-600 rounded-xl text-xs font-bold text-slate-200 uppercase tracking-wider active:scale-95 transition-all">
+        <button onclick="clearCurrentInput()" class="px-5 h-15 bg-slate-700 hover:bg-slate-600 rounded-xl text-xs font-bold text-slate-200 uppercase tracking-wider active:scale-95 transition-all">
           Clear
         </button>
       </div>
@@ -188,14 +181,14 @@
       </div>
 
       <!-- Action Button -->
-      <button id="submitActionBtn" onclick="submitCurrentAnswer()" class="w-full h-13 py-3 mt-1 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 font-kids text-xl font-bold text-slate-950 rounded-xl shadow-lg active:scale-98 transition-all flex items-center justify-center gap-2">
+      <button id="submitActionBtn" onclick="submitCurrentAnswer()" class="w-full h-14 py-3 mt-1 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 font-kids text-2xl font-bold text-slate-950 rounded-xl shadow-lg active:scale-98 transition-all flex items-center justify-center gap-2">
         <span>Check Answer</span>
         <span>✨</span>
       </button>
     </div>
 
     <!-- FEEDBACK BANNER -->
-    <div id="feedbackBox" class="w-full text-center text-sm sm:text-base font-bold min-h-[22px] transition-all"></div>
+    <div id="feedbackBox" class="w-full text-center text-base sm:text-lg font-bold min-h-[26px] transition-all"></div>
   </main>
 
   <footer class="max-w-4xl w-full mx-auto text-center text-xs text-slate-500 pt-1">
@@ -204,9 +197,6 @@
 
   <!-- CORE LOGIC & WEB AUDIO SCRIPT -->
   <script>
-    /* =====================================================================
-       AUDIO SYNTHESIZER (Pure Web Audio - Zero External Dependencies)
-       ===================================================================== */
     let audioCtx = null;
     function getAudioCtx() {
       if (!audioCtx) {
@@ -236,7 +226,6 @@
           osc.start(now);
           osc.stop(now + 0.09);
         } else if (type === 'correct') {
-          // Cheerful Major Chord Arpeggio
           [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
             const osc = ctx.createOscillator();
             const gain = ctx.createGain();
@@ -270,25 +259,21 @@
     /* =====================================================================
        STATE MANAGEMENT
        ===================================================================== */
-    let currentMode = 'bonds'; // 'bonds', 'bridge', 'rush'
-    let bondsTarget = 7;      // 5, 6, 7, 8, 9, 10, or 'mixed'
-    let bridgeTier = 'single'; // 'single' or 'decade'
-    let activeVisual = 'cherry'; // 'cherry' or 'frame'
+    let currentMode = 'bonds';
+    let bondsTarget = 7;
+    let bridgeTier = 'single';
+    let activeVisual = 'cherry';
 
     let currentInput = '';
     let streak = 0;
     let score = 0;
     let questionData = {};
-    let bridgeStep = 1; // 1 = Find bond to 10, 2 = Partition leftover, 3 = Combine total
+    let bridgeStep = 1;
     let isProcessing = false;
 
-    // Rush Timer
     let timerInterval = null;
     let rushTimeLeft = 60;
 
-    /* =====================================================================
-       INITIALIZATION & MODE SWITCHING
-       ===================================================================== */
     window.addEventListener('DOMContentLoaded', () => {
       generateQuestion();
       setupKeyboardListeners();
@@ -298,7 +283,6 @@
       playSound('pop');
       currentMode = mode;
       
-      // Update Top Nav Styling
       document.querySelectorAll('header nav button').forEach(b => {
         b.className = 'px-3 py-1.5 rounded-lg transition-all text-slate-300 hover:text-white';
       });
@@ -351,11 +335,11 @@
       playSound('pop');
       activeVisual = rep;
       if (rep === 'cherry') {
-        document.getElementById('toggleCherryBtn').className = 'px-2.5 py-1 rounded text-xs font-bold transition-all bg-slate-700 text-white';
-        document.getElementById('toggleFrameBtn').className = 'px-2.5 py-1 rounded text-xs font-bold transition-all text-slate-400 hover:text-white';
+        document.getElementById('toggleCherryBtn').className = 'px-3 py-1.5 rounded text-xs font-bold transition-all bg-slate-700 text-white';
+        document.getElementById('toggleFrameBtn').className = 'px-3 py-1.5 rounded text-xs font-bold transition-all text-slate-400 hover:text-white';
       } else {
-        document.getElementById('toggleCherryBtn').className = 'px-2.5 py-1 rounded text-xs font-bold transition-all text-slate-400 hover:text-white';
-        document.getElementById('toggleFrameBtn').className = 'px-2.5 py-1 rounded text-xs font-bold transition-all bg-slate-700 text-white';
+        document.getElementById('toggleCherryBtn').className = 'px-3 py-1.5 rounded text-xs font-bold transition-all text-slate-400 hover:text-white';
+        document.getElementById('toggleFrameBtn').className = 'px-3 py-1.5 rounded text-xs font-bold transition-all bg-slate-700 text-white';
       }
       renderVisualizer();
     }
@@ -371,10 +355,9 @@
       if (currentMode === 'bonds') {
         let whole = bondsTarget;
         if (whole === 'mixed') {
-          whole = Math.floor(Math.random() * 6) + 5; // 5 to 10
+          whole = Math.floor(Math.random() * 6) + 5;
         }
         
-        // Generate parts
         const part1 = Math.floor(Math.random() * (whole - 1)) + 1;
         const part2 = whole - part1;
 
@@ -390,14 +373,12 @@
       } else if (currentMode === 'bridge') {
         let num1, num2;
         if (bridgeTier === 'single') {
-          // Single Digit Crossing 10 (e.g. 8 + 5, 9 + 4, 7 + 6)
-          num1 = Math.floor(Math.random() * 4) + 6; // 6, 7, 8, 9
+          num1 = Math.floor(Math.random() * 4) + 6;
           const minAddend = 11 - num1;
           num2 = Math.floor(Math.random() * (9 - minAddend + 1)) + minAddend;
         } else {
-          // Decade Crossing (e.g. 28 + 5, 47 + 6, 79 + 4)
-          const tens = (Math.floor(Math.random() * 6) + 2) * 10; // 20, 30, 40, 50, 60, 70
-          const units = Math.floor(Math.random() * 4) + 6; // 6, 7, 8, 9
+          const tens = (Math.floor(Math.random() * 6) + 2) * 10;
+          const units = Math.floor(Math.random() * 4) + 6;
           num1 = tens + units;
           const minAddend = 11 - units;
           num2 = Math.floor(Math.random() * (9 - minAddend + 1)) + minAddend;
@@ -421,10 +402,8 @@
 
         renderBridgeUI();
       } else if (currentMode === 'rush') {
-        // Fast fire mix
         const pick = Math.random();
         if (pick < 0.5) {
-          // Random bond to 10
           const part1 = Math.floor(Math.random() * 9) + 1;
           questionData = {
             type: 'rush_bonds',
@@ -433,7 +412,6 @@
             correctAnswer: 10 - part1
           };
         } else {
-          // Quick bridging sum
           const num1 = Math.floor(Math.random() * 4) + 6;
           const num2 = Math.floor(Math.random() * 4) + (11 - num1);
           questionData = {
@@ -481,7 +459,7 @@
           `Step 1: How many does <span class="text-blue-400 font-bold">${q.num1}</span> need to reach friendly <span class="text-amber-400 font-bold">${q.nextTen}</span>?`;
       } else if (bridgeStep === 2) {
         eq.innerHTML = `
-          <span class="text-slate-400 text-2xl">Partition ${q.num2}:</span>
+          <span class="text-slate-400 text-3xl">Partition ${q.num2}:</span>
           <span class="text-emerald-400">${q.bondNeeded}</span>
           <span class="text-slate-400">+</span>
           <span class="text-purple-400 underline decoration-dashed">?</span>
@@ -525,7 +503,7 @@
     }
 
     /* =====================================================================
-       DYNAMIC VISUALIZERS (Cherry Diagram & Ten-Frames)
+       ENLARGED HIGH-VISIBILITY VISUALIZERS
        ===================================================================== */
     function renderVisualizer(isCompleted = false) {
       const container = document.getElementById('visualDisplayArea');
@@ -537,120 +515,110 @@
         const p2 = isCompleted ? questionData.part2 : '?';
 
         if (activeVisual === 'cherry') {
-          container.innerHTML = renderCherrySVG(whole, p1, p2, isCompleted);
+          container.innerHTML = renderLargeCherrySVG(whole, p1, p2, isCompleted);
         } else {
-          container.innerHTML = renderTenFrameBonds(whole, p1, isCompleted ? questionData.part2 : 0);
+          container.innerHTML = renderLargeTenFrameBonds(whole, p1, isCompleted ? questionData.part2 : 0);
         }
       } else {
-        // Bridging Visuals
         const q = questionData;
         if (activeVisual === 'cherry') {
-          container.innerHTML = renderBridgeCherrySVG(q, bridgeStep, isCompleted);
+          container.innerHTML = renderLargeBridgeCherrySVG(q, bridgeStep, isCompleted);
         } else {
-          container.innerHTML = renderDoubleTenFrame(q, bridgeStep, isCompleted);
+          container.innerHTML = renderLargeDoubleTenFrame(q, bridgeStep, isCompleted);
         }
       }
     }
 
-    // SVG Cherry Diagram for Part-Part-Whole
-    function renderCherrySVG(whole, part1, part2, completed) {
+    // ENLARGED Part-Part-Whole Cherry Diagram
+    function renderLargeCherrySVG(whole, part1, part2, completed) {
       return `
-        <svg viewBox="0 0 320 150" class="w-full max-w-xs h-36">
-          <!-- Connector Lines -->
-          <line x1="160" y1="40" x2="80" y2="105" stroke="#64748b" stroke-width="4" stroke-linecap="round"/>
-          <line x1="160" y1="40" x2="240" y2="105" stroke="#64748b" stroke-width="4" stroke-linecap="round"/>
+        <svg viewBox="0 0 360 200" class="w-full max-w-sm h-48 sm:h-52">
+          <!-- Thicker Connector Lines -->
+          <line x1="180" y1="52" x2="85" y2="145" stroke="#64748b" stroke-width="6" stroke-linecap="round"/>
+          <line x1="180" y1="52" x2="275" y2="145" stroke="#64748b" stroke-width="6" stroke-linecap="round"/>
           
           <!-- Whole Circle (Top) -->
-          <circle cx="160" cy="38" r="28" fill="#1e293b" stroke="#f59e0b" stroke-width="4" />
-          <text x="160" y="46" font-size="20" font-family="Fredoka, sans-serif" font-weight="bold" fill="#f59e0b" text-anchor="middle">${whole}</text>
+          <circle cx="180" cy="50" r="38" fill="#1e293b" stroke="#f59e0b" stroke-width="5" />
+          <text x="180" y="61" font-size="28" font-family="Fredoka, sans-serif" font-weight="bold" fill="#f59e0b" text-anchor="middle">${whole}</text>
           
           <!-- Part 1 Circle (Left) -->
-          <circle cx="80" cy="108" r="26" fill="#1e293b" stroke="#f43f5e" stroke-width="3.5" />
-          <text x="80" y="115" font-size="19" font-family="Fredoka, sans-serif" font-weight="bold" fill="#f43f5e" text-anchor="middle">${part1}</text>
+          <circle cx="85" cy="148" r="34" fill="#1e293b" stroke="#f43f5e" stroke-width="4.5" />
+          <text x="85" y="158" font-size="26" font-family="Fredoka, sans-serif" font-weight="bold" fill="#f43f5e" text-anchor="middle">${part1}</text>
           
           <!-- Part 2 Circle (Right) -->
-          <circle cx="240" cy="108" r="26" fill="#1e293b" stroke="${completed ? '#10b981' : '#38bdf8'}" stroke-width="3.5" class="${completed ? 'animate-pop' : ''}" />
-          <text x="240" y="116" font-size="${part2 === '?' ? '22' : '19'}" font-family="Fredoka, sans-serif" font-weight="bold" fill="${completed ? '#10b981' : '#38bdf8'}" text-anchor="middle">${part2}</text>
+          <circle cx="275" cy="148" r="34" fill="#1e293b" stroke="${completed ? '#10b981' : '#38bdf8'}" stroke-width="4.5" class="${completed ? 'animate-pop' : ''}" />
+          <text x="275" y="159" font-size="${part2 === '?' ? '30' : '26'}" font-family="Fredoka, sans-serif" font-weight="bold" fill="${completed ? '#10b981' : '#38bdf8'}" text-anchor="middle">${part2}</text>
         </svg>
       `;
     }
 
-    // FIX APPLIED HERE: Strictly caps displayed counters to whole, dims unused cells past target
-    function renderTenFrameBonds(whole, part1, answeredPart2) {
+    // ENLARGED Part-Whole Ten Frame (Uniform Slots, Non-spoiler)
+    function renderLargeTenFrameBonds(whole, part1, answeredPart2) {
       let cellsHTML = '';
       
       for (let i = 0; i < 10; i++) {
         if (i < part1) {
-          // First known part (Coral)
           cellsHTML += `
-            <div class="counter-cell border-rose-500/40 bg-slate-950/40">
+            <div class="counter-cell bg-slate-950/70 border-slate-600">
               <div class="counter-circle bg-rose-500 animate-pop"></div>
             </div>`;
         } else if (i < (part1 + answeredPart2)) {
-          // Second solved part (Emerald) - Strictly stops at part1 + answeredPart2 (never fills past target!)
           cellsHTML += `
-            <div class="counter-cell border-emerald-500/40 bg-slate-950/40">
+            <div class="counter-cell bg-slate-950/70 border-emerald-500/60">
               <div class="counter-circle bg-emerald-400 animate-pop"></div>
             </div>`;
-        } else if (i < whole) {
-          // Placeholder empty slot belonging to the target bond
-          cellsHTML += `
-            <div class="counter-cell border-slate-600 bg-slate-950/40">
-              <span class="w-3 h-3 rounded-full bg-slate-700/60"></span>
-            </div>`;
         } else {
-          // Slot is outside the target number bond (Ghosted / Dimmed out so child knows it's not in target)
           cellsHTML += `
-            <div class="counter-cell border-slate-800/40 bg-slate-950/20 opacity-30"></div>`;
+            <div class="counter-cell bg-slate-950/50 border-slate-700"></div>`;
         }
       }
 
       return `
-        <div class="flex flex-col items-center gap-2">
-          <div class="text-xs font-kids font-bold text-slate-400">Target Bond: ${whole}</div>
-          <div class="ten-frame-grid bg-slate-950/80 p-2.5 rounded-2xl border-2 border-slate-700 shadow-inner w-56 sm:w-64">
+        <div class="flex flex-col items-center gap-3">
+          <div class="text-sm sm:text-base font-kids font-bold text-amber-400">Target Bond: ${whole}</div>
+          <div class="ten-frame-grid bg-slate-950/95 p-3.5 rounded-2xl border-2 border-slate-600 shadow-2xl w-72 sm:w-80">
             ${cellsHTML}
           </div>
         </div>
       `;
     }
 
-    // Bridging Cherry SVG (Decomposing the addend)
-    function renderBridgeCherrySVG(q, step, completed) {
+    // ENLARGED Bridging Cherry Diagram (Decomposing the addend)
+    function renderLargeBridgeCherrySVG(q, step, completed) {
       const p1 = step >= 2 ? q.bondNeeded : '?';
       const p2 = step >= 3 ? q.leftover : '?';
       
       return `
-        <div class="flex flex-col items-center">
-          <div class="text-xs font-kids text-slate-400 mb-1">Decompose <span class="text-amber-400 font-bold">${q.num2}</span> to reach friendly ten</div>
-          <svg viewBox="0 0 280 130" class="w-full max-w-xs h-32">
-            <line x1="140" y1="30" x2="80" y2="85" stroke="#64748b" stroke-width="3" stroke-linecap="round"/>
-            <line x1="140" y1="30" x2="200" y2="85" stroke="#64748b" stroke-width="3" stroke-linecap="round"/>
+        <div class="flex flex-col items-center w-full">
+          <div class="text-sm font-kids text-slate-300 mb-1">Decompose <span class="text-amber-400 font-bold text-base">${q.num2}</span> to reach friendly ten</div>
+          <svg viewBox="0 0 340 180" class="w-full max-w-sm h-44 sm:h-48">
+            <line x1="170" y1="45" x2="90" y2="130" stroke="#64748b" stroke-width="5" stroke-linecap="round"/>
+            <line x1="170" y1="45" x2="250" y2="130" stroke="#64748b" stroke-width="5" stroke-linecap="round"/>
             
             <!-- Addend Top -->
-            <circle cx="140" cy="28" r="22" fill="#1e293b" stroke="#f59e0b" stroke-width="3"/>
-            <text x="140" y="34" font-size="16" font-family="Fredoka" font-weight="bold" fill="#f59e0b" text-anchor="middle">${q.num2}</text>
+            <circle cx="170" cy="42" r="32" fill="#1e293b" stroke="#f59e0b" stroke-width="4.5"/>
+            <text x="170" y="52" font-size="24" font-family="Fredoka" font-weight="bold" fill="#f59e0b" text-anchor="middle">${q.num2}</text>
             
             <!-- Bond Needed to Next 10 -->
-            <circle cx="80" cy="90" r="20" fill="#1e293b" stroke="#10b981" stroke-width="3"/>
-            <text x="80" y="96" font-size="15" font-family="Fredoka" font-weight="bold" fill="#10b981" text-anchor="middle">${p1}</text>
+            <circle cx="90" cy="132" r="28" fill="#1e293b" stroke="#10b981" stroke-width="4"/>
+            <text x="90" y="141" font-size="22" font-family="Fredoka" font-weight="bold" fill="#10b981" text-anchor="middle">${p1}</text>
             
             <!-- Leftover Remainder -->
-            <circle cx="200" cy="90" r="20" fill="#1e293b" stroke="#c084fc" stroke-width="3"/>
-            <text x="200" y="96" font-size="15" font-family="Fredoka" font-weight="bold" fill="#c084fc" text-anchor="middle">${p2}</text>
+            <circle cx="250" cy="132" r="28" fill="#1e293b" stroke="#c084fc" stroke-width="4"/>
+            <text x="250" y="141" font-size="22" font-family="Fredoka" font-weight="bold" fill="#c084fc" text-anchor="middle">${p2}</text>
           </svg>
         </div>
       `;
     }
 
-    // Double Ten-Frame for Bridging
-    function renderDoubleTenFrame(q, step, completed) {
+    // ENLARGED Double Ten-Frame for Bridging
+    function renderLargeDoubleTenFrame(q, step, completed) {
       const units1 = q.num1 % 10;
       let frame1Counters = units1;
       let frame2Counters = 0;
 
       if (step >= 2) {
-        frame1Counters = 10; // filled by bond
+        frame1Counters = 10;
       }
       if (step >= 3) {
         frame2Counters = q.leftover;
@@ -660,26 +628,26 @@
         let html = '';
         for (let i = 0; i < 10; i++) {
           if (i < filledCount) {
-            html += `<div class="counter-cell border-slate-700 bg-slate-950"><div class="counter-circle ${colorClass} animate-pop"></div></div>`;
+            html += `<div class="counter-cell border-slate-600 bg-slate-950"><div class="counter-circle ${colorClass} animate-pop"></div></div>`;
           } else {
-            html += `<div class="counter-cell border-slate-700/60 bg-slate-950/40"></div>`;
+            html += `<div class="counter-cell border-slate-700/70 bg-slate-950/40"></div>`;
           }
         }
         return html;
       }
 
       return `
-        <div class="flex items-center gap-3 flex-wrap justify-center">
+        <div class="flex items-center gap-4 flex-wrap justify-center">
           <div class="flex flex-col items-center">
-            <span class="text-xs font-kids text-slate-400 mb-1">Tens Frame 1</span>
-            <div class="ten-frame-grid bg-slate-950 p-2 rounded-xl border border-slate-700 w-44 sm:w-48">
+            <span class="text-xs sm:text-sm font-kids text-slate-300 mb-1">Tens Frame 1</span>
+            <div class="ten-frame-grid bg-slate-950 p-2.5 rounded-xl border-2 border-slate-700 w-52 sm:w-56">
               ${buildCells(frame1Counters, 'bg-blue-400')}
             </div>
           </div>
-          <div class="text-xl font-bold text-slate-500 font-kids">+</div>
+          <div class="text-2xl font-bold text-slate-400 font-kids">+</div>
           <div class="flex flex-col items-center">
-            <span class="text-xs font-kids text-slate-400 mb-1">Tens Frame 2</span>
-            <div class="ten-frame-grid bg-slate-950 p-2 rounded-xl border border-slate-700 w-44 sm:w-48">
+            <span class="text-xs sm:text-sm font-kids text-slate-300 mb-1">Tens Frame 2</span>
+            <div class="ten-frame-grid bg-slate-950 p-2.5 rounded-xl border-2 border-slate-700 w-52 sm:w-56">
               ${buildCells(frame2Counters, 'bg-purple-400')}
             </div>
           </div>
@@ -797,7 +765,7 @@
     function flashFeedback(msg, isSuccess) {
       const fb = document.getElementById('feedbackBox');
       fb.textContent = msg;
-      fb.className = `w-full text-center text-sm sm:text-base font-bold min-h-[22px] transition-all ${
+      fb.className = `w-full text-center text-base sm:text-lg font-bold min-h-[26px] transition-all ${
         isSuccess ? 'text-emerald-400 animate-pop' : 'text-rose-400'
       }`;
     }
@@ -812,9 +780,6 @@
       document.getElementById('scoreDisplay').textContent = score;
     }
 
-    /* =====================================================================
-       RUSH MODE TIMER
-       ===================================================================== */
     function startRushTimer() {
       clearInterval(timerInterval);
       rushTimeLeft = 60;
@@ -831,9 +796,6 @@
       }, 1000);
     }
 
-    /* =====================================================================
-       KEYBOARD SHORTCUTS
-       ===================================================================== */
     function setupKeyboardListeners() {
       window.addEventListener('keydown', (e) => {
         if (e.key >= '0' && e.key <= '9') {
