@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Early Counting & Pre-Number Mastery</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Fredoka & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+    }
+    .font-kids {
+      font-family: 'Fredoka', cursive, sans-serif;
+    }
+    @keyframes popIn {
+      0% { transform: scale(0.5); opacity: 0; }
+      70% { transform: scale(1.15); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .animate-pop {
+      animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 15px rgba(251, 191, 36, 0.6); }
+      50% { box-shadow: 0 0 30px rgba(251, 191, 36, 0.95); }
+    }
+    .pulse-glow {
+      animation: pulseGlow 1.4s infinite ease-in-out;
+    }
+    @keyframes sneakPop {
+      0% { transform: scale(0) rotate(-20deg); opacity: 0; filter: drop-shadow(0 0 20px #f59e0b); }
+      60% { transform: scale(1.3) rotate(10deg); opacity: 1; }
+      100% { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+    .sneak-entry {
+      animation: sneakPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+    @keyframes sneakPoof {
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.4); opacity: 0.7; filter: brightness(2); }
+      100% { transform: scale(0); opacity: 0; }
+    }
+    .sneak-exit {
+      animation: sneakPoof 0.45s ease-out forwards;
+    }
+    .tap-target {
+      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .tap-target:active {
+      transform: scale(0.92);
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-white min-h-screen flex flex-col justify-between p-2 sm:p-4 selection:bg-amber-400 selection:text-slate-950">
+
+  <!-- TOP HEADER & PERSISTENT 4-MODULE NAVIGATION -->
+  <header class="max-w-5xl w-full mx-auto flex flex-col md:flex-row items-center justify-between gap-3 pb-3 border-b border-slate-800">
+    <div class="flex items-center gap-3">
+      <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-emerald-500 via-amber-500 to-rose-500 flex items-center justify-center font-kids font-bold text-slate-950 text-2xl shadow-lg">
+        123
+      </div>
+      <div>
+        <h1 class="font-kids text-xl sm:text-2xl font-bold tracking-wide text-emerald-400 leading-tight">
+          Early Counting & Pre-Number Mastery
+        </h1>
+        <p class="text-xs text-slate-400 font-medium">Foundational Diagnostics & SEN Interventions • CCEA Early Numeracy</p>
+      </div>
+    </div>
+
+    <!-- MAIN 4 INTERVENTION MODES -->
+    <nav class="flex items-center bg-slate-900/90 p-1.5 rounded-2xl border border-slate-800 text-xs sm:text-sm font-semibold flex-wrap gap-1">
+      <button id="navTag" onclick="switchMode('tag')" class="px-3 py-1.5 rounded-xl font-bold transition-all bg-emerald-500 text-slate-950 shadow-md">
+        1. Touch & Tag
+      </button>
+      <button id="navCompare" onclick="switchMode('compare')" class="px-3 py-1.5 rounded-xl font-bold transition-all text-slate-300 hover:text-white">
+        2. More, Less or Same?
+      </button>
+      <button id="navConservation" onclick="switchMode('conservation')" class="px-3 py-1.5 rounded-xl font-bold transition-all text-slate-300 hover:text-white">
+        3. Conservation Lab
+      </button>
+      <button id="navChant" onclick="switchMode('chant')" class="px-3 py-1.5 rounded-xl font-bold transition-all text-slate-300 hover:text-white">
+        4. Chant & Catch
+      </button>
+    </nav>
+  </header>
+
+  <!-- SUB-BAR: MODE-SPECIFIC CONFIGURATION & LIVE METRICS -->
+  <section class="max-w-5xl w-full mx-auto my-2 flex flex-wrap items-center justify-between gap-2.5 text-xs sm:text-sm bg-slate-900/60 p-3 rounded-2xl border border-slate-800/80">
+    
+    <!-- MODE 1 CONTROLS: Touch & Tag -->
+    <div id="controlsTag" class="flex items-center gap-2 flex-wrap">
+      <span class="text-slate-400 font-semibold">Quantity Target:</span>
+      <button onclick="setTagRange(5)" id="tagBtn5" class="px-3 py-1 rounded-lg font-bold bg-emerald-500 text-slate-950 shadow">1 to 5 (Early)</button>
+      <button onclick="setTagRange(10)" id="tagBtn10" class="px-3 py-1 rounded-lg font-bold bg-slate-800 hover:bg-slate-700 text-slate-300">1 to 10</button>
+      <span class="text-slate-600 ml-1">|</span>
+      <span class="text-slate-400 font-semibold ml-1">Layout:</span>
+      <button onclick="setTagLayout('scattered')" id="tagLayScatter" class="px-2.5 py-1 rounded-lg font-bold bg-amber-500 text-slate-950">Scattered</button>
+      <button onclick="setTagLayout('row')" id="tagLayRow" class="px-2.5 py-1 rounded-lg font-bold bg-slate-800 hover:bg-slate-700 text-slate-300">Neat Line</button>
+    </div>
+
+    <!-- MODE 2 CONTROLS: More, Fewer, Same -->
+    <div id="controlsCompare" class="hidden flex items-center gap-2 flex-wrap">
+      <span class="text-slate-400 font-semibold">Comparison Difficulty:</span>
+      <button onclick="setCompareDiff('obvious')" id="compDiffObv" class="px-3 py-1 rounded-lg font-bold bg-emerald-500 text-slate-950 shadow">Clear Difference</button>
+      <button onclick="setCompareDiff('close')" id="compDiffClose" class="px-3 py-1 rounded-lg font-bold bg-slate-800 hover:bg-slate-700 text-slate-300">Close / Challenge</button>
+      <button onclick="setCompareDiff('mixed')" id="compDiffMixed" class="px-3 py-1 rounded-lg font-bold bg-slate-800 hover:bg-slate-700 text-slate-300">Include Equal (=)</button>
+    </div>
+
+    <!-- MODE 3 CONTROLS: Conservation Lab with Sneak Change Toggle -->
+    <div id="controlsConservation" class="hidden flex items-center gap-2 flex-wrap">
+      <span class="text-slate-400 font-semibold">Start Count:</span>
+      <button onclick="setConservationCount(4)" class="consv-cnt-btn px-2.5 py-1 rounded-lg font-bold bg-slate-800 text-slate-300">4</button>
+      <button onclick="setConservationCount(5)" class="consv-cnt-btn px-2.5 py-1 rounded-lg font-bold bg-emerald-500 text-slate-950 shadow">5</button>
+      <button onclick="setConservationCount(6)" class="consv-cnt-btn px-2.5 py-1 rounded-lg font-bold bg-slate-800 text-slate-300">6</button>
+      <button onclick="setConservationCount(7)" class="consv-cnt-btn px-2.5 py-1 rounded-lg font-bold bg-slate-800 text-slate-300">7</button>
+      
+      <span class="text-slate-600 ml-1">|</span>
+      <!-- Sneak Change Challenge Toggle -->
+      <button id="sneakToggleBtn" onclick="toggleSneakChange()" class="px-3 py-1 rounded-lg font-bold border border-amber-400/70 bg-amber-500/20 text-amber-300 hover:bg-amber-500/30 flex items-center gap-1.5 shadow transition-all">
+        <span>🕵️ Sneak Change:</span>
+        <span id="sneakBadge" class="bg-amber-400 text-slate-950 px-1.5 py-0.2 rounded text-[10px] font-bold">ON</span>
+      </button>
+    </div>
+
+    <!-- MODE 4 CONTROLS: Chant & Catch -->
+    <div id="controlsChant" class="hidden flex items-center gap-2 flex-wrap">
+      <span class="text-slate-400 font-semibold">Direction:</span>
+      <button onclick="setChantDir('fwd')" id="chantDirFwd" class="px-2.5 py-1 rounded-lg font-bold bg-emerald-500 text-slate-950 shadow">Forwards (➔)</button>
+      <button onclick="setChantDir('bwd')" id="chantDirBwd" class="px-2.5 py-1 rounded-lg font-bold bg-slate-800 hover:bg-slate-700 text-slate-300">Backwards (⬅)</button>
+      <span class="text-slate-600 ml-1">|</span>
+      <span class="text-slate-400 font-semibold ml-1">Max:</span>
+      <button onclick="setChantRange(10)" id="chantRng10" class="px-2.5 py-1 rounded-lg font-bold bg-amber-500 text-slate-950">Within 10</button>
+      <button onclick="setChantRange(20)" id="chantRng20" class="px-2.5 py-1 rounded-lg font-bold bg-slate-800 hover:bg-slate-700 text-slate-300">Within 20</button>
+    </div>
+
+    <!-- PERFORMANCE METRICS -->
+    <div class="flex items-center gap-4 font-kids ml-auto">
+      <div class="flex items-center gap-1.5 text-amber-400 font-bold">
+        <span>Streak:</span>
+        <span id="streakDisplay">🔥 0</span>
+      </div>
+      <div class="flex items-center gap-1.5 text-emerald-400 font-bold">
+        <span>Stars:</span>
+        <span id="starsDisplay">⭐ 0</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAIN INTERACTIVE STAGE -->
+  <main class="max-w-4xl w-full mx-auto bg-slate-900/80 rounded-3xl border border-slate-800 shadow-2xl p-4 sm:p-6 flex flex-col items-center justify-between gap-4 flex-grow my-1 relative overflow-hidden">
+    
+    <!-- QUESTION & GUIDED INSTRUCTION PANEL -->
+    <div class="w-full flex flex-col items-center text-center">
+      <div id="instructionTitle" class="font-kids text-2xl sm:text-3xl font-bold tracking-wide text-amber-300 min-h-[38px] flex items-center justify-center gap-2">
+        <!-- Dynamic header prompt -->
+      </div>
+      <div id="subPrompt" class="text-xs sm:text-sm text-slate-400 font-medium min-h-[22px] mt-1">
+        <!-- Dynamic pedagogical guidance -->
+      </div>
+    </div>
+
+    <!-- DYNAMIC INTERACTION CANVAS / PLAY AREA -->
+    <div id="stageSurface" class="w-full bg-slate-950/90 border-2 border-slate-800 rounded-3xl p-4 sm:p-6 flex flex-col items-center justify-center min-h-[280px] sm:min-h-[320px] shadow-inner relative overflow-hidden">
+      <!-- Dynamic interactive contents -->
+    </div>
+
+    <!-- ACTION CONTROLS / RESPONDER ROW -->
+    <div id="actionArea" class="w-full max-w-xl flex flex-col items-center gap-2">
+      <!-- Injected mode-specific action buttons or choices -->
+    </div>
+
+    <!-- LIVE FEEDBACK BANNER -->
+    <div id="feedbackBanner" class="w-full text-center text-base sm:text-lg font-bold min-h-[28px] transition-all"></div>
+  </main>
+
+  <footer class="max-w-5xl w-full mx-auto text-center text-xs text-slate-500 pt-1">
+    Early Years & P4 Interventions • Touch & Interactive Board Ready • Pure Web Audio Synthesizer
+  </footer>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script>
+    /* =====================================================================
+       WEB AUDIO SYNTHESIZER
+       ===================================================================== */
+    let audioCtx = null;
+    function getAudioCtx() {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      return audioCtx;
+    }
+
+    function playSound(type, notePitch = 440) {
+      try {
+        const ctx = getAudioCtx();
+        const now = ctx.currentTime;
+
+        if (type === 'tapTag') {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(notePitch, now);
+          osc.frequency.exponentialRampToValueAtTime(notePitch * 1.1, now + 0.12);
+          gain.gain.setValueAtTime(0.3, now);
+          gain.gain.linearRampToValueAtTime(0, now + 0.14);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.15);
+        } else if (type === 'correct') {
+          [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, now + i * 0.08);
+            gain.gain.setValueAtTime(0.25, now + i * 0.08);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.08 + 0.4);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now + i * 0.08);
+            osc.stop(now + i * 0.08 + 0.41);
+          });
+        } else if (type === 'gentleTry') {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(260, now);
+          osc.frequency.exponentialRampToValueAtTime(190, now + 0.28);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.linearRampToValueAtTime(0, now + 0.28);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.29);
+        } else if (type === 'whoosh') {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(160, now);
+          osc.frequency.exponentialRampToValueAtTime(540, now + 0.32);
+          gain.gain.setValueAtTime(0.22, now);
+          gain.gain.linearRampToValueAtTime(0, now + 0.35);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.36);
+        } else if (type === 'sneakAlert') {
+          // Playful mystery chime for sneak change
+          [350, 420, 520].forEach((freq, i) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, now + i * 0.09);
+            gain.gain.setValueAtTime(0.2, now + i * 0.09);
+            gain.gain.linearRampToValueAtTime(0, now + i * 0.09 + 0.16);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now + i * 0.09);
+            osc.stop(now + i * 0.09 + 0.17);
+          });
+        }
+      } catch (e) {
+        console.warn('Audio play error:', e);
+      }
+    }
+
+    const countFrequencies = [261.63, 293.66, 329.63, 349.23, 392.00, 440.00, 493.88, 523.25, 587.33, 659.25];
+
+    /* =====================================================================
+       GLOBAL STATE MANAGEMENT
+       ===================================================================== */
+    let activeMode = 'conservation'; // default to conservation for easy testing
+    let streak = 0;
+    let stars = 0;
+    let isProcessing = false;
+
+    // Mode 1 State (Touch & Tag)
+    let tagRange = 5;
+    let tagLayout = 'scattered';
+    let tagTargetCount = 0;
+    let taggedCount = 0;
+    let tagPhase = 'tagging';
+
+    // Mode 2 State (More, Less, Same)
+    let compareDiff = 'obvious';
+    let compareLeft = 0;
+    let compareRight = 0;
+
+    // Mode 3 State (Conservation & Sneak Change)
+    let consvCount = 5;
+    let consvState = 'initial'; // 'initial' or 'transformed'
+    let consvTransformType = 'stretched'; // 'stretched', 'squashed', 'clustered', 'arch'
+    let sneakChangeEnabled = true; // Teacher toggle
+    let isSneakRound = false;       // True if this round actually added or removed
+    let sneakDelta = 0;            // 0, +1, or -1
+    let consvFinalCount = 5;
+
+    // Mode 4 State (Chant & Catch)
+    let chantDirection = 'fwd';
+    let chantRange = 10;
+    let chantSequence = [];
+    let chantMissingIndex = -1;
+    let chantCorrectVal = 0;
+
+    window.addEventListener('DOMContentLoaded', () => {
+      initApp();
+      setupKeyboard();
+    });
+
+    function initApp() {
+      switchMode('conservation');
+    }
+
+    /* =====================================================================
+       NAVIGATION & MODE SWITCHING
+       ===================================================================== */
+    function switchMode(mode) {
+      playSound('tapTag', 440);
+      activeMode = mode;
+
+      ['navTag', 'navCompare', 'navConservation', 'navChant'].forEach(id => {
+        document.getElementById(id).className = 'px-3 py-1.5 rounded-xl font-bold transition-all text-slate-300 hover:text-white';
+      });
+
+      document.getElementById('controlsTag').classList.add('hidden');
+      document.getElementById('controlsCompare').classList.add('hidden');
+      document.getElementById('controlsConservation').classList.add('hidden');
+      document.getElementById('controlsChant').classList.add('hidden');
+
+      if (mode === 'tag') {
+        document.getElementById('navTag').className = 'px-3 py-1.5 rounded-xl font-bold transition-all bg-emerald-500 text-slate-950 shadow-md';
+        document.getElementById('controlsTag').classList.remove('hidden');
+      } else if (mode === 'compare') {
+        document.getElementById('navCompare').className = 'px-3 py-1.5 rounded-xl font-bold transition-all bg-emerald-500 text-slate-950 shadow-md';
+        document.getElementById('controlsCompare').classList.remove('hidden');
+      } else if (mode === 'conservation') {
+        document.getElementById('navConservation').className = 'px-3 py-1.5 rounded-xl font-bold transition-all bg-emerald-500 text-slate-950 shadow-md';
+        document.getElementById('controlsConservation').classList.remove('hidden');
+      } else if (mode === 'chant') {
+        document.getElementById('navChant').className = 'px-3 py-1.5 rounded-xl font-bold transition-all bg-emerald-500 text-slate-950 shadow-md';
+        document.getElementById('controlsChant').classList.remove('hidden');
+      }
+
+      streak = 0;
+      updateMetrics();
+      setupNewProblem();
+    }
+
+    /* Sub-Control Handlers */
+    function setTagRange(max) {
+      playSound('tapTag', 440);
+      tagRange = max;
+      document.getElementById('tagBtn5').className = max === 5 
+        ? 'px-3 py-1 rounded-lg font-bold bg-emerald-500 text-slate-950 shadow'
+        : 'px-3 py-1 rounded-lg font-bold bg-slate-800 hover:bg-slate-700 text-slate-300';
+      document.getElementById('tagBtn10').className = max === 10
+        ? 'px-3 py-1 rounded-lg font-bold bg-emerald-500 text-slate-950 shadow'
+        : 'px-3 py-1 rounded-lg font-bold bg-slate-800 hover:bg-slate-700 text-slate-300';
+      setupNewProblem();
+    }
+
+    function setTagLayout(lay) {
+      playSound('tapTag', 440);
+      tagLayout = lay;
+      document.getElementById('tagLayScatter').className = lay === 'scattered'
+        ? 'px-2.5 py-1 rounded-lg font-bold bg-amber-500 text-slate-950'
+        : 'px-2.5 py-1 rounded-lg font-bold bg-slate-800 hover:bg-slate-700 text-slate-300';
+      document.getElementById('tagLayRow').className = lay === 'row'
+        ? 'px-2.5 py-1 rounded-lg font-bold bg-amber-500 text-slate-950'
+        : 'px-2.5 py-1 rounded-lg font-bold bg-slate-800 hover:bg-slate-700 text-slate-300';
+      setupNewProblem();
+    }
+
+    function setCompareDiff(diff) {
+      playSound('tapTag', 440);
+      compareDiff = diff;
+      document.getElementById('compDiffObv').className = diff === 'obvious' ? 'px-3 py-1 rounded-lg font-bold bg-emerald-500 text-slate-950 shadow' : 'px-3 py-1 rounded-lg font-bold bg-slate-800 hover:bg-slate-700 text-slate-300';
+      document.getElementById('compDiffClose').className = diff === 'close' ? 'px-3 py-1 rounded-lg font-bold bg-emerald-500 text-slate-950 shadow' : 'px-3 py-1 rounded-lg font-bold bg-slate-800 hover:bg-slate-700 text-slate-300';
+      document.getElementById('compDiffMixed').className = diff === 'mixed' ? 'px-3 py-1 rounded-lg font-bold bg-emerald-500 text-slate-950 shadow' : 'px-3 py-1 rounded-lg font-bold bg-slate-800 hover:bg-slate-700 text-slate-300';
+      setupNewProblem();
+    }
+
+    function setConservationCount(cnt) {
+      playSound('tapTag', 440);
+      consvCount = cnt;
+      document.querySelectorAll('.consv-cnt-btn').forEach(btn => {
+        btn.className = parseInt(btn.textContent) === cnt
+          ? 'consv-cnt-btn px-2.5 py-1 rounded-lg font-bold bg-emerald-500 text-slate-950 shadow'
+          : 'consv-cnt-btn px-2.5 py-1 rounded-lg font-bold bg-slate-800 text-slate-300';
+      });
+      setupNewProblem();
+    }
+
+    function toggleSneakChange() {
+      playSound('tapTag', 440);
+      sneakChangeEnabled = !sneakChangeEnabled;
+      const badge = document.getElementById('sneakBadge');
+      const btn = document.getElementById('sneakToggleBtn');
+
+      if (sneakChangeEnabled) {
+        badge.textContent = 'ON';
+        badge.className = 'bg-amber-400 text-slate-950 px-1.5 py-0.2 rounded text-[10px] font-bold';
+        btn.className = 'px-3 py-1 rounded-lg font-bold border border-amber-400/70 bg-amber-500/20 text-amber-300 hover:bg-amber-500/30 flex items-center gap-1.5 shadow transition-all';
+      } else {
+        badge.textContent = 'OFF';
+        badge.className = 'bg-slate-800 text-slate-400 px-1.5 py-0.2 rounded text-[10px] font-bold';
+        btn.className = 'px-3 py-1 rounded-lg font-bold border border-slate-700 bg-slate-800/80 text-slate-400 hover:bg-slate-800 flex items-center gap-1.5 transition-all';
+      }
+      setupNewProblem();
+    }
+
+    function setChantDir(dir) {
+      playSound('tapTag', 440);
+      chantDirection = dir;
+      document.getElementById('chantDirFwd').className = dir === 'fwd' ? 'px-2.5 py-1 rounded-lg font-bold bg-emerald-500 text-slate-950 shadow' : 'px-2.5 py-1 rounded-lg font-bold bg-slate-800 hover:bg-slate-700 text-slate-300';
+      document.getElementById('chantDirBwd').className = dir === 'bwd' ? 'px-2.5 py-1 rounded-lg font-bold bg-emerald-500 text-slate-950 shadow' : 'px-2.5 py-1 rounded-lg font-bold bg-slate-800 hover:bg-slate-700 text-slate-300';
+      setupNewProblem();
+    }
+
+    function setChantRange(rng) {
+      playSound('tapTag', 440);
+      chantRange = rng;
+      document.getElementById('chantRng10').className = rng === 10 ? 'px-2.5 py-1 rounded-lg font-bold bg-amber-500 text-slate-950' : 'px-2.5 py-1 rounded-lg font-bold bg-slate-800 hover:bg-slate-700 text-slate-300';
+      document.getElementById('chantRng20').className = rng === 20 ? 'px-2.5 py-1 rounded-lg font-bold bg-amber-500 text-slate-950' : 'px-2.5 py-1 rounded-lg font-bold bg-slate-800 hover:bg-slate-700 text-slate-300';
+      setupNewProblem();
+    }
+
+    /* =====================================================================
+       PROBLEM ROUTER
+       ===================================================================== */
+    function setupNewProblem() {
+      clearFeedback();
+      isProcessing = false;
+
+      if (activeMode === 'tag') {
+        buildModeTag();
+      } else if (activeMode === 'compare') {
+        buildModeCompare();
+      } else if (activeMode === 'conservation') {
+        buildModeConservation();
+      } else if (activeMode === 'chant') {
+        buildModeChant();
+      }
+    }
+
+    /* =====================================================================
+       MODE 1: ONE-TO-ONE TOUCH & TAG (WITH CARDINALITY CHECK)
+       ===================================================================== */
+    function buildModeTag() {
+      tagTargetCount = Math.floor(Math.random() * (tagRange === 5 ? 5 : 7)) + (tagRange === 5 ? 1 : 4);
+      taggedCount = 0;
+      tagPhase = 'tagging';
+
+      document.getElementById('instructionTitle').innerHTML = `
+        <span class="text-amber-400 font-bold">Touch & Tag Each Star</span>
+        <span>👉</span>
+      `;
+      document.getElementById('subPrompt').textContent = `Tap each star one by one. Listen to the count!`;
+
+      const surface = document.getElementById('stageSurface');
+      surface.innerHTML = '';
+
+      const container = document.createElement('div');
+      container.id = 'tagItemsBox';
+      container.className = tagLayout === 'row' 
+        ? 'flex items-center justify-center gap-3 sm:gap-4 flex-wrap w-full p-4'
+        : 'relative w-full h-64 sm:h-72';
+
+      const icons = ['⭐', '🍎', '🌟', '🟡'];
+      const chosenIcon = icons[Math.floor(Math.random() * icons.length)];
+
+      const positions = [];
+      for (let i = 0; i < tagTargetCount; i++) {
+        let x, y;
+        if (tagLayout !== 'row') {
+          let safe = false;
+          let attempts = 0;
+          while (!safe && attempts < 100) {
+            attempts++;
+            x = Math.floor(Math.random() * 78) + 8;
+            y = Math.floor(Math.random() * 68) + 12;
+            safe = positions.every(pos => {
+              const dx = pos.x - x;
+              const dy = pos.y - y;
+              return Math.sqrt(dx * dx + dy * dy) > 16;
+            });
+          }
+          positions.push({ x, y });
+        }
+
+        const item = document.createElement('button');
+        item.dataset.index = i;
+        item.dataset.tagged = 'false';
+        item.onclick = () => onTagItemClick(item);
+
+        if (tagLayout === 'row') {
+          item.className = 'w-16 h-16 sm:w-20 sm:h-20 bg-slate-900 border-2 border-slate-700 hover:border-amber-400 rounded-2xl flex flex-col items-center justify-center text-3xl sm:text-4xl shadow-lg tap-target relative';
+        } else {
+          item.className = 'absolute w-16 h-16 sm:w-20 sm:h-20 bg-slate-900 border-2 border-slate-700 hover:border-amber-400 rounded-2xl flex flex-col items-center justify-center text-3xl sm:text-4xl shadow-lg tap-target';
+          item.style.left = `${x}%`;
+          item.style.top = `${y}%`;
+        }
+
+        item.innerHTML = `
+          <span class="icon-sym">${chosenIcon}</span>
+          <span class="tag-number hidden font-kids text-xl font-bold text-amber-300 -mt-1"></span>
+        `;
+        container.appendChild(item);
+      }
+
+      surface.appendChild(container);
+      renderTagActions();
+    }
+
+    function onTagItemClick(btn) {
+      if (tagPhase !== 'tagging' || btn.dataset.tagged === 'true') return;
+
+      taggedCount++;
+      btn.dataset.tagged = 'true';
+
+      const pitch = countFrequencies[(taggedCount - 1) % countFrequencies.length];
+      playSound('tapTag', pitch);
+
+      btn.className += ' border-amber-400 bg-amber-500/20 pulse-glow scale-105';
+      const numSpan = btn.querySelector('.tag-number');
+      numSpan.textContent = taggedCount;
+      numSpan.classList.remove('hidden');
+
+      renderTagActions();
+
+      if (taggedCount === tagTargetCount) {
+        setTimeout(() => {
+          triggerCardinalityQuestion();
+        }, 500);
+      }
+    }
+
+    function renderTagActions() {
+      const actionArea = document.getElementById('actionArea');
+      if (tagPhase === 'tagging') {
+        actionArea.innerHTML = `
+          <div class="flex items-center gap-2 font-kids text-lg text-slate-300">
+            <span>Tagged:</span>
+            <span class="text-amber-400 font-bold text-2xl">${taggedCount}</span>
+            <span class="text-slate-500">/ ${tagTargetCount}</span>
+          </div>
+        `;
+      }
+    }
+
+    function triggerCardinalityQuestion() {
+      tagPhase = 'cardinality';
+      playSound('whoosh');
+
+      document.getElementById('instructionTitle').innerHTML = `
+        <span class="text-emerald-400 font-bold">So, how many are there altogether?</span>
+      `;
+      document.getElementById('subPrompt').textContent = `The last number you said gives the TOTAL! Tap the correct number:`;
+
+      const options = [tagTargetCount];
+      while (options.length < 3) {
+        let fake = tagTargetCount + (Math.random() < 0.5 ? 1 : -1) * (Math.floor(Math.random() * 2) + 1);
+        if (fake > 0 && !options.includes(fake)) {
+          options.push(fake);
+        }
+      }
+      options.sort(() => Math.random() - 0.5);
+
+      const actionArea = document.getElementById('actionArea');
+      actionArea.innerHTML = `
+        <div class="flex items-center justify-center gap-3 w-full animate-pop">
+          ${options.map(num => `
+            <button onclick="checkCardinalityAnswer(${num})" class="w-20 h-16 sm:w-28 sm:h-20 bg-slate-800 hover:bg-emerald-500 hover:text-slate-950 border-2 border-slate-700 hover:border-emerald-400 rounded-2xl font-kids text-3xl sm:text-4xl font-bold shadow-xl transition-all active:scale-95">
+              ${num}
+            </button>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    function checkCardinalityAnswer(picked) {
+      if (isProcessing) return;
+
+      if (picked === tagTargetCount) {
+        handleSuccess(`🎉 Exactly right! The last number tagged (${tagTargetCount}) is the whole amount!`);
+      } else {
+        handleGentleMistake(`Look at the last tagged number stamped on the objects! Have another look!`);
+      }
+    }
+
+    /* =====================================================================
+       MODE 2: MAGNITUDE COMPARISON ("MORE, FEWER OR SAME?")
+       ===================================================================== */
+    function buildModeCompare() {
+      document.getElementById('instructionTitle').innerHTML = `
+        <span class="text-amber-300 font-bold">Which side has MORE?</span>
+      `;
+      document.getElementById('subPrompt').textContent = `Look closely at both collections without counting every single one.`;
+
+      if (compareDiff === 'mixed' && Math.random() < 0.3) {
+        const n = Math.floor(Math.random() * 6) + 3;
+        compareLeft = n;
+        compareRight = n;
+      } else if (compareDiff === 'close') {
+        const base = Math.floor(Math.random() * 5) + 3;
+        const delta = Math.random() < 0.5 ? 1 : -1;
+        compareLeft = base;
+        compareRight = base + delta;
+      } else {
+        let a = Math.floor(Math.random() * 4) + 2;
+        let b = a + Math.floor(Math.random() * 4) + 3;
+        if (Math.random() < 0.5) {
+          compareLeft = a;
+          compareRight = b;
+        } else {
+          compareLeft = b;
+          compareRight = a;
+        }
+      }
+
+      const surface = document.getElementById('stageSurface');
+      surface.innerHTML = `
+        <div class="grid grid-cols-2 gap-4 sm:gap-8 w-full max-w-xl">
+          <div id="sideLeftCard" class="bg-slate-900 border-2 border-slate-700 rounded-3xl p-4 sm:p-5 flex flex-col items-center justify-center min-h-[180px] shadow-lg">
+            <span class="text-xs font-kids font-bold text-sky-400 mb-2 uppercase tracking-widest">Left Group</span>
+            <div class="grid grid-cols-3 gap-2 justify-center items-center">
+              ${makeDotCluster(compareLeft, 'bg-sky-400')}
+            </div>
+            <div id="countRevealLeft" class="hidden mt-3 font-kids text-2xl font-bold text-sky-300">
+              Total: ${compareLeft}
+            </div>
+          </div>
+
+          <div id="sideRightCard" class="bg-slate-900 border-2 border-slate-700 rounded-3xl p-4 sm:p-5 flex flex-col items-center justify-center min-h-[180px] shadow-lg">
+            <span class="text-xs font-kids font-bold text-rose-400 mb-2 uppercase tracking-widest">Right Group</span>
+            <div class="grid grid-cols-3 gap-2 justify-center items-center">
+              ${makeDotCluster(compareRight, 'bg-rose-400')}
+            </div>
+            <div id="countRevealRight" class="hidden mt-3 font-kids text-2xl font-bold text-rose-300">
+              Total: ${compareRight}
+            </div>
+          </div>
+        </div>
+      `;
+
+      const actionArea = document.getElementById('actionArea');
+      actionArea.innerHTML = `
+        <div class="grid grid-cols-3 gap-2 sm:gap-3 w-full">
+          <button onclick="submitComparison('left')" class="py-4 px-2 bg-slate-800 hover:bg-sky-600 border-2 border-slate-700 hover:border-sky-400 rounded-2xl font-kids text-sm sm:text-base font-bold shadow-lg flex flex-col items-center justify-center gap-1 active:scale-95 transition">
+            <span class="text-2xl">👈</span>
+            <span class="text-sky-300 font-bold">LEFT Has More</span>
+          </button>
+          <button onclick="submitComparison('same')" class="py-4 px-2 bg-slate-800 hover:bg-amber-600 border-2 border-slate-700 hover:border-amber-400 rounded-2xl font-kids text-sm sm:text-base font-bold shadow-lg flex flex-col items-center justify-center gap-1 active:scale-95 transition">
+            <span class="text-2xl">⚖️</span>
+            <span class="text-amber-300 font-bold">They are SAME (=)</span>
+          </button>
+          <button onclick="submitComparison('right')" class="py-4 px-2 bg-slate-800 hover:bg-rose-600 border-2 border-slate-700 hover:border-rose-400 rounded-2xl font-kids text-sm sm:text-base font-bold shadow-lg flex flex-col items-center justify-center gap-1 active:scale-95 transition">
+            <span class="text-2xl">👉</span>
+            <span class="text-rose-300 font-bold">RIGHT Has More</span>
+          </button>
+        </div>
+      `;
+    }
+
+    function makeDotCluster(count, colorClass) {
+      let html = '';
+      for (let i = 0; i < count; i++) {
+        html += `<div class="w-7 h-7 sm:w-9 sm:h-9 rounded-full ${colorClass} shadow-md animate-pop"></div>`;
+      }
+      return html;
+    }
+
+    function submitComparison(choice) {
+      if (isProcessing) return;
+
+      let correct = '';
+      if (compareLeft > compareRight) correct = 'left';
+      else if (compareRight > compareLeft) correct = 'right';
+      else correct = 'same';
+
+      document.getElementById('countRevealLeft').classList.remove('hidden');
+      document.getElementById('countRevealRight').classList.remove('hidden');
+
+      if (choice === correct) {
+        let msg = '';
+        if (correct === 'left') msg = `⭐ Brilliant! Left had ${compareLeft} and Right had ${compareRight}!`;
+        else if (correct === 'right') msg = `⭐ Brilliant! Right had ${compareRight} and Left had ${compareLeft}!`;
+        else msg = `⭐ Perfect! Both sides have exactly ${compareLeft} (Equal)!`;
+
+        handleSuccess(msg);
+      } else {
+        handleGentleMistake(`Have a close count! Left has ${compareLeft} and Right has ${compareRight}.`);
+      }
+    }
+
+    /* =====================================================================
+       MODE 3: CONSERVATION LAB WITH "SNEAK CHANGE"
+       ===================================================================== */
+    function buildModeConservation() {
+      consvState = 'initial';
+      isSneakRound = false;
+      sneakDelta = 0;
+      consvFinalCount = consvCount;
+
+      // Determine if this round will sneak an add or remove
+      if (sneakChangeEnabled && Math.random() < 0.35) {
+        isSneakRound = true;
+        // Either +1 or -1 (ensure we don't drop below 3)
+        sneakDelta = (consvCount > 3 && Math.random() < 0.5) ? -1 : 1;
+        consvFinalCount = consvCount + sneakDelta;
+      }
+
+      // Pick a random spatial arrangement style
+      const styles = ['stretched', 'squashed', 'clustered', 'arch'];
+      consvTransformType = styles[Math.floor(Math.random() * styles.length)];
+
+      document.getElementById('instructionTitle').innerHTML = `
+        <span class="text-amber-300 font-bold">Conservation Lab</span>
+        <span>🔬</span>
+      `;
+      document.getElementById('subPrompt').textContent = `Count the starting counters, then tap "Stretch & Rearrange!" Watch carefully!`;
+
+      renderConservationInitialStage();
+    }
+
+    function renderConservationInitialStage() {
+      const surface = document.getElementById('stageSurface');
+      
+      let countersHTML = '';
+      for (let i = 0; i < consvCount; i++) {
+        countersHTML += `
+          <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-tr from-amber-400 to-rose-400 shadow-xl border-2 border-white/70 flex items-center justify-center font-kids text-lg text-slate-950 font-bold animate-pop">
+            ${i + 1}
+          </div>
+        `;
+      }
+
+      surface.innerHTML = `
+        <div class="flex flex-col items-center justify-center gap-4 w-full h-full">
+          <div class="text-sm font-kids font-bold text-slate-300 bg-slate-900/80 px-4 py-1.5 rounded-full border border-slate-700">
+            Starting Count: <span class="text-amber-400 text-xl font-bold">${consvCount}</span> counters
+          </div>
+
+          <!-- Neat Starting Row -->
+          <div id="consvAnimBox" class="min-h-[160px] flex items-center justify-center gap-3 sm:gap-4 w-full px-4">
+            ${countersHTML}
+          </div>
+        </div>
+      `;
+
+      const actionArea = document.getElementById('actionArea');
+      actionArea.innerHTML = `
+        <button onclick="triggerConservationTransform()" class="px-8 py-3.5 bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-400 hover:to-rose-400 text-slate-950 font-kids text-xl font-bold rounded-2xl shadow-xl active:scale-95 transition-all flex items-center gap-2">
+          <span>✨ Stretch & Rearrange!</span>
+        </button>
+      `;
+    }
+
+    function triggerConservationTransform() {
+      consvState = 'transformed';
+      playSound(isSneakRound ? 'sneakAlert' : 'whoosh');
+
+      document.getElementById('instructionTitle').innerHTML = `
+        <span class="text-sky-300 font-bold">Did the TOTAL amount change?</span>
+        <span>🤔</span>
+      `;
+      document.getElementById('subPrompt').textContent = `Look closely at the counters. Did anything get added or removed, or is it just rearranged?`;
+
+      const surface = document.getElementById('stageSurface');
+
+      // Build transformed visual structure
+      let layoutClasses = 'flex items-center justify-center flex-wrap transition-all duration-700';
+      if (consvTransformType === 'stretched') {
+        layoutClasses += ' gap-8 sm:gap-14';
+      } else if (consvTransformType === 'squashed') {
+        layoutClasses += ' gap-1 -space-x-1';
+      } else if (consvTransformType === 'clustered') {
+        layoutClasses += ' gap-3 max-w-xs';
+      } else {
+        layoutClasses += ' gap-4 sm:gap-6';
+      }
+
+      let countersHTML = '';
+      for (let i = 0; i < consvFinalCount; i++) {
+        // If this is the extra added counter, give it a distinctive sneak entry animation
+        if (isSneakRound && sneakDelta === 1 && i === consvFinalCount - 1) {
+          countersHTML += `
+            <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-tr from-emerald-400 to-teal-400 shadow-2xl border-2 border-emerald-200 sneak-entry flex items-center justify-center font-kids text-slate-950 font-bold text-lg">
+              ✨
+            </div>
+          `;
+        } else {
+          countersHTML += `
+            <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-tr from-amber-400 to-rose-400 shadow-xl border-2 border-white/70 animate-pop"></div>
+          `;
+        }
+      }
+
+      surface.innerHTML = `
+        <div class="flex flex-col items-center justify-center gap-4 w-full h-full">
+          <div class="text-xs font-kids font-bold text-slate-400">
+            Started with: <span class="text-amber-400 font-bold">${consvCount}</span> counters
+          </div>
+
+          <div id="consvAnimBox" class="min-h-[160px] flex items-center justify-center w-full px-4">
+            <div class="${layoutClasses}">
+              ${countersHTML}
+            </div>
+          </div>
+
+          <div id="consvCountReveal" class="hidden text-sm font-kids font-bold text-emerald-400 bg-slate-900/90 px-4 py-1 rounded-full border border-emerald-500/50">
+            Actual amount now: ${consvFinalCount}
+          </div>
+        </div>
+      `;
+
+      // Two clear, distinct pupil buttons
+      const actionArea = document.getElementById('actionArea');
+      actionArea.innerHTML = `
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-xl animate-pop">
+          <button onclick="submitConservationVerdict(false)" class="p-4 bg-slate-900 hover:bg-emerald-600 border-2 border-slate-700 hover:border-emerald-400 rounded-2xl font-kids text-base sm:text-lg font-bold shadow-xl active:scale-95 transition flex flex-col items-center justify-center gap-1">
+            <span class="text-2xl">⚖️</span>
+            <span class="text-emerald-300 font-bold">STILL THE SAME =</span>
+            <span class="text-xs text-slate-400 font-normal">Nothing added or taken away</span>
+          </button>
+          <button onclick="submitConservationVerdict(true)" class="p-4 bg-slate-900 hover:bg-amber-600 border-2 border-slate-700 hover:border-amber-400 rounded-2xl font-kids text-base sm:text-lg font-bold shadow-xl active:scale-95 transition flex flex-col items-center justify-center gap-1">
+            <span class="text-2xl">🕵️</span>
+            <span class="text-amber-300 font-bold">IT CHANGED!</span>
+            <span class="text-xs text-slate-400 font-normal">Someone added or took some!</span>
+          </button>
+        </div>
+      `;
+    }
+
+    function submitConservationVerdict(userClaimedChanged) {
+      if (isProcessing) return;
+
+      const revealBox = document.getElementById('consvCountReveal');
+      if (revealBox) revealBox.classList.remove('hidden');
+
+      if (!isSneakRound) {
+        // Pure Piagetian conservation: it DID NOT change
+        if (!userClaimedChanged) {
+          handleSuccess(`⭐ Spot on! Stretched or squashed, nothing was added or removed: Still ${consvCount}!`);
+        } else {
+          handleGentleMistake(`None were added and none were taken away! Spreading out doesn't make more: Still ${consvCount}!`);
+        }
+      } else {
+        // Sneak Change occurred: it DID change!
+        if (userClaimedChanged) {
+          const detail = sneakDelta === 1 
+            ? `Eagle eyes! 1 extra counter sneaked in! (Was ${consvCount}, now ${consvFinalCount}!)`
+            : `Sharp eyes! 1 counter was taken away! (Was ${consvCount}, now ${consvFinalCount}!)`;
+          handleSuccess(`🎉 ${detail}`);
+        } else {
+          const detail = sneakDelta === 1
+            ? `Look closer! An extra counter sneaked in! (Count them: now ${consvFinalCount}!)`
+            : `Look closer! 1 counter disappeared! (Count them: now ${consvFinalCount}!)`;
+          handleGentleMistake(`Not this time! ${detail}`);
+        }
+      }
+    }
+
+    /* =====================================================================
+       MODE 4: CHANT & CATCH (ORAL SEQUENCES & ARBITRARY STARTING CHAINS)
+       ===================================================================== */
+    function buildModeChant() {
+      const max = chantRange;
+      const isFwd = chantDirection === 'fwd';
+
+      document.getElementById('instructionTitle').innerHTML = `
+        <span class="text-amber-300 font-bold">Chant & Catch the Missing Number!</span>
+        <span>🚂</span>
+      `;
+      document.getElementById('subPrompt').textContent = isFwd 
+        ? `Count forward from the start number (no need to start from 1)!`
+        : `Count backward like a countdown!`;
+
+      const seqLength = 4;
+      let start;
+
+      if (isFwd) {
+        start = Math.floor(Math.random() * (max - seqLength)) + 1;
+        chantSequence = [start, start + 1, start + 2, start + 3];
+      } else {
+        start = Math.floor(Math.random() * (max - seqLength)) + seqLength;
+        chantSequence = [start, start - 1, start - 2, start - 3];
+      }
+
+      chantMissingIndex = Math.floor(Math.random() * 2) + 1;
+      chantCorrectVal = chantSequence[chantMissingIndex];
+
+      const surface = document.getElementById('stageSurface');
+      let trainCarsHTML = '';
+
+      chantSequence.forEach((num, idx) => {
+        if (idx === chantMissingIndex) {
+          trainCarsHTML += `
+            <div id="missingCartSlot" class="w-16 h-20 sm:w-20 sm:h-24 bg-slate-900 border-2 border-dashed border-amber-400 rounded-2xl flex flex-col items-center justify-center font-kids text-3xl sm:text-4xl font-bold text-amber-300 shadow-xl animate-pulse">
+              ?
+            </div>
+          `;
+        } else {
+          trainCarsHTML += `
+            <div class="w-16 h-20 sm:w-20 sm:h-24 bg-slate-900 border-2 border-slate-700 rounded-2xl flex flex-col items-center justify-center font-kids text-3xl sm:text-4xl font-bold text-sky-400 shadow-md">
+              <span>${num}</span>
+              <span class="text-[10px] text-slate-500 font-sans tracking-widest mt-1">CART</span>
+            </div>
+          `;
+        }
+
+        if (idx < chantSequence.length - 1) {
+          trainCarsHTML += `<div class="w-3 sm:w-5 h-1.5 bg-slate-700 rounded-full"></div>`;
+        }
+      });
+
+      surface.innerHTML = `
+        <div class="flex flex-col items-center gap-4 w-full">
+          <div class="flex items-center justify-center gap-1 sm:gap-2 flex-wrap max-w-full">
+            ${trainCarsHTML}
+          </div>
+          <button onclick="playChantAudioChimes()" class="px-4 py-1.5 bg-slate-800 hover:bg-slate-700 text-sky-300 font-bold text-xs rounded-xl border border-slate-700 transition flex items-center gap-1.5">
+            <span>🔊 Listen to the Chain</span>
+          </button>
+        </div>
+      `;
+
+      const options = [chantCorrectVal];
+      while (options.length < 4) {
+        let fake = chantCorrectVal + (Math.random() < 0.5 ? 1 : -1) * (Math.floor(Math.random() * 3) + 1);
+        if (fake >= 0 && fake <= max + 1 && !options.includes(fake)) {
+          options.push(fake);
+        }
+      }
+      options.sort((a, b) => a - b);
+
+      const actionArea = document.getElementById('actionArea');
+      actionArea.innerHTML = `
+        <div class="grid grid-cols-4 gap-2 w-full max-w-md">
+          ${options.map(opt => `
+            <button onclick="submitChantAnswer(${opt})" class="h-16 bg-slate-800 hover:bg-emerald-500 hover:text-slate-950 border-2 border-slate-700 hover:border-emerald-400 rounded-2xl font-kids text-3xl font-bold text-white shadow-xl active:scale-95 transition">
+              ${opt}
+            </button>
+          `).join('')}
+        </div>
+      `;
+
+      setTimeout(() => {
+        playChantAudioChimes();
+      }, 400);
+    }
+
+    function playChantAudioChimes() {
+      chantSequence.forEach((val, idx) => {
+        setTimeout(() => {
+          if (idx === chantMissingIndex) {
+            playSound('whoosh');
+          } else {
+            const pitch = countFrequencies[(val - 1) % countFrequencies.length] || 440;
+            playSound('tapTag', pitch);
+          }
+        }, idx * 450);
+      });
+    }
+
+    function submitChantAnswer(val) {
+      if (isProcessing) return;
+
+      if (val === chantCorrectVal) {
+        document.getElementById('missingCartSlot').textContent = val;
+        document.getElementById('missingCartSlot').className = 'w-16 h-20 sm:w-20 sm:h-24 bg-emerald-500/20 border-2 border-emerald-400 rounded-2xl flex flex-col items-center justify-center font-kids text-3xl sm:text-4xl font-bold text-emerald-300 shadow-xl animate-pop';
+        handleSuccess(`🎉 Caught it! ${val} comes right in the chain!`);
+      } else {
+        handleGentleMistake(`Not quite. Say the chain out loud: ${chantSequence[0]}, ${chantSequence[1]}...`);
+      }
+    }
+
+    /* =====================================================================
+       FEEDBACK & REINFORCEMENT
+       ===================================================================== */
+    function handleSuccess(msg) {
+      isProcessing = true;
+      playSound('correct');
+      streak++;
+      stars += 1;
+      updateMetrics();
+      flashFeedback(msg, true);
+
+      setTimeout(() => {
+        setupNewProblem();
+      }, 1600);
+    }
+
+    function handleGentleMistake(msg) {
+      playSound('gentleTry');
+      streak = 0;
+      updateMetrics();
+      flashFeedback(msg, false);
+    }
+
+    function flashFeedback(msg, isSuccess) {
+      const fb = document.getElementById('feedbackBanner');
+      fb.textContent = msg;
+      fb.className = `w-full text-center text-base sm:text-lg font-bold min-h-[28px] transition-all ${
+        isSuccess ? 'text-emerald-400 animate-pop' : 'text-amber-400'
+      }`;
+    }
+
+    function clearFeedback() {
+      document.getElementById('feedbackBanner').textContent = '';
+    }
+
+    function updateMetrics() {
+      document.getElementById('streakDisplay').textContent = `🔥 ${streak}`;
+      document.getElementById('starsDisplay').textContent = `⭐ ${stars}`;
+    }
+
+    /* =====================================================================
+       KEYBOARD SUPPORT
+       ===================================================================== */
+    function setupKeyboard() {
+      window.addEventListener('keydown', (e) => {
+        if (e.key === ' ' || e.key === 'Enter') {
+          if (activeMode === 'conservation' && consvState === 'initial') {
+            triggerConservationTransform();
+          }
+        }
+      });
+    }
+  </script>
+</body>
+</html>
