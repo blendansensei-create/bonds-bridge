@@ -567,8 +567,8 @@
         <span class="text-amber-300 underline decoration-dashed">?</span>
       `;
       document.getElementById('strategyGuidance').innerHTML = q.rows > 5
-        ? `Split <span class="text-cyan-400 font-bold">${q.rows}</span> into friendly <span class="text-emerald-400 font-bold">5</span> + <span class="text-amber-400 font-bold">${q.rows - 5}</span>: (${5} × ${q.cols}) + (${q.rows - 5} × ${q.cols})`
-        : `Array Partition: (${q.rows} × 2) + (${q.rows} × ${q.cols - 2})`;
+        ? `Strategy: Partition <span class="text-cyan-400 font-bold">${q.rows}</span> into <span class="text-emerald-400 font-bold">5</span> + <span class="text-amber-400 font-bold">${q.rows - 5}</span>. Work out each section, then combine them!`
+        : `Strategy: Partition <span class="text-indigo-400 font-bold">${q.cols}</span> into <span class="text-cyan-400 font-bold">2</span> + <span class="text-amber-400 font-bold">${q.cols - 2}</span> to simplify the multiplication!`;
     }
 
     function renderShiftUI() {
@@ -579,34 +579,34 @@
         <span class="text-amber-300 underline decoration-dashed">?</span>
       `;
       document.getElementById('strategyGuidance').innerHTML = q.op.startsWith('mul')
-        ? `Each digit shifts <strong class="text-emerald-400 font-bold">LEFT</strong> to a higher column. Digits never stay still!`
-        : `Each digit shifts <strong class="text-rose-400 font-bold">RIGHT</strong> to a smaller column.`;
+        ? `Place Value Rule: When multiplying by ${q.op === 'mul100' ? '100' : '10'}, each digit shifts <strong class="text-emerald-400 font-bold">LEFT</strong>. What is the new number?`
+        : `Place Value Rule: When dividing by 10, each digit shifts <strong class="text-rose-400 font-bold">RIGHT</strong> to the next column.`;
     }
 
     function renderNearTenAddUI() {
       const q = currentQ;
       document.getElementById('equationDisplay').innerHTML = `
-        <span class="text-cyan-400">${q.num1}</span>
+        <span class="text-cyan-400 font-bold">${q.num1}</span>
         <span class="text-slate-400">+</span>
-        <span class="text-amber-400">${q.num2}</span>
+        <span class="text-amber-400 font-bold">${q.num2}</span>
         <span class="text-slate-400">=</span>
         <span class="text-amber-300 underline decoration-dashed">?</span>
       `;
       document.getElementById('strategyGuidance').innerHTML = 
-        `Smart Compensation: Add friendly <span class="text-indigo-400 font-bold">${q.friendlyTen}</span>, then adjust <span class="text-rose-400 font-bold">- 1</span>!`;
+        `Mental Target: Can you calculate <span class="text-cyan-300 font-bold">${q.num1} + ${q.num2}</span> mentally? Enter your answer to reveal the smart jump strategy!`;
     }
 
     function renderConstDiffUI() {
       const q = currentQ;
       document.getElementById('equationDisplay').innerHTML = `
-        <span class="text-cyan-400">${q.minuend}</span>
+        <span class="text-cyan-400 font-bold">${q.minuend}</span>
         <span class="text-slate-400">-</span>
-        <span class="text-rose-400">${q.subtrahend}</span>
+        <span class="text-rose-400 font-bold">${q.subtrahend}</span>
         <span class="text-slate-400">=</span>
         <span class="text-amber-300 underline decoration-dashed">?</span>
       `;
       document.getElementById('strategyGuidance').innerHTML = 
-        `Constant Difference: Add +1 to both numbers ➔ <span class="text-emerald-400 font-bold">${q.adjustedMin} - ${q.adjustedSub}</span> (same distance, zero borrowing!)`;
+        `Mental Target: Solve <span class="text-cyan-300 font-bold">${q.minuend} - ${q.subtrahend}</span> mentally without column subtraction. The smart shift strategy will reveal once correct!`;
     }
 
     /* =====================================================================
@@ -625,11 +625,40 @@
         container.innerHTML = renderPlaceValueShiftVisual(q, solved);
       } else if (q.type === 'strategy') {
         document.getElementById('visualHeaderTitle').textContent = q.mode === 'nearTenAdd' ? `Compensation Jump Line Model` : `Constant Difference Number Shift`;
-        container.innerHTML = q.mode === 'nearTenAdd' ? renderCompensationJumpVisual(q, solved) : renderConstDiffVisual(q, solved);
+        if (!solved) {
+          container.innerHTML = renderStrategyMysteryPlaceholder(q);
+        } else {
+          container.innerHTML = q.mode === 'nearTenAdd' ? renderCompensationJumpVisual(q, solved) : renderConstDiffVisual(q, solved);
+        }
       }
     }
 
-    // 1. Array Slice & Split Renderer
+    // Placeholder before submitting in Smart Strategies
+    function renderStrategyMysteryPlaceholder(q) {
+      const isAdd = q.mode === 'nearTenAdd';
+      return `
+        <div class="flex flex-col items-center justify-center gap-3 py-6 px-4 text-center max-w-md w-full animate-pop">
+          <div class="w-16 h-16 rounded-2xl bg-slate-900 border-2 border-dashed border-cyan-500/50 flex items-center justify-center text-3xl shadow-lg">
+            ${isAdd ? '🦘' : '⚖️'}
+          </div>
+          <div>
+            <div class="font-kids text-lg font-bold text-cyan-300 mb-1">
+              ${isAdd ? 'Compensation Strategy Locked' : 'Constant Difference Strategy Locked'}
+            </div>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              ${isAdd 
+                ? `Think: How can a friendly near-ten (+${q.friendlyTen}) make this addition fast in your head?` 
+                : `Think: What happens if you shift both numbers up by +1 to eliminate borrowing?`}
+            </p>
+          </div>
+          <div class="bg-slate-900/80 border border-slate-800 text-[11px] font-mono text-amber-400 px-3 py-1.5 rounded-xl">
+            🔒 Enter your answer to unlock the interactive step-by-step visual model!
+          </div>
+        </div>
+      `;
+    }
+
+    // 1. Array Slice & Split Renderer (No spoilers before solving)
     function renderArrayVisual(q, solved) {
       let gridRows = '';
       for (let r = 0; r < q.rows; r++) {
@@ -643,19 +672,28 @@
         gridRows += `<div class="flex items-center gap-1.5 sm:gap-2">${dots}</div>`;
       }
 
+      const rowsA = q.rows > 5 ? 5 : q.rows;
+      const rowsB = q.rows - 5;
+      const ansA = rowsA * q.cols;
+      const ansB = rowsB * q.cols;
+
       return `
         <div class="flex flex-col items-center gap-3 w-full animate-pop">
           <div class="flex items-center gap-4 sm:gap-8 justify-center flex-wrap">
-            <!-- Partition Breakdown Cards -->
-            <div class="bg-slate-900 border border-cyan-500/50 p-2.5 rounded-2xl text-center">
-              <span class="text-[11px] text-cyan-300 font-semibold block">Section 1</span>
-              <span class="font-kids text-lg text-cyan-400 font-bold">${q.rows > 5 ? 5 : q.rows} × ${q.cols} = ${(q.rows > 5 ? 5 : q.rows) * q.cols}</span>
+            <!-- Partition Breakdown Cards with Spoilers Hidden Until Solved -->
+            <div class="bg-slate-900 border border-cyan-500/50 p-2.5 rounded-2xl text-center min-w-[120px]">
+              <span class="text-[11px] text-cyan-300 font-semibold block">Cyan Group</span>
+              <span class="font-kids text-lg text-cyan-400 font-bold">
+                ${rowsA} × ${q.cols} = <span class="${solved ? 'text-emerald-400' : 'text-slate-500'}">${solved ? ansA : '?'}</span>
+              </span>
             </div>
             ${q.rows > 5 ? `
               <div class="font-kids text-2xl font-bold text-slate-500">+</div>
-              <div class="bg-slate-900 border border-amber-500/50 p-2.5 rounded-2xl text-center">
-                <span class="text-[11px] text-amber-300 font-semibold block">Section 2</span>
-                <span class="font-kids text-lg text-amber-400 font-bold">${q.rows - 5} × ${q.cols} = ${(q.rows - 5) * q.cols}</span>
+              <div class="bg-slate-900 border border-amber-500/50 p-2.5 rounded-2xl text-center min-w-[120px]">
+                <span class="text-[11px] text-amber-300 font-semibold block">Amber Group</span>
+                <span class="font-kids text-lg text-amber-400 font-bold">
+                  ${rowsB} × ${q.cols} = <span class="${solved ? 'text-emerald-400' : 'text-slate-500'}">${solved ? ansB : '?'}</span>
+                </span>
               </div>
             ` : ''}
           </div>
@@ -666,16 +704,18 @@
           </div>
 
           ${solved ? `
-            <div class="text-xs font-kids text-emerald-400 font-bold">
-              Combined Total = ${q.answer} counters!
-            </div>` : ''}
+            <div class="text-xs font-kids text-emerald-400 font-bold animate-pop">
+              ✨ Solved: ${rowsA * q.cols} + ${rowsB * q.cols} = ${q.answer} counters!
+            </div>` : `
+            <div class="text-[11px] font-kids text-slate-400">
+              Count or calculate each color group, then add them together!
+            </div>`}
         </div>
       `;
     }
 
     // 2. Place Value Shift Machine Renderer
     function renderPlaceValueShiftVisual(q, solved) {
-      // Columns: Thousands (Th), Hundreds (H), Tens (T), Units (U), Tenths (t)
       function extractDigits(val) {
         const str = val.toString();
         const padded = str.padStart(4, ' ');
@@ -724,18 +764,20 @@
           </div>
 
           <div class="text-[11px] sm:text-xs text-slate-400 font-medium text-center">
-            Digits physically step across columns. The empty Units column receives a place-holder zero (0).
+            ${solved ? `Complete! Each digit moved to its new place value column.` : `Where do the digits land after sliding? Fill in the answer box!`}
           </div>
         </div>
       `;
     }
 
-    // 3. Compensation Jump Line Visualizer (+29 as +30 then -1)
+    // 3. Compensation Jump Line Visualizer (+29 as +30 then -1) - ONLY REVEALED POST-SOLUTION
     function renderCompensationJumpVisual(q, solved) {
       const midPoint = q.num1 + q.friendlyTen;
       return `
-        <div class="flex flex-col items-center gap-2 w-full max-w-lg animate-pop">
-          <div class="text-xs font-kids text-slate-300">Two-Step Jump Line: Jump friendly ten, then take step back</div>
+        <div class="flex flex-col items-center gap-3 w-full max-w-lg animate-pop">
+          <div class="p-2.5 bg-emerald-950/60 border border-emerald-500/50 rounded-xl text-center text-xs font-kids text-emerald-300 font-bold w-full">
+            🎉 How the Smart Compensation Strategy Works:
+          </div>
           <svg viewBox="0 0 420 140" class="w-full h-36">
             <!-- Baseline -->
             <line x1="30" y1="95" x2="390" y2="95" stroke="#64748b" stroke-width="4" stroke-linecap="round"/>
@@ -750,7 +792,7 @@
             
             <!-- Final Tick -->
             <line x1="260" y1="85" x2="260" y2="105" stroke="#34d399" stroke-width="4"/>
-            <text x="260" y="125" font-size="18" font-family="Fredoka" font-weight="bold" fill="#34d399" text-anchor="middle">${solved ? q.answer : '?'}</text>
+            <text x="260" y="125" font-size="18" font-family="Fredoka" font-weight="bold" fill="#34d399" text-anchor="middle">${q.answer}</text>
             
             <!-- Jump 1: +Friendly Ten (Forward big arc) -->
             <path d="M 50 85 Q 185 10 320 85" fill="none" stroke="#818cf8" stroke-width="4"/>
@@ -762,16 +804,22 @@
             <rect x="275" y="48" width="34" height="22" rx="5" fill="#0f172a" stroke="#fb7185" stroke-width="1.5"/>
             <text x="292" y="64" font-size="12" font-family="Fredoka" font-weight="bold" fill="#fb7185" text-anchor="middle">-1</text>
           </svg>
+          <div class="text-xs font-kids text-slate-300 text-center">
+            ${q.num1} + <strong class="text-indigo-400">${q.friendlyTen}</strong> = <strong class="text-indigo-300">${midPoint}</strong>, then adjust <strong class="text-rose-400">- 1</strong> = <strong class="text-emerald-400 font-bold">${q.answer}</strong>
+          </div>
         </div>
       `;
     }
 
-    // 4. Constant Difference Visualizer
+    // 4. Constant Difference Visualizer - ONLY REVEALED POST-SOLUTION
     function renderConstDiffVisual(q, solved) {
       return `
         <div class="flex flex-col items-center gap-3 w-full max-w-md animate-pop">
-          <div class="w-full bg-slate-900 border-2 border-cyan-500/60 rounded-xl p-3 text-center font-kids text-lg text-cyan-300 font-bold">
-            Original: ${q.minuend} - ${q.subtrahend}
+          <div class="p-2.5 bg-emerald-950/60 border border-emerald-500/50 rounded-xl text-center text-xs font-kids text-emerald-300 font-bold w-full">
+            🎉 How the Constant Difference Strategy Works:
+          </div>
+          <div class="w-full bg-slate-900 border-2 border-cyan-500/60 rounded-xl p-3 text-center font-kids text-base text-cyan-300 font-bold">
+            Target: ${q.minuend} - ${q.subtrahend}
           </div>
           <div class="w-full grid grid-cols-2 gap-2 text-center">
             <div class="bg-indigo-950 p-2.5 rounded-xl border border-indigo-700">
@@ -783,10 +831,12 @@
               <span class="font-kids text-xl font-bold text-rose-200">${q.adjustedSub}</span>
             </div>
           </div>
-          ${solved ? `
-            <div class="w-full bg-emerald-950 border border-emerald-500 rounded-xl p-2 text-center font-kids text-lg text-emerald-300 font-bold">
-              ${q.adjustedMin} - ${q.adjustedSub} = ${q.answer}
-            </div>` : ''}
+          <div class="w-full bg-slate-950 border border-emerald-500/50 rounded-xl p-2.5 text-center font-kids text-base text-emerald-300 font-bold shadow-inner">
+            ${q.adjustedMin} - ${q.adjustedSub} = <span class="text-emerald-400 font-bold text-xl">${q.answer}</span>
+          </div>
+          <p class="text-[11px] text-slate-400 text-center">
+            Because both numbers were shifted by +1, the difference stayed identical with zero borrowing!
+          </p>
         </div>
       `;
     }
