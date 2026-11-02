@@ -1,0 +1,2094 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>P7 Group A: Place Value, Regrouping & Calculation Lab</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Fredoka & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=Patrick+Hand&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+    }
+    .font-kids { font-family: 'Fredoka', cursive, sans-serif; }
+    .font-hand { font-family: 'Patrick Hand', cursive, sans-serif; }
+
+    @keyframes popIn {
+      0% { transform: scale(0.65); opacity: 0; }
+      70% { transform: scale(1.08); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .animate-pop { animation: popIn 0.28s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+
+    @keyframes bundleFly {
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.25) translateY(-20px); filter: drop-shadow(0 0 15px #38bdf8); }
+      100% { transform: scale(0.8) translateX(-80px); opacity: 0; }
+    }
+    .bundle-animate { animation: bundleFly 0.6s ease-in-out forwards; }
+
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 10px rgba(56, 189, 248, 0.4); }
+      50% { box-shadow: 0 0 25px rgba(56, 189, 248, 0.95); }
+    }
+    .pulse-glow { animation: pulseGlow 1.2s infinite ease-in-out; }
+
+    /* Base 10 Pictorial Blocks */
+    .b10-cube {
+      width: 14px;
+      height: 14px;
+      border-radius: 3px;
+      background: #f59e0b;
+      border: 1px solid #d97706;
+      box-shadow: inset 0 -1px 2px rgba(0,0,0,0.3);
+    }
+    .b10-rod {
+      width: 14px;
+      height: 52px;
+      border-radius: 3px;
+      background: #0284c7;
+      border: 1px solid #0369a1;
+      display: grid;
+      grid-template-rows: repeat(10, 1fr);
+      gap: 1px;
+      padding: 1px 0;
+      box-shadow: inset 0 -2px 3px rgba(0,0,0,0.3);
+    }
+    .b10-flat {
+      width: 48px;
+      height: 48px;
+      border-radius: 4px;
+      background: #10b981;
+      border: 1.5px solid #059669;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      grid-template-rows: repeat(5, 1fr);
+      gap: 1px;
+      padding: 1.5px;
+      box-shadow: inset 0 -2px 3px rgba(0,0,0,0.35);
+    }
+
+    /* Column Input Grid */
+    .col-cell {
+      width: 58px;
+      height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      font-weight: 700;
+      font-family: 'Fredoka', cursive, sans-serif;
+      position: relative;
+    }
+    @media (min-width: 640px) {
+      .col-cell {
+        width: 68px;
+        height: 68px;
+        font-size: 2.35rem;
+      }
+    }
+    .strikethrough {
+      position: relative;
+    }
+    .strikethrough::after {
+      content: '';
+      position: absolute;
+      top: 15%;
+      left: 15%;
+      width: 70%;
+      height: 70%;
+      border-top: 4px solid #ef4444;
+      transform: rotate(-35deg);
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between selection:bg-amber-400 selection:text-slate-950">
+
+  <!-- TOP HEADER & PRIMARY 4-TAB NAVIGATION -->
+  <header class="bg-slate-900 border-b border-slate-800 px-3 py-2.5 sm:px-6 shadow-xl">
+    <div class="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-3">
+      
+      <!-- Brand & Title -->
+      <div class="flex items-center space-x-3">
+        <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-emerald-500 via-sky-500 to-amber-500 flex items-center justify-center font-kids text-xl font-bold text-slate-950 shadow-md">
+          P7
+        </div>
+        <div>
+          <h1 class="font-kids text-xl sm:text-2xl font-bold tracking-wide text-sky-300 leading-none">
+            Place Value & Calculation Lab
+          </h1>
+          <p class="text-[11px] text-slate-400 font-medium">Group A Targeted Remediation • NI Curriculum Key Stage 2</p>
+        </div>
+      </div>
+
+      <!-- MAIN NAVIGATION TABS -->
+      <nav class="flex items-center gap-1 bg-slate-950 p-1.5 rounded-2xl border border-slate-800 text-xs sm:text-sm font-semibold flex-wrap">
+        <button id="navTabAdd" onclick="switchLabTab('addition')" class="px-3.5 py-1.5 rounded-xl font-bold transition-all bg-sky-500 text-slate-950 shadow-md">
+          1. Column Addition (Carry & Bundle)
+        </button>
+        <button id="navTabSub" onclick="switchLabTab('subtraction')" class="px-3.5 py-1.5 rounded-xl font-bold transition-all text-slate-300 hover:text-white">
+          2. Column Subtraction (Unpack & Exchange)
+        </button>
+        <button id="navTabClinic" onclick="switchLabTab('clinic')" class="px-3.5 py-1.5 rounded-xl font-bold transition-all text-slate-300 hover:text-white">
+          3. Spot the Mistake! 🕵️
+        </button>
+        <button id="navTabInverse" onclick="switchLabTab('inverse')" class="px-3.5 py-1.5 rounded-xl font-bold transition-all text-slate-300 hover:text-white">
+          4. Inverse Fact Fluency (× & ÷)
+        </button>
+        <button id="navTabAddOn" onclick="switchLabTab('addon')" class="px-3.5 py-1.5 rounded-xl font-bold transition-all text-slate-300 hover:text-white">
+          5. ⚡ Add-On 10, 20... 100, 1000
+        </button>
+      </nav>
+
+      <!-- Audio Mute/Unmute Toggle -->
+      <button onclick="toggleAudio()" id="soundToggleBtn" class="w-9 h-9 rounded-xl bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-200 transition" title="Toggle Sound">
+        <svg id="soundOnIcon" class="w-5 h-5 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path></svg>
+        <svg id="soundOffIcon" class="w-5 h-5 hidden text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15zM17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"></path></svg>
+      </button>
+
+    </div>
+  </header>
+
+  <!-- SUB-BAR: TIERED LEVEL SELECTION & PROGRESS -->
+  <section class="max-w-6xl w-full mx-auto my-2 px-3 flex flex-wrap items-center justify-between gap-2.5 text-xs sm:text-sm bg-slate-900/60 p-2.5 rounded-2xl border border-slate-800/80">
+    
+    <!-- SUB-CONTROLS: Addition Levels -->
+    <div id="controlsAddition" class="flex items-center gap-1.5 flex-wrap">
+      <span class="text-slate-400 font-semibold mr-1">Level:</span>
+      <button onclick="setLevel('add', 1)" id="addLvl1" class="px-3 py-1 rounded-xl font-bold bg-sky-500 text-slate-950 shadow">L1: 2-Digit (Units Carry)</button>
+      <button onclick="setLevel('add', 2)" id="addLvl2" class="px-3 py-1 rounded-xl font-bold bg-slate-800 text-slate-300 hover:text-white">L2: 3-Digit Single Regroup</button>
+      <button onclick="setLevel('add', 3)" id="addLvl3" class="px-3 py-1 rounded-xl font-bold bg-slate-800 text-slate-300 hover:text-white">L3: Double Regroup (U→T & T→H)</button>
+    </div>
+
+    <!-- SUB-CONTROLS: Subtraction Levels -->
+    <div id="controlsSubtraction" class="hidden flex items-center gap-1.5 flex-wrap">
+      <span class="text-slate-400 font-semibold mr-1">Level:</span>
+      <button onclick="setLevel('sub', 1)" id="subLvl1" class="px-3 py-1 rounded-xl font-bold bg-sky-500 text-slate-950 shadow">L1: 2-Digit Anti-Reversal (e.g. 52 - 27)</button>
+      <button onclick="setLevel('sub', 2)" id="subLvl2" class="px-3 py-1 rounded-xl font-bold bg-slate-800 text-slate-300 hover:text-white">L2: 3-Digit (Tens to Units)</button>
+      <button onclick="setLevel('sub', 3)" id="subLvl3" class="px-3 py-1 rounded-xl font-bold bg-slate-800 text-slate-300 hover:text-white">L3: Hundreds to Tens to Units</button>
+      <button onclick="setLevel('sub', 4)" id="subLvl4" class="px-3 py-1 rounded-xl font-bold bg-slate-800 text-slate-300 hover:text-white">L4: The Zero Void (e.g. 403 - 167)</button>
+    </div>
+
+    <!-- SUB-CONTROLS: Clinic Filter -->
+    <div id="controlsClinic" class="hidden flex items-center gap-1.5 flex-wrap">
+      <span class="text-slate-400 font-semibold mr-1">Misconception Focus:</span>
+      <button onclick="setClinicFilter('all')" id="clinicFiltAll" class="px-3 py-1 rounded-xl font-bold bg-sky-500 text-slate-950 shadow">All Common Errors</button>
+      <button onclick="setClinicFilter('reversal')" id="clinicFiltRev" class="px-3 py-1 rounded-xl font-bold bg-slate-800 text-slate-300 hover:text-white">Subtraction Reversals</button>
+      <button onclick="setClinicFilter('carry')" id="clinicFiltCarry" class="px-3 py-1 rounded-xl font-bold bg-slate-800 text-slate-300 hover:text-white">Forgotten Carries</button>
+    </div>
+
+    <!-- SUB-CONTROLS: Inverse Fluency -->
+    <div id="controlsInverse" class="hidden flex items-center gap-1.5 flex-wrap">
+      <span class="text-slate-400 font-semibold mr-1">Times Table Focus:</span>
+      <button onclick="setInverseTier('core')" id="invTierCore" class="px-3 py-1 rounded-xl font-bold bg-sky-500 text-slate-950 shadow">3×, 4×, 6×</button>
+      <button onclick="setInverseTier('target')" id="invTierTarget" class="px-3 py-1 rounded-xl font-bold bg-slate-800 text-slate-300 hover:text-white">7×, 8×, 9× (Priority)</button>
+      <button onclick="setInverseTier('all')" id="invTierAll" class="px-3 py-1 rounded-xl font-bold bg-slate-800 text-slate-300 hover:text-white">Mixed 2× to 12×</button>
+    </div>
+
+    <!-- SUB-CONTROLS: Place Value Add-On Levels (NEW) -->
+    <div id="controlsAddOn" class="hidden flex items-center gap-1.5 flex-wrap">
+      <span class="text-slate-400 font-semibold mr-1">Step Scale:</span>
+      <button onclick="setAddOnLevel(1)" id="addOnLvl1" class="px-2.5 py-1 rounded-xl font-bold bg-sky-500 text-slate-950 shadow">L1: ±10, 20... 90 (Safe)</button>
+      <button onclick="setAddOnLevel(2)" id="addOnLvl2" class="px-2.5 py-1 rounded-xl font-bold bg-slate-800 text-slate-300 hover:text-white">L2: Crossing 100</button>
+      <button onclick="setAddOnLevel(3)" id="addOnLvl3" class="px-2.5 py-1 rounded-xl font-bold bg-slate-800 text-slate-300 hover:text-white">L3: ±100, 200... 900</button>
+      <button onclick="setAddOnLevel(4)" id="addOnLvl4" class="px-2.5 py-1 rounded-xl font-bold bg-slate-800 text-slate-300 hover:text-white">L4: Crossing 1,000</button>
+      <button onclick="setAddOnLevel(5)" id="addOnLvl5" class="px-2.5 py-1 rounded-xl font-bold bg-slate-800 text-slate-300 hover:text-white">L5: ±1000, 2000... 5000</button>
+      <button onclick="setAddOnLevel(6)" id="addOnLvl6" class="px-2.5 py-1 rounded-xl font-bold bg-slate-800 text-slate-300 hover:text-white">L6: Mixed Sprint</button>
+    </div>
+
+    <!-- LIVE METRICS -->
+    <div class="flex items-center gap-4 font-kids ml-auto">
+      <div class="flex items-center gap-1.5 text-amber-400 font-bold text-sm sm:text-base">
+        <span>Streak:</span>
+        <span id="streakDisplay" class="bg-amber-500/20 px-2.5 py-0.5 rounded-full border border-amber-500/40">🔥 0</span>
+      </div>
+      <div class="flex items-center gap-1.5 text-emerald-400 font-bold text-sm sm:text-base">
+        <span>Score:</span>
+        <span id="scoreDisplay">0</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAIN INTERACTIVE STAGE -->
+  <main class="max-w-6xl w-full mx-auto px-3 py-1 flex-1 flex flex-col justify-between items-center gap-3">
+    
+    <!-- DYNAMIC CONTAINER INJECTED BY TAB -->
+    <div id="activeStageContainer" class="w-full">
+      <!-- Injected via JavaScript -->
+    </div>
+
+    <!-- ON-SCREEN WHITEBOARD KEYPAD (FOR ACTIVPANEL TOUCH) -->
+    <div id="touchKeypadSection" class="w-full max-w-md flex flex-col items-center gap-1.5 pb-2">
+      <div class="grid grid-cols-10 gap-1.5 w-full">
+        <button onclick="numpadPress(1)" class="h-11 sm:h-12 bg-slate-800 hover:bg-slate-700 active:bg-sky-500 active:text-slate-950 text-white font-kids font-bold text-xl rounded-xl shadow active:scale-95 transition">1</button>
+        <button onclick="numpadPress(2)" class="h-11 sm:h-12 bg-slate-800 hover:bg-slate-700 active:bg-sky-500 active:text-slate-950 text-white font-kids font-bold text-xl rounded-xl shadow active:scale-95 transition">2</button>
+        <button onclick="numpadPress(3)" class="h-11 sm:h-12 bg-slate-800 hover:bg-slate-700 active:bg-sky-500 active:text-slate-950 text-white font-kids font-bold text-xl rounded-xl shadow active:scale-95 transition">3</button>
+        <button onclick="numpadPress(4)" class="h-11 sm:h-12 bg-slate-800 hover:bg-slate-700 active:bg-sky-500 active:text-slate-950 text-white font-kids font-bold text-xl rounded-xl shadow active:scale-95 transition">4</button>
+        <button onclick="numpadPress(5)" class="h-11 sm:h-12 bg-slate-800 hover:bg-slate-700 active:bg-sky-500 active:text-slate-950 text-white font-kids font-bold text-xl rounded-xl shadow active:scale-95 transition">5</button>
+        <button onclick="numpadPress(6)" class="h-11 sm:h-12 bg-slate-800 hover:bg-slate-700 active:bg-sky-500 active:text-slate-950 text-white font-kids font-bold text-xl rounded-xl shadow active:scale-95 transition">6</button>
+        <button onclick="numpadPress(7)" class="h-11 sm:h-12 bg-slate-800 hover:bg-slate-700 active:bg-sky-500 active:text-slate-950 text-white font-kids font-bold text-xl rounded-xl shadow active:scale-95 transition">7</button>
+        <button onclick="numpadPress(8)" class="h-11 sm:h-12 bg-slate-800 hover:bg-slate-700 active:bg-sky-500 active:text-slate-950 text-white font-kids font-bold text-xl rounded-xl shadow active:scale-95 transition">8</button>
+        <button onclick="numpadPress(9)" class="h-11 sm:h-12 bg-slate-800 hover:bg-slate-700 active:bg-sky-500 active:text-slate-950 text-white font-kids font-bold text-xl rounded-xl shadow active:scale-95 transition">9</button>
+        <button onclick="numpadPress(0)" class="h-11 sm:h-12 bg-slate-800 hover:bg-slate-700 active:bg-sky-500 active:text-slate-950 text-white font-kids font-bold text-xl rounded-xl shadow active:scale-95 transition">0</button>
+      </div>
+      <div class="flex items-center justify-between w-full gap-2">
+        <button onclick="numpadPress('backspace')" class="flex-1 h-11 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl text-xs uppercase tracking-wider active:scale-95 transition">
+          ⌫ Backspace
+        </button>
+        <button onclick="numpadPress('clear')" class="flex-1 h-11 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl text-xs uppercase tracking-wider active:scale-95 transition">
+          Clear
+        </button>
+        <button id="numpadSubmitBtn" onclick="numpadSubmit()" class="flex-[1.5] h-11 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-kids text-lg font-bold rounded-xl shadow-md active:scale-95 transition flex items-center justify-center gap-1">
+          <span>Enter</span> <span>✨</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- BOTTOM CONTROL BAR -->
+    <div class="flex items-center justify-between w-full max-w-xl text-xs sm:text-sm pt-1">
+      <button onclick="generateNewProblem()" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-xl font-semibold text-slate-200 transition flex items-center gap-1.5">
+        <span>🔄 New Problem / Next Example</span>
+      </button>
+      <div class="text-slate-500">
+        Touch-screen & ActivPanel Optimized
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="bg-slate-950 border-t border-slate-900 px-4 py-1.5 text-center text-xs text-slate-500">
+    <p>CCEA KS2 Numeracy Intervention • <em>Concrete-Pictorial-Abstract (CPA) Base-10 column mastery and error deconstruction.</em></p>
+  </footer>
+
+  <!-- SCRIPT LOGIC -->
+  <script>
+    /* =====================================================================
+       WEB AUDIO SYNTHESIZER
+       ===================================================================== */
+    let audioCtx = null;
+    let soundEnabled = true;
+
+    function getAudioCtx() {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      return audioCtx;
+    }
+
+    function playSound(type) {
+      if (!soundEnabled) return;
+      try {
+        const ctx = getAudioCtx();
+        const now = ctx.currentTime;
+
+        if (type === 'click') {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(420, now);
+          osc.frequency.exponentialRampToValueAtTime(700, now + 0.06);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.linearRampToValueAtTime(0, now + 0.06);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.07);
+        } else if (type === 'bundle') {
+          // Playful ascending glissando for bundling/unpacking
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(260, now);
+          osc.frequency.exponentialRampToValueAtTime(840, now + 0.28);
+          gain.gain.setValueAtTime(0.25, now);
+          gain.gain.linearRampToValueAtTime(0, now + 0.3);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.31);
+        } else if (type === 'correct') {
+          [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, now + i * 0.06);
+            gain.gain.setValueAtTime(0.25, now + i * 0.06);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.06 + 0.32);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now + i * 0.06);
+            osc.stop(now + i * 0.06 + 0.33);
+          });
+        } else if (type === 'error') {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(220, now);
+          osc.frequency.exponentialRampToValueAtTime(120, now + 0.26);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.linearRampToValueAtTime(0, now + 0.26);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.27);
+        }
+      } catch (e) {
+        console.warn('Audio play error:', e);
+      }
+    }
+
+    function toggleAudio() {
+      soundEnabled = !soundEnabled;
+      document.getElementById('soundOnIcon').classList.toggle('hidden', !soundEnabled);
+      document.getElementById('soundOffIcon').classList.toggle('hidden', soundEnabled);
+    }
+
+    /* =====================================================================
+       GLOBAL STATE
+       ===================================================================== */
+    let currentTab = 'addition'; // 'addition', 'subtraction', 'clinic', 'inverse', 'addon'
+    let addLevel = 1;
+    let subLevel = 1;
+    let clinicFilter = 'all';
+    let inverseTier = 'target';
+    let addOnLevel = 1;
+
+    let streak = 0;
+    let score = 0;
+    let isProcessing = false;
+
+    // Active problem objects
+    let addState = {};
+    let subState = {};
+    let clinicState = {};
+    let inverseState = {};
+    let addOnState = {};
+
+    window.addEventListener('DOMContentLoaded', () => {
+      switchLabTab('addition');
+      setupKeyboard();
+    });
+
+    /* =====================================================================
+       TAB NAVIGATION ROUTER
+       ===================================================================== */
+    function switchLabTab(tab) {
+      playSound('click');
+      currentTab = tab;
+
+      // Update Nav Buttons
+      ['navTabAdd', 'navTabSub', 'navTabClinic', 'navTabInverse', 'navTabAddOn'].forEach(id => {
+        document.getElementById(id).className = 'px-3.5 py-1.5 rounded-xl font-bold transition-all text-slate-300 hover:text-white';
+      });
+      const map = {
+        addition: 'navTabAdd',
+        subtraction: 'navTabSub',
+        clinic: 'navTabClinic',
+        inverse: 'navTabInverse',
+        addon: 'navTabAddOn'
+      };
+      document.getElementById(map[tab]).className = 'px-3.5 py-1.5 rounded-xl font-bold transition-all bg-sky-500 text-slate-950 shadow-md';
+
+      // Toggle Sub-Bars
+      document.getElementById('controlsAddition').classList.add('hidden');
+      document.getElementById('controlsSubtraction').classList.add('hidden');
+      document.getElementById('controlsClinic').classList.add('hidden');
+      document.getElementById('controlsInverse').classList.add('hidden');
+      document.getElementById('controlsAddOn').classList.add('hidden');
+
+      if (tab === 'addition') document.getElementById('controlsAddition').classList.remove('hidden');
+      else if (tab === 'subtraction') document.getElementById('controlsSubtraction').classList.remove('hidden');
+      else if (tab === 'clinic') document.getElementById('controlsClinic').classList.remove('hidden');
+      else if (tab === 'inverse') document.getElementById('controlsInverse').classList.remove('hidden');
+      else if (tab === 'addon') document.getElementById('controlsAddOn').classList.remove('hidden');
+
+      generateNewProblem();
+    }
+
+    function setAddOnLevel(lvl) {
+      playSound('click');
+      addOnLevel = lvl;
+      [1, 2, 3, 4, 5, 6].forEach(l => {
+        document.getElementById(`addOnLvl${l}`).className = l === lvl
+          ? 'px-2.5 py-1 rounded-xl font-bold bg-sky-500 text-slate-950 shadow'
+          : 'px-2.5 py-1 rounded-xl font-bold bg-slate-800 text-slate-300 hover:text-white';
+      });
+      generateNewProblem();
+    }
+
+    function setLevel(type, lvl) {
+      playSound('click');
+      if (type === 'add') {
+        addLevel = lvl;
+        [1, 2, 3].forEach(l => {
+          document.getElementById(`addLvl${l}`).className = l === lvl
+            ? 'px-3 py-1 rounded-xl font-bold bg-sky-500 text-slate-950 shadow'
+            : 'px-3 py-1 rounded-xl font-bold bg-slate-800 text-slate-300 hover:text-white';
+        });
+      } else {
+        subLevel = lvl;
+        [1, 2, 3, 4].forEach(l => {
+          document.getElementById(`subLvl${l}`).className = l === lvl
+            ? 'px-3 py-1 rounded-xl font-bold bg-sky-500 text-slate-950 shadow'
+            : 'px-3 py-1 rounded-xl font-bold bg-slate-800 text-slate-300 hover:text-white';
+        });
+      }
+      generateNewProblem();
+    }
+
+    function setClinicFilter(f) {
+      playSound('click');
+      clinicFilter = f;
+      ['clinicFiltAll', 'clinicFiltRev', 'clinicFiltCarry'].forEach(id => {
+        document.getElementById(id).className = 'px-3 py-1 rounded-xl font-bold bg-slate-800 text-slate-300 hover:text-white';
+      });
+      const map = { all: 'clinicFiltAll', reversal: 'clinicFiltRev', carry: 'clinicFiltCarry' };
+      document.getElementById(map[f]).className = 'px-3 py-1 rounded-xl font-bold bg-sky-500 text-slate-950 shadow';
+      generateNewProblem();
+    }
+
+    function setInverseTier(t) {
+      playSound('click');
+      inverseTier = t;
+      ['invTierCore', 'invTierTarget', 'invTierAll'].forEach(id => {
+        document.getElementById(id).className = 'px-3 py-1 rounded-xl font-bold bg-slate-800 text-slate-300 hover:text-white';
+      });
+      const map = { core: 'invTierCore', target: 'invTierTarget', all: 'invTierAll' };
+      document.getElementById(map[t]).className = 'px-3 py-1 rounded-xl font-bold bg-sky-500 text-slate-950 shadow';
+      generateNewProblem();
+    }
+
+    /* =====================================================================
+       PROBLEM GENERATOR ROUTER
+       ===================================================================== */
+    function generateNewProblem() {
+      isProcessing = false;
+      const stage = document.getElementById('activeStageContainer');
+      stage.innerHTML = '';
+
+      if (currentTab === 'addition') {
+        buildAdditionModule(stage);
+      } else if (currentTab === 'subtraction') {
+        buildSubtractionModule(stage);
+      } else if (currentTab === 'clinic') {
+        buildClinicModule(stage);
+      } else if (currentTab === 'inverse') {
+        buildInverseModule(stage);
+      } else if (currentTab === 'addon') {
+        buildAddOnModule(stage);
+      }
+    }
+
+    /* =====================================================================
+       MODULE 1: COLUMN ADDITION (CPA DUAL VIEW & BUNDLE MECHANIC)
+       ===================================================================== */
+    function buildAdditionModule(container) {
+      let topNum, botNum;
+
+      if (addLevel === 1) {
+        // 2-digit + 2-digit with units carry guaranteed
+        const u1 = Math.floor(Math.random() * 5) + 5; // 5-9
+        const u2 = Math.floor(Math.random() * 4) + (10 - u1); // sum >= 10
+        const t1 = Math.floor(Math.random() * 4) + 2;
+        const t2 = Math.floor(Math.random() * 4) + 1;
+        topNum = t1 * 10 + u1;
+        botNum = t2 * 10 + u2;
+      } else if (addLevel === 2) {
+        // 3-digit + 2 or 3-digit (single regroup in Tens or Units)
+        topNum = Math.floor(Math.random() * 400) + 180;
+        botNum = Math.floor(Math.random() * 150) + 45;
+      } else {
+        // Double regroup (Units to Tens AND Tens to Hundreds)
+        const u1 = Math.floor(Math.random() * 4) + 6;
+        const u2 = Math.floor(Math.random() * 3) + 7;
+        const t1 = Math.floor(Math.random() * 4) + 6;
+        const t2 = Math.floor(Math.random() * 3) + 6;
+        const h1 = Math.floor(Math.random() * 3) + 1;
+        const h2 = Math.floor(Math.random() * 3) + 1;
+        topNum = h1 * 100 + t1 * 10 + u1;
+        botNum = h2 * 100 + t2 * 10 + u2;
+      }
+
+      const sum = topNum + botNum;
+      
+      const topH = Math.floor(topNum / 100);
+      const topT = Math.floor((topNum % 100) / 10);
+      const topU = topNum % 10;
+
+      const botH = Math.floor(botNum / 100);
+      const botT = Math.floor((botNum % 100) / 10);
+      const botU = botNum % 10;
+
+      addState = {
+        topNum, botNum, sum,
+        topH, topT, topU,
+        botH, botT, botU,
+        col: 'units', // 'units', 'tens', 'hundreds', 'done'
+        phase: 'solve', // 'solve' or 'ask_carry'
+        carriedTens: 0,
+        carriedHundreds: 0,
+        carriedThousands: 0,
+        inputU: '',
+        inputT: '',
+        inputH: '',
+        inputCarry: '',
+        currentColSum: 0
+      };
+
+      renderAdditionUI(container);
+    }
+
+    function renderAdditionUI(container) {
+      const s = addState;
+
+      // Calculate total columns we have
+      const hasHundreds = (s.topH > 0 || s.botH > 0 || s.carriedHundreds > 0);
+
+      container.innerHTML = `
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 w-full">
+          
+          <!-- LEFT: FORMAL WRITTEN COLUMN GRID -->
+          <div class="lg:col-span-5 bg-slate-900 border-2 border-slate-800 rounded-3xl p-5 shadow-2xl flex flex-col items-center justify-between">
+            <div class="w-full flex items-center justify-between border-b border-slate-800 pb-2">
+              <span class="font-kids text-sm font-bold text-sky-400">Step: <span id="addStepName" class="text-amber-400 uppercase">${s.col}</span></span>
+              <span class="text-[11px] text-slate-400 font-medium">Add Right to Left</span>
+            </div>
+
+            <!-- Place Value Column Titles -->
+            <div class="grid grid-cols-4 w-full max-w-[280px] text-center font-kids text-lg font-bold pt-3 pb-1">
+              <div class="text-purple-400 text-sm">Th</div>
+              <div class="text-emerald-400">H</div>
+              <div class="text-sky-400">T</div>
+              <div class="text-amber-400">U</div>
+            </div>
+
+            <!-- Carried Row Top -->
+            <div class="grid grid-cols-4 w-full max-w-[280px] text-center font-kids text-sm font-bold h-8 items-center">
+              <div id="addCarryTh" class="text-purple-400 ${s.carriedThousands ? 'bg-purple-500/20 border border-purple-500 rounded-lg' : ''}">${s.carriedThousands || ''}</div>
+              <div id="addCarryH" class="text-emerald-400 ${s.phase === 'ask_carry' && s.col === 'tens' ? 'border-2 border-dashed border-amber-400 bg-amber-500/20 rounded-lg animate-pulse' : (s.carriedHundreds ? 'bg-emerald-500/20 border border-emerald-500 rounded-lg' : '')}">
+                ${s.phase === 'ask_carry' && s.col === 'tens' ? (s.inputCarry || '?') : (s.carriedHundreds || '')}
+              </div>
+              <div id="addCarryT" class="text-sky-400 ${s.phase === 'ask_carry' && s.col === 'units' ? 'border-2 border-dashed border-amber-400 bg-amber-500/20 rounded-lg animate-pulse' : (s.carriedTens ? 'bg-sky-500/20 border border-sky-500 rounded-lg' : '')}">
+                ${s.phase === 'ask_carry' && s.col === 'units' ? (s.inputCarry || '?') : (s.carriedTens || '')}
+              </div>
+              <div></div>
+            </div>
+
+            <!-- Top Number Row -->
+            <div class="grid grid-cols-4 w-full max-w-[280px] text-center font-kids text-3xl font-bold">
+              <div></div>
+              <div class="text-emerald-400">${s.topH || ''}</div>
+              <div class="text-sky-400">${s.topT}</div>
+              <div class="text-amber-400">${s.topU}</div>
+            </div>
+
+            <!-- Bottom Number Row -->
+            <div class="grid grid-cols-4 w-full max-w-[280px] text-center font-kids text-3xl font-bold border-b-4 border-slate-300 pb-2">
+              <div class="text-slate-400 text-3xl flex items-center justify-center">+</div>
+              <div class="text-emerald-400">${s.botH || ''}</div>
+              <div class="text-sky-400">${s.botT}</div>
+              <div class="text-amber-400">${s.botU}</div>
+            </div>
+
+            <!-- Answer Row -->
+            <div class="grid grid-cols-4 w-full max-w-[280px] text-center font-kids text-3xl font-bold pt-2">
+              <div id="addAnsTh" class="col-cell text-purple-400 font-bold">${s.carriedThousands || ''}</div>
+              <div id="addAnsH" class="col-cell text-emerald-400 border border-dashed ${s.col === 'hundreds' && s.phase === 'solve' ? 'border-emerald-400 bg-emerald-500/10' : 'border-slate-800'} rounded-xl">${s.inputH || (s.col === 'hundreds' ? '?' : '')}</div>
+              <div id="addAnsT" class="col-cell text-sky-400 border border-dashed ${s.col === 'tens' && s.phase === 'solve' ? 'border-sky-400 bg-sky-500/10' : 'border-slate-800'} rounded-xl">${s.inputT || (s.col === 'tens' ? '?' : '')}</div>
+              <div id="addAnsU" class="col-cell text-amber-400 border border-dashed ${s.col === 'units' && s.phase === 'solve' ? 'border-amber-400 bg-amber-500/10' : 'border-slate-800'} rounded-xl">${s.inputU || (s.col === 'units' ? '?' : '')}</div>
+            </div>
+
+            <div id="addGuidancePrompt" class="mt-4 p-2.5 bg-slate-950 rounded-2xl border border-slate-800 w-full text-center text-xs font-semibold text-slate-300 min-h-[46px] flex items-center justify-center">
+              ${getAdditionPromptText()}
+            </div>
+          </div>
+
+          <!-- RIGHT: CONCRETE-PICTORIAL PLACE VALUE MAT -->
+          <div class="lg:col-span-7 bg-slate-900 border-2 border-slate-800 rounded-3xl p-5 shadow-2xl flex flex-col justify-between gap-3">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+              <span class="font-kids text-sm font-bold text-slate-200">Interactive Place Value Mat (CPA Regrouping)</span>
+              <span class="text-[11px] text-emerald-400 font-mono">10 Units = 1 Ten | 10 Tens = 1 Hundred</span>
+            </div>
+
+            <!-- Columns Display (Hundreds, Tens, Units) -->
+            <div class="grid grid-cols-3 gap-2 h-64 sm:h-72">
+              <!-- Hundreds Mat -->
+              <div class="bg-slate-950/80 border-2 border-emerald-500/40 rounded-2xl p-2 flex flex-col items-center overflow-y-auto">
+                <span class="font-kids text-xs font-bold text-emerald-400 uppercase tracking-widest mb-1.5">Hundreds (H)</span>
+                <div id="matH" class="flex flex-wrap gap-1.5 justify-center">
+                  ${renderBase10Flats(s.topH + s.botH + s.carriedHundreds)}
+                </div>
+              </div>
+
+              <!-- Tens Mat -->
+              <div class="bg-slate-950/80 border-2 border-sky-500/40 rounded-2xl p-2 flex flex-col items-center overflow-y-auto">
+                <span class="font-kids text-xs font-bold text-sky-400 uppercase tracking-widest mb-1.5">Tens (T)</span>
+                <div id="matT" class="flex flex-wrap gap-1.5 justify-center">
+                  ${renderBase10Rods(s.topT + s.botT + s.carriedTens)}
+                </div>
+              </div>
+
+              <!-- Units Mat -->
+              <div class="bg-slate-950/80 border-2 border-amber-500/40 rounded-2xl p-2 flex flex-col items-center overflow-y-auto">
+                <span class="font-kids text-xs font-bold text-amber-400 uppercase tracking-widest mb-1.5">Units (U)</span>
+                <div id="matU" class="flex flex-wrap gap-1 justify-center">
+                  ${renderBase10Cubes(s.col === 'units' ? (s.topU + s.botU) : (s.topU + s.botU - (s.carriedTens ? 10 : 0)))}
+                </div>
+              </div>
+            </div>
+
+            <!-- Interactive Action / Question Row -->
+            <div id="addMatActionArea" class="flex items-center justify-between gap-3 bg-slate-950 p-3 rounded-2xl border border-slate-800 min-h-[58px]">
+              ${getAdditionMatControls()}
+            </div>
+
+          </div>
+
+        </div>
+      `;
+    }
+
+    function getAdditionPromptText() {
+      const s = addState;
+      if (s.col === 'units') {
+        if (s.phase === 'solve') {
+          return `Add the Units column: What digit stays in the Units box?`;
+        } else {
+          return `Regrouping needed! What digit must be carried over to the Tens column?`;
+        }
+      } else if (s.col === 'tens') {
+        if (s.phase === 'solve') {
+          return s.carriedTens > 0 
+            ? `Add the Tens column (don't forget the carried ten): What digit stays in the Tens box?` 
+            : `Add the Tens column: What digit stays in the Tens box?`;
+        } else {
+          return `Regrouping needed! What digit must be carried over to the Hundreds column?`;
+        }
+      } else if (s.col === 'hundreds') {
+        return s.carriedHundreds > 0 
+          ? `Add the Hundreds column (including the carried hundred): Enter the total hundreds.` 
+          : `Add the Hundreds column: Enter the total hundreds.`;
+      } else {
+        return `🎉 Excellent calculation! Total = ${s.sum}.`;
+      }
+    }
+
+    function getAdditionMatControls() {
+      const s = addState;
+      if (s.col === 'done') {
+        return `<div class="text-emerald-400 font-kids font-bold text-base">🎉 Calculation Complete & Verified: ${s.sum}!</div>`;
+      }
+      if (s.phase === 'ask_carry') {
+        const nextColName = s.col === 'units' ? 'Tens' : 'Hundreds';
+        return `
+          <div class="text-xs font-kids text-amber-300">
+            <strong>Question:</strong> How many are carried to the <strong>${nextColName}</strong> column?
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-xs text-slate-400 font-mono">Type digit & press Enter</span>
+          </div>
+        `;
+      }
+      return `
+        <div class="text-xs font-kids text-slate-300">
+          Calculating the <strong class="text-amber-400 uppercase">${s.col}</strong> column.
+        </div>
+        <div class="text-xs font-mono text-sky-400">Type the digit that stays in this column.</div>
+      `;
+    }
+
+    function renderBase10Cubes(count) {
+      let html = '';
+      for (let i = 0; i < count; i++) {
+        html += `<div class="b10-cube animate-pop"></div>`;
+      }
+      return html || '<span class="text-slate-600 text-[10px] mt-4">Empty</span>';
+    }
+
+    function renderBase10Rods(count) {
+      let html = '';
+      for (let i = 0; i < count; i++) {
+        html += `<div class="b10-rod animate-pop"></div>`;
+      }
+      return html || '<span class="text-slate-600 text-[10px] mt-4">Empty</span>';
+    }
+
+    function renderBase10Flats(count) {
+      let html = '';
+      for (let i = 0; i < count; i++) {
+        html += `<div class="b10-flat animate-pop"></div>`;
+      }
+      return html || '<span class="text-slate-600 text-[10px] mt-4">Empty</span>';
+    }
+
+    function getAdditionActionControls() {
+      const s = addState;
+      const unitSum = s.topU + s.botU;
+      const tenSum = s.topT + s.botT + s.carriedTens;
+
+      if (s.step === 'units') {
+        if (unitSum >= 10 && !s.bundledU) {
+          return `
+            <div class="text-xs font-kids text-amber-300">You have ${unitSum} units! Bundle 10 into 1 Ten Rod:</div>
+            <button onclick="bundleUnitsToAdd()" class="px-5 py-2.5 bg-gradient-to-r from-amber-500 to-sky-500 text-slate-950 font-kids text-base font-bold rounded-xl shadow-lg active:scale-95 pulse-glow transition">
+              ✨ Bundle 10 Units ➔ 1 Ten
+            </button>
+          `;
+        } else {
+          return `
+            <div class="text-xs font-kids text-slate-300">Now record the remaining loose units:</div>
+            <div class="font-kids text-lg text-amber-400 font-bold">${unitSum % 10} Units go in the answer box!</div>
+          `;
+        }
+      } else if (s.step === 'tens') {
+        if (tenSum >= 10 && !s.bundledT) {
+          return `
+            <div class="text-xs font-kids text-sky-300">You have ${tenSum} tens! Bundle 10 into 1 Hundred Flat:</div>
+            <button onclick="bundleTensToAdd()" class="px-5 py-2.5 bg-gradient-to-r from-sky-500 to-emerald-500 text-slate-950 font-kids text-base font-bold rounded-xl shadow-lg active:scale-95 pulse-glow transition">
+              ✨ Bundle 10 Tens ➔ 1 Hundred
+            </button>
+          `;
+        } else {
+          return `
+            <div class="text-xs font-kids text-slate-300">Record the remaining tens:</div>
+            <div class="font-kids text-lg text-sky-400 font-bold">${tenSum % 10} Tens go in the answer box!</div>
+          `;
+        }
+      } else if (s.step === 'hundreds') {
+        const hSum = s.topH + s.botH + s.carriedHundreds;
+        return `
+          <div class="text-xs font-kids text-emerald-300">Add the Hundreds:</div>
+          <div class="font-kids text-lg text-emerald-400 font-bold">${hSum} Hundreds total</div>
+        `;
+      } else {
+        return `
+          <div class="text-emerald-400 font-kids font-bold text-base">🎉 Calculation Complete & Correct: ${s.sum}!</div>
+        `;
+      }
+    }
+
+    function bundleUnitsToAdd() {
+      playSound('bundle');
+      addState.bundledU = true;
+      addState.carriedTens = 1;
+      renderAdditionUI(document.getElementById('activeStageContainer'));
+    }
+
+    function bundleTensToAdd() {
+      playSound('bundle');
+      addState.bundledT = true;
+      addState.carriedHundreds = 1;
+      renderAdditionUI(document.getElementById('activeStageContainer'));
+    }
+
+    /* =====================================================================
+       MODULE 2: COLUMN SUBTRACTION (UNPACK TEN & ANTI-REVERSAL ENGINE)
+       ===================================================================== */
+    function buildSubtractionModule(container) {
+      let topNum, botNum;
+
+      if (subLevel === 1) {
+        // 2-digit anti-reversal (e.g. 52 - 27; top unit strictly smaller than bottom)
+        const t1 = Math.floor(Math.random() * 4) + 4; // 4 to 7
+        const t2 = Math.floor(Math.random() * 2) + 2; // 2 to 3
+        const u1 = Math.floor(Math.random() * 4) + 1; // 1 to 4
+        const u2 = Math.floor(Math.random() * 3) + 6; // 6 to 8 (so u1 < u2 always!)
+        topNum = t1 * 10 + u1;
+        botNum = t2 * 10 + u2;
+      } else if (subLevel === 2) {
+        // 3-digit: exchange tens to units
+        topNum = (Math.floor(Math.random() * 3) + 3) * 100 + (Math.floor(Math.random() * 4) + 4) * 10 + (Math.floor(Math.random() * 3) + 1);
+        botNum = (Math.floor(Math.random() * 2) + 1) * 100 + (Math.floor(Math.random() * 2) + 1) * 10 + (Math.floor(Math.random() * 3) + 7);
+      } else if (subLevel === 3) {
+        // Exchange Hundreds to Tens and Tens to Units
+        topNum = (Math.floor(Math.random() * 3) + 5) * 100 + 20 + (Math.floor(Math.random() * 3) + 1);
+        botNum = 200 + 70 + (Math.floor(Math.random() * 3) + 6);
+      } else {
+        // The Zero Void (e.g. 403 - 167)
+        topNum = (Math.floor(Math.random() * 3) + 4) * 100 + 0 * 10 + (Math.floor(Math.random() * 4) + 2);
+        botNum = (Math.floor(Math.random() * 2) + 1) * 100 + (Math.floor(Math.random() * 4) + 4) * 10 + (Math.floor(Math.random() * 3) + 7);
+      }
+
+      const diff = topNum - botNum;
+
+      subState = {
+        topNum, botNum, diff,
+        topH: Math.floor(topNum / 100),
+        topT: Math.floor((topNum % 100) / 10),
+        topU: topNum % 10,
+        botH: Math.floor(botNum / 100),
+        botT: Math.floor((botNum % 100) / 10),
+        botU: botNum % 10,
+        unpackedTenToUnits: false,
+        unpackedHundredToTen: false,
+        step: 'units',
+        inputU: '', inputT: '', inputH: '',
+        reversalAlert: false
+      };
+
+      renderSubtractionUI(container);
+    }
+
+    function renderSubtractionUI(container) {
+      const s = subState;
+
+      // Current visual counts after unpack
+      const currentU = s.topU + (s.unpackedTenToUnits ? 10 : 0);
+      const currentT = s.topT + (s.unpackedHundredToTen ? 10 : 0) - (s.unpackedTenToUnits ? 1 : 0);
+      const currentH = s.topH - (s.unpackedHundredToTen ? 1 : 0);
+
+      container.innerHTML = `
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 w-full">
+          
+          <!-- LEFT: WRITTEN SUBTRACTION GRID -->
+          <div class="lg:col-span-5 bg-slate-900 border-2 border-slate-800 rounded-3xl p-5 shadow-2xl flex flex-col items-center justify-between">
+            <div class="w-full flex items-center justify-between border-b border-slate-800 pb-2">
+              <span class="font-kids text-sm font-bold text-rose-400">Step: <span class="text-amber-400 uppercase">${s.step}</span></span>
+              <span class="text-[11px] text-slate-400 font-medium">Never flip numbers! Unpack instead.</span>
+            </div>
+
+            <!-- Titles -->
+            <div class="grid grid-cols-4 w-full max-w-[280px] text-center font-kids text-lg font-bold pt-3 pb-1">
+              <div></div>
+              <div class="text-emerald-400">H</div>
+              <div class="text-sky-400">T</div>
+              <div class="text-amber-400">U</div>
+            </div>
+
+            <!-- Struck-Through Regroup Display Row -->
+            <div class="grid grid-cols-4 w-full max-w-[280px] text-center font-kids text-lg font-bold h-7 items-center">
+              <div></div>
+              <div class="text-emerald-400 font-bold">${s.unpackedHundredToTen ? currentH : ''}</div>
+              <div class="text-sky-400 font-bold">${s.unpackedTenToUnits ? currentT : (s.unpackedHundredToTen ? currentT : '')}</div>
+              <div class="text-amber-400 font-bold">${s.unpackedTenToUnits ? currentU : ''}</div>
+            </div>
+
+            <!-- Top Number Row -->
+            <div class="grid grid-cols-4 w-full max-w-[280px] text-center font-kids text-3xl font-bold">
+              <div></div>
+              <div class="text-emerald-400 ${s.unpackedHundredToTen ? 'strikethrough text-slate-500' : ''}">${s.topH || ''}</div>
+              <div class="text-sky-400 ${s.unpackedTenToUnits ? 'strikethrough text-slate-500' : ''}">${s.topT}</div>
+              <div class="text-amber-400 ${s.unpackedTenToUnits ? 'strikethrough text-slate-500' : ''}">${s.topU}</div>
+            </div>
+
+            <!-- Bottom Number Row -->
+            <div class="grid grid-cols-4 w-full max-w-[280px] text-center font-kids text-3xl font-bold border-b-4 border-slate-300 pb-2">
+              <div class="text-rose-400 text-3xl flex items-center justify-center">-</div>
+              <div class="text-emerald-400">${s.botH || ''}</div>
+              <div class="text-sky-400">${s.botT}</div>
+              <div class="text-amber-400">${s.botU}</div>
+            </div>
+
+            <!-- Answer Row -->
+            <div class="grid grid-cols-4 w-full max-w-[280px] text-center font-kids text-3xl font-bold pt-2">
+              <div></div>
+              <div id="subAnsH" class="col-cell text-emerald-400 border border-dashed ${s.step === 'hundreds' ? 'border-emerald-400 bg-emerald-500/10' : 'border-slate-800'} rounded-xl">${s.inputH || '?'}</div>
+              <div id="subAnsT" class="col-cell text-sky-400 border border-dashed ${s.step === 'tens' ? 'border-sky-400 bg-sky-500/10' : 'border-slate-800'} rounded-xl">${s.inputT || '?'}</div>
+              <div id="subAnsU" class="col-cell text-amber-400 border border-dashed ${s.step === 'units' ? 'border-amber-400 bg-amber-500/10' : 'border-slate-800'} rounded-xl">${s.inputU || '?'}</div>
+            </div>
+
+            <!-- Warning Prompt -->
+            <div id="subGuidancePrompt" class="mt-4 p-2.5 bg-slate-950 rounded-2xl border ${s.reversalAlert ? 'border-rose-500 text-rose-300 animate-pulse' : 'border-slate-800 text-slate-300'} w-full text-center text-xs font-semibold">
+              ${s.reversalAlert ? `
+                ⚠️ <strong>REVERSAL TRAP DETECTED!</strong> You have ${s.topU} and need to take away ${s.botU}. You CANNOT flip it to ${s.botU} - ${s.topU}! Unpack a Ten first!
+              ` : `
+                Looking at Units: <strong>${currentU} - ${s.botU}</strong>. ${currentU < s.botU ? 'Cannot do it yet! Unpack 1 Ten on the mat.' : 'Subtract and type the answer!'}
+              `}
+            </div>
+          </div>
+
+          <!-- RIGHT: CONCRETE UNPACKING MAT -->
+          <div class="lg:col-span-7 bg-slate-900 border-2 border-slate-800 rounded-3xl p-5 shadow-2xl flex flex-col justify-between gap-3">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+              <span class="font-kids text-sm font-bold text-slate-200">Decomposition Mat (Unpack Base-10 Blocks)</span>
+              <span class="text-[11px] text-rose-400 font-mono">1 Ten decomposes into 10 Units</span>
+            </div>
+
+            <!-- Blocks Display -->
+            <div class="grid grid-cols-3 gap-2 h-64 sm:h-72">
+              <!-- Hundreds Mat -->
+              <div class="bg-slate-950/80 border-2 border-emerald-500/40 rounded-2xl p-2 flex flex-col items-center overflow-y-auto">
+                <span class="font-kids text-xs font-bold text-emerald-400 uppercase tracking-widest mb-1.5">Hundreds (${currentH})</span>
+                <div class="flex flex-wrap gap-1.5 justify-center">
+                  ${renderBase10Flats(currentH)}
+                </div>
+              </div>
+
+              <!-- Tens Mat -->
+              <div class="bg-slate-950/80 border-2 border-sky-500/40 rounded-2xl p-2 flex flex-col items-center overflow-y-auto">
+                <span class="font-kids text-xs font-bold text-sky-400 uppercase tracking-widest mb-1.5">Tens (${currentT})</span>
+                <div class="flex flex-wrap gap-1.5 justify-center">
+                  ${renderBase10Rods(currentT)}
+                </div>
+              </div>
+
+              <!-- Units Mat -->
+              <div class="bg-slate-950/80 border-2 border-amber-500/40 rounded-2xl p-2 flex flex-col items-center overflow-y-auto">
+                <span class="font-kids text-xs font-bold text-amber-400 uppercase tracking-widest mb-1.5">Units (${currentU})</span>
+                <div class="flex flex-wrap gap-1 justify-center">
+                  ${renderBase10Cubes(currentU)}
+                </div>
+              </div>
+            </div>
+
+            <!-- Action Controls -->
+            <div id="subMatActionArea" class="flex items-center justify-between gap-3 bg-slate-950 p-3 rounded-2xl border border-slate-800 min-h-[58px]">
+              ${getSubtractionActionControls(currentU, currentT, currentH)}
+            </div>
+
+          </div>
+
+        </div>
+      `;
+    }
+
+    function getSubtractionActionControls(u, t, h) {
+      const s = subState;
+      if (s.step === 'units') {
+        if (u < s.botU) {
+          if (t === 0 && h > 0) {
+            return `
+              <div class="text-xs font-kids text-amber-300">Tens column is 0! Unpack 1 Hundred into 10 Tens first:</div>
+              <button onclick="unpackHundredToTens()" class="px-5 py-2.5 bg-gradient-to-r from-emerald-500 to-sky-500 text-slate-950 font-kids text-base font-bold rounded-xl shadow-lg active:scale-95 pulse-glow transition">
+                💥 Unpack 1 Hundred ➔ 10 Tens
+              </button>
+            `;
+          }
+          return `
+            <div class="text-xs font-kids text-amber-300">Need more units! Break 1 Ten rod into 10 loose units:</div>
+            <button onclick="unpackTenToUnits()" class="px-5 py-2.5 bg-gradient-to-r from-sky-500 to-amber-500 text-slate-950 font-kids text-base font-bold rounded-xl shadow-lg active:scale-95 pulse-glow transition">
+              💥 Unpack 1 Ten ➔ 10 Units
+            </button>
+          `;
+        } else {
+          return `
+            <div class="text-xs font-kids text-slate-300">Ready to subtract Units!</div>
+            <div class="font-kids text-lg text-amber-400 font-bold">${u} - ${s.botU} = ${u - s.botU}</div>
+          `;
+        }
+      } else if (s.step === 'tens') {
+        if (t < s.botT) {
+          return `
+            <div class="text-xs font-kids text-sky-300">Need more tens! Unpack 1 Hundred:</div>
+            <button onclick="unpackHundredToTens()" class="px-5 py-2.5 bg-gradient-to-r from-emerald-500 to-sky-500 text-slate-950 font-kids text-base font-bold rounded-xl shadow-lg active:scale-95 pulse-glow transition">
+              💥 Unpack 1 Hundred ➔ 10 Tens
+            </button>
+          `;
+        } else {
+          return `
+            <div class="text-xs font-kids text-slate-300">Subtract Tens:</div>
+            <div class="font-kids text-lg text-sky-400 font-bold">${t} - ${s.botT} = ${t - s.botT}</div>
+          `;
+        }
+      } else if (s.step === 'hundreds') {
+        return `
+          <div class="text-xs font-kids text-slate-300">Subtract Hundreds:</div>
+          <div class="font-kids text-lg text-emerald-400 font-bold">${h} - ${s.botH} = ${h - s.botH}</div>
+        `;
+      } else {
+        return `
+          <div class="text-emerald-400 font-kids font-bold text-base">🎉 Subtraction Complete: ${s.diff}!</div>
+        `;
+      }
+    }
+
+    function unpackTenToUnits() {
+      playSound('bundle');
+      subState.unpackedTenToUnits = true;
+      subState.reversalAlert = false;
+      renderSubtractionUI(document.getElementById('activeStageContainer'));
+    }
+
+    function unpackHundredToTens() {
+      playSound('bundle');
+      subState.unpackedHundredToTen = true;
+      renderSubtractionUI(document.getElementById('activeStageContainer'));
+    }
+
+    /* =====================================================================
+       MODULE 3: "SPOT THE MISTAKE!" (REASONING & ERROR CLINIC)
+       ===================================================================== */
+    const clinicMistakesPool = [
+      {
+        id: 1,
+        type: 'reversal',
+        title: 'Subtraction Reversal Trap',
+        top: 63,
+        bot: 28,
+        op: '-',
+        flawedAns: 45, // Did 8 - 3 = 5 instead of borrowing!
+        correctAns: 35,
+        flawedCol: 'units',
+        reasons: [
+          'Subtracted smaller from larger (8 - 3 = 5) instead of borrowing a ten.',
+          'Added instead of subtracting.',
+          'Forgot to write down the hundred.'
+        ],
+        correctReasonIdx: 0,
+        explanation: 'In the units column, 3 is smaller than 8. The pupil flipped it to 8 - 3 = 5 instead of unpacking a ten to make 13 - 8 = 5!'
+      },
+      {
+        id: 2,
+        type: 'carry',
+        title: 'The Forgotten Carried Ten',
+        top: 58,
+        bot: 27,
+        op: '+',
+        flawedAns: 75, // 8+7=15, carried 1 forgotten (5+2=7 instead of 8)
+        correctAns: 85,
+        flawedCol: 'tens',
+        reasons: [
+          'Forgot to add the carried ten into the tens column (5 + 2 = 7 instead of 8).',
+          'Multiplied the numbers together.',
+          'Wrote down the wrong units answer.'
+        ],
+        correctReasonIdx: 0,
+        explanation: '8 + 7 = 15. The 1 ten was carried to the tens column, but the pupil only added 5 + 2 = 7 and left out the carried 1!'
+      },
+      {
+        id: 3,
+        type: 'reversal',
+        title: 'Three-Digit Subtraction Reversal',
+        top: 342,
+        bot: 129,
+        op: '-',
+        flawedAns: 227, // 9 - 2 = 7 instead of 12 - 9 = 3
+        correctAns: 213,
+        flawedCol: 'units',
+        reasons: [
+          'Flipped the units (did 9 - 2 = 7 instead of exchanging from the tens).',
+          'Subtracted the hundreds in reverse.',
+          'Added the digits together.'
+        ],
+        correctReasonIdx: 0,
+        explanation: '2 is smaller than 9. You cannot do 2 - 9 without exchanging a ten to make 12 - 9 = 3!'
+      },
+      {
+        id: 4,
+        type: 'carry',
+        title: 'Double Carrying Omission',
+        top: 476,
+        bot: 285,
+        op: '+',
+        flawedAns: 751, // 6+5=11 (carry 1). 7+8+1=16 (forgot to carry the 1 into hundreds: 4+2=6 not 7)
+        correctAns: 761,
+        flawedCol: 'tens',
+        reasons: [
+          'Wrote 5 tens instead of 6 tens (forgot the carried ten from 6 + 5 = 11).',
+          'Added the units incorrectly.',
+          'Subtracted the numbers.'
+        ],
+        correctReasonIdx: 0,
+        explanation: '6 + 5 = 11 gave 1 carried ten. 7 + 8 + 1 = 16 tens (6 tens and 1 carried hundred).'
+      }
+    ];
+
+    function buildClinicModule(container) {
+      let pool = clinicMistakesPool;
+      if (clinicFilter === 'reversal') pool = pool.filter(p => p.type === 'reversal');
+      else if (clinicFilter === 'carry') pool = pool.filter(p => p.type === 'carry');
+
+      const item = pool[Math.floor(Math.random() * pool.length)];
+
+      clinicState = {
+        item,
+        currentStep: 1, // 1: Verdict, 2: Find Column, 3: Reason, 4: True Answer
+        selectedCol: null,
+        userFixedAns: ''
+      };
+
+      renderClinicUI(container);
+    }
+
+    function renderClinicUI(container) {
+      const c = clinicState;
+      const m = c.item;
+
+      const topDigits = m.top.toString().padStart(3, ' ');
+      const botDigits = m.bot.toString().padStart(3, ' ');
+      const ansDigits = m.flawedAns.toString().padStart(3, ' ');
+
+      container.innerHTML = `
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-5 w-full max-w-4xl mx-auto">
+          
+          <!-- WORKED EXAMPLE JOTTER CARD -->
+          <div class="md:col-span-5 bg-amber-50 text-slate-900 rounded-3xl p-6 shadow-2xl border-4 border-amber-200 flex flex-col items-center justify-between relative overflow-hidden">
+            <div class="w-full flex items-center justify-between border-b-2 border-dashed border-amber-300 pb-2">
+              <span class="font-hand text-xl font-bold text-amber-900">Pupil Workbook</span>
+              <span class="text-xs bg-rose-500 text-white px-2 py-0.5 rounded-full font-bold">Investigation</span>
+            </div>
+
+            <!-- Handwritten Style Column Working -->
+            <div class="py-6 flex flex-col items-center font-hand text-4xl sm:text-5xl font-bold tracking-widest text-slate-900 leading-tight">
+              <!-- Top Row -->
+              <div class="grid grid-cols-4 w-44 text-right">
+                <div></div>
+                <div>${topDigits[0] !== ' ' ? topDigits[0] : ''}</div>
+                <div>${topDigits[1] !== ' ' ? topDigits[1] : ''}</div>
+                <div>${topDigits[2]}</div>
+              </div>
+              <!-- Bottom Row -->
+              <div class="grid grid-cols-4 w-44 text-right border-b-4 border-slate-900 pb-1">
+                <div class="text-left text-3xl font-kids">${m.op}</div>
+                <div>${botDigits[0] !== ' ' ? botDigits[0] : ''}</div>
+                <div>${botDigits[1] !== ' ' ? botDigits[1] : ''}</div>
+                <div>${botDigits[2]}</div>
+              </div>
+              <!-- Flawed Answer -->
+              <div class="grid grid-cols-4 w-44 text-right text-rose-600 pt-1">
+                <div></div>
+                <div>${ansDigits[0] !== ' ' ? ansDigits[0] : ''}</div>
+                <div>${ansDigits[1] !== ' ' ? ansDigits[1] : ''}</div>
+                <div>${ansDigits[2]}</div>
+              </div>
+            </div>
+
+            <div class="text-center font-hand text-lg text-slate-700 bg-white/70 p-2.5 rounded-xl border border-amber-200 w-full">
+              "Teacher, look at my calculation! Is it right?"
+            </div>
+          </div>
+
+          <!-- DIAGNOSTIC REASONING CLINIC (RIGHT) -->
+          <div class="md:col-span-7 bg-slate-900 border-2 border-slate-800 rounded-3xl p-5 shadow-2xl flex flex-col justify-between gap-4">
+            
+            <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+              <span class="font-kids text-sm font-bold text-sky-400">Error Clinic Investigation</span>
+              <span class="text-xs font-mono text-amber-400">Phase ${c.currentStep} of 4</span>
+            </div>
+
+            <!-- Dynamic Investigation Stage -->
+            <div id="clinicStepArea" class="flex-grow flex flex-col justify-center">
+              ${renderClinicStepContent()}
+            </div>
+
+            <div id="clinicFeedbackBanner" class="min-h-[24px] text-xs font-bold text-center"></div>
+
+          </div>
+
+        </div>
+      `;
+    }
+
+    function renderClinicStepContent() {
+      const c = clinicState;
+      const m = c.item;
+
+      if (c.currentStep === 1) {
+        return `
+          <div class="flex flex-col items-center gap-4 text-center animate-pop">
+            <h3 class="font-kids text-xl font-bold text-slate-100">Step 1: Check the Calculation</h3>
+            <p class="text-xs text-slate-300">Look closely at the pupil's working. Is this answer correct or incorrect?</p>
+            <div class="grid grid-cols-2 gap-3 w-full max-w-sm mt-2">
+              <button onclick="handleClinicVerdict(false)" class="py-4 bg-emerald-600/30 hover:bg-emerald-600 border-2 border-emerald-500 rounded-2xl font-kids text-lg font-bold text-emerald-300 hover:text-slate-950 transition active:scale-95">
+                ✅ It is Correct
+              </button>
+              <button onclick="handleClinicVerdict(true)" class="py-4 bg-rose-600/30 hover:bg-rose-600 border-2 border-rose-500 rounded-2xl font-kids text-lg font-bold text-rose-300 hover:text-slate-950 transition active:scale-95">
+                ❌ It has a Mistake!
+              </button>
+            </div>
+          </div>
+        `;
+      } else if (c.currentStep === 2) {
+        return `
+          <div class="flex flex-col items-center gap-3 text-center animate-pop">
+            <h3 class="font-kids text-xl font-bold text-amber-300">Step 2: Where did the mistake happen?</h3>
+            <p class="text-xs text-slate-300">Tap on the place value column where the pupil made their error:</p>
+            <div class="grid grid-cols-3 gap-3 w-full max-w-sm mt-2">
+              <button onclick="handleClinicColumn('hundreds')" class="py-4 bg-slate-800 hover:bg-emerald-500 hover:text-slate-950 border-2 border-slate-700 rounded-2xl font-kids text-base font-bold text-emerald-400 transition active:scale-95">
+                Hundreds
+              </button>
+              <button onclick="handleClinicColumn('tens')" class="py-4 bg-slate-800 hover:bg-sky-500 hover:text-slate-950 border-2 border-slate-700 rounded-2xl font-kids text-base font-bold text-sky-400 transition active:scale-95">
+                Tens
+              </button>
+              <button onclick="handleClinicColumn('units')" class="py-4 bg-slate-800 hover:bg-amber-500 hover:text-slate-950 border-2 border-slate-700 rounded-2xl font-kids text-base font-bold text-amber-400 transition active:scale-95">
+                Units
+              </button>
+            </div>
+          </div>
+        `;
+      } else if (c.currentStep === 3) {
+        return `
+          <div class="flex flex-col items-center gap-3 animate-pop">
+            <h3 class="font-kids text-xl font-bold text-sky-300 text-center">Step 3: Why is it wrong?</h3>
+            <p class="text-xs text-slate-300 text-center">Pick the mathematical reason for the mistake:</p>
+            <div class="flex flex-col gap-2 w-full mt-1">
+              ${m.reasons.map((r, idx) => `
+                <button onclick="handleClinicReason(${idx})" class="p-3 bg-slate-800 hover:bg-sky-600 hover:text-slate-950 border border-slate-700 rounded-xl text-left font-kids text-xs sm:text-sm font-semibold transition active:scale-98">
+                  ${r}
+                </button>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      } else {
+        return `
+          <div class="flex flex-col items-center gap-3 text-center animate-pop">
+            <h3 class="font-kids text-xl font-bold text-emerald-400">Step 4: Fix the Calculation!</h3>
+            <p class="text-xs text-slate-300">${m.explanation}</p>
+            <div class="my-2 p-3 bg-slate-950 rounded-2xl border border-slate-800 font-kids text-2xl text-slate-200">
+              ${m.top} ${m.op} ${m.bot} = <span class="text-emerald-400 font-bold underline">${c.userFixedAns || '?'}</span>
+            </div>
+            <p class="text-xs text-amber-300">Type the correct answer on the numpad below!</p>
+          </div>
+        `;
+      }
+    }
+
+    function handleClinicVerdict(userSaidMistake) {
+      if (userSaidMistake) {
+        playSound('correct');
+        clinicState.currentStep = 2;
+        renderClinicUI(document.getElementById('activeStageContainer'));
+      } else {
+        playSound('error');
+        flashClinicFeedback('Look again! Calculate each column carefully to spot the slip.', false);
+      }
+    }
+
+    function handleClinicColumn(col) {
+      if (col === clinicState.item.flawedCol) {
+        playSound('correct');
+        clinicState.currentStep = 3;
+        renderClinicUI(document.getElementById('activeStageContainer'));
+      } else {
+        playSound('error');
+        flashClinicFeedback(`Not the ${col} column! Check the digits in the other columns.`, false);
+      }
+    }
+
+    function handleClinicReason(idx) {
+      if (idx === clinicState.item.correctReasonIdx) {
+        playSound('correct');
+        clinicState.currentStep = 4;
+        renderClinicUI(document.getElementById('activeStageContainer'));
+      } else {
+        playSound('error');
+        flashClinicFeedback('Not quite. Think about how exchanging/carrying actually works!', false);
+      }
+    }
+
+    function flashClinicFeedback(msg, isSuccess) {
+      const fb = document.getElementById('clinicFeedbackBanner');
+      if (fb) {
+        fb.textContent = msg;
+        fb.className = `min-h-[24px] text-xs font-bold text-center ${isSuccess ? 'text-emerald-400' : 'text-rose-400'}`;
+      }
+    }
+
+    /* =====================================================================
+       MODULE 4: INVERSE FACT FLUENCY (MULTIPLICATION & DIVISION TRIANGLES)
+       ===================================================================== */
+    function buildInverseModule(container) {
+      let f1Pool = [3, 4, 6];
+      if (inverseTier === 'target') f1Pool = [7, 8, 9];
+      else if (inverseTier === 'all') f1Pool = [2, 3, 4, 5, 6, 7, 8, 9, 11, 12];
+
+      const factor1 = f1Pool[Math.floor(Math.random() * f1Pool.length)];
+      const factor2 = Math.floor(Math.random() * 8) + 2; // 2 to 9
+      const product = factor1 * factor2;
+
+      // 4 Linked sentences: Pick 1 to test
+      const sentenceTypes = ['mul1', 'mul2', 'div1', 'div2'];
+      const activeTest = sentenceTypes[Math.floor(Math.random() * sentenceTypes.length)];
+
+      let qText, targetAns;
+      if (activeTest === 'mul1') {
+        qText = `${factor1} × ${factor2} = ?`;
+        targetAns = product;
+      } else if (activeTest === 'mul2') {
+        qText = `${factor2} × ${factor1} = ?`;
+        targetAns = product;
+      } else if (activeTest === 'div1') {
+        qText = `${product} ÷ ${factor1} = ?`;
+        targetAns = factor2;
+      } else {
+        qText = `${product} ÷ ${factor2} = ?`;
+        targetAns = factor1;
+      }
+
+      inverseState = {
+        factor1, factor2, product,
+        activeTest, qText, targetAns,
+        userAns: ''
+      };
+
+      renderInverseUI(container);
+    }
+
+    function renderInverseUI(container) {
+      const inv = inverseState;
+
+      container.innerHTML = `
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-5 w-full max-w-4xl mx-auto">
+          
+          <!-- LEFT: FACT FAMILY TRIANGLE -->
+          <div class="md:col-span-5 bg-slate-900 border-2 border-slate-800 rounded-3xl p-5 shadow-2xl flex flex-col items-center justify-between">
+            <div class="w-full flex items-center justify-between border-b border-slate-800 pb-2">
+              <span class="font-kids text-sm font-bold text-amber-400">Fact Family Triangle</span>
+              <span class="text-[11px] text-slate-400 font-mono">Product at the Peak</span>
+            </div>
+
+            <!-- Triangle SVG Graphic -->
+            <div class="py-3 flex items-center justify-center w-full">
+              <svg viewBox="0 0 240 210" class="w-56 h-52">
+                <!-- Triangle Outline -->
+                <polygon points="120,25 215,185 25,185" fill="#0f172a" stroke="#38bdf8" stroke-width="4" stroke-linejoin="round"/>
+                
+                <!-- Center Inverse Operators -->
+                <text x="120" y="145" font-family="Fredoka" font-size="28" font-weight="bold" fill="#64748b" text-anchor="middle">×</text>
+                <text x="65" y="105" font-family="Fredoka" font-size="22" font-weight="bold" fill="#64748b" text-anchor="middle">÷</text>
+                <text x="175" y="105" font-family="Fredoka" font-size="22" font-weight="bold" fill="#64748b" text-anchor="middle">÷</text>
+
+                <!-- Peak: Product -->
+                <circle cx="120" cy="35" r="28" fill="#1e293b" stroke="#38bdf8" stroke-width="3"/>
+                <text x="120" y="44" font-family="Fredoka" font-size="22" font-weight="bold" fill="#38bdf8" text-anchor="middle">${inv.product}</text>
+
+                <!-- Bottom Left: Factor 1 -->
+                <circle cx="45" cy="175" r="28" fill="#1e293b" stroke="#f59e0b" stroke-width="3"/>
+                <text x="45" y="184" font-family="Fredoka" font-size="22" font-weight="bold" fill="#f59e0b" text-anchor="middle">${inv.factor1}</text>
+
+                <!-- Bottom Right: Factor 2 -->
+                <circle cx="195" cy="175" r="28" fill="#1e293b" stroke="#10b981" stroke-width="3"/>
+                <text x="195" y="184" font-family="Fredoka" font-size="22" font-weight="bold" fill="#10b981" text-anchor="middle">${inv.factor2}</text>
+              </svg>
+            </div>
+
+            <div class="text-xs text-slate-400 text-center font-medium">
+              3 numbers connected forever: 2 factors multiply to the product; dividing the product gives the other factor!
+            </div>
+          </div>
+
+          <!-- RIGHT: INVERSE RELATIONSHIP SENTENCES -->
+          <div class="md:col-span-7 bg-slate-900 border-2 border-slate-800 rounded-3xl p-5 shadow-2xl flex flex-col justify-between gap-3">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+              <span class="font-kids text-sm font-bold text-sky-400">4 Connected Number Sentences</span>
+              <span class="text-xs font-mono text-emerald-400">Inverse Power</span>
+            </div>
+
+            <!-- Active Test Card -->
+            <div class="bg-slate-950 border-2 border-amber-400/80 p-4 rounded-2xl flex flex-col items-center justify-center gap-2">
+              <span class="text-xs text-amber-300 font-kids uppercase tracking-widest">Complete the Linked Sentence</span>
+              <div class="font-kids text-4xl sm:text-5xl font-bold text-white tracking-wider">
+                ${inv.qText.replace('?', `<span class="text-amber-400 underline decoration-dashed">${inv.userAns || '?'}</span>`)}
+              </div>
+            </div>
+
+            <!-- 4 Linked Sentences List -->
+            <div class="grid grid-cols-2 gap-2 text-xs font-kids font-bold">
+              <div class="p-2.5 rounded-xl border ${inv.activeTest === 'mul1' ? 'border-amber-400 bg-amber-500/10 text-amber-300' : 'border-slate-800 bg-slate-950 text-slate-400'}">
+                1. ${inv.factor1} × ${inv.factor2} = ${inv.activeTest === 'mul1' ? '?' : inv.product}
+              </div>
+              <div class="p-2.5 rounded-xl border ${inv.activeTest === 'mul2' ? 'border-amber-400 bg-amber-500/10 text-amber-300' : 'border-slate-800 bg-slate-950 text-slate-400'}">
+                2. ${inv.factor2} × ${inv.factor1} = ${inv.activeTest === 'mul2' ? '?' : inv.product}
+              </div>
+              <div class="p-2.5 rounded-xl border ${inv.activeTest === 'div1' ? 'border-amber-400 bg-amber-500/10 text-amber-300' : 'border-slate-800 bg-slate-950 text-slate-400'}">
+                3. ${inv.product} ÷ ${inv.factor1} = ${inv.activeTest === 'div1' ? '?' : inv.factor2}
+              </div>
+              <div class="p-2.5 rounded-xl border ${inv.activeTest === 'div2' ? 'border-amber-400 bg-amber-500/10 text-amber-300' : 'border-slate-800 bg-slate-950 text-slate-400'}">
+                4. ${inv.product} ÷ ${inv.factor2} = ${inv.activeTest === 'div2' ? '?' : inv.factor1}
+              </div>
+            </div>
+
+            <div id="invFeedback" class="min-h-[24px] text-xs font-bold text-center text-slate-400">
+              Use the triangle at the left to find your missing number!
+            </div>
+          </div>
+
+        </div>
+      `;
+    }
+
+    /* =====================================================================
+       MODULE 5: MULTIPLES OF 10, 20... 100, 1000 ADD-ON ENGINE
+       ===================================================================== */
+    function buildAddOnModule(container) {
+      let lvl = addOnLevel;
+      if (lvl === 6) {
+        lvl = Math.floor(Math.random() * 5) + 1; // 1 to 5 random
+      }
+
+      let baseNum, stepNum, isPlus, answer, targetCol;
+
+      if (lvl === 1) {
+        // Safe Tens addition/subtraction (no boundary crossing)
+        targetCol = 'T';
+        isPlus = Math.random() < 0.6;
+        const tensMultiples = [10, 20, 30, 40, 50, 60, 70];
+        stepNum = tensMultiples[Math.floor(Math.random() * tensMultiples.length)];
+        const stepVal = stepNum / 10;
+        
+        let tVal;
+        if (isPlus) {
+          tVal = Math.floor(Math.random() * (9 - stepVal)) + 1; // tVal + stepVal <= 9
+        } else {
+          tVal = Math.floor(Math.random() * (9 - stepVal)) + stepVal; // tVal - stepVal >= 0
+        }
+
+        const hVal = Math.floor(Math.random() * 8) + 1;
+        const uVal = Math.floor(Math.random() * 8) + 1;
+        baseNum = hVal * 100 + tVal * 10 + uVal;
+        answer = isPlus ? (baseNum + stepNum) : (baseNum - stepNum);
+
+      } else if (lvl === 2) {
+        // Crossing the 100 boundary with Tens
+        targetCol = 'T';
+        isPlus = Math.random() < 0.55;
+        const crossingSteps = [30, 40, 50, 60, 70, 80];
+        stepNum = crossingSteps[Math.floor(Math.random() * crossingSteps.length)];
+        const hVal = Math.floor(Math.random() * 7) + 2; // 2 to 8
+        const uVal = Math.floor(Math.random() * 8) + 1;
+
+        if (isPlus) {
+          // ensure tens + step >= 10
+          const tVal = Math.floor(Math.random() * 4) + (10 - (stepNum / 10)); // e.g. 7, 8, 9
+          baseNum = hVal * 100 + (tVal % 10) * 10 + uVal;
+          if (baseNum + stepNum < (hVal + 1) * 100) baseNum += 20; // force crossing
+          answer = baseNum + stepNum;
+        } else {
+          // subtraction crossing: e.g. 520 - 40 -> 480
+          const tVal = Math.floor(Math.random() * (stepNum / 10)); // 0, 1, 2
+          baseNum = hVal * 100 + tVal * 10 + uVal;
+          answer = baseNum - stepNum;
+        }
+
+      } else if (lvl === 3) {
+        // Add/Subtract Hundreds (No boundary crossing)
+        targetCol = 'H';
+        isPlus = Math.random() < 0.5;
+        const hSteps = [100, 200, 300, 400, 500];
+        stepNum = hSteps[Math.floor(Math.random() * hSteps.length)];
+        const stepVal = stepNum / 100;
+
+        const thVal = Math.floor(Math.random() * 4) + 1; // 1 to 4
+        let hVal;
+        if (isPlus) {
+          hVal = Math.floor(Math.random() * (9 - stepVal)) + 1;
+        } else {
+          hVal = Math.floor(Math.random() * (9 - stepVal)) + stepVal;
+        }
+        const tVal = Math.floor(Math.random() * 8) + 1;
+        const uVal = Math.floor(Math.random() * 9);
+        baseNum = thVal * 1000 + hVal * 100 + tVal * 10 + uVal;
+        answer = isPlus ? (baseNum + stepNum) : (baseNum - stepNum);
+
+      } else if (lvl === 4) {
+        // Crossing the 1,000 boundary with Hundreds
+        targetCol = 'H';
+        isPlus = Math.random() < 0.55;
+        const hCrossingSteps = [300, 400, 500, 600, 700];
+        stepNum = hCrossingSteps[Math.floor(Math.random() * hCrossingSteps.length)];
+        const thVal = Math.floor(Math.random() * 4) + 2; // 2 to 5
+        const tVal = Math.floor(Math.random() * 8) + 1;
+        const uVal = Math.floor(Math.random() * 9);
+
+        if (isPlus) {
+          const hVal = Math.floor(Math.random() * 3) + (10 - (stepNum / 100)); // 7, 8, 9
+          baseNum = thVal * 1000 + (hVal % 10) * 100 + tVal * 10 + uVal;
+          answer = baseNum + stepNum;
+        } else {
+          const hVal = Math.floor(Math.random() * (stepNum / 100)); // 0, 1, 2
+          baseNum = thVal * 1000 + hVal * 100 + tVal * 10 + uVal;
+          answer = baseNum - stepNum;
+        }
+
+      } else {
+        // Add/Subtract Thousands
+        targetCol = 'Th';
+        isPlus = Math.random() < 0.5;
+        const thSteps = [1000, 2000, 3000, 4000];
+        stepNum = thSteps[Math.floor(Math.random() * thSteps.length)];
+        const stepVal = stepNum / 1000;
+
+        let thVal;
+        if (isPlus) {
+          thVal = Math.floor(Math.random() * (9 - stepVal)) + 1;
+        } else {
+          thVal = Math.floor(Math.random() * (9 - stepVal)) + stepVal;
+        }
+        const hVal = Math.floor(Math.random() * 9);
+        const tVal = Math.floor(Math.random() * 9);
+        const uVal = Math.floor(Math.random() * 9);
+        baseNum = thVal * 1000 + hVal * 100 + tVal * 10 + uVal;
+        answer = isPlus ? (baseNum + stepNum) : (baseNum - stepNum);
+      }
+
+      addOnState = {
+        lvl, baseNum, stepNum, isPlus, answer, targetCol,
+        userAns: '',
+        showStepExplanation: false
+      };
+
+      renderAddOnUI(container);
+    }
+
+    function renderAddOnUI(container) {
+      const s = addOnState;
+      const opSymbol = s.isPlus ? '+' : '-';
+
+      // Parse base digits
+      const bStr = s.baseNum.toString().padStart(4, '0');
+      const bTh = parseInt(bStr[0], 10);
+      const bH = parseInt(bStr[1], 10);
+      const bT = parseInt(bStr[2], 10);
+      const bU = parseInt(bStr[3], 10);
+
+      // Parse answer digits (if solved or explained)
+      const aStr = s.answer.toString().padStart(4, '0');
+      const aTh = parseInt(aStr[0], 10);
+      const aH = parseInt(aStr[1], 10);
+      const aT = parseInt(aStr[2], 10);
+      const aU = parseInt(aStr[3], 10);
+
+      const colColor = {
+        Th: 'text-purple-400 border-purple-500 bg-purple-500/10',
+        H: 'text-emerald-400 border-emerald-500 bg-emerald-500/10',
+        T: 'text-sky-400 border-sky-500 bg-sky-500/10',
+        U: 'text-amber-400 border-amber-500 bg-amber-500/10'
+      };
+
+      let pedagogicRule = '';
+      if (s.targetCol === 'T') {
+        pedagogicRule = s.lvl === 1
+          ? `⚡ Only the <strong class="text-sky-400">TENS</strong> change! Units (${bU}) and Hundreds (${bH}) stay locked!`
+          : `⚠️ Crossing 100: ${bT} tens ${opSymbol} ${s.stepNum / 10} tens will regroup with the <strong class="text-emerald-400">Hundreds</strong> column!`;
+      } else if (s.targetCol === 'H') {
+        pedagogicRule = s.lvl === 3
+          ? `⚡ Only the <strong class="text-emerald-400">HUNDREDS</strong> change! Tens (${bT}) and Units (${bU}) stay locked!`
+          : `⚠️ Crossing 1,000: ${bH} hundreds ${opSymbol} ${s.stepNum / 100} hundreds regroups with the <strong class="text-purple-400">Thousands</strong>!`;
+      } else {
+        pedagogicRule = `⚡ Add/Subtract Thousands directly! Hundreds, Tens, and Units stay locked!`;
+      }
+
+      container.innerHTML = `
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 w-full max-w-5xl mx-auto">
+          
+          <!-- LEFT: THE MATH EXPRESSION & PLACE VALUE SPOTLIGHT -->
+          <div class="lg:col-span-7 bg-slate-900 border-2 border-slate-800 rounded-3xl p-5 shadow-2xl flex flex-col justify-between gap-4">
+            
+            <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+              <span class="font-kids text-sm font-bold text-sky-400">Mental Strategy: Multiples of 10, 100, 1000</span>
+              <span class="text-xs font-mono bg-sky-500/20 text-sky-300 px-2.5 py-0.5 rounded-full border border-sky-500/40">
+                Level ${s.lvl}
+              </span>
+            </div>
+
+            <!-- Big Math Equation Display -->
+            <div class="bg-slate-950 border-2 border-slate-800 rounded-2xl py-4 px-6 flex items-center justify-center gap-3 font-kids text-4xl sm:text-5xl font-bold shadow-inner">
+              <span class="text-slate-100">${s.baseNum}</span>
+              <span class="${s.isPlus ? 'text-emerald-400' : 'text-rose-400'}">${opSymbol}</span>
+              <span class="text-amber-300 underline decoration-sky-400 decoration-wavy">${s.stepNum}</span>
+              <span class="text-slate-500">=</span>
+              <span id="addOnAnsSlot" class="text-sky-300 font-bold underline decoration-dashed">
+                ${s.userAns || '?'}
+              </span>
+            </div>
+
+            <!-- PLACE VALUE SPOTLIGHT BAR -->
+            <div class="w-full bg-slate-950 rounded-2xl border border-slate-800 p-3 sm:p-4">
+              <div class="text-[11px] font-kids font-bold text-slate-400 uppercase tracking-widest text-center mb-2">
+                Place Value Spotlight Column Tracker
+              </div>
+
+              <!-- Column Header & Digit Grid -->
+              <div class="grid grid-cols-4 gap-2 text-center">
+                <!-- Thousands -->
+                <div class="p-2 rounded-xl border ${s.targetCol === 'Th' ? colColor.Th + ' pulse-glow' : 'border-slate-800 bg-slate-900/60 text-slate-400'}">
+                  <div class="text-[10px] font-bold">Thousands (Th)</div>
+                  <div class="font-kids text-2xl sm:text-3xl font-bold">${bTh || '-'}</div>
+                </div>
+                <!-- Hundreds -->
+                <div class="p-2 rounded-xl border ${s.targetCol === 'H' ? colColor.H + ' pulse-glow' : 'border-slate-800 bg-slate-900/60 text-slate-400'}">
+                  <div class="text-[10px] font-bold">Hundreds (H)</div>
+                  <div class="font-kids text-2xl sm:text-3xl font-bold">${bH}</div>
+                </div>
+                <!-- Tens -->
+                <div class="p-2 rounded-xl border ${s.targetCol === 'T' ? colColor.T + ' pulse-glow' : 'border-slate-800 bg-slate-900/60 text-slate-400'}">
+                  <div class="text-[10px] font-bold">Tens (T)</div>
+                  <div class="font-kids text-2xl sm:text-3xl font-bold">${bT}</div>
+                </div>
+                <!-- Units -->
+                <div class="p-2 rounded-xl border ${s.targetCol === 'U' ? colColor.U : 'border-slate-800 bg-slate-900/60 text-slate-400'}">
+                  <div class="text-[10px] font-bold">Units (U)</div>
+                  <div class="font-kids text-2xl sm:text-3xl font-bold">${bU}</div>
+                </div>
+              </div>
+
+              <!-- Column Delta Label -->
+              <div class="mt-3 text-center text-xs font-kids font-semibold text-slate-300">
+                ${pedagogicRule}
+              </div>
+            </div>
+
+            <!-- Action: Reveal Hint / Step Breakdown -->
+            <div class="flex items-center justify-between gap-2 text-xs">
+              <button onclick="toggleAddOnExplanation()" class="px-3.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-sky-300 font-bold rounded-xl border border-slate-700 transition flex items-center gap-1.5">
+                <span>👁️ ${s.showStepExplanation ? 'Hide Strategy Step' : 'Show Strategy Step'}</span>
+              </button>
+              <span id="addOnFeedbackBanner" class="font-bold min-h-[20px]"></span>
+            </div>
+
+          </div>
+
+          <!-- RIGHT: STEP BREAKDOWN & MENTAL WALKTHROUGH -->
+          <div class="lg:col-span-5 bg-slate-900 border-2 border-slate-800 rounded-3xl p-5 shadow-2xl flex flex-col justify-between gap-3">
+            
+            <div class="border-b border-slate-800 pb-2 flex items-center justify-between">
+              <span class="font-kids text-sm font-bold text-slate-200">Mental Strategy Walkthrough</span>
+              <span class="text-[11px] text-amber-400 font-mono">No Column Method Needed!</span>
+            </div>
+
+            <!-- Dynamic Step-by-Step Card -->
+            <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 flex-grow flex flex-col justify-center gap-3">
+              ${renderAddOnWalkthroughContent(bTh, bH, bT, bU, aTh, aH, aT, aU)}
+            </div>
+
+            <div class="p-3 bg-slate-950/80 rounded-2xl border border-slate-800 text-center text-xs text-slate-400">
+              Type your answer using the numpad below or keyboard and tap <strong class="text-emerald-400">Enter</strong>!
+            </div>
+
+          </div>
+
+        </div>
+      `;
+    }
+
+    function renderAddOnWalkthroughContent(bTh, bH, bT, bU, aTh, aH, aT, aU) {
+      const s = addOnState;
+      const op = s.isPlus ? '+' : '-';
+
+      if (s.targetCol === 'T') {
+        const stepTens = s.stepNum / 10;
+        if (s.lvl === 1) {
+          return `
+            <div class="flex flex-col gap-2.5 text-xs sm:text-sm font-kids">
+              <div class="text-sky-300 font-bold">1. Focus on the Tens:</div>
+              <div class="p-2.5 bg-slate-900 rounded-xl border border-sky-500/40 text-center text-base">
+                <span class="text-sky-400 font-bold">${bT} tens</span> ${op} <span class="text-amber-400 font-bold">${stepTens} tens</span> = <strong class="text-emerald-400">${s.isPlus ? bT + stepTens : bT - stepTens} tens</strong>
+              </div>
+              <div class="text-slate-300">2. Keep Hundreds and Units locked:</div>
+              <div class="text-slate-400 text-xs">
+                Hundreds stay <strong class="text-emerald-400">${bH}</strong>, Units stay <strong class="text-amber-400">${bU}</strong>.
+              </div>
+              ${s.showStepExplanation ? `
+                <div class="p-2 bg-emerald-950/40 border border-emerald-500/50 rounded-xl text-center text-emerald-300 font-bold animate-pop">
+                  Result: ${s.answer}
+                </div>` : ''}
+            </div>
+          `;
+        } else {
+          return `
+            <div class="flex flex-col gap-2.5 text-xs sm:text-sm font-kids">
+              <div class="text-amber-300 font-bold">1. Count in Tens across 100:</div>
+              <div class="p-2.5 bg-slate-900 rounded-xl border border-amber-500/40 text-xs sm:text-sm">
+                ${s.isPlus 
+                  ? `${s.baseNum} + ${s.stepNum}: Total tens = <strong class="text-sky-300">${(bH * 10 + bT)} tens + ${stepTens} tens = ${(bH * 10 + bT) + stepTens} tens</strong>.`
+                  : `${s.baseNum} - ${s.stepNum}: Total tens = <strong class="text-sky-300">${(bH * 10 + bT)} tens - ${stepTens} tens = ${(bH * 10 + bT) - stepTens} tens</strong>.`}
+              </div>
+              <div class="text-slate-300">2. Recombine with the Units (${bU}):</div>
+              <div class="text-slate-400 text-xs">
+                The units digit <strong class="text-amber-400">${bU}</strong> does not change at all!
+              </div>
+              ${s.showStepExplanation ? `
+                <div class="p-2 bg-emerald-950/40 border border-emerald-500/50 rounded-xl text-center text-emerald-300 font-bold animate-pop">
+                  Result: ${s.answer}
+                </div>` : ''}
+            </div>
+          `;
+        }
+      } else if (s.targetCol === 'H') {
+        const stepH = s.stepNum / 100;
+        return `
+          <div class="flex flex-col gap-2.5 text-xs sm:text-sm font-kids">
+            <div class="text-emerald-300 font-bold">1. Focus on the Hundreds:</div>
+            <div class="p-2.5 bg-slate-900 rounded-xl border border-emerald-500/40 text-center text-base">
+              <span class="text-emerald-400 font-bold">${bH} hundreds</span> ${op} <span class="text-amber-400 font-bold">${stepH} hundreds</span> = <strong class="text-sky-400">${s.isPlus ? bH + stepH : bH - stepH} hundreds</strong>
+            </div>
+            <div class="text-slate-300">2. Keep Tens & Units locked:</div>
+            <div class="text-slate-400 text-xs">
+              Tens stay <strong class="text-sky-400">${bT}</strong>, Units stay <strong class="text-amber-400">${bU}</strong>.
+            </div>
+            ${s.showStepExplanation ? `
+              <div class="p-2 bg-emerald-950/40 border border-emerald-500/50 rounded-xl text-center text-emerald-300 font-bold animate-pop">
+                Result: ${s.answer}
+              </div>` : ''}
+          </div>
+        `;
+      } else {
+        const stepTh = s.stepNum / 1000;
+        return `
+          <div class="flex flex-col gap-2.5 text-xs sm:text-sm font-kids">
+            <div class="text-purple-300 font-bold">1. Focus on the Thousands:</div>
+            <div class="p-2.5 bg-slate-900 rounded-xl border border-purple-500/40 text-center text-base">
+              <span class="text-purple-400 font-bold">${bTh} th</span> ${op} <span class="text-amber-400 font-bold">${stepTh} th</span> = <strong class="text-emerald-400">${s.isPlus ? bTh + stepTh : bTh - stepTh} thousands</strong>
+            </div>
+            <div class="text-slate-300">2. The other 3 digits stay untouched:</div>
+            <div class="text-slate-400 text-xs">
+              Hundreds (<strong class="text-emerald-400">${bH}</strong>), Tens (<strong class="text-sky-400">${bT}</strong>), Units (<strong class="text-amber-400">${bU}</strong>).
+            </div>
+            ${s.showStepExplanation ? `
+              <div class="p-2 bg-emerald-950/40 border border-emerald-500/50 rounded-xl text-center text-emerald-300 font-bold animate-pop">
+                Result: ${s.answer}
+              </div>` : ''}
+          </div>
+        `;
+      }
+    }
+
+    function toggleAddOnExplanation() {
+      playSound('click');
+      addOnState.showStepExplanation = !addOnState.showStepExplanation;
+      renderAddOnUI(document.getElementById('activeStageContainer'));
+    }
+
+    function submitAddOnAnswer() {
+      const s = addOnState;
+      if (s.userAns === '') return;
+
+      const userNum = parseInt(s.userAns, 10);
+      const fb = document.getElementById('addOnFeedbackBanner');
+
+      if (userNum === s.answer) {
+        playSound('correct');
+        streak++;
+        score += 10;
+        updateMetrics();
+        if (fb) {
+          fb.textContent = `⭐ Brilliant mental calculation! Answer = ${s.answer}!`;
+          fb.className = 'text-xs font-bold text-emerald-400 animate-pop';
+        }
+        setTimeout(() => {
+          generateNewProblem();
+        }, 1300);
+      } else {
+        playSound('error');
+        streak = 0;
+        updateMetrics();
+        if (fb) {
+          fb.textContent = `Check your place value: look at which column changes!`;
+          fb.className = 'text-xs font-bold text-rose-400';
+        }
+        s.userAns = '';
+        const slot = document.getElementById('addOnAnsSlot');
+        if (slot) slot.textContent = '?';
+      }
+    }
+
+    /* =====================================================================
+       INPUT & NUMPAD HANDLER
+       ===================================================================== */
+    function numpadPress(val) {
+      if (isProcessing) return;
+      playSound('click');
+
+      if (currentTab === 'addition') {
+        const s = addState;
+        if (s.col === 'done') return;
+
+        if (s.phase === 'ask_carry') {
+          if (val === 'clear') s.inputCarry = '';
+          else if (val === 'backspace') s.inputCarry = s.inputCarry.slice(0, -1);
+          else if (s.inputCarry.length < 1) s.inputCarry = val.toString();
+        } else {
+          let field = s.col === 'units' ? 'inputU' : (s.col === 'tens' ? 'inputT' : 'inputH');
+          if (val === 'clear') s[field] = '';
+          else if (val === 'backspace') s[field] = s[field].slice(0, -1);
+          else if (s[field].length < (s.col === 'hundreds' ? 2 : 1)) s[field] += val.toString();
+        }
+        renderAdditionUI(document.getElementById('activeStageContainer'));
+      } else if (currentTab === 'subtraction') {
+        const s = subState;
+        if (s.step === 'done') return;
+        let field = s.step === 'units' ? 'inputU' : (s.step === 'tens' ? 'inputT' : 'inputH');
+
+        if (val === 'clear') s[field] = '';
+        else if (val === 'backspace') s[field] = s[field].slice(0, -1);
+        else if (s[field].length < 2) s[field] += val.toString();
+
+        renderSubtractionUI(document.getElementById('activeStageContainer'));
+      } else if (currentTab === 'clinic') {
+        if (clinicState.currentStep !== 4) return;
+        if (val === 'clear') clinicState.userFixedAns = '';
+        else if (val === 'backspace') clinicState.userFixedAns = clinicState.userFixedAns.slice(0, -1);
+        else if (clinicState.userFixedAns.length < 4) clinicState.userFixedAns += val.toString();
+        renderClinicUI(document.getElementById('activeStageContainer'));
+      } else if (currentTab === 'inverse') {
+        if (val === 'clear') inverseState.userAns = '';
+        else if (val === 'backspace') inverseState.userAns = inverseState.userAns.slice(0, -1);
+        else if (inverseState.userAns.length < 3) inverseState.userAns += val.toString();
+        renderInverseUI(document.getElementById('activeStageContainer'));
+      } else if (currentTab === 'addon') {
+        if (val === 'clear') addOnState.userAns = '';
+        else if (val === 'backspace') addOnState.userAns = addOnState.userAns.slice(0, -1);
+        else if (addOnState.userAns.length < 5) addOnState.userAns += val.toString();
+        
+        const slot = document.getElementById('addOnAnsSlot');
+        if (slot) slot.textContent = addOnState.userAns || '?';
+      }
+    }
+
+    function numpadSubmit() {
+      if (isProcessing) return;
+
+      if (currentTab === 'addition') {
+        submitAdditionStep();
+      } else if (currentTab === 'subtraction') {
+        submitSubtractionStep();
+      } else if (currentTab === 'clinic') {
+        submitClinicFinalAnswer();
+      } else if (currentTab === 'inverse') {
+        submitInverseAnswer();
+      } else if (currentTab === 'addon') {
+        submitAddOnAnswer();
+      }
+    }
+
+    function numpadSubmit() {
+      if (isProcessing) return;
+
+      if (currentTab === 'addition') {
+        submitAdditionStep();
+      } else if (currentTab === 'subtraction') {
+        submitSubtractionStep();
+      } else if (currentTab === 'clinic') {
+        submitClinicFinalAnswer();
+      } else if (currentTab === 'inverse') {
+        submitInverseAnswer();
+      }
+    }
+
+    function submitAdditionStep() {
+      const s = addState;
+      if (s.col === 'done') return;
+
+      if (s.col === 'units') {
+        const colSum = s.topU + s.botU;
+        s.currentColSum = colSum;
+
+        if (s.phase === 'solve') {
+          if (s.inputU === '') return;
+          const expectedStay = colSum % 10;
+          if (parseInt(s.inputU, 10) === expectedStay) {
+            playSound('correct');
+            if (colSum >= 10) {
+              // Ask what needs to be carried
+              s.phase = 'ask_carry';
+              s.inputCarry = '';
+              renderAdditionUI(document.getElementById('activeStageContainer'));
+            } else {
+              // No carry needed, move straight to tens
+              s.carriedTens = 0;
+              s.col = 'tens';
+              renderAdditionUI(document.getElementById('activeStageContainer'));
+            }
+          } else {
+            playSound('error');
+            s.inputU = '';
+            renderAdditionUI(document.getElementById('activeStageContainer'));
+          }
+        } else if (s.phase === 'ask_carry') {
+          if (s.inputCarry === '') return;
+          const expectedCarry = Math.floor(colSum / 10);
+          if (parseInt(s.inputCarry, 10) === expectedCarry) {
+            playSound('bundle');
+            s.carriedTens = expectedCarry;
+            s.phase = 'solve';
+            s.col = 'tens';
+            renderAdditionUI(document.getElementById('activeStageContainer'));
+          } else {
+            playSound('error');
+            s.inputCarry = '';
+            renderAdditionUI(document.getElementById('activeStageContainer'));
+          }
+        }
+      } else if (s.col === 'tens') {
+        const colSum = s.topT + s.botT + s.carriedTens;
+        s.currentColSum = colSum;
+
+        if (s.phase === 'solve') {
+          if (s.inputT === '') return;
+          const expectedStay = colSum % 10;
+          if (parseInt(s.inputT, 10) === expectedStay) {
+            playSound('correct');
+            if (colSum >= 10) {
+              s.phase = 'ask_carry';
+              s.inputCarry = '';
+              renderAdditionUI(document.getElementById('activeStageContainer'));
+            } else {
+              s.carriedHundreds = 0;
+              if (s.topH > 0 || s.botH > 0) {
+                s.col = 'hundreds';
+                renderAdditionUI(document.getElementById('activeStageContainer'));
+              } else {
+                s.col = 'done';
+                finishCalculationAward();
+                renderAdditionUI(document.getElementById('activeStageContainer'));
+              }
+            }
+          } else {
+            playSound('error');
+            s.inputT = '';
+            renderAdditionUI(document.getElementById('activeStageContainer'));
+          }
+        } else if (s.phase === 'ask_carry') {
+          if (s.inputCarry === '') return;
+          const expectedCarry = Math.floor(colSum / 10);
+          if (parseInt(s.inputCarry, 10) === expectedCarry) {
+            playSound('bundle');
+            s.carriedHundreds = expectedCarry;
+            s.phase = 'solve';
+            s.col = 'hundreds';
+            renderAdditionUI(document.getElementById('activeStageContainer'));
+          } else {
+            playSound('error');
+            s.inputCarry = '';
+            renderAdditionUI(document.getElementById('activeStageContainer'));
+          }
+        }
+      } else if (s.col === 'hundreds') {
+        const colSum = s.topH + s.botH + s.carriedHundreds;
+        if (s.inputH === '') return;
+
+        if (parseInt(s.inputH, 10) === colSum) {
+          playSound('correct');
+          if (colSum >= 10) {
+            s.carriedThousands = Math.floor(colSum / 10);
+            s.inputH = (colSum % 10).toString();
+          }
+          s.col = 'done';
+          finishCalculationAward();
+          renderAdditionUI(document.getElementById('activeStageContainer'));
+        } else {
+          playSound('error');
+          s.inputH = '';
+          renderAdditionUI(document.getElementById('activeStageContainer'));
+        }
+      }
+    }
+
+    function submitSubtractionStep() {
+      const s = subState;
+      const currentU = s.topU + (s.unpackedTenToUnits ? 10 : 0);
+      const currentT = s.topT + (s.unpackedHundredToTen ? 10 : 0) - (s.unpackedTenToUnits ? 1 : 0);
+      const currentH = s.topH - (s.unpackedHundredToTen ? 1 : 0);
+
+      if (s.step === 'units') {
+        // Anti-reversal verification: if pupil tries to submit bottom - top without unpack
+        if (!s.unpackedTenToUnits && s.topU < s.botU) {
+          s.reversalAlert = true;
+          playSound('error');
+          renderSubtractionUI(document.getElementById('activeStageContainer'));
+          return;
+        }
+
+        const expected = currentU - s.botU;
+        if (parseInt(s.inputU, 10) === expected) {
+          playSound('correct');
+          s.step = 'tens';
+          renderSubtractionUI(document.getElementById('activeStageContainer'));
+        } else {
+          playSound('error');
+        }
+      } else if (s.step === 'tens') {
+        const expected = currentT - s.botT;
+        if (parseInt(s.inputT, 10) === expected) {
+          playSound('correct');
+          s.step = (s.topH || s.botH) ? 'hundreds' : 'done';
+          if (s.step === 'done') finishCalculationAward();
+          else renderSubtractionUI(document.getElementById('activeStageContainer'));
+        } else {
+          playSound('error');
+        }
+      } else if (s.step === 'hundreds') {
+        const expected = currentH - s.botH;
+        if (parseInt(s.inputH, 10) === expected) {
+          playSound('correct');
+          s.step = 'done';
+          finishCalculationAward();
+          renderSubtractionUI(document.getElementById('activeStageContainer'));
+        } else {
+          playSound('error');
+        }
+      }
+    }
+
+    function submitClinicFinalAnswer() {
+      const c = clinicState;
+      const expected = c.item.correctAns;
+      if (parseInt(c.userFixedAns, 10) === expected) {
+        playSound('correct');
+        streak++;
+        score += 15;
+        updateMetrics();
+        flashClinicFeedback(`🌟 Excellent investigation! True answer is ${expected}!`, true);
+        setTimeout(() => {
+          generateNewProblem();
+        }, 1600);
+      } else {
+        playSound('error');
+        flashClinicFeedback(`Check your calculation: calculate column by column!`, false);
+      }
+    }
+
+    function submitInverseAnswer() {
+      const inv = inverseState;
+      if (parseInt(inv.userAns, 10) === inv.targetAns) {
+        playSound('correct');
+        streak++;
+        score += 10;
+        updateMetrics();
+        const fb = document.getElementById('invFeedback');
+        if (fb) {
+          fb.textContent = `⭐ Spot on! ${inv.qText.replace('?', inv.targetAns)} is verified!`;
+          fb.className = 'min-h-[24px] text-xs font-bold text-center text-emerald-400 animate-pop';
+        }
+        setTimeout(() => {
+          generateNewProblem();
+        }, 1400);
+      } else {
+        playSound('error');
+        const fb = document.getElementById('invFeedback');
+        if (fb) {
+          fb.textContent = `Check the triangle: what number is missing?`;
+          fb.className = 'min-h-[24px] text-xs font-bold text-center text-rose-400';
+        }
+      }
+    }
+
+    function finishCalculationAward() {
+      isProcessing = true;
+      streak++;
+      score += 15;
+      updateMetrics();
+      setTimeout(() => {
+        isProcessing = false;
+        generateNewProblem();
+      }, 1600);
+    }
+
+    function updateMetrics() {
+      document.getElementById('streakDisplay').textContent = `🔥 ${streak}`;
+      document.getElementById('scoreDisplay').textContent = score;
+    }
+
+    function setupKeyboard() {
+      window.addEventListener('keydown', (e) => {
+        if (e.key >= '0' && e.key <= '9') {
+          numpadPress(parseInt(e.key, 10));
+        } else if (e.key === 'Enter') {
+          numpadSubmit();
+        } else if (e.key === 'Backspace') {
+          numpadPress('backspace');
+        } else if (e.key === 'Escape') {
+          numpadPress('clear');
+        }
+      });
+    }
+  </script>
+</body>
+</html>
