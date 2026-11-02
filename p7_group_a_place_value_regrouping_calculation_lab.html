@@ -4,2088 +4,1723 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>P7 Group A: Place Value, Regrouping & Calculation Lab</title>
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Google Fonts: Fredoka & Inter -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=Patrick+Hand&display=swap" rel="stylesheet">
   <style>
-    body {
-      font-family: 'Inter', sans-serif;
+    :root {
+      --bg-dark: #090d16;
+      --panel-bg: #111827;
+      --panel-border: #1f293d;
+      --card-bg: #0d1322;
+      --text-main: #f8fafc;
+      --text-dim: #94a3b8;
+      --accent-cyan: #38bdf8;
+      --accent-amber: #fbbf24;
+      --accent-emerald: #34d399;
+      --accent-rose: #f87171;
+      --accent-purple: #c084fc;
+      --accent-indigo: #818cf8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
       user-select: none;
       -webkit-user-select: none;
       touch-action: manipulation;
     }
-    .font-kids { font-family: 'Fredoka', cursive, sans-serif; }
-    .font-hand { font-family: 'Patrick Hand', cursive, sans-serif; }
 
-    @keyframes popIn {
-      0% { transform: scale(0.65); opacity: 0; }
-      70% { transform: scale(1.08); }
-      100% { transform: scale(1); opacity: 1; }
-    }
-    .animate-pop { animation: popIn 0.28s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
-
-    @keyframes bundleFly {
-      0% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.25) translateY(-20px); filter: drop-shadow(0 0 15px #38bdf8); }
-      100% { transform: scale(0.8) translateX(-80px); opacity: 0; }
-    }
-    .bundle-animate { animation: bundleFly 0.6s ease-in-out forwards; }
-
-    @keyframes pulseGlow {
-      0%, 100% { box-shadow: 0 0 10px rgba(56, 189, 248, 0.4); }
-      50% { box-shadow: 0 0 25px rgba(56, 189, 248, 0.95); }
-    }
-    .pulse-glow { animation: pulseGlow 1.2s infinite ease-in-out; }
-
-    /* Base 10 Pictorial Blocks */
-    .b10-cube {
-      width: 14px;
-      height: 14px;
-      border-radius: 3px;
-      background: #f59e0b;
-      border: 1px solid #d97706;
-      box-shadow: inset 0 -1px 2px rgba(0,0,0,0.3);
-    }
-    .b10-rod {
-      width: 14px;
-      height: 52px;
-      border-radius: 3px;
-      background: #0284c7;
-      border: 1px solid #0369a1;
-      display: grid;
-      grid-template-rows: repeat(10, 1fr);
-      gap: 1px;
-      padding: 1px 0;
-      box-shadow: inset 0 -2px 3px rgba(0,0,0,0.3);
-    }
-    .b10-flat {
-      width: 48px;
-      height: 48px;
-      border-radius: 4px;
-      background: #10b981;
-      border: 1.5px solid #059669;
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      grid-template-rows: repeat(5, 1fr);
-      gap: 1px;
-      padding: 1.5px;
-      box-shadow: inset 0 -2px 3px rgba(0,0,0,0.35);
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-col;
+      flex-direction: column;
+      justify-content: space-between;
     }
 
-    /* Column Input Grid */
-    .col-cell {
-      width: 58px;
-      height: 58px;
+    /* Header & Navigation */
+    header {
+      background: var(--panel-bg);
+      border-bottom: 2px solid var(--panel-border);
+      padding: 10px 16px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .badge-icon {
+      background: linear-gradient(135deg, #10b981, #0284c7, #f59e0b);
+      color: #000;
+      font-weight: 900;
+      font-size: 1.15rem;
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 2rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+
+    .brand-title h1 {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--accent-cyan);
+      letter-spacing: 0.5px;
+    }
+    .brand-title p {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+    }
+
+    /* Main Tab Navigation */
+    nav.main-tabs {
+      display: flex;
+      gap: 6px;
+      background: var(--bg-dark);
+      padding: 6px;
+      border-radius: 14px;
+      border: 1px solid var(--panel-border);
+      flex-wrap: wrap;
+    }
+
+    .nav-btn {
+      background: transparent;
+      color: var(--text-dim);
+      border: none;
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-size: 0.82rem;
       font-weight: 700;
-      font-family: 'Fredoka', cursive, sans-serif;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .nav-btn:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.05);
+    }
+    .nav-btn.active {
+      background: var(--accent-cyan);
+      color: #090d16;
+      box-shadow: 0 2px 8px rgba(56, 189, 248, 0.35);
+    }
+
+    /* Sub-Bar */
+    .sub-bar {
+      max-width: 1100px;
+      width: 96%;
+      margin: 8px auto 4px auto;
+      background: rgba(17, 24, 39, 0.75);
+      border: 1px solid var(--panel-border);
+      border-radius: 14px;
+      padding: 8px 16px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .filter-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .filter-label {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      font-weight: 600;
+      margin-right: 4px;
+    }
+    .lvl-btn {
+      background: #1f293d;
+      color: #cbd5e1;
+      border: none;
+      padding: 5px 12px;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .lvl-btn.active {
+      background: var(--accent-cyan);
+      color: #090d16;
+    }
+
+    .stats-bar {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-weight: 800;
+      font-size: 0.95rem;
+    }
+    .streak-pill {
+      background: rgba(251, 191, 36, 0.15);
+      border: 1px solid rgba(251, 191, 36, 0.4);
+      color: var(--accent-amber);
+      padding: 3px 12px;
+      border-radius: 20px;
+    }
+    .score-pill {
+      color: var(--accent-emerald);
+    }
+
+    /* Main Stage Layout */
+    main {
+      max-width: 1100px;
+      width: 96%;
+      margin: 4px auto 8px auto;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .stage-card {
+      width: 100%;
+      background: var(--panel-bg);
+      border: 2px solid var(--panel-border);
+      border-radius: 20px;
+      padding: 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+      min-height: 380px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
       position: relative;
     }
-    @media (min-width: 640px) {
-      .col-cell {
-        width: 68px;
-        height: 68px;
-        font-size: 2.35rem;
+
+    /* Column Algorithm & Place Value Views */
+    .calc-split-container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      align-items: start;
+    }
+    @media (min-width: 800px) {
+      .calc-split-container {
+        grid-template-columns: 340px 1fr;
       }
     }
-    .strikethrough {
+
+    /* Algorithm Column Table */
+    .algo-box {
+      background: var(--card-bg);
+      border: 2px solid var(--panel-border);
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .algo-grid {
+      display: grid;
+      grid-template-columns: 42px 64px 64px 64px;
+      gap: 4px;
+      text-align: center;
+      font-weight: 800;
+      font-family: monospace, monospace;
+      font-size: 1.85rem;
+    }
+
+    .grid-header {
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      border-bottom: 2px solid #334155;
+      padding-bottom: 6px;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+    }
+
+    .cell {
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       position: relative;
     }
-    .strikethrough::after {
+
+    .cell-regroup {
+      font-size: 1.15rem;
+      color: var(--accent-emerald);
+      height: 32px;
+    }
+
+    .striked {
+      position: relative;
+      color: #94a3b8;
+    }
+    .striked::after {
       content: '';
       position: absolute;
       top: 15%;
-      left: 15%;
-      width: 70%;
+      left: 20%;
+      width: 60%;
       height: 70%;
-      border-top: 4px solid #ef4444;
+      border-top: 4px solid var(--accent-rose);
       transform: rotate(-35deg);
+    }
+
+    .cell-borrowed-new {
+      position: absolute;
+      top: -12px;
+      font-size: 1.15rem;
+      color: var(--accent-cyan);
+      font-weight: 900;
+      background: #090d16;
+      border: 1px solid var(--accent-cyan);
+      padding: 0 4px;
+      border-radius: 4px;
+    }
+
+    .algo-operator {
+      color: var(--accent-amber);
+      font-size: 1.6rem;
+    }
+
+    .algo-divider {
+      grid-column: span 4;
+      height: 4px;
+      background: #475569;
+      border-radius: 2px;
+      margin: 4px 0;
+    }
+
+    .ans-slot {
+      border: 2px dashed #475569;
+      border-radius: 8px;
+      background: rgba(0,0,0,0.3);
+      color: var(--accent-amber);
+      height: 48px;
+    }
+    .ans-slot.active {
+      border-color: var(--accent-cyan);
+      background: rgba(56, 189, 248, 0.1);
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
+    }
+    .ans-slot.filled {
+      border-style: solid;
+      border-color: var(--accent-emerald);
+      color: var(--accent-emerald);
+    }
+
+    .carry-row-slot {
+      height: 28px;
+      font-size: 0.95rem;
+      color: var(--accent-purple);
+      border-bottom: 1px dashed #334155;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Pedagogical Prompt & Instruction Box */
+    .interactive-guide {
+      background: var(--card-bg);
+      border: 2px solid var(--panel-border);
+      border-radius: 16px;
+      padding: 16px;
+      min-height: 280px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .prompt-banner {
+      background: #1e293b;
+      border-left: 5px solid var(--accent-cyan);
+      padding: 12px 14px;
+      border-radius: 8px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #f1f5f9;
+      margin-bottom: 12px;
+      line-height: 1.4;
+    }
+
+    .step-actions-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 12px 0;
+      justify-content: center;
+    }
+
+    .action-btn {
+      background: #1e293b;
+      border: 2px solid #334155;
+      color: #fff;
+      font-size: 1.1rem;
+      font-weight: 800;
+      padding: 12px 20px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      min-width: 120px;
+    }
+    .action-btn:hover {
+      border-color: var(--accent-cyan);
+      background: #334155;
+    }
+    .action-btn:active {
+      transform: scale(0.96);
+    }
+    .action-btn.btn-no {
+      border-color: rgba(248, 113, 113, 0.4);
+      background: rgba(248, 113, 113, 0.1);
+      color: var(--accent-rose);
+    }
+    .action-btn.btn-yes {
+      border-color: rgba(52, 211, 153, 0.4);
+      background: rgba(52, 211, 153, 0.1);
+      color: var(--accent-emerald);
+    }
+    .action-btn.btn-highlight {
+      background: var(--accent-cyan);
+      color: #090d16;
+      border-color: var(--accent-cyan);
+    }
+
+    /* Feedback Banner */
+    .status-msg {
+      font-size: 0.95rem;
+      font-weight: 700;
+      padding: 10px;
+      border-radius: 8px;
+      text-align: center;
+      min-height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .status-msg.error {
+      background: rgba(248, 113, 113, 0.15);
+      border: 1px solid var(--accent-rose);
+      color: var(--accent-rose);
+    }
+    .status-msg.success {
+      background: rgba(52, 211, 153, 0.15);
+      border: 1px solid var(--accent-emerald);
+      color: var(--accent-emerald);
+    }
+    .status-msg.info {
+      background: rgba(56, 189, 248, 0.15);
+      border: 1px solid var(--accent-cyan);
+      color: var(--accent-cyan);
+    }
+
+    /* On-Screen Virtual Numpad */
+    .keypad-container {
+      width: 100%;
+      max-width: 480px;
+      background: #0d1322;
+      border: 2px solid var(--panel-border);
+      border-radius: 18px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .keypad-row {
+      display: grid;
+      grid-template-columns: repeat(10, 1fr);
+      gap: 4px;
+    }
+    .num-key {
+      background: #1f293d;
+      border: 1px solid #334155;
+      color: #fff;
+      font-size: 1.25rem;
+      font-weight: 800;
+      height: 46px;
+      border-radius: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.1s ease, transform 0.05s ease;
+    }
+    .num-key:active {
+      background: var(--accent-cyan);
+      color: #000;
+      transform: scale(0.94);
+    }
+
+    .keypad-controls-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1.6fr;
+      gap: 6px;
+    }
+    .ctrl-key {
+      background: #1f293d;
+      border: 1px solid #334155;
+      color: #cbd5e1;
+      font-size: 0.85rem;
+      font-weight: 800;
+      height: 44px;
+      border-radius: 10px;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .ctrl-key.btn-enter {
+      background: var(--accent-emerald);
+      color: #090d16;
+      border: none;
+      font-size: 1.05rem;
+    }
+    .ctrl-key:active {
+      transform: scale(0.96);
+    }
+
+    /* Module 3: Spot the Mistake Styling */
+    .jotter-card {
+      background: #0f172a;
+      border: 2px solid #334155;
+      border-radius: 14px;
+      padding: 18px;
+      max-width: 600px;
+      margin: 0 auto;
+      box-shadow: inset 0 0 16px rgba(0,0,0,0.5);
+    }
+
+    /* Module 4: Fact Family Triangles */
+    .triangle-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      padding: 10px;
+    }
+    .triangle-svg {
+      width: 220px;
+      height: 190px;
+    }
+
+    /* Module 5: Place Value Add-On */
+    .pv-blocks-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin: 16px 0;
+      flex-wrap: wrap;
+    }
+    .pv-col-card {
+      background: #090d16;
+      border: 2px solid #334155;
+      border-radius: 12px;
+      padding: 10px 16px;
+      text-align: center;
+      min-width: 90px;
+      transition: all 0.25s ease;
+    }
+    .pv-col-card.glow {
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 16px rgba(56, 189, 248, 0.45);
+      transform: translateY(-4px);
+    }
+
+    /* Footer */
+    footer {
+      background: #090d16;
+      border-top: 1px solid #1f293d;
+      padding: 6px 12px;
+      text-align: center;
+      font-size: 0.72rem;
+      color: var(--text-dim);
     }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between selection:bg-amber-400 selection:text-slate-950">
+<body>
 
-  <!-- TOP HEADER & PRIMARY 4-TAB NAVIGATION -->
-  <header class="bg-slate-900 border-b border-slate-800 px-3 py-2.5 sm:px-6 shadow-xl">
-    <div class="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-3">
-      
-      <!-- Brand & Title -->
-      <div class="flex items-center space-x-3">
-        <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-emerald-500 via-sky-500 to-amber-500 flex items-center justify-center font-kids text-xl font-bold text-slate-950 shadow-md">
-          P7
-        </div>
-        <div>
-          <h1 class="font-kids text-xl sm:text-2xl font-bold tracking-wide text-sky-300 leading-none">
-            Place Value & Calculation Lab
-          </h1>
-          <p class="text-[11px] text-slate-400 font-medium">Group A Targeted Remediation • NI Curriculum Key Stage 2</p>
-        </div>
+  <!-- APP HEADER -->
+  <header>
+    <div class="brand-group">
+      <div class="badge-icon">P7</div>
+      <div class="brand-title">
+        <h1>Place Value & Calculation Lab</h1>
+        <p>Key Stage 2 Intervention & Remediation Engine</p>
       </div>
-
-      <!-- MAIN NAVIGATION TABS -->
-      <nav class="flex items-center gap-1 bg-slate-950 p-1.5 rounded-2xl border border-slate-800 text-xs sm:text-sm font-semibold flex-wrap">
-        <button id="navTabAdd" onclick="switchLabTab('addition')" class="px-3.5 py-1.5 rounded-xl font-bold transition-all bg-sky-500 text-slate-950 shadow-md">
-          1. Column Addition (Carry & Bundle)
-        </button>
-        <button id="navTabSub" onclick="switchLabTab('subtraction')" class="px-3.5 py-1.5 rounded-xl font-bold transition-all text-slate-300 hover:text-white">
-          2. Column Subtraction (Unpack & Exchange)
-        </button>
-        <button id="navTabClinic" onclick="switchLabTab('clinic')" class="px-3.5 py-1.5 rounded-xl font-bold transition-all text-slate-300 hover:text-white">
-          3. Spot the Mistake! 🕵️
-        </button>
-        <button id="navTabInverse" onclick="switchLabTab('inverse')" class="px-3.5 py-1.5 rounded-xl font-bold transition-all text-slate-300 hover:text-white">
-          4. Inverse Fact Fluency (× & ÷)
-        </button>
-        <button id="navTabAddOn" onclick="switchLabTab('addon')" class="px-3.5 py-1.5 rounded-xl font-bold transition-all text-slate-300 hover:text-white">
-          5. ⚡ Add-On 10, 20... 100, 1000
-        </button>
-      </nav>
-
-      <!-- Audio Mute/Unmute Toggle -->
-      <button onclick="toggleAudio()" id="soundToggleBtn" class="w-9 h-9 rounded-xl bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-200 transition" title="Toggle Sound">
-        <svg id="soundOnIcon" class="w-5 h-5 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path></svg>
-        <svg id="soundOffIcon" class="w-5 h-5 hidden text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15zM17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"></path></svg>
-      </button>
-
     </div>
+
+    <!-- MAIN MODULE TABS -->
+    <nav class="main-tabs">
+      <button id="tabBtnAdd" class="nav-btn active" onclick="switchTab('addition')">1. Column Addition</button>
+      <button id="tabBtnSub" class="nav-btn" onclick="switchTab('subtraction')">2. Column Subtraction</button>
+      <button id="tabBtnMistake" class="nav-btn" onclick="switchTab('mistake')">3. Spot The Mistake! 🕵️</button>
+      <button id="tabBtnInverse" class="nav-btn" onclick="switchTab('inverse')">4. Inverse Triangles</button>
+      <button id="tabBtnAddOn" class="nav-btn" onclick="switchTab('addon')">5. ⚡ Add-On 10, 20... 1000</button>
+    </nav>
   </header>
 
-  <!-- SUB-BAR: TIERED LEVEL SELECTION & PROGRESS -->
-  <section class="max-w-6xl w-full mx-auto my-2 px-3 flex flex-wrap items-center justify-between gap-2.5 text-xs sm:text-sm bg-slate-900/60 p-2.5 rounded-2xl border border-slate-800/80">
-    
-    <!-- SUB-CONTROLS: Addition Levels -->
-    <div id="controlsAddition" class="flex items-center gap-1.5 flex-wrap">
-      <span class="text-slate-400 font-semibold mr-1">Level:</span>
-      <button onclick="setLevel('add', 1)" id="addLvl1" class="px-3 py-1 rounded-xl font-bold bg-sky-500 text-slate-950 shadow">L1: 2-Digit (Units Carry)</button>
-      <button onclick="setLevel('add', 2)" id="addLvl2" class="px-3 py-1 rounded-xl font-bold bg-slate-800 text-slate-300 hover:text-white">L2: 3-Digit Single Regroup</button>
-      <button onclick="setLevel('add', 3)" id="addLvl3" class="px-3 py-1 rounded-xl font-bold bg-slate-800 text-slate-300 hover:text-white">L3: Double Regroup (U→T & T→H)</button>
+  <!-- SUB-BAR CONTROLS & STREAK TRACKER -->
+  <section class="sub-bar">
+    <div id="filterControls" class="filter-group">
+      <!-- Dynamic per tab -->
     </div>
 
-    <!-- SUB-CONTROLS: Subtraction Levels -->
-    <div id="controlsSubtraction" class="hidden flex items-center gap-1.5 flex-wrap">
-      <span class="text-slate-400 font-semibold mr-1">Level:</span>
-      <button onclick="setLevel('sub', 1)" id="subLvl1" class="px-3 py-1 rounded-xl font-bold bg-sky-500 text-slate-950 shadow">L1: 2-Digit Anti-Reversal (e.g. 52 - 27)</button>
-      <button onclick="setLevel('sub', 2)" id="subLvl2" class="px-3 py-1 rounded-xl font-bold bg-slate-800 text-slate-300 hover:text-white">L2: 3-Digit (Tens to Units)</button>
-      <button onclick="setLevel('sub', 3)" id="subLvl3" class="px-3 py-1 rounded-xl font-bold bg-slate-800 text-slate-300 hover:text-white">L3: Hundreds to Tens to Units</button>
-      <button onclick="setLevel('sub', 4)" id="subLvl4" class="px-3 py-1 rounded-xl font-bold bg-slate-800 text-slate-300 hover:text-white">L4: The Zero Void (e.g. 403 - 167)</button>
-    </div>
-
-    <!-- SUB-CONTROLS: Clinic Filter -->
-    <div id="controlsClinic" class="hidden flex items-center gap-1.5 flex-wrap">
-      <span class="text-slate-400 font-semibold mr-1">Misconception Focus:</span>
-      <button onclick="setClinicFilter('all')" id="clinicFiltAll" class="px-3 py-1 rounded-xl font-bold bg-sky-500 text-slate-950 shadow">All Common Errors</button>
-      <button onclick="setClinicFilter('reversal')" id="clinicFiltRev" class="px-3 py-1 rounded-xl font-bold bg-slate-800 text-slate-300 hover:text-white">Subtraction Reversals</button>
-      <button onclick="setClinicFilter('carry')" id="clinicFiltCarry" class="px-3 py-1 rounded-xl font-bold bg-slate-800 text-slate-300 hover:text-white">Forgotten Carries</button>
-    </div>
-
-    <!-- SUB-CONTROLS: Inverse Fluency -->
-    <div id="controlsInverse" class="hidden flex items-center gap-1.5 flex-wrap">
-      <span class="text-slate-400 font-semibold mr-1">Times Table Focus:</span>
-      <button onclick="setInverseTier('core')" id="invTierCore" class="px-3 py-1 rounded-xl font-bold bg-sky-500 text-slate-950 shadow">3×, 4×, 6×</button>
-      <button onclick="setInverseTier('target')" id="invTierTarget" class="px-3 py-1 rounded-xl font-bold bg-slate-800 text-slate-300 hover:text-white">7×, 8×, 9× (Priority)</button>
-      <button onclick="setInverseTier('all')" id="invTierAll" class="px-3 py-1 rounded-xl font-bold bg-slate-800 text-slate-300 hover:text-white">Mixed 2× to 12×</button>
-    </div>
-
-    <!-- SUB-CONTROLS: Place Value Add-On Levels (NEW) -->
-    <div id="controlsAddOn" class="hidden flex items-center gap-1.5 flex-wrap">
-      <span class="text-slate-400 font-semibold mr-1">Step Scale:</span>
-      <button onclick="setAddOnLevel(1)" id="addOnLvl1" class="px-2.5 py-1 rounded-xl font-bold bg-sky-500 text-slate-950 shadow">L1: ±10, 20... 90 (Safe)</button>
-      <button onclick="setAddOnLevel(2)" id="addOnLvl2" class="px-2.5 py-1 rounded-xl font-bold bg-slate-800 text-slate-300 hover:text-white">L2: Crossing 100</button>
-      <button onclick="setAddOnLevel(3)" id="addOnLvl3" class="px-2.5 py-1 rounded-xl font-bold bg-slate-800 text-slate-300 hover:text-white">L3: ±100, 200... 900</button>
-      <button onclick="setAddOnLevel(4)" id="addOnLvl4" class="px-2.5 py-1 rounded-xl font-bold bg-slate-800 text-slate-300 hover:text-white">L4: Crossing 1,000</button>
-      <button onclick="setAddOnLevel(5)" id="addOnLvl5" class="px-2.5 py-1 rounded-xl font-bold bg-slate-800 text-slate-300 hover:text-white">L5: ±1000, 2000... 5000</button>
-      <button onclick="setAddOnLevel(6)" id="addOnLvl6" class="px-2.5 py-1 rounded-xl font-bold bg-slate-800 text-slate-300 hover:text-white">L6: Mixed Sprint</button>
-    </div>
-
-    <!-- LIVE METRICS -->
-    <div class="flex items-center gap-4 font-kids ml-auto">
-      <div class="flex items-center gap-1.5 text-amber-400 font-bold text-sm sm:text-base">
-        <span>Streak:</span>
-        <span id="streakDisplay" class="bg-amber-500/20 px-2.5 py-0.5 rounded-full border border-amber-500/40">🔥 0</span>
-      </div>
-      <div class="flex items-center gap-1.5 text-emerald-400 font-bold text-sm sm:text-base">
-        <span>Score:</span>
-        <span id="scoreDisplay">0</span>
-      </div>
+    <div class="stats-bar">
+      <div class="streak-pill" id="streakBadge">🔥 Streak: 0</div>
+      <div class="score-pill" id="scoreBadge">⭐ Score: 0</div>
     </div>
   </section>
 
-  <!-- MAIN INTERACTIVE STAGE -->
-  <main class="max-w-6xl w-full mx-auto px-3 py-1 flex-1 flex flex-col justify-between items-center gap-3">
-    
-    <!-- DYNAMIC CONTAINER INJECTED BY TAB -->
-    <div id="activeStageContainer" class="w-full">
-      <!-- Injected via JavaScript -->
+  <!-- MAIN INTERACTIVE WORKSPACE -->
+  <main>
+    <div class="stage-card" id="stageCard">
+      <!-- Dynamic Workspace Injected Here -->
     </div>
 
-    <!-- ON-SCREEN WHITEBOARD KEYPAD (FOR ACTIVPANEL TOUCH) -->
-    <div id="touchKeypadSection" class="w-full max-w-md flex flex-col items-center gap-1.5 pb-2">
-      <div class="grid grid-cols-10 gap-1.5 w-full">
-        <button onclick="numpadPress(1)" class="h-11 sm:h-12 bg-slate-800 hover:bg-slate-700 active:bg-sky-500 active:text-slate-950 text-white font-kids font-bold text-xl rounded-xl shadow active:scale-95 transition">1</button>
-        <button onclick="numpadPress(2)" class="h-11 sm:h-12 bg-slate-800 hover:bg-slate-700 active:bg-sky-500 active:text-slate-950 text-white font-kids font-bold text-xl rounded-xl shadow active:scale-95 transition">2</button>
-        <button onclick="numpadPress(3)" class="h-11 sm:h-12 bg-slate-800 hover:bg-slate-700 active:bg-sky-500 active:text-slate-950 text-white font-kids font-bold text-xl rounded-xl shadow active:scale-95 transition">3</button>
-        <button onclick="numpadPress(4)" class="h-11 sm:h-12 bg-slate-800 hover:bg-slate-700 active:bg-sky-500 active:text-slate-950 text-white font-kids font-bold text-xl rounded-xl shadow active:scale-95 transition">4</button>
-        <button onclick="numpadPress(5)" class="h-11 sm:h-12 bg-slate-800 hover:bg-slate-700 active:bg-sky-500 active:text-slate-950 text-white font-kids font-bold text-xl rounded-xl shadow active:scale-95 transition">5</button>
-        <button onclick="numpadPress(6)" class="h-11 sm:h-12 bg-slate-800 hover:bg-slate-700 active:bg-sky-500 active:text-slate-950 text-white font-kids font-bold text-xl rounded-xl shadow active:scale-95 transition">6</button>
-        <button onclick="numpadPress(7)" class="h-11 sm:h-12 bg-slate-800 hover:bg-slate-700 active:bg-sky-500 active:text-slate-950 text-white font-kids font-bold text-xl rounded-xl shadow active:scale-95 transition">7</button>
-        <button onclick="numpadPress(8)" class="h-11 sm:h-12 bg-slate-800 hover:bg-slate-700 active:bg-sky-500 active:text-slate-950 text-white font-kids font-bold text-xl rounded-xl shadow active:scale-95 transition">8</button>
-        <button onclick="numpadPress(9)" class="h-11 sm:h-12 bg-slate-800 hover:bg-slate-700 active:bg-sky-500 active:text-slate-950 text-white font-kids font-bold text-xl rounded-xl shadow active:scale-95 transition">9</button>
-        <button onclick="numpadPress(0)" class="h-11 sm:h-12 bg-slate-800 hover:bg-slate-700 active:bg-sky-500 active:text-slate-950 text-white font-kids font-bold text-xl rounded-xl shadow active:scale-95 transition">0</button>
+    <!-- ACTIVPANEL TOUCH KEYPAD -->
+    <div class="keypad-container" id="keypadBox">
+      <div class="keypad-row">
+        <button class="num-key" onclick="numpadInput('1')">1</button>
+        <button class="num-key" onclick="numpadInput('2')">2</button>
+        <button class="num-key" onclick="numpadInput('3')">3</button>
+        <button class="num-key" onclick="numpadInput('4')">4</button>
+        <button class="num-key" onclick="numpadInput('5')">5</button>
+        <button class="num-key" onclick="numpadInput('6')">6</button>
+        <button class="num-key" onclick="numpadInput('7')">7</button>
+        <button class="num-key" onclick="numpadInput('8')">8</button>
+        <button class="num-key" onclick="numpadInput('9')">9</button>
+        <button class="num-key" onclick="numpadInput('0')">0</button>
       </div>
-      <div class="flex items-center justify-between w-full gap-2">
-        <button onclick="numpadPress('backspace')" class="flex-1 h-11 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl text-xs uppercase tracking-wider active:scale-95 transition">
-          ⌫ Backspace
-        </button>
-        <button onclick="numpadPress('clear')" class="flex-1 h-11 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl text-xs uppercase tracking-wider active:scale-95 transition">
-          Clear
-        </button>
-        <button id="numpadSubmitBtn" onclick="numpadSubmit()" class="flex-[1.5] h-11 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-kids text-lg font-bold rounded-xl shadow-md active:scale-95 transition flex items-center justify-center gap-1">
-          <span>Enter</span> <span>✨</span>
-        </button>
+      <div class="keypad-controls-row">
+        <button class="ctrl-key" onclick="numpadBackspace()">⌫ Del</button>
+        <button class="ctrl-key" onclick="numpadClear()">Clear</button>
+        <button class="ctrl-key btn-enter" onclick="numpadSubmit()">Submit ✨</button>
       </div>
     </div>
-
-    <!-- BOTTOM CONTROL BAR -->
-    <div class="flex items-center justify-between w-full max-w-xl text-xs sm:text-sm pt-1">
-      <button onclick="generateNewProblem()" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-xl font-semibold text-slate-200 transition flex items-center gap-1.5">
-        <span>🔄 New Problem / Next Example</span>
-      </button>
-      <div class="text-slate-500">
-        Touch-screen & ActivPanel Optimized
-      </div>
-    </div>
-
   </main>
 
-  <footer class="bg-slate-950 border-t border-slate-900 px-4 py-1.5 text-center text-xs text-slate-500">
-    <p>CCEA KS2 Numeracy Intervention • <em>Concrete-Pictorial-Abstract (CPA) Base-10 column mastery and error deconstruction.</em></p>
+  <!-- FOOTER -->
+  <footer>
+    Northern Ireland Curriculum KS2 Support: <em>Decomposing place-value units, inverse links, and concrete exchange algorithms.</em>
   </footer>
 
-  <!-- SCRIPT LOGIC -->
+  <!-- CORE LOGIC & WEB AUDIO SCRIPT -->
   <script>
     /* =====================================================================
-       WEB AUDIO SYNTHESIZER
+       WEB AUDIO SOUND ENGINE (NO EXTERNAL AUDIO FILES)
        ===================================================================== */
     let audioCtx = null;
-    let soundEnabled = true;
-
-    function getAudioCtx() {
+    function getAudio() {
       if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       if (audioCtx.state === 'suspended') audioCtx.resume();
       return audioCtx;
     }
 
-    function playSound(type) {
-      if (!soundEnabled) return;
+    function playTone(type) {
       try {
-        const ctx = getAudioCtx();
+        const ctx = getAudio();
         const now = ctx.currentTime;
-
         if (type === 'click') {
           const osc = ctx.createOscillator();
           const gain = ctx.createGain();
-          osc.type = 'sine';
-          osc.frequency.setValueAtTime(420, now);
-          osc.frequency.exponentialRampToValueAtTime(700, now + 0.06);
-          gain.gain.setValueAtTime(0.2, now);
-          gain.gain.linearRampToValueAtTime(0, now + 0.06);
+          osc.frequency.setValueAtTime(480, now);
+          osc.frequency.exponentialRampToValueAtTime(240, now + 0.05);
+          gain.gain.setValueAtTime(0.15, now);
+          gain.gain.linearRampToValueAtTime(0, now + 0.05);
           osc.connect(gain);
           gain.connect(ctx.destination);
           osc.start(now);
-          osc.stop(now + 0.07);
-        } else if (type === 'bundle') {
-          // Playful ascending glissando for bundling/unpacking
-          const osc = ctx.createOscillator();
-          const gain = ctx.createGain();
-          osc.type = 'triangle';
-          osc.frequency.setValueAtTime(260, now);
-          osc.frequency.exponentialRampToValueAtTime(840, now + 0.28);
-          gain.gain.setValueAtTime(0.25, now);
-          gain.gain.linearRampToValueAtTime(0, now + 0.3);
-          osc.connect(gain);
-          gain.connect(ctx.destination);
-          osc.start(now);
-          osc.stop(now + 0.31);
-        } else if (type === 'correct') {
-          [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
+          osc.stop(now + 0.06);
+        } else if (type === 'success') {
+          [523.25, 659.25, 783.99, 1046.50].forEach((f, i) => {
             const osc = ctx.createOscillator();
             const gain = ctx.createGain();
-            osc.type = 'triangle';
-            osc.frequency.setValueAtTime(freq, now + i * 0.06);
-            gain.gain.setValueAtTime(0.25, now + i * 0.06);
-            gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.06 + 0.32);
+            osc.frequency.setValueAtTime(f, now + i * 0.07);
+            gain.gain.setValueAtTime(0.18, now + i * 0.07);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.07 + 0.3);
             osc.connect(gain);
             gain.connect(ctx.destination);
-            osc.start(now + i * 0.06);
-            osc.stop(now + i * 0.06 + 0.33);
+            osc.start(now + i * 0.07);
+            osc.stop(now + i * 0.07 + 0.32);
           });
         } else if (type === 'error') {
           const osc = ctx.createOscillator();
           const gain = ctx.createGain();
           osc.type = 'sawtooth';
           osc.frequency.setValueAtTime(220, now);
-          osc.frequency.exponentialRampToValueAtTime(120, now + 0.26);
-          gain.gain.setValueAtTime(0.2, now);
-          gain.gain.linearRampToValueAtTime(0, now + 0.26);
+          osc.frequency.linearRampToValueAtTime(140, now + 0.22);
+          gain.gain.setValueAtTime(0.18, now);
+          gain.gain.linearRampToValueAtTime(0, now + 0.22);
           osc.connect(gain);
           gain.connect(ctx.destination);
           osc.start(now);
-          osc.stop(now + 0.27);
+          osc.stop(now + 0.23);
         }
-      } catch (e) {
-        console.warn('Audio play error:', e);
-      }
-    }
-
-    function toggleAudio() {
-      soundEnabled = !soundEnabled;
-      document.getElementById('soundOnIcon').classList.toggle('hidden', !soundEnabled);
-      document.getElementById('soundOffIcon').classList.toggle('hidden', soundEnabled);
+      } catch(e) {}
     }
 
     /* =====================================================================
        GLOBAL STATE
        ===================================================================== */
-    let currentTab = 'addition'; // 'addition', 'subtraction', 'clinic', 'inverse', 'addon'
-    let addLevel = 1;
-    let subLevel = 1;
-    let clinicFilter = 'all';
-    let inverseTier = 'target';
-    let addOnLevel = 1;
-
+    let currentTab = 'subtraction'; // Defaulting to the fixed subtraction module
     let streak = 0;
     let score = 0;
-    let isProcessing = false;
+    let activeInputBuffer = '';
 
-    // Active problem objects
-    let addState = {};
-    let subState = {};
-    let clinicState = {};
-    let inverseState = {};
-    let addOnState = {};
+    // Subtraction Engine State
+    let subState = {
+      level: 1, // 1: 2-digit borrowing, 2: 3-digit, 3: zero void
+      top: 52,
+      bottom: 27,
+      originalTop: 52,
+      hTop: 0,
+      tTop: 5,
+      uTop: 2,
+      hBot: 0,
+      tBot: 2,
+      uBot: 7,
+      uBorrowDone: false,
+      tBorrowDone: false,
+      activeCol: 'units', // 'units', 'tens', 'hundreds', 'done'
+      step: 'check_can_sub', // 'check_can_sub', 'ask_how_many', 'ask_lender_new', 'ask_target_new', 'calc_col'
+      ansUnits: null,
+      ansTens: null,
+      ansHundreds: null
+    };
 
+    // Addition Engine State
+    let addState = {
+      level: 1,
+      top: 48,
+      bottom: 37,
+      activeCol: 'units', // 'units', 'tens', 'hundreds'
+      step: 'calc_units', // 'calc_units', 'ask_carry_val', 'calc_tens'
+      uCarry: 0,
+      tCarry: 0,
+      ansUnits: null,
+      ansTens: null,
+      ansHundreds: null
+    };
+
+    // Module 3: Clinic State
+    let clinicState = {
+      currentIdx: 0,
+      selectedErrId: null
+    };
+
+    // Module 4: Inverse State
+    let inverseState = {
+      factorA: 7,
+      factorB: 8,
+      product: 56,
+      blankSlot: 'product',
+      userVal: ''
+    };
+
+    // Module 5: Add-On State
+    let addOnState = {
+      level: 1,
+      base: 345,
+      change: 30,
+      isAdd: true,
+      userVal: ''
+    };
+
+    /* =====================================================================
+       INITIALIZATION
+       ===================================================================== */
     window.addEventListener('DOMContentLoaded', () => {
-      switchLabTab('addition');
-      setupKeyboard();
+      switchTab('subtraction');
+      setupPhysicalKeyboard();
     });
 
-    /* =====================================================================
-       TAB NAVIGATION ROUTER
-       ===================================================================== */
-    function switchLabTab(tab) {
-      playSound('click');
+    function updateStats() {
+      document.getElementById('streakBadge').textContent = `🔥 Streak: ${streak}`;
+      document.getElementById('scoreBadge').textContent = `⭐ Score: ${score}`;
+    }
+
+    function switchTab(tab) {
+      playTone('click');
       currentTab = tab;
+      activeInputBuffer = '';
 
-      // Update Nav Buttons
-      ['navTabAdd', 'navTabSub', 'navTabClinic', 'navTabInverse', 'navTabAddOn'].forEach(id => {
-        document.getElementById(id).className = 'px-3.5 py-1.5 rounded-xl font-bold transition-all text-slate-300 hover:text-white';
-      });
-      const map = {
-        addition: 'navTabAdd',
-        subtraction: 'navTabSub',
-        clinic: 'navTabClinic',
-        inverse: 'navTabInverse',
-        addon: 'navTabAddOn'
-      };
-      document.getElementById(map[tab]).className = 'px-3.5 py-1.5 rounded-xl font-bold transition-all bg-sky-500 text-slate-950 shadow-md';
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      if (tab === 'addition') document.getElementById('tabBtnAdd').classList.add('active');
+      if (tab === 'subtraction') document.getElementById('tabBtnSub').classList.add('active');
+      if (tab === 'mistake') document.getElementById('tabBtnMistake').classList.add('active');
+      if (tab === 'inverse') document.getElementById('tabBtnInverse').classList.add('active');
+      if (tab === 'addon') document.getElementById('tabBtnAddOn').classList.add('active');
 
-      // Toggle Sub-Bars
-      document.getElementById('controlsAddition').classList.add('hidden');
-      document.getElementById('controlsSubtraction').classList.add('hidden');
-      document.getElementById('controlsClinic').classList.add('hidden');
-      document.getElementById('controlsInverse').classList.add('hidden');
-      document.getElementById('controlsAddOn').classList.add('hidden');
-
-      if (tab === 'addition') document.getElementById('controlsAddition').classList.remove('hidden');
-      else if (tab === 'subtraction') document.getElementById('controlsSubtraction').classList.remove('hidden');
-      else if (tab === 'clinic') document.getElementById('controlsClinic').classList.remove('hidden');
-      else if (tab === 'inverse') document.getElementById('controlsInverse').classList.remove('hidden');
-      else if (tab === 'addon') document.getElementById('controlsAddOn').classList.remove('hidden');
-
-      generateNewProblem();
+      renderSubBar();
+      initCurrentModule();
     }
 
-    function setAddOnLevel(lvl) {
-      playSound('click');
-      addOnLevel = lvl;
-      [1, 2, 3, 4, 5, 6].forEach(l => {
-        document.getElementById(`addOnLvl${l}`).className = l === lvl
-          ? 'px-2.5 py-1 rounded-xl font-bold bg-sky-500 text-slate-950 shadow'
-          : 'px-2.5 py-1 rounded-xl font-bold bg-slate-800 text-slate-300 hover:text-white';
-      });
-      generateNewProblem();
-    }
+    function renderSubBar() {
+      const bar = document.getElementById('filterControls');
+      bar.innerHTML = '';
 
-    function setLevel(type, lvl) {
-      playSound('click');
-      if (type === 'add') {
-        addLevel = lvl;
-        [1, 2, 3].forEach(l => {
-          document.getElementById(`addLvl${l}`).className = l === lvl
-            ? 'px-3 py-1 rounded-xl font-bold bg-sky-500 text-slate-950 shadow'
-            : 'px-3 py-1 rounded-xl font-bold bg-slate-800 text-slate-300 hover:text-white';
-        });
-      } else {
-        subLevel = lvl;
-        [1, 2, 3, 4].forEach(l => {
-          document.getElementById(`subLvl${l}`).className = l === lvl
-            ? 'px-3 py-1 rounded-xl font-bold bg-sky-500 text-slate-950 shadow'
-            : 'px-3 py-1 rounded-xl font-bold bg-slate-800 text-slate-300 hover:text-white';
-        });
-      }
-      generateNewProblem();
-    }
-
-    function setClinicFilter(f) {
-      playSound('click');
-      clinicFilter = f;
-      ['clinicFiltAll', 'clinicFiltRev', 'clinicFiltCarry'].forEach(id => {
-        document.getElementById(id).className = 'px-3 py-1 rounded-xl font-bold bg-slate-800 text-slate-300 hover:text-white';
-      });
-      const map = { all: 'clinicFiltAll', reversal: 'clinicFiltRev', carry: 'clinicFiltCarry' };
-      document.getElementById(map[f]).className = 'px-3 py-1 rounded-xl font-bold bg-sky-500 text-slate-950 shadow';
-      generateNewProblem();
-    }
-
-    function setInverseTier(t) {
-      playSound('click');
-      inverseTier = t;
-      ['invTierCore', 'invTierTarget', 'invTierAll'].forEach(id => {
-        document.getElementById(id).className = 'px-3 py-1 rounded-xl font-bold bg-slate-800 text-slate-300 hover:text-white';
-      });
-      const map = { core: 'invTierCore', target: 'invTierTarget', all: 'invTierAll' };
-      document.getElementById(map[t]).className = 'px-3 py-1 rounded-xl font-bold bg-sky-500 text-slate-950 shadow';
-      generateNewProblem();
-    }
-
-    /* =====================================================================
-       PROBLEM GENERATOR ROUTER
-       ===================================================================== */
-    function generateNewProblem() {
-      isProcessing = false;
-      const stage = document.getElementById('activeStageContainer');
-      stage.innerHTML = '';
-
-      if (currentTab === 'addition') {
-        buildAdditionModule(stage);
-      } else if (currentTab === 'subtraction') {
-        buildSubtractionModule(stage);
-      } else if (currentTab === 'clinic') {
-        buildClinicModule(stage);
+      if (currentTab === 'subtraction') {
+        bar.innerHTML = `
+          <span class="filter-label">Difficulty:</span>
+          <button class="lvl-btn ${subState.level===1?'active':''}" onclick="setSubLevel(1)">L1: 2-Digit Exchange</button>
+          <button class="lvl-btn ${subState.level===2?'active':''}" onclick="setSubLevel(2)">L2: 3-Digit Exchange</button>
+          <button class="lvl-btn ${subState.level===3?'active':''}" onclick="setSubLevel(3)">L3: Across Zero Void</button>
+        `;
+      } else if (currentTab === 'addition') {
+        bar.innerHTML = `
+          <span class="filter-label">Difficulty:</span>
+          <button class="lvl-btn ${addState.level===1?'active':''}" onclick="setAddLevel(1)">L1: 2-Digit Carry</button>
+          <button class="lvl-btn ${addState.level===2?'active':''}" onclick="setAddLevel(2)">L2: 3-Digit Double Carry</button>
+        `;
+      } else if (currentTab === 'mistake') {
+        bar.innerHTML = `<span class="filter-label">Mode:</span> <span style="font-size:0.8rem; font-weight:700; color:#38bdf8;">Authentic Pupil Misconception Analysis</span>`;
       } else if (currentTab === 'inverse') {
-        buildInverseModule(stage);
+        bar.innerHTML = `<span class="filter-label">Focus:</span> <span style="font-size:0.8rem; font-weight:700; color:#c084fc;">Multiplication & Division Fact Families</span>`;
       } else if (currentTab === 'addon') {
-        buildAddOnModule(stage);
+        bar.innerHTML = `
+          <span class="filter-label">Scale:</span>
+          <button class="lvl-btn ${addOnState.level===1?'active':''}" onclick="setAddOnLevel(1)">±10 to 90</button>
+          <button class="lvl-btn ${addOnState.level===2?'active':''}" onclick="setAddOnLevel(2)">Crossing 100</button>
+          <button class="lvl-btn ${addOnState.level===3?'active':''}" onclick="setAddOnLevel(3)">±100 to 900</button>
+          <button class="lvl-btn ${addOnState.level===4?'active':''}" onclick="setAddOnLevel(4)">Crossing 1,000</button>
+        `;
       }
+    }
+
+    function initCurrentModule() {
+      if (currentTab === 'subtraction') initSubtractionProblem();
+      else if (currentTab === 'addition') initAdditionProblem();
+      else if (currentTab === 'mistake') initMistakeProblem();
+      else if (currentTab === 'inverse') initInverseProblem();
+      else if (currentTab === 'addon') initAddOnProblem();
     }
 
     /* =====================================================================
-       MODULE 1: COLUMN ADDITION (CPA DUAL VIEW & BUNDLE MECHANIC)
+       MODULE 2: STEP-BY-STEP SUBTRACTION BORROWING ENGINE (REPAIRED & ROBUST)
        ===================================================================== */
-    function buildAdditionModule(container) {
-      let topNum, botNum;
+    function setSubLevel(lvl) {
+      subState.level = lvl;
+      renderSubBar();
+      initSubtractionProblem();
+    }
 
-      if (addLevel === 1) {
-        // 2-digit + 2-digit with units carry guaranteed
-        const u1 = Math.floor(Math.random() * 5) + 5; // 5-9
-        const u2 = Math.floor(Math.random() * 4) + (10 - u1); // sum >= 10
-        const t1 = Math.floor(Math.random() * 4) + 2;
-        const t2 = Math.floor(Math.random() * 4) + 1;
-        topNum = t1 * 10 + u1;
-        botNum = t2 * 10 + u2;
-      } else if (addLevel === 2) {
-        // 3-digit + 2 or 3-digit (single regroup in Tens or Units)
-        topNum = Math.floor(Math.random() * 400) + 180;
-        botNum = Math.floor(Math.random() * 150) + 45;
+    function initSubtractionProblem() {
+      activeInputBuffer = '';
+      if (subState.level === 1) {
+        // 2-digit requiring borrowing in units
+        const tens = Math.floor(Math.random() * 5) + 3; // 3 to 7
+        const uTop = Math.floor(Math.random() * 4) + 1; // 1 to 4
+        const subTens = Math.floor(Math.random() * (tens - 2)) + 1;
+        const uBot = Math.floor(Math.random() * 4) + 6; // 6 to 9
+        subState.top = tens * 10 + uTop;
+        subState.bottom = subTens * 10 + uBot;
+        subState.hTop = 0; subState.tTop = tens; subState.uTop = uTop;
+        subState.hBot = 0; subState.tBot = subTens; subState.uBot = uBot;
+      } else if (subState.level === 2) {
+        // 3-digit with borrowing in units
+        const h = Math.floor(Math.random() * 4) + 2;
+        const t = Math.floor(Math.random() * 5) + 2;
+        const u = Math.floor(Math.random() * 3) + 1;
+        const hSub = Math.floor(Math.random() * (h - 1)) + 1;
+        const tSub = Math.floor(Math.random() * t);
+        const uSub = Math.floor(Math.random() * 4) + 6;
+        subState.top = h * 100 + t * 10 + u;
+        subState.bottom = hSub * 100 + tSub * 10 + uSub;
+        subState.hTop = h; subState.tTop = t; subState.uTop = u;
+        subState.hBot = hSub; subState.tBot = tSub; subState.uBot = uSub;
       } else {
-        // Double regroup (Units to Tens AND Tens to Hundreds)
-        const u1 = Math.floor(Math.random() * 4) + 6;
-        const u2 = Math.floor(Math.random() * 3) + 7;
-        const t1 = Math.floor(Math.random() * 4) + 6;
-        const t2 = Math.floor(Math.random() * 3) + 6;
-        const h1 = Math.floor(Math.random() * 3) + 1;
-        const h2 = Math.floor(Math.random() * 3) + 1;
-        topNum = h1 * 100 + t1 * 10 + u1;
-        botNum = h2 * 100 + t2 * 10 + u2;
+        // Zero void: e.g. 403 - 167
+        const h = Math.floor(Math.random() * 4) + 3;
+        const t = 0;
+        const u = Math.floor(Math.random() * 4) + 1;
+        const hSub = Math.floor(Math.random() * (h - 2)) + 1;
+        const tSub = Math.floor(Math.random() * 5) + 3;
+        const uSub = Math.floor(Math.random() * 4) + 6;
+        subState.top = h * 100 + t * 10 + u;
+        subState.bottom = hSub * 100 + tSub * 10 + uSub;
+        subState.hTop = h; subState.tTop = t; subState.uTop = u;
+        subState.hBot = hSub; subState.tBot = tSub; subState.uBot = uSub;
       }
 
-      const sum = topNum + botNum;
-      
-      const topH = Math.floor(topNum / 100);
-      const topT = Math.floor((topNum % 100) / 10);
-      const topU = topNum % 10;
+      subState.originalTop = subState.top;
+      subState.uBorrowDone = false;
+      subState.tBorrowDone = false;
+      subState.activeCol = 'units';
+      subState.step = 'check_can_sub';
+      subState.ansUnits = null;
+      subState.ansTens = null;
+      subState.ansHundreds = null;
 
-      const botH = Math.floor(botNum / 100);
-      const botT = Math.floor((botNum % 100) / 10);
-      const botU = botNum % 10;
-
-      addState = {
-        topNum, botNum, sum,
-        topH, topT, topU,
-        botH, botT, botU,
-        col: 'units', // 'units', 'tens', 'hundreds', 'done'
-        phase: 'solve', // 'solve' or 'ask_carry'
-        carriedTens: 0,
-        carriedHundreds: 0,
-        carriedThousands: 0,
-        inputU: '',
-        inputT: '',
-        inputH: '',
-        inputCarry: '',
-        currentColSum: 0
-      };
-
-      renderAdditionUI(container);
+      renderSubtractionView();
     }
 
-    function renderAdditionUI(container) {
-      const s = addState;
-
-      // Calculate total columns we have
-      const hasHundreds = (s.topH > 0 || s.botH > 0 || s.carriedHundreds > 0);
-
-      container.innerHTML = `
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 w-full">
-          
-          <!-- LEFT: FORMAL WRITTEN COLUMN GRID -->
-          <div class="lg:col-span-5 bg-slate-900 border-2 border-slate-800 rounded-3xl p-5 shadow-2xl flex flex-col items-center justify-between">
-            <div class="w-full flex items-center justify-between border-b border-slate-800 pb-2">
-              <span class="font-kids text-sm font-bold text-sky-400">Step: <span id="addStepName" class="text-amber-400 uppercase">${s.col}</span></span>
-              <span class="text-[11px] text-slate-400 font-medium">Add Right to Left</span>
-            </div>
-
-            <!-- Place Value Column Titles -->
-            <div class="grid grid-cols-4 w-full max-w-[280px] text-center font-kids text-lg font-bold pt-3 pb-1">
-              <div class="text-purple-400 text-sm">Th</div>
-              <div class="text-emerald-400">H</div>
-              <div class="text-sky-400">T</div>
-              <div class="text-amber-400">U</div>
-            </div>
-
-            <!-- Carried Row Top -->
-            <div class="grid grid-cols-4 w-full max-w-[280px] text-center font-kids text-sm font-bold h-8 items-center">
-              <div id="addCarryTh" class="text-purple-400 ${s.carriedThousands ? 'bg-purple-500/20 border border-purple-500 rounded-lg' : ''}">${s.carriedThousands || ''}</div>
-              <div id="addCarryH" class="text-emerald-400 ${s.phase === 'ask_carry' && s.col === 'tens' ? 'border-2 border-dashed border-amber-400 bg-amber-500/20 rounded-lg animate-pulse' : (s.carriedHundreds ? 'bg-emerald-500/20 border border-emerald-500 rounded-lg' : '')}">
-                ${s.phase === 'ask_carry' && s.col === 'tens' ? (s.inputCarry || '?') : (s.carriedHundreds || '')}
-              </div>
-              <div id="addCarryT" class="text-sky-400 ${s.phase === 'ask_carry' && s.col === 'units' ? 'border-2 border-dashed border-amber-400 bg-amber-500/20 rounded-lg animate-pulse' : (s.carriedTens ? 'bg-sky-500/20 border border-sky-500 rounded-lg' : '')}">
-                ${s.phase === 'ask_carry' && s.col === 'units' ? (s.inputCarry || '?') : (s.carriedTens || '')}
-              </div>
-              <div></div>
-            </div>
-
-            <!-- Top Number Row -->
-            <div class="grid grid-cols-4 w-full max-w-[280px] text-center font-kids text-3xl font-bold">
-              <div></div>
-              <div class="text-emerald-400">${s.topH || ''}</div>
-              <div class="text-sky-400">${s.topT}</div>
-              <div class="text-amber-400">${s.topU}</div>
-            </div>
-
-            <!-- Bottom Number Row -->
-            <div class="grid grid-cols-4 w-full max-w-[280px] text-center font-kids text-3xl font-bold border-b-4 border-slate-300 pb-2">
-              <div class="text-slate-400 text-3xl flex items-center justify-center">+</div>
-              <div class="text-emerald-400">${s.botH || ''}</div>
-              <div class="text-sky-400">${s.botT}</div>
-              <div class="text-amber-400">${s.botU}</div>
-            </div>
-
-            <!-- Answer Row -->
-            <div class="grid grid-cols-4 w-full max-w-[280px] text-center font-kids text-3xl font-bold pt-2">
-              <div id="addAnsTh" class="col-cell text-purple-400 font-bold">${s.carriedThousands || ''}</div>
-              <div id="addAnsH" class="col-cell text-emerald-400 border border-dashed ${s.col === 'hundreds' && s.phase === 'solve' ? 'border-emerald-400 bg-emerald-500/10' : 'border-slate-800'} rounded-xl">${s.inputH || (s.col === 'hundreds' ? '?' : '')}</div>
-              <div id="addAnsT" class="col-cell text-sky-400 border border-dashed ${s.col === 'tens' && s.phase === 'solve' ? 'border-sky-400 bg-sky-500/10' : 'border-slate-800'} rounded-xl">${s.inputT || (s.col === 'tens' ? '?' : '')}</div>
-              <div id="addAnsU" class="col-cell text-amber-400 border border-dashed ${s.col === 'units' && s.phase === 'solve' ? 'border-amber-400 bg-amber-500/10' : 'border-slate-800'} rounded-xl">${s.inputU || (s.col === 'units' ? '?' : '')}</div>
-            </div>
-
-            <div id="addGuidancePrompt" class="mt-4 p-2.5 bg-slate-950 rounded-2xl border border-slate-800 w-full text-center text-xs font-semibold text-slate-300 min-h-[46px] flex items-center justify-center">
-              ${getAdditionPromptText()}
-            </div>
-          </div>
-
-          <!-- RIGHT: CONCRETE-PICTORIAL PLACE VALUE MAT -->
-          <div class="lg:col-span-7 bg-slate-900 border-2 border-slate-800 rounded-3xl p-5 shadow-2xl flex flex-col justify-between gap-3">
-            <div class="flex items-center justify-between border-b border-slate-800 pb-2">
-              <span class="font-kids text-sm font-bold text-slate-200">Interactive Place Value Mat (CPA Regrouping)</span>
-              <span class="text-[11px] text-emerald-400 font-mono">10 Units = 1 Ten | 10 Tens = 1 Hundred</span>
-            </div>
-
-            <!-- Columns Display (Hundreds, Tens, Units) -->
-            <div class="grid grid-cols-3 gap-2 h-64 sm:h-72">
-              <!-- Hundreds Mat -->
-              <div class="bg-slate-950/80 border-2 border-emerald-500/40 rounded-2xl p-2 flex flex-col items-center overflow-y-auto">
-                <span class="font-kids text-xs font-bold text-emerald-400 uppercase tracking-widest mb-1.5">Hundreds (H)</span>
-                <div id="matH" class="flex flex-wrap gap-1.5 justify-center">
-                  ${renderBase10Flats(s.topH + s.botH + s.carriedHundreds)}
-                </div>
-              </div>
-
-              <!-- Tens Mat -->
-              <div class="bg-slate-950/80 border-2 border-sky-500/40 rounded-2xl p-2 flex flex-col items-center overflow-y-auto">
-                <span class="font-kids text-xs font-bold text-sky-400 uppercase tracking-widest mb-1.5">Tens (T)</span>
-                <div id="matT" class="flex flex-wrap gap-1.5 justify-center">
-                  ${renderBase10Rods(s.topT + s.botT + s.carriedTens)}
-                </div>
-              </div>
-
-              <!-- Units Mat -->
-              <div class="bg-slate-950/80 border-2 border-amber-500/40 rounded-2xl p-2 flex flex-col items-center overflow-y-auto">
-                <span class="font-kids text-xs font-bold text-amber-400 uppercase tracking-widest mb-1.5">Units (U)</span>
-                <div id="matU" class="flex flex-wrap gap-1 justify-center">
-                  ${renderBase10Cubes(s.col === 'units' ? (s.topU + s.botU) : (s.topU + s.botU - (s.carriedTens ? 10 : 0)))}
-                </div>
-              </div>
-            </div>
-
-            <!-- Interactive Action / Question Row -->
-            <div id="addMatActionArea" class="flex items-center justify-between gap-3 bg-slate-950 p-3 rounded-2xl border border-slate-800 min-h-[58px]">
-              ${getAdditionMatControls()}
-            </div>
-
-          </div>
-
-        </div>
-      `;
-    }
-
-    function getAdditionPromptText() {
-      const s = addState;
-      if (s.col === 'units') {
-        if (s.phase === 'solve') {
-          return `Add the Units column: What digit stays in the Units box?`;
-        } else {
-          return `Regrouping needed! What digit must be carried over to the Tens column?`;
-        }
-      } else if (s.col === 'tens') {
-        if (s.phase === 'solve') {
-          return s.carriedTens > 0 
-            ? `Add the Tens column (don't forget the carried ten): What digit stays in the Tens box?` 
-            : `Add the Tens column: What digit stays in the Tens box?`;
-        } else {
-          return `Regrouping needed! What digit must be carried over to the Hundreds column?`;
-        }
-      } else if (s.col === 'hundreds') {
-        return s.carriedHundreds > 0 
-          ? `Add the Hundreds column (including the carried hundred): Enter the total hundreds.` 
-          : `Add the Hundreds column: Enter the total hundreds.`;
-      } else {
-        return `🎉 Excellent calculation! Total = ${s.sum}.`;
-      }
-    }
-
-    function getAdditionMatControls() {
-      const s = addState;
-      if (s.col === 'done') {
-        return `<div class="text-emerald-400 font-kids font-bold text-base">🎉 Calculation Complete & Verified: ${s.sum}!</div>`;
-      }
-      if (s.phase === 'ask_carry') {
-        const nextColName = s.col === 'units' ? 'Tens' : 'Hundreds';
-        return `
-          <div class="text-xs font-kids text-amber-300">
-            <strong>Question:</strong> How many are carried to the <strong>${nextColName}</strong> column?
-          </div>
-          <div class="flex items-center gap-2">
-            <span class="text-xs text-slate-400 font-mono">Type digit & press Enter</span>
-          </div>
-        `;
-      }
-      return `
-        <div class="text-xs font-kids text-slate-300">
-          Calculating the <strong class="text-amber-400 uppercase">${s.col}</strong> column.
-        </div>
-        <div class="text-xs font-mono text-sky-400">Type the digit that stays in this column.</div>
-      `;
-    }
-
-    function renderBase10Cubes(count) {
-      let html = '';
-      for (let i = 0; i < count; i++) {
-        html += `<div class="b10-cube animate-pop"></div>`;
-      }
-      return html || '<span class="text-slate-600 text-[10px] mt-4">Empty</span>';
-    }
-
-    function renderBase10Rods(count) {
-      let html = '';
-      for (let i = 0; i < count; i++) {
-        html += `<div class="b10-rod animate-pop"></div>`;
-      }
-      return html || '<span class="text-slate-600 text-[10px] mt-4">Empty</span>';
-    }
-
-    function renderBase10Flats(count) {
-      let html = '';
-      for (let i = 0; i < count; i++) {
-        html += `<div class="b10-flat animate-pop"></div>`;
-      }
-      return html || '<span class="text-slate-600 text-[10px] mt-4">Empty</span>';
-    }
-
-    function getAdditionActionControls() {
-      const s = addState;
-      const unitSum = s.topU + s.botU;
-      const tenSum = s.topT + s.botT + s.carriedTens;
-
-      if (s.step === 'units') {
-        if (unitSum >= 10 && !s.bundledU) {
-          return `
-            <div class="text-xs font-kids text-amber-300">You have ${unitSum} units! Bundle 10 into 1 Ten Rod:</div>
-            <button onclick="bundleUnitsToAdd()" class="px-5 py-2.5 bg-gradient-to-r from-amber-500 to-sky-500 text-slate-950 font-kids text-base font-bold rounded-xl shadow-lg active:scale-95 pulse-glow transition">
-              ✨ Bundle 10 Units ➔ 1 Ten
-            </button>
-          `;
-        } else {
-          return `
-            <div class="text-xs font-kids text-slate-300">Now record the remaining loose units:</div>
-            <div class="font-kids text-lg text-amber-400 font-bold">${unitSum % 10} Units go in the answer box!</div>
-          `;
-        }
-      } else if (s.step === 'tens') {
-        if (tenSum >= 10 && !s.bundledT) {
-          return `
-            <div class="text-xs font-kids text-sky-300">You have ${tenSum} tens! Bundle 10 into 1 Hundred Flat:</div>
-            <button onclick="bundleTensToAdd()" class="px-5 py-2.5 bg-gradient-to-r from-sky-500 to-emerald-500 text-slate-950 font-kids text-base font-bold rounded-xl shadow-lg active:scale-95 pulse-glow transition">
-              ✨ Bundle 10 Tens ➔ 1 Hundred
-            </button>
-          `;
-        } else {
-          return `
-            <div class="text-xs font-kids text-slate-300">Record the remaining tens:</div>
-            <div class="font-kids text-lg text-sky-400 font-bold">${tenSum % 10} Tens go in the answer box!</div>
-          `;
-        }
-      } else if (s.step === 'hundreds') {
-        const hSum = s.topH + s.botH + s.carriedHundreds;
-        return `
-          <div class="text-xs font-kids text-emerald-300">Add the Hundreds:</div>
-          <div class="font-kids text-lg text-emerald-400 font-bold">${hSum} Hundreds total</div>
-        `;
-      } else {
-        return `
-          <div class="text-emerald-400 font-kids font-bold text-base">🎉 Calculation Complete & Correct: ${s.sum}!</div>
-        `;
-      }
-    }
-
-    function bundleUnitsToAdd() {
-      playSound('bundle');
-      addState.bundledU = true;
-      addState.carriedTens = 1;
-      renderAdditionUI(document.getElementById('activeStageContainer'));
-    }
-
-    function bundleTensToAdd() {
-      playSound('bundle');
-      addState.bundledT = true;
-      addState.carriedHundreds = 1;
-      renderAdditionUI(document.getElementById('activeStageContainer'));
-    }
-
-    /* =====================================================================
-       MODULE 2: COLUMN SUBTRACTION (UNPACK TEN & ANTI-REVERSAL ENGINE)
-       ===================================================================== */
-    function buildSubtractionModule(container) {
-      let topNum, botNum;
-
-      if (subLevel === 1) {
-        // 2-digit anti-reversal (e.g. 52 - 27; top unit strictly smaller than bottom)
-        const t1 = Math.floor(Math.random() * 4) + 4; // 4 to 7
-        const t2 = Math.floor(Math.random() * 2) + 2; // 2 to 3
-        const u1 = Math.floor(Math.random() * 4) + 1; // 1 to 4
-        const u2 = Math.floor(Math.random() * 3) + 6; // 6 to 8 (so u1 < u2 always!)
-        topNum = t1 * 10 + u1;
-        botNum = t2 * 10 + u2;
-      } else if (subLevel === 2) {
-        // 3-digit: exchange tens to units
-        topNum = (Math.floor(Math.random() * 3) + 3) * 100 + (Math.floor(Math.random() * 4) + 4) * 10 + (Math.floor(Math.random() * 3) + 1);
-        botNum = (Math.floor(Math.random() * 2) + 1) * 100 + (Math.floor(Math.random() * 2) + 1) * 10 + (Math.floor(Math.random() * 3) + 7);
-      } else if (subLevel === 3) {
-        // Exchange Hundreds to Tens and Tens to Units
-        topNum = (Math.floor(Math.random() * 3) + 5) * 100 + 20 + (Math.floor(Math.random() * 3) + 1);
-        botNum = 200 + 70 + (Math.floor(Math.random() * 3) + 6);
-      } else {
-        // The Zero Void (e.g. 403 - 167)
-        topNum = (Math.floor(Math.random() * 3) + 4) * 100 + 0 * 10 + (Math.floor(Math.random() * 4) + 2);
-        botNum = (Math.floor(Math.random() * 2) + 1) * 100 + (Math.floor(Math.random() * 4) + 4) * 10 + (Math.floor(Math.random() * 3) + 7);
-      }
-
-      const diff = topNum - botNum;
-
-      subState = {
-        topNum, botNum, diff,
-        topH: Math.floor(topNum / 100),
-        topT: Math.floor((topNum % 100) / 10),
-        topU: topNum % 10,
-        botH: Math.floor(botNum / 100),
-        botT: Math.floor((botNum % 100) / 10),
-        botU: botNum % 10,
-        unpackedTenToUnits: false,
-        unpackedHundredToTen: false,
-        step: 'units',
-        inputU: '', inputT: '', inputH: '',
-        reversalAlert: false
-      };
-
-      renderSubtractionUI(container);
-    }
-
-    function renderSubtractionUI(container) {
+    function renderSubtractionView() {
+      const card = document.getElementById('stageCard');
       const s = subState;
 
-      // Current visual counts after unpack
-      const currentU = s.topU + (s.unpackedTenToUnits ? 10 : 0);
-      const currentT = s.topT + (s.unpackedHundredToTen ? 10 : 0) - (s.unpackedTenToUnits ? 1 : 0);
-      const currentH = s.topH - (s.unpackedHundredToTen ? 1 : 0);
+      // Algorithm HTML construction
+      const hTopDisplay = s.hTop > 0 ? s.hTop : '';
+      const hBotDisplay = s.hBot > 0 ? s.hBot : '';
 
-      container.innerHTML = `
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 w-full">
-          
-          <!-- LEFT: WRITTEN SUBTRACTION GRID -->
-          <div class="lg:col-span-5 bg-slate-900 border-2 border-slate-800 rounded-3xl p-5 shadow-2xl flex flex-col items-center justify-between">
-            <div class="w-full flex items-center justify-between border-b border-slate-800 pb-2">
-              <span class="font-kids text-sm font-bold text-rose-400">Step: <span class="text-amber-400 uppercase">${s.step}</span></span>
-              <span class="text-[11px] text-slate-400 font-medium">Never flip numbers! Unpack instead.</span>
+      // Regrouped indicator values
+      const uTopClass = s.uBorrowDone ? 'striked' : '';
+      const tTopClass = s.tBorrowDone ? 'striked' : '';
+
+      const uNewDisplay = s.uBorrowDone ? `<span class="cell-borrowed-new">${s.uTop}</span>` : '';
+      const tNewDisplay = s.tBorrowDone ? `<span class="cell-borrowed-new">${s.tTop}</span>` : '';
+
+      // Guide panel construction
+      let guideContent = '';
+
+      if (s.step === 'check_can_sub') {
+        if (s.activeCol === 'units') {
+          guideContent = `
+            <div class="prompt-banner">
+              Look at the <strong>Units Column</strong>:<br>
+              We have <strong>${s.uTop}</strong> on top and need to subtract <strong>${s.uBot}</strong>.<br>
+              Can we calculate <em>${s.uTop} − ${s.uBot}</em> without borrowing?
             </div>
-
-            <!-- Titles -->
-            <div class="grid grid-cols-4 w-full max-w-[280px] text-center font-kids text-lg font-bold pt-3 pb-1">
-              <div></div>
-              <div class="text-emerald-400">H</div>
-              <div class="text-sky-400">T</div>
-              <div class="text-amber-400">U</div>
+            <div class="step-actions-container">
+              <button class="action-btn btn-yes" onclick="handleSubCheckChoice(true)">Yes, we can</button>
+              <button class="action-btn btn-no" onclick="handleSubCheckChoice(false)">No, need to borrow</button>
             </div>
-
-            <!-- Struck-Through Regroup Display Row -->
-            <div class="grid grid-cols-4 w-full max-w-[280px] text-center font-kids text-lg font-bold h-7 items-center">
-              <div></div>
-              <div class="text-emerald-400 font-bold">${s.unpackedHundredToTen ? currentH : ''}</div>
-              <div class="text-sky-400 font-bold">${s.unpackedTenToUnits ? currentT : (s.unpackedHundredToTen ? currentT : '')}</div>
-              <div class="text-amber-400 font-bold">${s.unpackedTenToUnits ? currentU : ''}</div>
+            <div class="status-msg info">Make your decision on the Units column.</div>
+          `;
+        } else if (s.activeCol === 'tens') {
+          guideContent = `
+            <div class="prompt-banner">
+              Now look at the <strong>Tens Column</strong>:<br>
+              We have <strong>${s.tTop}</strong> on top and need to subtract <strong>${s.tBot}</strong>.<br>
+              Can we calculate <em>${s.tTop} − ${s.tBot}</em> without borrowing?
             </div>
-
-            <!-- Top Number Row -->
-            <div class="grid grid-cols-4 w-full max-w-[280px] text-center font-kids text-3xl font-bold">
-              <div></div>
-              <div class="text-emerald-400 ${s.unpackedHundredToTen ? 'strikethrough text-slate-500' : ''}">${s.topH || ''}</div>
-              <div class="text-sky-400 ${s.unpackedTenToUnits ? 'strikethrough text-slate-500' : ''}">${s.topT}</div>
-              <div class="text-amber-400 ${s.unpackedTenToUnits ? 'strikethrough text-slate-500' : ''}">${s.topU}</div>
+            <div class="step-actions-container">
+              <button class="action-btn btn-yes" onclick="handleSubCheckChoice(true)">Yes, we can</button>
+              <button class="action-btn btn-no" onclick="handleSubCheckChoice(false)">No, need to borrow</button>
             </div>
+            <div class="status-msg info">Check if borrowing from Hundreds is required.</div>
+          `;
+        }
+      } else if (s.step === 'ask_how_many') {
+        const lender = s.activeCol === 'units' ? 'Tens' : 'Hundreds';
+        guideContent = `
+          <div class="prompt-banner">
+            Correct! We must exchange.<br>
+            How many <strong>${lender}</strong> do we borrow from the column to the left?
+          </div>
+          <div class="step-actions-container">
+            <button class="action-btn btn-highlight" onclick="handleBorrowQtySubmit(1)">Borrow 1 ${lender.slice(0,-1)}</button>
+          </div>
+          <div class="status-msg info">Click the button or press 1 on the keypad.</div>
+        `;
+      } else if (s.step === 'ask_lender_new') {
+        const lender = s.activeCol === 'units' ? 'Tens' : 'Hundreds';
+        const oldVal = s.activeCol === 'units' ? (s.tTop) : s.hTop;
+        guideContent = `
+          <div class="prompt-banner">
+            We borrow 1 ${lender.slice(0,-1)} from the ${lender} column.<br>
+            It had <strong>${oldVal}</strong>. What does this column become after lending 1?
+          </div>
+          <div class="step-actions-container">
+            <input type="text" readonly id="stepSubInput" value="${activeInputBuffer}" placeholder="?" style="width:110px; height:50px; font-size:2rem; text-align:center; background:#000; border:2px solid var(--accent-cyan); border-radius:12px; color:#fff; font-weight:800;">
+          </div>
+          <div class="status-msg info">Enter the new value on the numpad below, then press Enter ✨</div>
+        `;
+      } else if (s.step === 'ask_target_new') {
+        const target = s.activeCol === 'units' ? 'Units' : 'Tens';
+        const oldVal = s.activeCol === 'units' ? (s.uTop - 10) : (s.tTop - 10);
+        guideContent = `
+          <div class="prompt-banner">
+            1 ten equals 10 units! We add those 10 to our existing <strong>${oldVal}</strong>.<br>
+            What does the <strong>${target}</strong> column become now?
+          </div>
+          <div class="step-actions-container">
+            <input type="text" readonly id="stepSubInput" value="${activeInputBuffer}" placeholder="?" style="width:110px; height:50px; font-size:2rem; text-align:center; background:#000; border:2px solid var(--accent-cyan); border-radius:12px; color:#fff; font-weight:800;">
+          </div>
+          <div class="status-msg info">Enter the combined regrouped value on the numpad below.</div>
+        `;
+      } else if (s.step === 'calc_col') {
+        const topD = s.activeCol === 'units' ? s.uTop : (s.activeCol === 'tens' ? s.tTop : s.hTop);
+        const botD = s.activeCol === 'units' ? s.uBot : (s.activeCol === 'tens' ? s.tBot : s.hBot);
+        guideContent = `
+          <div class="prompt-banner">
+            ✨ Regrouping complete! Now calculate the <strong>${s.activeCol.toUpperCase()}</strong>:<br>
+            <span style="color:var(--accent-cyan); font-size:1.6rem; font-weight:900;">${topD} − ${botD} = ?</span>
+          </div>
+          <div class="step-actions-container">
+            <input type="text" readonly id="stepSubInput" value="${activeInputBuffer}" placeholder="?" style="width:110px; height:50px; font-size:2rem; text-align:center; background:#000; border:2px solid var(--accent-emerald); border-radius:12px; color:var(--accent-emerald); font-weight:800;">
+          </div>
+          <div class="status-msg info">Work out the difference and enter on the numpad.</div>
+        `;
+      } else if (s.step === 'complete') {
+        const total = s.top - s.bottom;
+        guideContent = `
+          <div class="prompt-banner" style="border-left-color:var(--accent-emerald);">
+            🎉 Brilliant Subtraction! Full calculation solved:<br>
+            <span style="font-size:1.8rem; color:var(--accent-emerald);">${s.originalTop} − ${s.bottom} = ${total}</span>
+          </div>
+          <div class="step-actions-container">
+            <button class="action-btn btn-highlight" onclick="initSubtractionProblem()">Next Calculation ➔</button>
+          </div>
+          <div class="status-msg success">Super place value decomposition! Score +20!</div>
+        `;
+      }
 
-            <!-- Bottom Number Row -->
-            <div class="grid grid-cols-4 w-full max-w-[280px] text-center font-kids text-3xl font-bold border-b-4 border-slate-300 pb-2">
-              <div class="text-rose-400 text-3xl flex items-center justify-center">-</div>
-              <div class="text-emerald-400">${s.botH || ''}</div>
-              <div class="text-sky-400">${s.botT}</div>
-              <div class="text-amber-400">${s.botU}</div>
-            </div>
+      card.innerHTML = `
+        <div class="calc-split-container">
+          <!-- Left: Column Algorithm -->
+          <div class="algo-box">
+            <div class="algo-grid">
+              <div class="grid-header"></div>
+              <div class="grid-header">H</div>
+              <div class="grid-header">T</div>
+              <div class="grid-header">U</div>
 
-            <!-- Answer Row -->
-            <div class="grid grid-cols-4 w-full max-w-[280px] text-center font-kids text-3xl font-bold pt-2">
-              <div></div>
-              <div id="subAnsH" class="col-cell text-emerald-400 border border-dashed ${s.step === 'hundreds' ? 'border-emerald-400 bg-emerald-500/10' : 'border-slate-800'} rounded-xl">${s.inputH || '?'}</div>
-              <div id="subAnsT" class="col-cell text-sky-400 border border-dashed ${s.step === 'tens' ? 'border-sky-400 bg-sky-500/10' : 'border-slate-800'} rounded-xl">${s.inputT || '?'}</div>
-              <div id="subAnsU" class="col-cell text-amber-400 border border-dashed ${s.step === 'units' ? 'border-amber-400 bg-amber-500/10' : 'border-slate-800'} rounded-xl">${s.inputU || '?'}</div>
-            </div>
+              <!-- Top Number Row -->
+              <div class="cell"></div>
+              <div class="cell">${hTopDisplay}</div>
+              <div class="cell ${tTopClass}">${s.tTop}${tNewDisplay}</div>
+              <div class="cell ${uTopClass}">${s.uTop}${uNewDisplay}</div>
 
-            <!-- Warning Prompt -->
-            <div id="subGuidancePrompt" class="mt-4 p-2.5 bg-slate-950 rounded-2xl border ${s.reversalAlert ? 'border-rose-500 text-rose-300 animate-pulse' : 'border-slate-800 text-slate-300'} w-full text-center text-xs font-semibold">
-              ${s.reversalAlert ? `
-                ⚠️ <strong>REVERSAL TRAP DETECTED!</strong> You have ${s.topU} and need to take away ${s.botU}. You CANNOT flip it to ${s.botU} - ${s.topU}! Unpack a Ten first!
-              ` : `
-                Looking at Units: <strong>${currentU} - ${s.botU}</strong>. ${currentU < s.botU ? 'Cannot do it yet! Unpack 1 Ten on the mat.' : 'Subtract and type the answer!'}
-              `}
+              <!-- Bottom Number Row -->
+              <div class="cell algo-operator">−</div>
+              <div class="cell">${hBotDisplay}</div>
+              <div class="cell">${s.tBot}</div>
+              <div class="cell">${s.uBot}</div>
+
+              <div class="algo-divider"></div>
+
+              <!-- Answer Row -->
+              <div class="cell"></div>
+              <div class="cell ans-slot ${s.activeCol==='hundreds'?'active':''} ${s.ansHundreds!==null?'filled':''}">
+                ${s.ansHundreds !== null ? s.ansHundreds : ''}
+              </div>
+              <div class="cell ans-slot ${s.activeCol==='tens'?'active':''} ${s.ansTens!==null?'filled':''}">
+                ${s.ansTens !== null ? s.ansTens : ''}
+              </div>
+              <div class="cell ans-slot ${s.activeCol==='units'?'active':''} ${s.ansUnits!==null?'filled':''}">
+                ${s.ansUnits !== null ? s.ansUnits : ''}
+              </div>
             </div>
           </div>
 
-          <!-- RIGHT: CONCRETE UNPACKING MAT -->
-          <div class="lg:col-span-7 bg-slate-900 border-2 border-slate-800 rounded-3xl p-5 shadow-2xl flex flex-col justify-between gap-3">
-            <div class="flex items-center justify-between border-b border-slate-800 pb-2">
-              <span class="font-kids text-sm font-bold text-slate-200">Decomposition Mat (Unpack Base-10 Blocks)</span>
-              <span class="text-[11px] text-rose-400 font-mono">1 Ten decomposes into 10 Units</span>
-            </div>
-
-            <!-- Blocks Display -->
-            <div class="grid grid-cols-3 gap-2 h-64 sm:h-72">
-              <!-- Hundreds Mat -->
-              <div class="bg-slate-950/80 border-2 border-emerald-500/40 rounded-2xl p-2 flex flex-col items-center overflow-y-auto">
-                <span class="font-kids text-xs font-bold text-emerald-400 uppercase tracking-widest mb-1.5">Hundreds (${currentH})</span>
-                <div class="flex flex-wrap gap-1.5 justify-center">
-                  ${renderBase10Flats(currentH)}
-                </div>
-              </div>
-
-              <!-- Tens Mat -->
-              <div class="bg-slate-950/80 border-2 border-sky-500/40 rounded-2xl p-2 flex flex-col items-center overflow-y-auto">
-                <span class="font-kids text-xs font-bold text-sky-400 uppercase tracking-widest mb-1.5">Tens (${currentT})</span>
-                <div class="flex flex-wrap gap-1.5 justify-center">
-                  ${renderBase10Rods(currentT)}
-                </div>
-              </div>
-
-              <!-- Units Mat -->
-              <div class="bg-slate-950/80 border-2 border-amber-500/40 rounded-2xl p-2 flex flex-col items-center overflow-y-auto">
-                <span class="font-kids text-xs font-bold text-amber-400 uppercase tracking-widest mb-1.5">Units (${currentU})</span>
-                <div class="flex flex-wrap gap-1 justify-center">
-                  ${renderBase10Cubes(currentU)}
-                </div>
-              </div>
-            </div>
-
-            <!-- Action Controls -->
-            <div id="subMatActionArea" class="flex items-center justify-between gap-3 bg-slate-950 p-3 rounded-2xl border border-slate-800 min-h-[58px]">
-              ${getSubtractionActionControls(currentU, currentT, currentH)}
-            </div>
-
+          <!-- Right: Interactive Guide & Questions -->
+          <div class="interactive-guide" id="guideArea">
+            ${guideContent}
           </div>
-
         </div>
       `;
     }
 
-    function getSubtractionActionControls(u, t, h) {
+    function handleSubCheckChoice(userSaidYes) {
       const s = subState;
-      if (s.step === 'units') {
-        if (u < s.botU) {
-          if (t === 0 && h > 0) {
-            return `
-              <div class="text-xs font-kids text-amber-300">Tens column is 0! Unpack 1 Hundred into 10 Tens first:</div>
-              <button onclick="unpackHundredToTens()" class="px-5 py-2.5 bg-gradient-to-r from-emerald-500 to-sky-500 text-slate-950 font-kids text-base font-bold rounded-xl shadow-lg active:scale-95 pulse-glow transition">
-                💥 Unpack 1 Hundred ➔ 10 Tens
-              </button>
-            `;
+      const topD = s.activeCol === 'units' ? s.uTop : s.tTop;
+      const botD = s.activeCol === 'units' ? s.uBot : s.tBot;
+      const needsBorrow = topD < botD;
+
+      if (userSaidYes) {
+        if (needsBorrow) {
+          playTone('error');
+          flashGuideStatus(`⚠️ REVERSAL ERROR TRAP: You have ${topD} and need to take away ${botD}. You CANNOT flip it to ${botD} − ${topD}! You must borrow first.`, 'error');
+        } else {
+          playTone('click');
+          s.step = 'calc_col';
+          activeInputBuffer = '';
+          renderSubtractionView();
+        }
+      } else {
+        if (!needsBorrow) {
+          playTone('error');
+          flashGuideStatus(`Look closely: ${topD} is larger than ${botD}. We can subtract directly without borrowing!`, 'error');
+        } else {
+          playTone('click');
+          s.step = 'ask_how_many';
+          activeInputBuffer = '';
+          renderSubtractionView();
+        }
+      }
+    }
+
+    function handleBorrowQtySubmit(qty) {
+      if (parseInt(qty, 10) === 1) {
+        playTone('click');
+        subState.step = 'ask_lender_new';
+        activeInputBuffer = '';
+        renderSubtractionView();
+      } else {
+        playTone('error');
+        flashGuideStatus('We only borrow 1 ten or 1 hundred at a time.', 'error');
+      }
+    }
+
+    function verifySubLenderNew(val) {
+      const s = subState;
+      if (s.activeCol === 'units') {
+        const expected = s.tTop - 1;
+        if (parseInt(val, 10) === expected) {
+          playTone('success');
+          s.tTop = expected;
+          s.tBorrowDone = true;
+          s.step = 'ask_target_new';
+          activeInputBuffer = '';
+          renderSubtractionView();
+        } else {
+          playTone('error');
+          flashGuideStatus(`Think: what is 1 less than ${s.tTop}?`, 'error');
+        }
+      } else if (s.activeCol === 'tens') {
+        const expected = s.hTop - 1;
+        if (parseInt(val, 10) === expected) {
+          playTone('success');
+          s.hTop = expected;
+          s.step = 'ask_target_new';
+          activeInputBuffer = '';
+          renderSubtractionView();
+        } else {
+          playTone('error');
+          flashGuideStatus(`Think: what is 1 less than ${s.hTop}?`, 'error');
+        }
+      }
+    }
+
+    function verifySubTargetNew(val) {
+      const s = subState;
+      if (s.activeCol === 'units') {
+        const expected = s.uTop + 10;
+        if (parseInt(val, 10) === expected) {
+          playTone('success');
+          s.uTop = expected;
+          s.uBorrowDone = true;
+          s.step = 'calc_col';
+          activeInputBuffer = '';
+          renderSubtractionView();
+        } else {
+          playTone('error');
+          flashGuideStatus(`Add 10 to your original units. Try again!`, 'error');
+        }
+      } else if (s.activeCol === 'tens') {
+        const expected = s.tTop + 10;
+        if (parseInt(val, 10) === expected) {
+          playTone('success');
+          s.tTop = expected;
+          s.step = 'calc_col';
+          activeInputBuffer = '';
+          renderSubtractionView();
+        } else {
+          playTone('error');
+          flashGuideStatus(`Add 10 to your tens. Try again!`, 'error');
+        }
+      }
+    }
+
+    function verifySubColCalc(val) {
+      const s = subState;
+      const v = parseInt(val, 10);
+      if (s.activeCol === 'units') {
+        const expected = s.uTop - s.uBot;
+        if (v === expected) {
+          playTone('success');
+          s.ansUnits = v;
+          s.activeCol = 'tens';
+          s.step = 'check_can_sub';
+          activeInputBuffer = '';
+          renderSubtractionView();
+        } else {
+          playTone('error');
+          flashGuideStatus(`Check your subtraction: ${s.uTop} − ${s.uBot} = ?`, 'error');
+        }
+      } else if (s.activeCol === 'tens') {
+        const expected = s.tTop - s.tBot;
+        if (v === expected) {
+          playTone('success');
+          s.ansTens = v;
+          if (s.hTop > 0 || s.hBot > 0) {
+            s.activeCol = 'hundreds';
+            s.step = 'calc_col';
+          } else {
+            finishSubtraction();
           }
-          return `
-            <div class="text-xs font-kids text-amber-300">Need more units! Break 1 Ten rod into 10 loose units:</div>
-            <button onclick="unpackTenToUnits()" class="px-5 py-2.5 bg-gradient-to-r from-sky-500 to-amber-500 text-slate-950 font-kids text-base font-bold rounded-xl shadow-lg active:scale-95 pulse-glow transition">
-              💥 Unpack 1 Ten ➔ 10 Units
-            </button>
-          `;
+          activeInputBuffer = '';
+          renderSubtractionView();
         } else {
-          return `
-            <div class="text-xs font-kids text-slate-300">Ready to subtract Units!</div>
-            <div class="font-kids text-lg text-amber-400 font-bold">${u} - ${s.botU} = ${u - s.botU}</div>
-          `;
+          playTone('error');
+          flashGuideStatus(`Check your subtraction: ${s.tTop} − ${s.tBot} = ?`, 'error');
         }
-      } else if (s.step === 'tens') {
-        if (t < s.botT) {
-          return `
-            <div class="text-xs font-kids text-sky-300">Need more tens! Unpack 1 Hundred:</div>
-            <button onclick="unpackHundredToTens()" class="px-5 py-2.5 bg-gradient-to-r from-emerald-500 to-sky-500 text-slate-950 font-kids text-base font-bold rounded-xl shadow-lg active:scale-95 pulse-glow transition">
-              💥 Unpack 1 Hundred ➔ 10 Tens
-            </button>
-          `;
+      } else if (s.activeCol === 'hundreds') {
+        const expected = s.hTop - s.hBot;
+        if (v === expected) {
+          playTone('success');
+          s.ansHundreds = v;
+          finishSubtraction();
+          renderSubtractionView();
         } else {
-          return `
-            <div class="text-xs font-kids text-slate-300">Subtract Tens:</div>
-            <div class="font-kids text-lg text-sky-400 font-bold">${t} - ${s.botT} = ${t - s.botT}</div>
-          `;
+          playTone('error');
+          flashGuideStatus(`Check your subtraction: ${s.hTop} − ${s.hBot} = ?`, 'error');
         }
-      } else if (s.step === 'hundreds') {
-        return `
-          <div class="text-xs font-kids text-slate-300">Subtract Hundreds:</div>
-          <div class="font-kids text-lg text-emerald-400 font-bold">${h} - ${s.botH} = ${h - s.botH}</div>
-        `;
-      } else {
-        return `
-          <div class="text-emerald-400 font-kids font-bold text-base">🎉 Subtraction Complete: ${s.diff}!</div>
-        `;
       }
     }
 
-    function unpackTenToUnits() {
-      playSound('bundle');
-      subState.unpackedTenToUnits = true;
-      subState.reversalAlert = false;
-      renderSubtractionUI(document.getElementById('activeStageContainer'));
+    function finishSubtraction() {
+      subState.step = 'complete';
+      streak++;
+      score += 20;
+      updateStats();
+      playTone('success');
     }
 
-    function unpackHundredToTens() {
-      playSound('bundle');
-      subState.unpackedHundredToTen = true;
-      renderSubtractionUI(document.getElementById('activeStageContainer'));
+    function flashGuideStatus(msg, type) {
+      const g = document.getElementById('guideArea');
+      let statusEl = g.querySelector('.status-msg');
+      if (statusEl) {
+        statusEl.className = `status-msg ${type}`;
+        statusEl.textContent = msg;
+      }
     }
 
     /* =====================================================================
-       MODULE 3: "SPOT THE MISTAKE!" (REASONING & ERROR CLINIC)
+       MODULE 1: STEP-BY-STEP ADDITION WITH CARRYING & QUESTIONING
        ===================================================================== */
-    const clinicMistakesPool = [
+    function setAddLevel(lvl) {
+      addState.level = lvl;
+      renderSubBar();
+      initAdditionProblem();
+    }
+
+    function initAdditionProblem() {
+      activeInputBuffer = '';
+      if (addState.level === 1) {
+        const t1 = Math.floor(Math.random() * 4) + 2;
+        const u1 = Math.floor(Math.random() * 4) + 6;
+        const t2 = Math.floor(Math.random() * 3) + 1;
+        const u2 = Math.floor(Math.random() * 4) + 5;
+        addState.top = t1 * 10 + u1;
+        addState.bottom = t2 * 10 + u2;
+      } else {
+        const h1 = Math.floor(Math.random() * 3) + 2;
+        const t1 = Math.floor(Math.random() * 4) + 6;
+        const u1 = Math.floor(Math.random() * 4) + 6;
+        const h2 = Math.floor(Math.random() * 2) + 1;
+        const t2 = Math.floor(Math.random() * 4) + 5;
+        const u2 = Math.floor(Math.random() * 4) + 5;
+        addState.top = h1 * 100 + t1 * 10 + u1;
+        addState.bottom = h2 * 100 + t2 * 10 + u2;
+      }
+
+      addState.activeCol = 'units';
+      addState.step = 'calc_units';
+      addState.uCarry = 0;
+      addState.tCarry = 0;
+      addState.ansUnits = null;
+      addState.ansTens = null;
+      addState.ansHundreds = null;
+
+      renderAdditionView();
+    }
+
+    function renderAdditionView() {
+      const card = document.getElementById('stageCard');
+      const a = addState;
+
+      const topDigits = a.top.toString().padStart(3, ' ').split('');
+      const botDigits = a.bottom.toString().padStart(3, ' ').split('');
+
+      let guideContent = '';
+      const u1 = parseInt(topDigits[2], 10);
+      const u2 = parseInt(botDigits[2], 10);
+
+      if (a.step === 'calc_units') {
+        guideContent = `
+          <div class="prompt-banner">
+            Add the <strong>Units Column</strong>:<br>
+            <span style="color:var(--accent-cyan); font-size:1.5rem; font-weight:800;">${u1} + ${u2} = ?</span>
+          </div>
+          <div class="step-actions-container">
+            <input type="text" readonly id="stepAddInput" value="${activeInputBuffer}" placeholder="?" style="width:110px; height:50px; font-size:2rem; text-align:center; background:#000; border:2px solid var(--accent-cyan); border-radius:12px; color:#fff; font-weight:800;">
+          </div>
+          <div class="status-msg info">Enter the sum of the units on the numpad.</div>
+        `;
+      } else if (a.step === 'ask_carry_val') {
+        guideContent = `
+          <div class="prompt-banner">
+            Because the sum is 10 or greater, we regroup!<br>
+            What digit stays in the units, and what digit carries into the <strong>Tens</strong>?
+          </div>
+          <div class="step-actions-container">
+            <button class="action-btn btn-highlight" onclick="handleCarryUnitsPick()">Keep Unit Digit & Carry 1</button>
+          </div>
+          <div class="status-msg info">Click to bundle 10 units into 1 ten.</div>
+        `;
+      } else if (a.step === 'calc_tens') {
+        const t1 = parseInt(topDigits[1], 10);
+        const t2 = parseInt(botDigits[1], 10);
+        guideContent = `
+          <div class="prompt-banner">
+            Now add the <strong>Tens Column</strong> (including the carried 1):<br>
+            <span style="color:var(--accent-cyan); font-size:1.5rem; font-weight:800;">${t1} + ${t2} + ${a.uCarry} = ?</span>
+          </div>
+          <div class="step-actions-container">
+            <input type="text" readonly id="stepAddInput" value="${activeInputBuffer}" placeholder="?" style="width:110px; height:50px; font-size:2rem; text-align:center; background:#000; border:2px solid var(--accent-emerald); border-radius:12px; color:var(--accent-emerald); font-weight:800;">
+          </div>
+          <div class="status-msg info">Enter the sum of the tens on the numpad.</div>
+        `;
+      } else if (a.step === 'complete') {
+        const total = a.top + a.bottom;
+        guideContent = `
+          <div class="prompt-banner" style="border-left-color:var(--accent-emerald);">
+            🎉 Addition Complete!<br>
+            <span style="font-size:1.8rem; color:var(--accent-emerald);">${a.top} + ${a.bottom} = ${total}</span>
+          </div>
+          <div class="step-actions-container">
+            <button class="action-btn btn-highlight" onclick="initAdditionProblem()">Next Addition ➔</button>
+          </div>
+          <div class="status-msg success">Great place value bundling! Score +15!</div>
+        `;
+      }
+
+      card.innerHTML = `
+        <div class="calc-split-container">
+          <div class="algo-box">
+            <div class="algo-grid">
+              <div class="grid-header"></div>
+              <div class="grid-header">H</div>
+              <div class="grid-header">T</div>
+              <div class="grid-header">U</div>
+
+              <div class="carry-row-slot"></div>
+              <div class="carry-row-slot">${a.tCarry>0?a.tCarry:''}</div>
+              <div class="carry-row-slot">${a.uCarry>0?a.uCarry:''}</div>
+              <div class="carry-row-slot"></div>
+
+              <div class="cell"></div>
+              <div class="cell">${topDigits[0].trim()}</div>
+              <div class="cell">${topDigits[1]}</div>
+              <div class="cell">${topDigits[2]}</div>
+
+              <div class="cell algo-operator">+</div>
+              <div class="cell">${botDigits[0].trim()}</div>
+              <div class="cell">${botDigits[1]}</div>
+              <div class="cell">${botDigits[2]}</div>
+
+              <div class="algo-divider"></div>
+
+              <div class="cell"></div>
+              <div class="cell ans-slot ${a.ansHundreds!==null?'filled':''}">${a.ansHundreds!==null?a.ansHundreds:''}</div>
+              <div class="cell ans-slot ${a.ansTens!==null?'filled':''}">${a.ansTens!==null?a.ansTens:''}</div>
+              <div class="cell ans-slot ${a.ansUnits!==null?'filled':''}">${a.ansUnits!==null?a.ansUnits:''}</div>
+            </div>
+          </div>
+
+          <div class="interactive-guide" id="guideAreaAdd">
+            ${guideContent}
+          </div>
+        </div>
+      `;
+    }
+
+    function verifyAddUnits(val) {
+      const a = addState;
+      const topDigits = a.top.toString().padStart(3, ' ').split('');
+      const botDigits = a.bottom.toString().padStart(3, ' ').split('');
+      const u1 = parseInt(topDigits[2], 10);
+      const u2 = parseInt(botDigits[2], 10);
+      const sum = u1 + u2;
+
+      if (parseInt(val, 10) === sum) {
+        playTone('success');
+        if (sum >= 10) {
+          a.step = 'ask_carry_val';
+          a.ansUnits = sum % 10;
+        } else {
+          a.ansUnits = sum;
+          a.step = 'calc_tens';
+        }
+        activeInputBuffer = '';
+        renderAdditionView();
+      } else {
+        playTone('error');
+      }
+    }
+
+    function handleCarryUnitsPick() {
+      playTone('click');
+      addState.uCarry = 1;
+      addState.step = 'calc_tens';
+      activeInputBuffer = '';
+      renderAdditionView();
+    }
+
+    function verifyAddTens(val) {
+      const a = addState;
+      const topDigits = a.top.toString().padStart(3, ' ').split('');
+      const botDigits = a.bottom.toString().padStart(3, ' ').split('');
+      const t1 = parseInt(topDigits[1], 10);
+      const t2 = parseInt(botDigits[1], 10);
+      const sum = t1 + t2 + a.uCarry;
+
+      if (parseInt(val, 10) === sum) {
+        playTone('success');
+        if (sum >= 10 && topDigits[0].trim() === '') {
+          a.ansTens = sum % 10;
+          a.ansHundreds = Math.floor(sum / 10);
+          a.step = 'complete';
+          streak++;
+          score += 15;
+          updateStats();
+        } else if (sum >= 10) {
+          a.ansTens = sum % 10;
+          a.tCarry = Math.floor(sum / 10);
+          a.step = 'complete'; // Simplified finish
+          streak++;
+          score += 15;
+          updateStats();
+        } else {
+          a.ansTens = sum;
+          a.step = 'complete';
+          streak++;
+          score += 15;
+          updateStats();
+        }
+        activeInputBuffer = '';
+        renderAdditionView();
+      } else {
+        playTone('error');
+      }
+    }
+
+    /* =====================================================================
+       MODULE 3: SPOT THE MISTAKE (REASONING & ERROR CLINIC)
+       ===================================================================== */
+    const clinicExamples = [
       {
-        id: 1,
-        type: 'reversal',
-        title: 'Subtraction Reversal Trap',
-        top: 63,
-        bot: 28,
-        op: '-',
-        flawedAns: 45, // Did 8 - 3 = 5 instead of borrowing!
-        correctAns: 35,
-        flawedCol: 'units',
-        reasons: [
-          'Subtracted smaller from larger (8 - 3 = 5) instead of borrowing a ten.',
-          'Added instead of subtracting.',
-          'Forgot to write down the hundred.'
-        ],
-        correctReasonIdx: 0,
-        explanation: 'In the units column, 3 is smaller than 8. The pupil flipped it to 8 - 3 = 5 instead of unpacking a ten to make 13 - 8 = 5!'
+        question: "52 − 27",
+        pupilAns: "35",
+        flawCol: "units",
+        explanation: "Reversal Error: The pupil saw 2 and 7, and did 7 − 2 = 5 instead of borrowing a ten from the tens column!",
+        correct: "25"
       },
       {
-        id: 2,
-        type: 'carry',
-        title: 'The Forgotten Carried Ten',
-        top: 58,
-        bot: 27,
-        op: '+',
-        flawedAns: 75, // 8+7=15, carried 1 forgotten (5+2=7 instead of 8)
-        correctAns: 85,
-        flawedCol: 'tens',
-        reasons: [
-          'Forgot to add the carried ten into the tens column (5 + 2 = 7 instead of 8).',
-          'Multiplied the numbers together.',
-          'Wrote down the wrong units answer.'
-        ],
-        correctReasonIdx: 0,
-        explanation: '8 + 7 = 15. The 1 ten was carried to the tens column, but the pupil only added 5 + 2 = 7 and left out the carried 1!'
+        question: "48 + 37",
+        pupilAns: "75",
+        flawCol: "tens",
+        explanation: "Forgotten Carry: 8 + 7 = 15. The pupil wrote down 5, but forgot to add the carried ten into the tens column (4 + 3 + 1 = 8)!",
+        correct: "85"
       },
       {
-        id: 3,
-        type: 'reversal',
-        title: 'Three-Digit Subtraction Reversal',
-        top: 342,
-        bot: 129,
-        op: '-',
-        flawedAns: 227, // 9 - 2 = 7 instead of 12 - 9 = 3
-        correctAns: 213,
-        flawedCol: 'units',
-        reasons: [
-          'Flipped the units (did 9 - 2 = 7 instead of exchanging from the tens).',
-          'Subtracted the hundreds in reverse.',
-          'Added the digits together.'
-        ],
-        correctReasonIdx: 0,
-        explanation: '2 is smaller than 9. You cannot do 2 - 9 without exchanging a ten to make 12 - 9 = 3!'
-      },
-      {
-        id: 4,
-        type: 'carry',
-        title: 'Double Carrying Omission',
-        top: 476,
-        bot: 285,
-        op: '+',
-        flawedAns: 751, // 6+5=11 (carry 1). 7+8+1=16 (forgot to carry the 1 into hundreds: 4+2=6 not 7)
-        correctAns: 761,
-        flawedCol: 'tens',
-        reasons: [
-          'Wrote 5 tens instead of 6 tens (forgot the carried ten from 6 + 5 = 11).',
-          'Added the units incorrectly.',
-          'Subtracted the numbers.'
-        ],
-        correctReasonIdx: 0,
-        explanation: '6 + 5 = 11 gave 1 carried ten. 7 + 8 + 1 = 16 tens (6 tens and 1 carried hundred).'
+        question: "74 − 39",
+        pupilAns: "45",
+        flawCol: "units",
+        explanation: "Reversal Error: Subtracted 9 − 4 = 5 rather than exchanging 1 ten to make 14 − 9 = 5 and reducing 7 tens to 6 tens!",
+        correct: "35"
       }
     ];
 
-    function buildClinicModule(container) {
-      let pool = clinicMistakesPool;
-      if (clinicFilter === 'reversal') pool = pool.filter(p => p.type === 'reversal');
-      else if (clinicFilter === 'carry') pool = pool.filter(p => p.type === 'carry');
-
-      const item = pool[Math.floor(Math.random() * pool.length)];
-
-      clinicState = {
-        item,
-        currentStep: 1, // 1: Verdict, 2: Find Column, 3: Reason, 4: True Answer
-        selectedCol: null,
-        userFixedAns: ''
-      };
-
-      renderClinicUI(container);
-    }
-
-    function renderClinicUI(container) {
-      const c = clinicState;
-      const m = c.item;
-
-      const topDigits = m.top.toString().padStart(3, ' ');
-      const botDigits = m.bot.toString().padStart(3, ' ');
-      const ansDigits = m.flawedAns.toString().padStart(3, ' ');
-
-      container.innerHTML = `
-        <div class="grid grid-cols-1 md:grid-cols-12 gap-5 w-full max-w-4xl mx-auto">
-          
-          <!-- WORKED EXAMPLE JOTTER CARD -->
-          <div class="md:col-span-5 bg-amber-50 text-slate-900 rounded-3xl p-6 shadow-2xl border-4 border-amber-200 flex flex-col items-center justify-between relative overflow-hidden">
-            <div class="w-full flex items-center justify-between border-b-2 border-dashed border-amber-300 pb-2">
-              <span class="font-hand text-xl font-bold text-amber-900">Pupil Workbook</span>
-              <span class="text-xs bg-rose-500 text-white px-2 py-0.5 rounded-full font-bold">Investigation</span>
-            </div>
-
-            <!-- Handwritten Style Column Working -->
-            <div class="py-6 flex flex-col items-center font-hand text-4xl sm:text-5xl font-bold tracking-widest text-slate-900 leading-tight">
-              <!-- Top Row -->
-              <div class="grid grid-cols-4 w-44 text-right">
-                <div></div>
-                <div>${topDigits[0] !== ' ' ? topDigits[0] : ''}</div>
-                <div>${topDigits[1] !== ' ' ? topDigits[1] : ''}</div>
-                <div>${topDigits[2]}</div>
-              </div>
-              <!-- Bottom Row -->
-              <div class="grid grid-cols-4 w-44 text-right border-b-4 border-slate-900 pb-1">
-                <div class="text-left text-3xl font-kids">${m.op}</div>
-                <div>${botDigits[0] !== ' ' ? botDigits[0] : ''}</div>
-                <div>${botDigits[1] !== ' ' ? botDigits[1] : ''}</div>
-                <div>${botDigits[2]}</div>
-              </div>
-              <!-- Flawed Answer -->
-              <div class="grid grid-cols-4 w-44 text-right text-rose-600 pt-1">
-                <div></div>
-                <div>${ansDigits[0] !== ' ' ? ansDigits[0] : ''}</div>
-                <div>${ansDigits[1] !== ' ' ? ansDigits[1] : ''}</div>
-                <div>${ansDigits[2]}</div>
-              </div>
-            </div>
-
-            <div class="text-center font-hand text-lg text-slate-700 bg-white/70 p-2.5 rounded-xl border border-amber-200 w-full">
-              "Teacher, look at my calculation! Is it right?"
-            </div>
+    function initMistakeProblem() {
+      const ex = clinicExamples[clinicState.currentIdx % clinicExamples.length];
+      const card = document.getElementById('stageCard');
+      card.innerHTML = `
+        <div class="jotter-card">
+          <div style="font-size:0.85rem; color:var(--text-dim); text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">P7 Diagnostic Jotter Review</div>
+          <div style="background:#1e293b; padding:16px; border-radius:12px; border-left:6px solid var(--accent-rose); margin-bottom:14px;">
+            <div style="font-size:1.8rem; font-weight:800; color:#fff;">Problem: ${ex.question}</div>
+            <div style="font-size:1.5rem; font-weight:800; color:var(--accent-rose);">Pupil's Work: = ${ex.pupilAns} ❌</div>
           </div>
 
-          <!-- DIAGNOSTIC REASONING CLINIC (RIGHT) -->
-          <div class="md:col-span-7 bg-slate-900 border-2 border-slate-800 rounded-3xl p-5 shadow-2xl flex flex-col justify-between gap-4">
-            
-            <div class="flex items-center justify-between border-b border-slate-800 pb-2">
-              <span class="font-kids text-sm font-bold text-sky-400">Error Clinic Investigation</span>
-              <span class="text-xs font-mono text-amber-400">Phase ${c.currentStep} of 4</span>
-            </div>
-
-            <!-- Dynamic Investigation Stage -->
-            <div id="clinicStepArea" class="flex-grow flex flex-col justify-center">
-              ${renderClinicStepContent()}
-            </div>
-
-            <div id="clinicFeedbackBanner" class="min-h-[24px] text-xs font-bold text-center"></div>
-
+          <div style="font-size:1rem; font-weight:700; color:#f8fafc; margin-bottom:10px;">What misconception caused this error?</div>
+          <div class="step-actions-container" style="flex-direction:column; align-items:stretch;">
+            <button class="action-btn" onclick="checkMistakeReason(true)">Subtracted smaller from larger instead of borrowing (Reversal)</button>
+            <button class="action-btn" onclick="checkMistakeReason(false)">Added the columns incorrectly</button>
+            <button class="action-btn" onclick="checkMistakeReason(false)">Multiplied instead of subtracting</button>
           </div>
 
+          <div id="clinicFeedback" class="status-msg info" style="margin-top:10px;">Identify why the pupil made this slip.</div>
         </div>
       `;
     }
 
-    function renderClinicStepContent() {
-      const c = clinicState;
-      const m = c.item;
-
-      if (c.currentStep === 1) {
-        return `
-          <div class="flex flex-col items-center gap-4 text-center animate-pop">
-            <h3 class="font-kids text-xl font-bold text-slate-100">Step 1: Check the Calculation</h3>
-            <p class="text-xs text-slate-300">Look closely at the pupil's working. Is this answer correct or incorrect?</p>
-            <div class="grid grid-cols-2 gap-3 w-full max-w-sm mt-2">
-              <button onclick="handleClinicVerdict(false)" class="py-4 bg-emerald-600/30 hover:bg-emerald-600 border-2 border-emerald-500 rounded-2xl font-kids text-lg font-bold text-emerald-300 hover:text-slate-950 transition active:scale-95">
-                ✅ It is Correct
-              </button>
-              <button onclick="handleClinicVerdict(true)" class="py-4 bg-rose-600/30 hover:bg-rose-600 border-2 border-rose-500 rounded-2xl font-kids text-lg font-bold text-rose-300 hover:text-slate-950 transition active:scale-95">
-                ❌ It has a Mistake!
-              </button>
-            </div>
-          </div>
-        `;
-      } else if (c.currentStep === 2) {
-        return `
-          <div class="flex flex-col items-center gap-3 text-center animate-pop">
-            <h3 class="font-kids text-xl font-bold text-amber-300">Step 2: Where did the mistake happen?</h3>
-            <p class="text-xs text-slate-300">Tap on the place value column where the pupil made their error:</p>
-            <div class="grid grid-cols-3 gap-3 w-full max-w-sm mt-2">
-              <button onclick="handleClinicColumn('hundreds')" class="py-4 bg-slate-800 hover:bg-emerald-500 hover:text-slate-950 border-2 border-slate-700 rounded-2xl font-kids text-base font-bold text-emerald-400 transition active:scale-95">
-                Hundreds
-              </button>
-              <button onclick="handleClinicColumn('tens')" class="py-4 bg-slate-800 hover:bg-sky-500 hover:text-slate-950 border-2 border-slate-700 rounded-2xl font-kids text-base font-bold text-sky-400 transition active:scale-95">
-                Tens
-              </button>
-              <button onclick="handleClinicColumn('units')" class="py-4 bg-slate-800 hover:bg-amber-500 hover:text-slate-950 border-2 border-slate-700 rounded-2xl font-kids text-base font-bold text-amber-400 transition active:scale-95">
-                Units
-              </button>
-            </div>
-          </div>
-        `;
-      } else if (c.currentStep === 3) {
-        return `
-          <div class="flex flex-col items-center gap-3 animate-pop">
-            <h3 class="font-kids text-xl font-bold text-sky-300 text-center">Step 3: Why is it wrong?</h3>
-            <p class="text-xs text-slate-300 text-center">Pick the mathematical reason for the mistake:</p>
-            <div class="flex flex-col gap-2 w-full mt-1">
-              ${m.reasons.map((r, idx) => `
-                <button onclick="handleClinicReason(${idx})" class="p-3 bg-slate-800 hover:bg-sky-600 hover:text-slate-950 border border-slate-700 rounded-xl text-left font-kids text-xs sm:text-sm font-semibold transition active:scale-98">
-                  ${r}
-                </button>
-              `).join('')}
-            </div>
-          </div>
-        `;
-      } else {
-        return `
-          <div class="flex flex-col items-center gap-3 text-center animate-pop">
-            <h3 class="font-kids text-xl font-bold text-emerald-400">Step 4: Fix the Calculation!</h3>
-            <p class="text-xs text-slate-300">${m.explanation}</p>
-            <div class="my-2 p-3 bg-slate-950 rounded-2xl border border-slate-800 font-kids text-2xl text-slate-200">
-              ${m.top} ${m.op} ${m.bot} = <span class="text-emerald-400 font-bold underline">${c.userFixedAns || '?'}</span>
-            </div>
-            <p class="text-xs text-amber-300">Type the correct answer on the numpad below!</p>
-          </div>
-        `;
-      }
-    }
-
-    function handleClinicVerdict(userSaidMistake) {
-      if (userSaidMistake) {
-        playSound('correct');
-        clinicState.currentStep = 2;
-        renderClinicUI(document.getElementById('activeStageContainer'));
-      } else {
-        playSound('error');
-        flashClinicFeedback('Look again! Calculate each column carefully to spot the slip.', false);
-      }
-    }
-
-    function handleClinicColumn(col) {
-      if (col === clinicState.item.flawedCol) {
-        playSound('correct');
-        clinicState.currentStep = 3;
-        renderClinicUI(document.getElementById('activeStageContainer'));
-      } else {
-        playSound('error');
-        flashClinicFeedback(`Not the ${col} column! Check the digits in the other columns.`, false);
-      }
-    }
-
-    function handleClinicReason(idx) {
-      if (idx === clinicState.item.correctReasonIdx) {
-        playSound('correct');
-        clinicState.currentStep = 4;
-        renderClinicUI(document.getElementById('activeStageContainer'));
-      } else {
-        playSound('error');
-        flashClinicFeedback('Not quite. Think about how exchanging/carrying actually works!', false);
-      }
-    }
-
-    function flashClinicFeedback(msg, isSuccess) {
-      const fb = document.getElementById('clinicFeedbackBanner');
-      if (fb) {
-        fb.textContent = msg;
-        fb.className = `min-h-[24px] text-xs font-bold text-center ${isSuccess ? 'text-emerald-400' : 'text-rose-400'}`;
-      }
-    }
-
-    /* =====================================================================
-       MODULE 4: INVERSE FACT FLUENCY (MULTIPLICATION & DIVISION TRIANGLES)
-       ===================================================================== */
-    function buildInverseModule(container) {
-      let f1Pool = [3, 4, 6];
-      if (inverseTier === 'target') f1Pool = [7, 8, 9];
-      else if (inverseTier === 'all') f1Pool = [2, 3, 4, 5, 6, 7, 8, 9, 11, 12];
-
-      const factor1 = f1Pool[Math.floor(Math.random() * f1Pool.length)];
-      const factor2 = Math.floor(Math.random() * 8) + 2; // 2 to 9
-      const product = factor1 * factor2;
-
-      // 4 Linked sentences: Pick 1 to test
-      const sentenceTypes = ['mul1', 'mul2', 'div1', 'div2'];
-      const activeTest = sentenceTypes[Math.floor(Math.random() * sentenceTypes.length)];
-
-      let qText, targetAns;
-      if (activeTest === 'mul1') {
-        qText = `${factor1} × ${factor2} = ?`;
-        targetAns = product;
-      } else if (activeTest === 'mul2') {
-        qText = `${factor2} × ${factor1} = ?`;
-        targetAns = product;
-      } else if (activeTest === 'div1') {
-        qText = `${product} ÷ ${factor1} = ?`;
-        targetAns = factor2;
-      } else {
-        qText = `${product} ÷ ${factor2} = ?`;
-        targetAns = factor1;
-      }
-
-      inverseState = {
-        factor1, factor2, product,
-        activeTest, qText, targetAns,
-        userAns: ''
-      };
-
-      renderInverseUI(container);
-    }
-
-    function renderInverseUI(container) {
-      const inv = inverseState;
-
-      container.innerHTML = `
-        <div class="grid grid-cols-1 md:grid-cols-12 gap-5 w-full max-w-4xl mx-auto">
-          
-          <!-- LEFT: FACT FAMILY TRIANGLE -->
-          <div class="md:col-span-5 bg-slate-900 border-2 border-slate-800 rounded-3xl p-5 shadow-2xl flex flex-col items-center justify-between">
-            <div class="w-full flex items-center justify-between border-b border-slate-800 pb-2">
-              <span class="font-kids text-sm font-bold text-amber-400">Fact Family Triangle</span>
-              <span class="text-[11px] text-slate-400 font-mono">Product at the Peak</span>
-            </div>
-
-            <!-- Triangle SVG Graphic -->
-            <div class="py-3 flex items-center justify-center w-full">
-              <svg viewBox="0 0 240 210" class="w-56 h-52">
-                <!-- Triangle Outline -->
-                <polygon points="120,25 215,185 25,185" fill="#0f172a" stroke="#38bdf8" stroke-width="4" stroke-linejoin="round"/>
-                
-                <!-- Center Inverse Operators -->
-                <text x="120" y="145" font-family="Fredoka" font-size="28" font-weight="bold" fill="#64748b" text-anchor="middle">×</text>
-                <text x="65" y="105" font-family="Fredoka" font-size="22" font-weight="bold" fill="#64748b" text-anchor="middle">÷</text>
-                <text x="175" y="105" font-family="Fredoka" font-size="22" font-weight="bold" fill="#64748b" text-anchor="middle">÷</text>
-
-                <!-- Peak: Product -->
-                <circle cx="120" cy="35" r="28" fill="#1e293b" stroke="#38bdf8" stroke-width="3"/>
-                <text x="120" y="44" font-family="Fredoka" font-size="22" font-weight="bold" fill="#38bdf8" text-anchor="middle">${inv.product}</text>
-
-                <!-- Bottom Left: Factor 1 -->
-                <circle cx="45" cy="175" r="28" fill="#1e293b" stroke="#f59e0b" stroke-width="3"/>
-                <text x="45" y="184" font-family="Fredoka" font-size="22" font-weight="bold" fill="#f59e0b" text-anchor="middle">${inv.factor1}</text>
-
-                <!-- Bottom Right: Factor 2 -->
-                <circle cx="195" cy="175" r="28" fill="#1e293b" stroke="#10b981" stroke-width="3"/>
-                <text x="195" y="184" font-family="Fredoka" font-size="22" font-weight="bold" fill="#10b981" text-anchor="middle">${inv.factor2}</text>
-              </svg>
-            </div>
-
-            <div class="text-xs text-slate-400 text-center font-medium">
-              3 numbers connected forever: 2 factors multiply to the product; dividing the product gives the other factor!
-            </div>
-          </div>
-
-          <!-- RIGHT: INVERSE RELATIONSHIP SENTENCES -->
-          <div class="md:col-span-7 bg-slate-900 border-2 border-slate-800 rounded-3xl p-5 shadow-2xl flex flex-col justify-between gap-3">
-            <div class="flex items-center justify-between border-b border-slate-800 pb-2">
-              <span class="font-kids text-sm font-bold text-sky-400">4 Connected Number Sentences</span>
-              <span class="text-xs font-mono text-emerald-400">Inverse Power</span>
-            </div>
-
-            <!-- Active Test Card -->
-            <div class="bg-slate-950 border-2 border-amber-400/80 p-4 rounded-2xl flex flex-col items-center justify-center gap-2">
-              <span class="text-xs text-amber-300 font-kids uppercase tracking-widest">Complete the Linked Sentence</span>
-              <div class="font-kids text-4xl sm:text-5xl font-bold text-white tracking-wider">
-                ${inv.qText.replace('?', `<span class="text-amber-400 underline decoration-dashed">${inv.userAns || '?'}</span>`)}
-              </div>
-            </div>
-
-            <!-- 4 Linked Sentences List -->
-            <div class="grid grid-cols-2 gap-2 text-xs font-kids font-bold">
-              <div class="p-2.5 rounded-xl border ${inv.activeTest === 'mul1' ? 'border-amber-400 bg-amber-500/10 text-amber-300' : 'border-slate-800 bg-slate-950 text-slate-400'}">
-                1. ${inv.factor1} × ${inv.factor2} = ${inv.activeTest === 'mul1' ? '?' : inv.product}
-              </div>
-              <div class="p-2.5 rounded-xl border ${inv.activeTest === 'mul2' ? 'border-amber-400 bg-amber-500/10 text-amber-300' : 'border-slate-800 bg-slate-950 text-slate-400'}">
-                2. ${inv.factor2} × ${inv.factor1} = ${inv.activeTest === 'mul2' ? '?' : inv.product}
-              </div>
-              <div class="p-2.5 rounded-xl border ${inv.activeTest === 'div1' ? 'border-amber-400 bg-amber-500/10 text-amber-300' : 'border-slate-800 bg-slate-950 text-slate-400'}">
-                3. ${inv.product} ÷ ${inv.factor1} = ${inv.activeTest === 'div1' ? '?' : inv.factor2}
-              </div>
-              <div class="p-2.5 rounded-xl border ${inv.activeTest === 'div2' ? 'border-amber-400 bg-amber-500/10 text-amber-300' : 'border-slate-800 bg-slate-950 text-slate-400'}">
-                4. ${inv.product} ÷ ${inv.factor2} = ${inv.activeTest === 'div2' ? '?' : inv.factor1}
-              </div>
-            </div>
-
-            <div id="invFeedback" class="min-h-[24px] text-xs font-bold text-center text-slate-400">
-              Use the triangle at the left to find your missing number!
-            </div>
-          </div>
-
-        </div>
-      `;
-    }
-
-    /* =====================================================================
-       MODULE 5: MULTIPLES OF 10, 20... 100, 1000 ADD-ON ENGINE
-       ===================================================================== */
-    function buildAddOnModule(container) {
-      let lvl = addOnLevel;
-      if (lvl === 6) {
-        lvl = Math.floor(Math.random() * 5) + 1; // 1 to 5 random
-      }
-
-      let baseNum, stepNum, isPlus, answer, targetCol;
-
-      if (lvl === 1) {
-        // Safe Tens addition/subtraction (no boundary crossing)
-        targetCol = 'T';
-        isPlus = Math.random() < 0.6;
-        const tensMultiples = [10, 20, 30, 40, 50, 60, 70];
-        stepNum = tensMultiples[Math.floor(Math.random() * tensMultiples.length)];
-        const stepVal = stepNum / 10;
-        
-        let tVal;
-        if (isPlus) {
-          tVal = Math.floor(Math.random() * (9 - stepVal)) + 1; // tVal + stepVal <= 9
-        } else {
-          tVal = Math.floor(Math.random() * (9 - stepVal)) + stepVal; // tVal - stepVal >= 0
-        }
-
-        const hVal = Math.floor(Math.random() * 8) + 1;
-        const uVal = Math.floor(Math.random() * 8) + 1;
-        baseNum = hVal * 100 + tVal * 10 + uVal;
-        answer = isPlus ? (baseNum + stepNum) : (baseNum - stepNum);
-
-      } else if (lvl === 2) {
-        // Crossing the 100 boundary with Tens
-        targetCol = 'T';
-        isPlus = Math.random() < 0.55;
-        const crossingSteps = [30, 40, 50, 60, 70, 80];
-        stepNum = crossingSteps[Math.floor(Math.random() * crossingSteps.length)];
-        const hVal = Math.floor(Math.random() * 7) + 2; // 2 to 8
-        const uVal = Math.floor(Math.random() * 8) + 1;
-
-        if (isPlus) {
-          // ensure tens + step >= 10
-          const tVal = Math.floor(Math.random() * 4) + (10 - (stepNum / 10)); // e.g. 7, 8, 9
-          baseNum = hVal * 100 + (tVal % 10) * 10 + uVal;
-          if (baseNum + stepNum < (hVal + 1) * 100) baseNum += 20; // force crossing
-          answer = baseNum + stepNum;
-        } else {
-          // subtraction crossing: e.g. 520 - 40 -> 480
-          const tVal = Math.floor(Math.random() * (stepNum / 10)); // 0, 1, 2
-          baseNum = hVal * 100 + tVal * 10 + uVal;
-          answer = baseNum - stepNum;
-        }
-
-      } else if (lvl === 3) {
-        // Add/Subtract Hundreds (No boundary crossing)
-        targetCol = 'H';
-        isPlus = Math.random() < 0.5;
-        const hSteps = [100, 200, 300, 400, 500];
-        stepNum = hSteps[Math.floor(Math.random() * hSteps.length)];
-        const stepVal = stepNum / 100;
-
-        const thVal = Math.floor(Math.random() * 4) + 1; // 1 to 4
-        let hVal;
-        if (isPlus) {
-          hVal = Math.floor(Math.random() * (9 - stepVal)) + 1;
-        } else {
-          hVal = Math.floor(Math.random() * (9 - stepVal)) + stepVal;
-        }
-        const tVal = Math.floor(Math.random() * 8) + 1;
-        const uVal = Math.floor(Math.random() * 9);
-        baseNum = thVal * 1000 + hVal * 100 + tVal * 10 + uVal;
-        answer = isPlus ? (baseNum + stepNum) : (baseNum - stepNum);
-
-      } else if (lvl === 4) {
-        // Crossing the 1,000 boundary with Hundreds
-        targetCol = 'H';
-        isPlus = Math.random() < 0.55;
-        const hCrossingSteps = [300, 400, 500, 600, 700];
-        stepNum = hCrossingSteps[Math.floor(Math.random() * hCrossingSteps.length)];
-        const thVal = Math.floor(Math.random() * 4) + 2; // 2 to 5
-        const tVal = Math.floor(Math.random() * 8) + 1;
-        const uVal = Math.floor(Math.random() * 9);
-
-        if (isPlus) {
-          const hVal = Math.floor(Math.random() * 3) + (10 - (stepNum / 100)); // 7, 8, 9
-          baseNum = thVal * 1000 + (hVal % 10) * 100 + tVal * 10 + uVal;
-          answer = baseNum + stepNum;
-        } else {
-          const hVal = Math.floor(Math.random() * (stepNum / 100)); // 0, 1, 2
-          baseNum = thVal * 1000 + hVal * 100 + tVal * 10 + uVal;
-          answer = baseNum - stepNum;
-        }
-
-      } else {
-        // Add/Subtract Thousands
-        targetCol = 'Th';
-        isPlus = Math.random() < 0.5;
-        const thSteps = [1000, 2000, 3000, 4000];
-        stepNum = thSteps[Math.floor(Math.random() * thSteps.length)];
-        const stepVal = stepNum / 1000;
-
-        let thVal;
-        if (isPlus) {
-          thVal = Math.floor(Math.random() * (9 - stepVal)) + 1;
-        } else {
-          thVal = Math.floor(Math.random() * (9 - stepVal)) + stepVal;
-        }
-        const hVal = Math.floor(Math.random() * 9);
-        const tVal = Math.floor(Math.random() * 9);
-        const uVal = Math.floor(Math.random() * 9);
-        baseNum = thVal * 1000 + hVal * 100 + tVal * 10 + uVal;
-        answer = isPlus ? (baseNum + stepNum) : (baseNum - stepNum);
-      }
-
-      addOnState = {
-        lvl, baseNum, stepNum, isPlus, answer, targetCol,
-        userAns: '',
-        showStepExplanation: false
-      };
-
-      renderAddOnUI(container);
-    }
-
-    function renderAddOnUI(container) {
-      const s = addOnState;
-      const opSymbol = s.isPlus ? '+' : '-';
-
-      // Parse base digits
-      const bStr = s.baseNum.toString().padStart(4, '0');
-      const bTh = parseInt(bStr[0], 10);
-      const bH = parseInt(bStr[1], 10);
-      const bT = parseInt(bStr[2], 10);
-      const bU = parseInt(bStr[3], 10);
-
-      // Parse answer digits (if solved or explained)
-      const aStr = s.answer.toString().padStart(4, '0');
-      const aTh = parseInt(aStr[0], 10);
-      const aH = parseInt(aStr[1], 10);
-      const aT = parseInt(aStr[2], 10);
-      const aU = parseInt(aStr[3], 10);
-
-      const colColor = {
-        Th: 'text-purple-400 border-purple-500 bg-purple-500/10',
-        H: 'text-emerald-400 border-emerald-500 bg-emerald-500/10',
-        T: 'text-sky-400 border-sky-500 bg-sky-500/10',
-        U: 'text-amber-400 border-amber-500 bg-amber-500/10'
-      };
-
-      let pedagogicRule = '';
-      if (s.targetCol === 'T') {
-        pedagogicRule = s.lvl === 1
-          ? `⚡ Only the <strong class="text-sky-400">TENS</strong> change! Units (${bU}) and Hundreds (${bH}) stay locked!`
-          : `⚠️ Crossing 100: ${bT} tens ${opSymbol} ${s.stepNum / 10} tens will regroup with the <strong class="text-emerald-400">Hundreds</strong> column!`;
-      } else if (s.targetCol === 'H') {
-        pedagogicRule = s.lvl === 3
-          ? `⚡ Only the <strong class="text-emerald-400">HUNDREDS</strong> change! Tens (${bT}) and Units (${bU}) stay locked!`
-          : `⚠️ Crossing 1,000: ${bH} hundreds ${opSymbol} ${s.stepNum / 100} hundreds regroups with the <strong class="text-purple-400">Thousands</strong>!`;
-      } else {
-        pedagogicRule = `⚡ Add/Subtract Thousands directly! Hundreds, Tens, and Units stay locked!`;
-      }
-
-      container.innerHTML = `
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 w-full max-w-5xl mx-auto">
-          
-          <!-- LEFT: THE MATH EXPRESSION & PLACE VALUE SPOTLIGHT -->
-          <div class="lg:col-span-7 bg-slate-900 border-2 border-slate-800 rounded-3xl p-5 shadow-2xl flex flex-col justify-between gap-4">
-            
-            <div class="flex items-center justify-between border-b border-slate-800 pb-2">
-              <span class="font-kids text-sm font-bold text-sky-400">Mental Strategy: Multiples of 10, 100, 1000</span>
-              <span class="text-xs font-mono bg-sky-500/20 text-sky-300 px-2.5 py-0.5 rounded-full border border-sky-500/40">
-                Level ${s.lvl}
-              </span>
-            </div>
-
-            <!-- Big Math Equation Display -->
-            <div class="bg-slate-950 border-2 border-slate-800 rounded-2xl py-4 px-6 flex items-center justify-center gap-3 font-kids text-4xl sm:text-5xl font-bold shadow-inner">
-              <span class="text-slate-100">${s.baseNum}</span>
-              <span class="${s.isPlus ? 'text-emerald-400' : 'text-rose-400'}">${opSymbol}</span>
-              <span class="text-amber-300 underline decoration-sky-400 decoration-wavy">${s.stepNum}</span>
-              <span class="text-slate-500">=</span>
-              <span id="addOnAnsSlot" class="text-sky-300 font-bold underline decoration-dashed">
-                ${s.userAns || '?'}
-              </span>
-            </div>
-
-            <!-- PLACE VALUE SPOTLIGHT BAR -->
-            <div class="w-full bg-slate-950 rounded-2xl border border-slate-800 p-3 sm:p-4">
-              <div class="text-[11px] font-kids font-bold text-slate-400 uppercase tracking-widest text-center mb-2">
-                Place Value Spotlight Column Tracker
-              </div>
-
-              <!-- Column Header & Digit Grid -->
-              <div class="grid grid-cols-4 gap-2 text-center">
-                <!-- Thousands -->
-                <div class="p-2 rounded-xl border ${s.targetCol === 'Th' ? colColor.Th + ' pulse-glow' : 'border-slate-800 bg-slate-900/60 text-slate-400'}">
-                  <div class="text-[10px] font-bold">Thousands (Th)</div>
-                  <div class="font-kids text-2xl sm:text-3xl font-bold">${bTh || '-'}</div>
-                </div>
-                <!-- Hundreds -->
-                <div class="p-2 rounded-xl border ${s.targetCol === 'H' ? colColor.H + ' pulse-glow' : 'border-slate-800 bg-slate-900/60 text-slate-400'}">
-                  <div class="text-[10px] font-bold">Hundreds (H)</div>
-                  <div class="font-kids text-2xl sm:text-3xl font-bold">${bH}</div>
-                </div>
-                <!-- Tens -->
-                <div class="p-2 rounded-xl border ${s.targetCol === 'T' ? colColor.T + ' pulse-glow' : 'border-slate-800 bg-slate-900/60 text-slate-400'}">
-                  <div class="text-[10px] font-bold">Tens (T)</div>
-                  <div class="font-kids text-2xl sm:text-3xl font-bold">${bT}</div>
-                </div>
-                <!-- Units -->
-                <div class="p-2 rounded-xl border ${s.targetCol === 'U' ? colColor.U : 'border-slate-800 bg-slate-900/60 text-slate-400'}">
-                  <div class="text-[10px] font-bold">Units (U)</div>
-                  <div class="font-kids text-2xl sm:text-3xl font-bold">${bU}</div>
-                </div>
-              </div>
-
-              <!-- Column Delta Label -->
-              <div class="mt-3 text-center text-xs font-kids font-semibold text-slate-300">
-                ${pedagogicRule}
-              </div>
-            </div>
-
-            <!-- Action: Reveal Hint / Step Breakdown -->
-            <div class="flex items-center justify-between gap-2 text-xs">
-              <button onclick="toggleAddOnExplanation()" class="px-3.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-sky-300 font-bold rounded-xl border border-slate-700 transition flex items-center gap-1.5">
-                <span>👁️ ${s.showStepExplanation ? 'Hide Strategy Step' : 'Show Strategy Step'}</span>
-              </button>
-              <span id="addOnFeedbackBanner" class="font-bold min-h-[20px]"></span>
-            </div>
-
-          </div>
-
-          <!-- RIGHT: STEP BREAKDOWN & MENTAL WALKTHROUGH -->
-          <div class="lg:col-span-5 bg-slate-900 border-2 border-slate-800 rounded-3xl p-5 shadow-2xl flex flex-col justify-between gap-3">
-            
-            <div class="border-b border-slate-800 pb-2 flex items-center justify-between">
-              <span class="font-kids text-sm font-bold text-slate-200">Mental Strategy Walkthrough</span>
-              <span class="text-[11px] text-amber-400 font-mono">No Column Method Needed!</span>
-            </div>
-
-            <!-- Dynamic Step-by-Step Card -->
-            <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 flex-grow flex flex-col justify-center gap-3">
-              ${renderAddOnWalkthroughContent(bTh, bH, bT, bU, aTh, aH, aT, aU)}
-            </div>
-
-            <div class="p-3 bg-slate-950/80 rounded-2xl border border-slate-800 text-center text-xs text-slate-400">
-              Type your answer using the numpad below or keyboard and tap <strong class="text-emerald-400">Enter</strong>!
-            </div>
-
-          </div>
-
-        </div>
-      `;
-    }
-
-    function renderAddOnWalkthroughContent(bTh, bH, bT, bU, aTh, aH, aT, aU) {
-      const s = addOnState;
-      const op = s.isPlus ? '+' : '-';
-
-      if (s.targetCol === 'T') {
-        const stepTens = s.stepNum / 10;
-        if (s.lvl === 1) {
-          return `
-            <div class="flex flex-col gap-2.5 text-xs sm:text-sm font-kids">
-              <div class="text-sky-300 font-bold">1. Focus on the Tens:</div>
-              <div class="p-2.5 bg-slate-900 rounded-xl border border-sky-500/40 text-center text-base">
-                <span class="text-sky-400 font-bold">${bT} tens</span> ${op} <span class="text-amber-400 font-bold">${stepTens} tens</span> = <strong class="text-emerald-400">${s.isPlus ? bT + stepTens : bT - stepTens} tens</strong>
-              </div>
-              <div class="text-slate-300">2. Keep Hundreds and Units locked:</div>
-              <div class="text-slate-400 text-xs">
-                Hundreds stay <strong class="text-emerald-400">${bH}</strong>, Units stay <strong class="text-amber-400">${bU}</strong>.
-              </div>
-              ${s.showStepExplanation ? `
-                <div class="p-2 bg-emerald-950/40 border border-emerald-500/50 rounded-xl text-center text-emerald-300 font-bold animate-pop">
-                  Result: ${s.answer}
-                </div>` : ''}
-            </div>
-          `;
-        } else {
-          return `
-            <div class="flex flex-col gap-2.5 text-xs sm:text-sm font-kids">
-              <div class="text-amber-300 font-bold">1. Count in Tens across 100:</div>
-              <div class="p-2.5 bg-slate-900 rounded-xl border border-amber-500/40 text-xs sm:text-sm">
-                ${s.isPlus 
-                  ? `${s.baseNum} + ${s.stepNum}: Total tens = <strong class="text-sky-300">${(bH * 10 + bT)} tens + ${stepTens} tens = ${(bH * 10 + bT) + stepTens} tens</strong>.`
-                  : `${s.baseNum} - ${s.stepNum}: Total tens = <strong class="text-sky-300">${(bH * 10 + bT)} tens - ${stepTens} tens = ${(bH * 10 + bT) - stepTens} tens</strong>.`}
-              </div>
-              <div class="text-slate-300">2. Recombine with the Units (${bU}):</div>
-              <div class="text-slate-400 text-xs">
-                The units digit <strong class="text-amber-400">${bU}</strong> does not change at all!
-              </div>
-              ${s.showStepExplanation ? `
-                <div class="p-2 bg-emerald-950/40 border border-emerald-500/50 rounded-xl text-center text-emerald-300 font-bold animate-pop">
-                  Result: ${s.answer}
-                </div>` : ''}
-            </div>
-          `;
-        }
-      } else if (s.targetCol === 'H') {
-        const stepH = s.stepNum / 100;
-        return `
-          <div class="flex flex-col gap-2.5 text-xs sm:text-sm font-kids">
-            <div class="text-emerald-300 font-bold">1. Focus on the Hundreds:</div>
-            <div class="p-2.5 bg-slate-900 rounded-xl border border-emerald-500/40 text-center text-base">
-              <span class="text-emerald-400 font-bold">${bH} hundreds</span> ${op} <span class="text-amber-400 font-bold">${stepH} hundreds</span> = <strong class="text-sky-400">${s.isPlus ? bH + stepH : bH - stepH} hundreds</strong>
-            </div>
-            <div class="text-slate-300">2. Keep Tens & Units locked:</div>
-            <div class="text-slate-400 text-xs">
-              Tens stay <strong class="text-sky-400">${bT}</strong>, Units stay <strong class="text-amber-400">${bU}</strong>.
-            </div>
-            ${s.showStepExplanation ? `
-              <div class="p-2 bg-emerald-950/40 border border-emerald-500/50 rounded-xl text-center text-emerald-300 font-bold animate-pop">
-                Result: ${s.answer}
-              </div>` : ''}
-          </div>
-        `;
-      } else {
-        const stepTh = s.stepNum / 1000;
-        return `
-          <div class="flex flex-col gap-2.5 text-xs sm:text-sm font-kids">
-            <div class="text-purple-300 font-bold">1. Focus on the Thousands:</div>
-            <div class="p-2.5 bg-slate-900 rounded-xl border border-purple-500/40 text-center text-base">
-              <span class="text-purple-400 font-bold">${bTh} th</span> ${op} <span class="text-amber-400 font-bold">${stepTh} th</span> = <strong class="text-emerald-400">${s.isPlus ? bTh + stepTh : bTh - stepTh} thousands</strong>
-            </div>
-            <div class="text-slate-300">2. The other 3 digits stay untouched:</div>
-            <div class="text-slate-400 text-xs">
-              Hundreds (<strong class="text-emerald-400">${bH}</strong>), Tens (<strong class="text-sky-400">${bT}</strong>), Units (<strong class="text-amber-400">${bU}</strong>).
-            </div>
-            ${s.showStepExplanation ? `
-              <div class="p-2 bg-emerald-950/40 border border-emerald-500/50 rounded-xl text-center text-emerald-300 font-bold animate-pop">
-                Result: ${s.answer}
-              </div>` : ''}
-          </div>
-        `;
-      }
-    }
-
-    function toggleAddOnExplanation() {
-      playSound('click');
-      addOnState.showStepExplanation = !addOnState.showStepExplanation;
-      renderAddOnUI(document.getElementById('activeStageContainer'));
-    }
-
-    function submitAddOnAnswer() {
-      const s = addOnState;
-      if (s.userAns === '') return;
-
-      const userNum = parseInt(s.userAns, 10);
-      const fb = document.getElementById('addOnFeedbackBanner');
-
-      if (userNum === s.answer) {
-        playSound('correct');
-        streak++;
-        score += 10;
-        updateMetrics();
-        if (fb) {
-          fb.textContent = `⭐ Brilliant mental calculation! Answer = ${s.answer}!`;
-          fb.className = 'text-xs font-bold text-emerald-400 animate-pop';
-        }
-        setTimeout(() => {
-          generateNewProblem();
-        }, 1300);
-      } else {
-        playSound('error');
-        streak = 0;
-        updateMetrics();
-        if (fb) {
-          fb.textContent = `Check your place value: look at which column changes!`;
-          fb.className = 'text-xs font-bold text-rose-400';
-        }
-        s.userAns = '';
-        const slot = document.getElementById('addOnAnsSlot');
-        if (slot) slot.textContent = '?';
-      }
-    }
-
-    /* =====================================================================
-       INPUT & NUMPAD HANDLER
-       ===================================================================== */
-    function numpadPress(val) {
-      if (isProcessing) return;
-      playSound('click');
-
-      if (currentTab === 'addition') {
-        const s = addState;
-        if (s.col === 'done') return;
-
-        if (s.phase === 'ask_carry') {
-          if (val === 'clear') s.inputCarry = '';
-          else if (val === 'backspace') s.inputCarry = s.inputCarry.slice(0, -1);
-          else if (s.inputCarry.length < 1) s.inputCarry = val.toString();
-        } else {
-          let field = s.col === 'units' ? 'inputU' : (s.col === 'tens' ? 'inputT' : 'inputH');
-          if (val === 'clear') s[field] = '';
-          else if (val === 'backspace') s[field] = s[field].slice(0, -1);
-          else if (s[field].length < (s.col === 'hundreds' ? 2 : 1)) s[field] += val.toString();
-        }
-        renderAdditionUI(document.getElementById('activeStageContainer'));
-      } else if (currentTab === 'subtraction') {
-        const s = subState;
-        if (s.step === 'done') return;
-        let field = s.step === 'units' ? 'inputU' : (s.step === 'tens' ? 'inputT' : 'inputH');
-
-        if (val === 'clear') s[field] = '';
-        else if (val === 'backspace') s[field] = s[field].slice(0, -1);
-        else if (s[field].length < 2) s[field] += val.toString();
-
-        renderSubtractionUI(document.getElementById('activeStageContainer'));
-      } else if (currentTab === 'clinic') {
-        if (clinicState.currentStep !== 4) return;
-        if (val === 'clear') clinicState.userFixedAns = '';
-        else if (val === 'backspace') clinicState.userFixedAns = clinicState.userFixedAns.slice(0, -1);
-        else if (clinicState.userFixedAns.length < 4) clinicState.userFixedAns += val.toString();
-        renderClinicUI(document.getElementById('activeStageContainer'));
-      } else if (currentTab === 'inverse') {
-        if (val === 'clear') inverseState.userAns = '';
-        else if (val === 'backspace') inverseState.userAns = inverseState.userAns.slice(0, -1);
-        else if (inverseState.userAns.length < 3) inverseState.userAns += val.toString();
-        renderInverseUI(document.getElementById('activeStageContainer'));
-      } else if (currentTab === 'addon') {
-        if (val === 'clear') addOnState.userAns = '';
-        else if (val === 'backspace') addOnState.userAns = addOnState.userAns.slice(0, -1);
-        else if (addOnState.userAns.length < 5) addOnState.userAns += val.toString();
-        
-        const slot = document.getElementById('addOnAnsSlot');
-        if (slot) slot.textContent = addOnState.userAns || '?';
-      }
-    }
-
-    function numpadSubmit() {
-      if (isProcessing) return;
-
-      if (currentTab === 'addition') {
-        submitAdditionStep();
-      } else if (currentTab === 'subtraction') {
-        submitSubtractionStep();
-      } else if (currentTab === 'clinic') {
-        submitClinicFinalAnswer();
-      } else if (currentTab === 'inverse') {
-        submitInverseAnswer();
-      } else if (currentTab === 'addon') {
-        submitAddOnAnswer();
-      }
-    }
-
-    function numpadSubmit() {
-      if (isProcessing) return;
-
-      if (currentTab === 'addition') {
-        submitAdditionStep();
-      } else if (currentTab === 'subtraction') {
-        submitSubtractionStep();
-      } else if (currentTab === 'clinic') {
-        submitClinicFinalAnswer();
-      } else if (currentTab === 'inverse') {
-        submitInverseAnswer();
-      }
-    }
-
-    function submitAdditionStep() {
-      const s = addState;
-      if (s.col === 'done') return;
-
-      if (s.col === 'units') {
-        const colSum = s.topU + s.botU;
-        s.currentColSum = colSum;
-
-        if (s.phase === 'solve') {
-          if (s.inputU === '') return;
-          const expectedStay = colSum % 10;
-          if (parseInt(s.inputU, 10) === expectedStay) {
-            playSound('correct');
-            if (colSum >= 10) {
-              // Ask what needs to be carried
-              s.phase = 'ask_carry';
-              s.inputCarry = '';
-              renderAdditionUI(document.getElementById('activeStageContainer'));
-            } else {
-              // No carry needed, move straight to tens
-              s.carriedTens = 0;
-              s.col = 'tens';
-              renderAdditionUI(document.getElementById('activeStageContainer'));
-            }
-          } else {
-            playSound('error');
-            s.inputU = '';
-            renderAdditionUI(document.getElementById('activeStageContainer'));
-          }
-        } else if (s.phase === 'ask_carry') {
-          if (s.inputCarry === '') return;
-          const expectedCarry = Math.floor(colSum / 10);
-          if (parseInt(s.inputCarry, 10) === expectedCarry) {
-            playSound('bundle');
-            s.carriedTens = expectedCarry;
-            s.phase = 'solve';
-            s.col = 'tens';
-            renderAdditionUI(document.getElementById('activeStageContainer'));
-          } else {
-            playSound('error');
-            s.inputCarry = '';
-            renderAdditionUI(document.getElementById('activeStageContainer'));
-          }
-        }
-      } else if (s.col === 'tens') {
-        const colSum = s.topT + s.botT + s.carriedTens;
-        s.currentColSum = colSum;
-
-        if (s.phase === 'solve') {
-          if (s.inputT === '') return;
-          const expectedStay = colSum % 10;
-          if (parseInt(s.inputT, 10) === expectedStay) {
-            playSound('correct');
-            if (colSum >= 10) {
-              s.phase = 'ask_carry';
-              s.inputCarry = '';
-              renderAdditionUI(document.getElementById('activeStageContainer'));
-            } else {
-              s.carriedHundreds = 0;
-              if (s.topH > 0 || s.botH > 0) {
-                s.col = 'hundreds';
-                renderAdditionUI(document.getElementById('activeStageContainer'));
-              } else {
-                s.col = 'done';
-                finishCalculationAward();
-                renderAdditionUI(document.getElementById('activeStageContainer'));
-              }
-            }
-          } else {
-            playSound('error');
-            s.inputT = '';
-            renderAdditionUI(document.getElementById('activeStageContainer'));
-          }
-        } else if (s.phase === 'ask_carry') {
-          if (s.inputCarry === '') return;
-          const expectedCarry = Math.floor(colSum / 10);
-          if (parseInt(s.inputCarry, 10) === expectedCarry) {
-            playSound('bundle');
-            s.carriedHundreds = expectedCarry;
-            s.phase = 'solve';
-            s.col = 'hundreds';
-            renderAdditionUI(document.getElementById('activeStageContainer'));
-          } else {
-            playSound('error');
-            s.inputCarry = '';
-            renderAdditionUI(document.getElementById('activeStageContainer'));
-          }
-        }
-      } else if (s.col === 'hundreds') {
-        const colSum = s.topH + s.botH + s.carriedHundreds;
-        if (s.inputH === '') return;
-
-        if (parseInt(s.inputH, 10) === colSum) {
-          playSound('correct');
-          if (colSum >= 10) {
-            s.carriedThousands = Math.floor(colSum / 10);
-            s.inputH = (colSum % 10).toString();
-          }
-          s.col = 'done';
-          finishCalculationAward();
-          renderAdditionUI(document.getElementById('activeStageContainer'));
-        } else {
-          playSound('error');
-          s.inputH = '';
-          renderAdditionUI(document.getElementById('activeStageContainer'));
-        }
-      }
-    }
-
-    function submitSubtractionStep() {
-      const s = subState;
-      const currentU = s.topU + (s.unpackedTenToUnits ? 10 : 0);
-      const currentT = s.topT + (s.unpackedHundredToTen ? 10 : 0) - (s.unpackedTenToUnits ? 1 : 0);
-      const currentH = s.topH - (s.unpackedHundredToTen ? 1 : 0);
-
-      if (s.step === 'units') {
-        // Anti-reversal verification: if pupil tries to submit bottom - top without unpack
-        if (!s.unpackedTenToUnits && s.topU < s.botU) {
-          s.reversalAlert = true;
-          playSound('error');
-          renderSubtractionUI(document.getElementById('activeStageContainer'));
-          return;
-        }
-
-        const expected = currentU - s.botU;
-        if (parseInt(s.inputU, 10) === expected) {
-          playSound('correct');
-          s.step = 'tens';
-          renderSubtractionUI(document.getElementById('activeStageContainer'));
-        } else {
-          playSound('error');
-        }
-      } else if (s.step === 'tens') {
-        const expected = currentT - s.botT;
-        if (parseInt(s.inputT, 10) === expected) {
-          playSound('correct');
-          s.step = (s.topH || s.botH) ? 'hundreds' : 'done';
-          if (s.step === 'done') finishCalculationAward();
-          else renderSubtractionUI(document.getElementById('activeStageContainer'));
-        } else {
-          playSound('error');
-        }
-      } else if (s.step === 'hundreds') {
-        const expected = currentH - s.botH;
-        if (parseInt(s.inputH, 10) === expected) {
-          playSound('correct');
-          s.step = 'done';
-          finishCalculationAward();
-          renderSubtractionUI(document.getElementById('activeStageContainer'));
-        } else {
-          playSound('error');
-        }
-      }
-    }
-
-    function submitClinicFinalAnswer() {
-      const c = clinicState;
-      const expected = c.item.correctAns;
-      if (parseInt(c.userFixedAns, 10) === expected) {
-        playSound('correct');
+    function checkMistakeReason(isCorrect) {
+      const fb = document.getElementById('clinicFeedback');
+      const ex = clinicExamples[clinicState.currentIdx % clinicExamples.length];
+      if (isCorrect) {
+        playTone('success');
+        fb.className = 'status-msg success';
+        fb.innerHTML = `<strong>Spot On!</strong> ${ex.explanation}<br>The correct answer is <strong>${ex.correct}</strong>.`;
         streak++;
         score += 15;
-        updateMetrics();
-        flashClinicFeedback(`🌟 Excellent investigation! True answer is ${expected}!`, true);
+        updateStats();
         setTimeout(() => {
-          generateNewProblem();
-        }, 1600);
+          clinicState.currentIdx++;
+          initMistakeProblem();
+        }, 3200);
       } else {
-        playSound('error');
-        flashClinicFeedback(`Check your calculation: calculate column by column!`, false);
+        playTone('error');
+        fb.className = 'status-msg error';
+        fb.textContent = 'Look closer at how the units were calculated.';
       }
     }
 
-    function submitInverseAnswer() {
+    /* =====================================================================
+       MODULE 4: INVERSE FACT FLUENCY (TRIANGLES)
+       ===================================================================== */
+    function initInverseProblem() {
+      activeInputBuffer = '';
+      const tables = [3, 4, 6, 7, 8, 9];
+      const a = tables[Math.floor(Math.random() * tables.length)];
+      const b = Math.floor(Math.random() * 8) + 2;
+      inverseState.factorA = a;
+      inverseState.factorB = b;
+      inverseState.product = a * b;
+
+      const slots = ['product', 'factorA', 'factorB'];
+      inverseState.blankSlot = slots[Math.floor(Math.random() * slots.length)];
+
+      renderInverseView();
+    }
+
+    function renderInverseView() {
       const inv = inverseState;
-      if (parseInt(inv.userAns, 10) === inv.targetAns) {
-        playSound('correct');
+      const card = document.getElementById('stageCard');
+
+      const pDisplay = inv.blankSlot === 'product' ? '?' : inv.product;
+      const aDisplay = inv.blankSlot === 'factorA' ? '?' : inv.factorA;
+      const bDisplay = inv.blankSlot === 'factorB' ? '?' : inv.factorB;
+
+      card.innerHTML = `
+        <div class="triangle-container">
+          <div class="prompt-banner" style="text-align:center;">
+            Inverse Fact Triangle: Connect Multiplication & Division
+          </div>
+
+          <svg class="triangle-svg" viewBox="0 0 200 180">
+            <polygon points="100,20 20,160 180,160" fill="#1e293b" stroke="#38bdf8" stroke-width="4"/>
+            <!-- Top Vertex (Product) -->
+            <circle cx="100" cy="30" r="22" fill="#090d16" stroke="#c084fc" stroke-width="3"/>
+            <text x="100" y="37" text-anchor="middle" fill="#c084fc" font-size="16" font-weight="bold">${pDisplay}</text>
+            <!-- Bottom Left Vertex (Factor A) -->
+            <circle cx="35" cy="150" r="20" fill="#090d16" stroke="#38bdf8" stroke-width="3"/>
+            <text x="35" y="156" text-anchor="middle" fill="#38bdf8" font-size="16" font-weight="bold">${aDisplay}</text>
+            <!-- Bottom Right Vertex (Factor B) -->
+            <circle cx="165" cy="150" r="20" fill="#090d16" stroke="#34d399" stroke-width="3"/>
+            <text x="165" y="156" text-anchor="middle" fill="#34d399" font-size="16" font-weight="bold">${bDisplay}</text>
+          </svg>
+
+          <div style="font-size:1.4rem; font-weight:800; color:#fff; display:flex; gap:16px;">
+            <span>${aDisplay} × ${bDisplay} = ${pDisplay}</span>
+            <span>|</span>
+            <span>${pDisplay} ÷ ${bDisplay} = ${aDisplay}</span>
+          </div>
+
+          <div class="step-actions-container">
+            <input type="text" readonly id="stepInvInput" value="${activeInputBuffer}" placeholder="?" style="width:110px; height:50px; font-size:2rem; text-align:center; background:#000; border:2px solid var(--accent-cyan); border-radius:12px; color:#fff; font-weight:800;">
+          </div>
+          <div class="status-msg info">Enter the missing number on the keypad and press Enter.</div>
+        </div>
+      `;
+    }
+
+    function verifyInverseInput(val) {
+      const inv = inverseState;
+      let expected = inv.product;
+      if (inv.blankSlot === 'factorA') expected = inv.factorA;
+      if (inv.blankSlot === 'factorB') expected = inv.factorB;
+
+      if (parseInt(val, 10) === expected) {
+        playTone('success');
         streak++;
         score += 10;
-        updateMetrics();
-        const fb = document.getElementById('invFeedback');
-        if (fb) {
-          fb.textContent = `⭐ Spot on! ${inv.qText.replace('?', inv.targetAns)} is verified!`;
-          fb.className = 'min-h-[24px] text-xs font-bold text-center text-emerald-400 animate-pop';
-        }
-        setTimeout(() => {
-          generateNewProblem();
-        }, 1400);
+        updateStats();
+        initInverseProblem();
       } else {
-        playSound('error');
-        const fb = document.getElementById('invFeedback');
-        if (fb) {
-          fb.textContent = `Check the triangle: what number is missing?`;
-          fb.className = 'min-h-[24px] text-xs font-bold text-center text-rose-400';
-        }
+        playTone('error');
       }
     }
 
-    function finishCalculationAward() {
-      isProcessing = true;
-      streak++;
-      score += 15;
-      updateMetrics();
-      setTimeout(() => {
-        isProcessing = false;
-        generateNewProblem();
-      }, 1600);
+    /* =====================================================================
+       MODULE 5: ADD-ON 10, 20... 1000 MACHINE
+       ===================================================================== */
+    function setAddOnLevel(lvl) {
+      addOnState.level = lvl;
+      renderSubBar();
+      initAddOnProblem();
     }
 
-    function updateMetrics() {
-      document.getElementById('streakDisplay').textContent = `🔥 ${streak}`;
-      document.getElementById('scoreDisplay').textContent = score;
+    function initAddOnProblem() {
+      activeInputBuffer = '';
+      const s = addOnState;
+      s.isAdd = Math.random() > 0.4;
+
+      if (s.level === 1) {
+        // Safe tens: e.g. 345 + 30 = 375
+        const t = Math.floor(Math.random() * 4) + 2;
+        const addT = Math.floor(Math.random() * 3) + 1;
+        s.base = Math.floor(Math.random() * 5 + 1) * 100 + t * 10 + Math.floor(Math.random() * 9 + 1);
+        s.change = addT * 10;
+      } else if (s.level === 2) {
+        // Crossing 100: e.g. 385 + 40 = 425
+        s.base = Math.floor(Math.random() * 4 + 2) * 100 + (Math.floor(Math.random() * 3) + 7) * 10 + 5;
+        s.change = (Math.floor(Math.random() * 3) + 3) * 10;
+      } else if (s.level === 3) {
+        // Hundreds: e.g. 2,430 + 300
+        s.base = Math.floor(Math.random() * 4 + 1) * 1000 + Math.floor(Math.random() * 4 + 1) * 100 + 40;
+        s.change = (Math.floor(Math.random() * 4) + 2) * 100;
+      } else {
+        // Crossing 1000: e.g. 2,850 + 400
+        s.base = Math.floor(Math.random() * 3 + 1) * 1000 + (Math.floor(Math.random() * 3) + 7) * 100 + 20;
+        s.change = (Math.floor(Math.random() * 3) + 4) * 100;
+      }
+
+      renderAddOnView();
     }
 
-    function setupKeyboard() {
+    function renderAddOnView() {
+      const s = addOnState;
+      const card = document.getElementById('stageCard');
+      const op = s.isAdd ? '+' : '−';
+
+      card.innerHTML = `
+        <div style="display:flex; flex-direction:column; align-items:center; gap:16px;">
+          <div class="prompt-banner" style="text-align:center;">
+            Mental Place Value Scaling: Keep unchanged columns anchored!
+          </div>
+
+          <div style="font-size:2.8rem; font-weight:900; color:var(--accent-cyan);">
+            ${s.base} <span style="color:var(--accent-amber);">${op}</span> ${s.change} = ?
+          </div>
+
+          <div class="pv-blocks-row">
+            <div class="pv-col-card ${s.change>=1000?'glow':''}">
+              <div style="font-size:0.75rem; color:var(--text-dim);">Thousands</div>
+              <div style="font-size:1.6rem; font-weight:800; color:var(--accent-purple);">
+                ${Math.floor(s.base/1000)||'0'}
+              </div>
+            </div>
+            <div class="pv-col-card ${s.change>=100&&s.change<1000?'glow':''}">
+              <div style="font-size:0.75rem; color:var(--text-dim);">Hundreds</div>
+              <div style="font-size:1.6rem; font-weight:800; color:var(--accent-emerald);">
+                ${Math.floor((s.base%1000)/100)}
+              </div>
+            </div>
+            <div class="pv-col-card ${s.change>=10&&s.change<100?'glow':''}">
+              <div style="font-size:0.75rem; color:var(--text-dim);">Tens</div>
+              <div style="font-size:1.6rem; font-weight:800; color:var(--accent-cyan);">
+                ${Math.floor((s.base%100)/10)}
+              </div>
+            </div>
+            <div class="pv-col-card">
+              <div style="font-size:0.75rem; color:var(--text-dim);">Units</div>
+              <div style="font-size:1.6rem; font-weight:800; color:var(--accent-amber);">
+                ${s.base%10}
+              </div>
+            </div>
+          </div>
+
+          <div class="step-actions-container">
+            <input type="text" readonly id="stepAddOnInput" value="${activeInputBuffer}" placeholder="?" style="width:160px; height:50px; font-size:2rem; text-align:center; background:#000; border:2px solid var(--accent-cyan); border-radius:12px; color:#fff; font-weight:800;">
+          </div>
+          <div class="status-msg info">Calculate mentally and enter your answer on the numpad.</div>
+        </div>
+      `;
+    }
+
+    function verifyAddOnInput(val) {
+      const s = addOnState;
+      const expected = s.isAdd ? s.base + s.change : s.base - s.change;
+      if (parseInt(val, 10) === expected) {
+        playTone('success');
+        streak++;
+        score += 10;
+        updateStats();
+        initAddOnProblem();
+      } else {
+        playTone('error');
+      }
+    }
+
+    /* =====================================================================
+       INPUT DISPATCHER (NUMPAD & KEYBOARD)
+       ===================================================================== */
+    function numpadInput(digit) {
+      playTone('click');
+      if (activeInputBuffer.length < 6) {
+        activeInputBuffer += digit;
+        refreshInputDisplay();
+      }
+    }
+
+    function numpadBackspace() {
+      playTone('click');
+      activeInputBuffer = activeInputBuffer.slice(0, -1);
+      refreshInputDisplay();
+    }
+
+    function numpadClear() {
+      playTone('click');
+      activeInputBuffer = '';
+      refreshInputDisplay();
+    }
+
+    function refreshInputDisplay() {
+      const subIn = document.getElementById('stepSubInput');
+      if (subIn) subIn.value = activeInputBuffer;
+
+      const addIn = document.getElementById('stepAddInput');
+      if (addIn) addIn.value = activeInputBuffer;
+
+      const invIn = document.getElementById('stepInvInput');
+      if (invIn) invIn.value = activeInputBuffer;
+
+      const aOnIn = document.getElementById('stepAddOnInput');
+      if (aOnIn) aOnIn.value = activeInputBuffer;
+    }
+
+    function numpadSubmit() {
+      if (!activeInputBuffer) return;
+      const val = activeInputBuffer.trim();
+
+      if (currentTab === 'subtraction') {
+        const s = subState;
+        if (s.step === 'ask_how_many') {
+          handleBorrowQtySubmit(val);
+        } else if (s.step === 'ask_lender_new') {
+          verifySubLenderNew(val);
+        } else if (s.step === 'ask_target_new') {
+          verifySubTargetNew(val);
+        } else if (s.step === 'calc_col') {
+          verifySubColCalc(val);
+        }
+      } else if (currentTab === 'addition') {
+        const a = addState;
+        if (a.step === 'calc_units') {
+          verifyAddUnits(val);
+        } else if (a.step === 'calc_tens') {
+          verifyAddTens(val);
+        }
+      } else if (currentTab === 'inverse') {
+        verifyInverseInput(val);
+      } else if (currentTab === 'addon') {
+        verifyAddOnInput(val);
+      }
+    }
+
+    function setupPhysicalKeyboard() {
       window.addEventListener('keydown', (e) => {
         if (e.key >= '0' && e.key <= '9') {
-          numpadPress(parseInt(e.key, 10));
+          numpadInput(e.key);
         } else if (e.key === 'Enter') {
           numpadSubmit();
         } else if (e.key === 'Backspace') {
-          numpadPress('backspace');
+          numpadBackspace();
         } else if (e.key === 'Escape') {
-          numpadPress('clear');
+          numpadClear();
         }
       });
     }
