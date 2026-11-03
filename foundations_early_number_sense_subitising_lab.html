@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Foundations: Early Number Sense, Subitising & 5-and-a-Bit</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Fredoka & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+    }
+    .font-kids {
+      font-family: 'Fredoka', cursive, sans-serif;
+    }
+    @keyframes popBounce {
+      0% { transform: scale(0.65); opacity: 0; }
+      70% { transform: scale(1.08); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .animate-pop {
+      animation: popBounce 0.28s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+    .counter-dot {
+      width: 2.75rem;
+      height: 2.75rem;
+      border-radius: 9999px;
+      transition: all 0.2s ease;
+    }
+    @media (min-width: 640px) {
+      .counter-dot {
+        width: 3.5rem;
+        height: 3.5rem;
+      }
+    }
+    .die-face {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(3, 1fr);
+      width: 140px;
+      height: 140px;
+      gap: 6px;
+      padding: 12px;
+      background: #0f172a;
+      border: 3px solid #38bdf8;
+      border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+    }
+    .die-pip {
+      width: 24px;
+      height: 24px;
+      background: #38bdf8;
+      border-radius: 9999px;
+      justify-self: center;
+      align-self: center;
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.6);
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between selection:bg-amber-400 selection:text-slate-950">
+
+  <!-- TOP HEADER & MODULE TABS -->
+  <header class="bg-slate-900 border-b border-slate-800 px-3 py-2.5 sm:px-6 shadow-xl">
+    <div class="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-3">
+      
+      <!-- App Brand -->
+      <div class="flex items-center space-x-3">
+        <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-cyan-400 via-indigo-500 to-emerald-400 flex items-center justify-center font-kids text-xl font-black text-slate-950 shadow-md">
+          123
+        </div>
+        <div>
+          <h1 class="font-kids text-xl sm:text-2xl font-bold tracking-wide text-cyan-300 leading-none">
+            Foundations Numeracy Lab
+          </h1>
+          <p class="text-[11px] text-slate-400 font-medium">Subitising, 5-and-a-Bit & Number Neighbours • KS1 / KS2 Foundations</p>
+        </div>
+      </div>
+
+      <!-- MAIN MODULE TABS -->
+      <nav class="flex items-center gap-1.5 bg-slate-950 p-1.5 rounded-2xl border border-slate-800 text-xs sm:text-sm font-semibold flex-wrap">
+        <button id="tabSubitise" onclick="setModule('subitise')" class="px-3.5 py-1.5 rounded-xl font-bold transition-all bg-cyan-400 text-slate-950 shadow-md">
+          1. Subitising Lab 👁️
+        </button>
+        <button id="tabFiveBit" onclick="setModule('five_bit')" class="px-3.5 py-1.5 rounded-xl font-bold transition-all text-slate-300 hover:text-white">
+          2. 5-and-a-Bit Structure 🖐️
+        </button>
+        <button id="tabNeighbours" onclick="setModule('neighbours')" class="px-3.5 py-1.5 rounded-xl font-bold transition-all text-slate-300 hover:text-white">
+          3. Number Neighbours (+1 / −1) 🏘️
+        </button>
+        <button id="tabSprint" onclick="setModule('sprint')" class="px-3.5 py-1.5 rounded-xl font-bold transition-all text-slate-300 hover:text-white">
+          4. 60s Fast Sprint ⚡
+        </button>
+      </nav>
+
+      <!-- Audio Mute/Unmute Toggle -->
+      <button onclick="toggleSound()" id="soundToggleBtn" class="w-9 h-9 rounded-xl bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-200 transition" title="Toggle Sound">
+        <svg id="soundOnIcon" class="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path></svg>
+        <svg id="soundOffIcon" class="w-5 h-5 hidden text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15zM17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"></path></svg>
+      </button>
+
+    </div>
+  </header>
+
+  <!-- SUB-BAR CONTROLS & STREAK TRACKER -->
+  <section class="max-w-5xl w-full mx-auto my-2 px-3 flex flex-wrap items-center justify-between gap-2.5 text-xs sm:text-sm bg-slate-900/60 p-2.5 rounded-2xl border border-slate-800/80">
+    
+    <!-- SUB-CONTROLS PER MODULE -->
+    <div id="subBarControls" class="flex items-center gap-1.5 flex-wrap">
+      <!-- Injected per module -->
+    </div>
+
+    <!-- LIVE METRICS -->
+    <div class="flex items-center gap-4 font-kids ml-auto">
+      <div class="flex items-center gap-1.5 text-amber-400 font-bold text-sm sm:text-base">
+        <span>Streak:</span>
+        <span id="streakBadge" class="bg-amber-500/20 px-2.5 py-0.5 rounded-full border border-amber-500/40">🔥 0</span>
+      </div>
+      <div class="flex items-center gap-1.5 text-emerald-400 font-bold text-sm sm:text-base">
+        <span>Score:</span>
+        <span id="scoreDisplay">0</span>
+      </div>
+      <div id="sprintTimerBox" class="hidden items-center gap-1 text-rose-400 font-bold bg-rose-500/20 px-3 py-0.5 rounded-full border border-rose-500/40 font-mono">
+        <span>⏱️</span>
+        <span id="sprintTimerCount">60s</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAIN PLAYSPACE STAGE -->
+  <main class="max-w-3xl w-full mx-auto px-3 py-1 flex-1 flex flex-col justify-between items-center gap-3">
+    
+    <!-- STAGE CARD -->
+    <div class="w-full bg-slate-900 rounded-3xl border border-slate-800 shadow-2xl p-4 sm:p-6 flex flex-col items-center justify-between gap-3">
+      
+      <!-- PROMPT & EQUATION DISPLAY (CRITICAL: TRADITIONAL FORMAT WITH EQUALS SIGN STRICTLY ON THE RIGHT) -->
+      <div class="w-full flex flex-col items-center">
+        <div id="equationDisplay" class="bg-slate-950 border-2 border-slate-800 px-6 sm:px-10 py-3 rounded-2xl flex items-center justify-center gap-3 font-kids text-4xl sm:text-5xl font-bold tracking-wider shadow-inner text-cyan-300 min-h-[82px]">
+          <!-- Equation Prompt (e.g., 5 + 3 = ?) -->
+        </div>
+        
+        <!-- Pedagogical Sub-Prompt Guidance -->
+        <div id="promptGuidance" class="mt-2 text-sm sm:text-base font-semibold text-slate-300 text-center min-h-[26px]">
+          <!-- Helpful sub-text without leaking answers -->
+        </div>
+      </div>
+
+      <!-- INTERACTIVE VISUALIZER CONTAINER -->
+      <div class="w-full">
+        <div class="w-full flex items-center justify-between text-xs px-2 mb-1.5 text-slate-400">
+          <div class="flex items-center gap-1.5">
+            <span class="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse"></span>
+            <span id="visualHeaderTitle" class="font-semibold text-slate-300">Visual Model</span>
+          </div>
+          <span id="visualStatusBadge" class="text-slate-500 text-[11px] font-mono">Whiteboard Ready</span>
+        </div>
+
+        <!-- Dynamic Visual Display Surface (Ten-Frames, Dice Patterns, Number Tracks) -->
+        <div id="visualDisplayArea" class="w-full bg-slate-950/90 border border-slate-800 rounded-2xl p-4 sm:p-5 flex flex-col items-center justify-center min-h-[220px] overflow-x-auto shadow-inner">
+          <!-- Injected Visual Display -->
+        </div>
+      </div>
+
+      <!-- INPUT DISPLAY & ACTIVPANEL TOUCH NUMPAD -->
+      <div class="w-full max-w-md flex flex-col items-center gap-2">
+        
+        <!-- Screen & Clear -->
+        <div class="w-full flex items-center justify-between gap-3">
+          <div id="inputScreen" class="flex-grow h-14 bg-slate-950 border-2 border-cyan-400/80 rounded-2xl flex items-center justify-center font-kids text-4xl font-bold text-cyan-300 shadow-inner tracking-widest">
+            ?
+          </div>
+          <button onclick="keypadAction('backspace')" class="px-4 h-14 bg-slate-800 hover:bg-slate-700 active:scale-95 rounded-2xl text-xs font-bold text-slate-300 uppercase tracking-wider transition">
+            ⌫ Del
+          </button>
+          <button onclick="keypadAction('clear')" class="px-4 h-14 bg-slate-800 hover:bg-slate-700 active:scale-95 rounded-2xl text-xs font-bold text-slate-300 uppercase tracking-wider transition">
+            Clear
+          </button>
+        </div>
+
+        <!-- Whiteboard Numpad Grid -->
+        <div class="grid grid-cols-10 gap-1.5 w-full">
+          <button onclick="keypadAction(1)" class="h-12 bg-slate-800 hover:bg-slate-700 active:bg-cyan-500 active:text-slate-950 text-white font-kids font-bold text-xl rounded-xl shadow active:scale-95 transition">1</button>
+          <button onclick="keypadAction(2)" class="h-12 bg-slate-800 hover:bg-slate-700 active:bg-cyan-500 active:text-slate-950 text-white font-kids font-bold text-xl rounded-xl shadow active:scale-95 transition">2</button>
+          <button onclick="keypadAction(3)" class="h-12 bg-slate-800 hover:bg-slate-700 active:bg-cyan-500 active:text-slate-950 text-white font-kids font-bold text-xl rounded-xl shadow active:scale-95 transition">3</button>
+          <button onclick="keypadAction(4)" class="h-12 bg-slate-800 hover:bg-slate-700 active:bg-cyan-500 active:text-slate-950 text-white font-kids font-bold text-xl rounded-xl shadow active:scale-95 transition">4</button>
+          <button onclick="keypadAction(5)" class="h-12 bg-slate-800 hover:bg-slate-700 active:bg-cyan-500 active:text-slate-950 text-white font-kids font-bold text-xl rounded-xl shadow active:scale-95 transition">5</button>
+          <button onclick="keypadAction(6)" class="h-12 bg-slate-800 hover:bg-slate-700 active:bg-cyan-500 active:text-slate-950 text-white font-kids font-bold text-xl rounded-xl shadow active:scale-95 transition">6</button>
+          <button onclick="keypadAction(7)" class="h-12 bg-slate-800 hover:bg-slate-700 active:bg-cyan-500 active:text-slate-950 text-white font-kids font-bold text-xl rounded-xl shadow active:scale-95 transition">7</button>
+          <button onclick="keypadAction(8)" class="h-12 bg-slate-800 hover:bg-slate-700 active:bg-cyan-500 active:text-slate-950 text-white font-kids font-bold text-xl rounded-xl shadow active:scale-95 transition">8</button>
+          <button onclick="keypadAction(9)" class="h-12 bg-slate-800 hover:bg-slate-700 active:bg-cyan-500 active:text-slate-950 text-white font-kids font-bold text-xl rounded-xl shadow active:scale-95 transition">9</button>
+          <button onclick="keypadAction(0)" class="h-12 bg-slate-800 hover:bg-slate-700 active:bg-cyan-500 active:text-slate-950 text-white font-kids font-bold text-xl rounded-xl shadow active:scale-95 transition">0</button>
+        </div>
+
+        <!-- Submit Button -->
+        <button id="submitBtn" onclick="submitAnswer()" class="w-full h-14 py-3 bg-gradient-to-r from-cyan-400 to-emerald-400 hover:from-cyan-300 hover:to-emerald-300 font-kids text-2xl font-bold text-slate-950 rounded-2xl shadow-lg active:scale-98 transition flex items-center justify-center gap-2">
+          <span>Check Answer</span>
+          <span>✨</span>
+        </button>
+      </div>
+
+      <!-- FEEDBACK BANNER -->
+      <div id="feedbackBanner" class="w-full text-center text-base sm:text-lg font-bold min-h-[26px]"></div>
+
+    </div>
+
+    <!-- QUICK SKIP / NEXT BUTTONS -->
+    <div class="flex gap-3 text-xs sm:text-sm">
+      <button onclick="generateQuestion()" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white rounded-xl border border-slate-800 font-semibold transition">
+        Next Question ⏩
+      </button>
+      <button onclick="resetMetrics()" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-rose-400 rounded-xl border border-slate-800 font-semibold transition">
+        Reset Score 🔄
+      </button>
+    </div>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-slate-950 border-t border-slate-900 px-4 py-2 text-center text-xs text-slate-500">
+    <p>Early Numeracy Foundations: <em>Subitising (perceptual & conceptual), 5-and-a-bit Hungarian frames, and contiguous number neighbours (+1 / −1).</em></p>
+  </footer>
+
+  <!-- SPRINT COMPLETION MODAL -->
+  <div id="sprintModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 border-2 border-cyan-400 rounded-3xl p-6 sm:p-8 max-w-sm w-full text-center shadow-2xl animate-pop">
+      <div class="text-5xl mb-2">⚡🌟</div>
+      <h3 class="font-kids text-2xl font-bold text-cyan-300 mb-1">Sprint Complete!</h3>
+      <p class="text-slate-300 text-xs mb-4">Super mental recognition! Excellent work without counting in ones!</p>
+      
+      <div class="bg-slate-950 rounded-2xl p-4 mb-4 border border-slate-800 flex justify-around">
+        <div>
+          <div class="text-xs text-slate-400">Total Score</div>
+          <div id="modalScore" class="font-kids text-3xl text-emerald-400 font-bold">0</div>
+        </div>
+        <div>
+          <div class="text-xs text-slate-400">Best Streak</div>
+          <div id="modalStreak" class="font-kids text-3xl text-amber-400 font-bold">0</div>
+        </div>
+      </div>
+
+      <button onclick="closeSprintModal()" class="w-full py-3 bg-gradient-to-r from-cyan-400 to-emerald-400 text-slate-950 font-kids text-lg font-bold rounded-xl shadow-lg">
+        Play Again! 🚀
+      </button>
+    </div>
+  </div>
+
+  <!-- SCRIPT ENGINE -->
+  <script>
+    /* =====================================================================
+       SYNTHESIZED WEB AUDIO (ZERO EXTERNAL MEDIA FILES)
+       ===================================================================== */
+    let audioCtx = null;
+    let soundEnabled = true;
+
+    function getAudioCtx() {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      return audioCtx;
+    }
+
+    function playTone(type) {
+      if (!soundEnabled) return;
+      try {
+        const ctx = getAudioCtx();
+        const now = ctx.currentTime;
+
+        if (type === 'click') {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(440, now);
+          osc.frequency.exponentialRampToValueAtTime(880, now + 0.05);
+          gain.gain.setValueAtTime(0.18, now);
+          gain.gain.linearRampToValueAtTime(0, now + 0.05);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.06);
+        } else if (type === 'correct') {
+          [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, now + i * 0.06);
+            gain.gain.setValueAtTime(0.2, now + i * 0.06);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.06 + 0.3);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now + i * 0.06);
+            osc.stop(now + i * 0.06 + 0.31);
+          });
+        } else if (type === 'wrong') {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(220, now);
+          osc.frequency.linearRampToValueAtTime(140, now + 0.2);
+          gain.gain.setValueAtTime(0.18, now);
+          gain.gain.linearRampToValueAtTime(0, now + 0.2);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.21);
+        }
+      } catch (e) {
+        console.warn('Audio error:', e);
+      }
+    }
+
+    function toggleSound() {
+      soundEnabled = !soundEnabled;
+      document.getElementById('soundOnIcon').classList.toggle('hidden', !soundEnabled);
+      document.getElementById('soundOffIcon').classList.toggle('hidden', soundEnabled);
+    }
+
+    /* =====================================================================
+       STATE MANAGEMENT
+       ===================================================================== */
+    let currentModule = 'subitise'; // 'subitise', 'five_bit', 'neighbours', 'sprint'
+
+    // Sub-modes
+    let subitiseMode = 'frame';     // 'frame', 'dice', 'scatter'
+    let flashTimerMode = 'instant'; // 'instant' (stay visible), 'flash_1s', 'flash_0.5s'
+    let neighbourType = 'mixed';    // 'more' (+1), 'less' (-1), 'mixed'
+
+    // Question State
+    let currentQ = {};
+    let currentInput = '';
+    let streak = 0;
+    let maxStreak = 0;
+    let score = 0;
+    let isProcessing = false;
+
+    // 60-Second Sprint Timer
+    let sprintTimerInterval = null;
+    let sprintTimeLeft = 60;
+
+    /* =====================================================================
+       INITIALIZATION
+       ===================================================================== */
+    window.addEventListener('DOMContentLoaded', () => {
+      renderSubBar();
+      generateQuestion();
+      setupKeyboard();
+    });
+
+    function setModule(mod) {
+      playTone('click');
+      currentModule = mod;
+
+      // Update Nav Buttons
+      ['tabSubitise', 'tabFiveBit', 'tabNeighbours', 'tabSprint'].forEach(id => {
+        document.getElementById(id).className = 'px-3.5 py-1.5 rounded-xl font-bold transition-all text-slate-300 hover:text-white';
+      });
+
+      const navMap = {
+        subitise: 'tabSubitise',
+        five_bit: 'tabFiveBit',
+        neighbours: 'tabNeighbours',
+        sprint: 'tabSprint'
+      };
+      document.getElementById(navMap[mod]).className = 'px-3.5 py-1.5 rounded-xl font-bold transition-all bg-cyan-400 text-slate-950 shadow-md';
+
+      document.getElementById('sprintTimerBox').classList.add('hidden');
+      clearInterval(sprintTimerInterval);
+
+      if (mod === 'sprint') {
+        document.getElementById('sprintTimerBox').classList.remove('hidden');
+        document.getElementById('sprintTimerBox').classList.add('flex');
+        startSprint();
+      }
+
+      renderSubBar();
+      streak = 0;
+      updateStats();
+      generateQuestion();
+    }
+
+    function renderSubBar() {
+      const container = document.getElementById('subBarControls');
+      container.innerHTML = '';
+
+      if (currentModule === 'subitise') {
+        container.innerHTML = `
+          <span class="text-slate-400 font-semibold mr-1">Pattern:</span>
+          <button onclick="setSubitiseMode('frame')" class="px-2.5 py-1 rounded-xl font-bold ${subitiseMode==='frame'?'bg-cyan-400 text-slate-950':'bg-slate-800 text-slate-300'}">Ten-Frame</button>
+          <button onclick="setSubitiseMode('dice')" class="px-2.5 py-1 rounded-xl font-bold ${subitiseMode==='dice'?'bg-cyan-400 text-slate-950':'bg-slate-800 text-slate-300'}">Dice Dot Pattern</button>
+          <button onclick="setSubitiseMode('scatter')" class="px-2.5 py-1 rounded-xl font-bold ${subitiseMode==='scatter'?'bg-cyan-400 text-slate-950':'bg-slate-800 text-slate-300'}">Random Scatter</button>
+          <span class="text-slate-500 mx-1">|</span>
+          <button onclick="setFlashMode('instant')" class="px-2 py-1 rounded-lg text-xs font-bold ${flashTimerMode==='instant'?'bg-amber-400 text-slate-950':'bg-slate-800 text-slate-300'}">Stay Visible</button>
+          <button onclick="setFlashMode('flash_1s')" class="px-2 py-1 rounded-lg text-xs font-bold ${flashTimerMode==='flash_1s'?'bg-amber-400 text-slate-950':'bg-slate-800 text-slate-300'}">Flash 1s ⚡</button>
+        `;
+      } else if (currentModule === 'five_bit') {
+        container.innerHTML = `
+          <span class="text-cyan-400 font-semibold">5-and-a-Bit Structure:</span>
+          <span class="text-slate-300 text-xs">5 Red counters on top row + Blue counters on bottom row!</span>
+        `;
+      } else if (currentModule === 'neighbours') {
+        container.innerHTML = `
+          <span class="text-slate-400 font-semibold mr-1">Neighbour:</span>
+          <button onclick="setNeighbourType('more')" class="px-2.5 py-1 rounded-xl font-bold ${neighbourType==='more'?'bg-cyan-400 text-slate-950':'bg-slate-800 text-slate-300'}">One More (+1)</button>
+          <button onclick="setNeighbourType('less')" class="px-2.5 py-1 rounded-xl font-bold ${neighbourType==='less'?'bg-cyan-400 text-slate-950':'bg-slate-800 text-slate-300'}">One Less (−1)</button>
+          <button onclick="setNeighbourType('mixed')" class="px-2.5 py-1 rounded-xl font-bold ${neighbourType==='mixed'?'bg-cyan-400 text-slate-950':'bg-slate-800 text-slate-300'}">Mixed (+1 / −1)</button>
+        `;
+      } else if (currentModule === 'sprint') {
+        container.innerHTML = `<span class="text-cyan-300 font-semibold">⚡ Quick-Fire Sprint: Subitise & solve without counting in ones!</span>`;
+      }
+    }
+
+    function setSubitiseMode(mode) { playTone('click'); subitiseMode = mode; renderSubBar(); generateQuestion(); }
+    function setFlashMode(flash) { playTone('click'); flashTimerMode = flash; renderSubBar(); generateQuestion(); }
+    function setNeighbourType(type) { playTone('click'); neighbourType = type; renderSubBar(); generateQuestion(); }
+
+    /* =====================================================================
+       QUESTION GENERATOR
+       ===================================================================== */
+    function generateQuestion() {
+      clearInput();
+      clearFeedback();
+
+      let active = currentModule;
+      if (active === 'sprint') {
+        const types = ['subitise', 'five_bit', 'neighbours'];
+        active = types[Math.floor(Math.random() * types.length)];
+      }
+
+      if (active === 'subitise') {
+        let count;
+        if (subitiseMode === 'dice') {
+          count = Math.floor(Math.random() * 6) + 1; // 1 to 6
+        } else {
+          count = Math.floor(Math.random() * 10) + 1; // 1 to 10
+        }
+
+        currentQ = {
+          type: 'subitise',
+          subType: subitiseMode,
+          count: count,
+          answer: count
+        };
+
+        renderSubitiseUI();
+      } else if (active === 'five_bit') {
+        // 5 + bit = total (e.g., 5 + 1 = 6 up to 5 + 5 = 10)
+        const bit = Math.floor(Math.random() * 5) + 1; // 1 to 5
+        const total = 5 + bit;
+
+        currentQ = {
+          type: 'five_bit',
+          base: 5,
+          bit: bit,
+          answer: total
+        };
+
+        renderFiveBitUI();
+      } else if (active === 'neighbours') {
+        let op = neighbourType;
+        if (op === 'mixed') op = Math.random() > 0.5 ? 'more' : 'less';
+
+        let base, ans;
+        if (op === 'more') {
+          base = Math.floor(Math.random() * 9) + 1; // 1 to 9
+          ans = base + 1;
+        } else {
+          base = Math.floor(Math.random() * 9) + 2; // 2 to 10
+          ans = base - 1;
+        }
+
+        currentQ = {
+          type: 'neighbours',
+          op: op,
+          base: base,
+          answer: ans
+        };
+
+        renderNeighboursUI();
+      }
+
+      renderVisualModel();
+    }
+
+    /* =====================================================================
+       EQUATION RENDERING - STRICTLY TRADITIONAL: [A] + [B] = ?
+       ===================================================================== */
+    function renderSubitiseUI() {
+      // Subitising asks "How many?" in traditional format: "Counters = ?"
+      document.getElementById('equationDisplay').innerHTML = `
+        <span class="text-cyan-400 font-bold">Total Counters</span>
+        <span class="text-slate-400">=</span>
+        <span class="text-amber-300 underline decoration-dashed">?</span>
+      `;
+      document.getElementById('promptGuidance').innerHTML = 
+        `How many counters or dots do you see? Recognise the pattern instantly without counting one-by-one!`;
+    }
+
+    function renderFiveBitUI() {
+      const q = currentQ;
+      // TRADITIONAL EQUATION FORMAT: 5 + [bit] = ?
+      document.getElementById('equationDisplay').innerHTML = `
+        <span class="text-rose-400 font-bold">${q.base}</span>
+        <span class="text-slate-400">+</span>
+        <span class="text-cyan-400 font-bold">${q.bit}</span>
+        <span class="text-slate-400">=</span>
+        <span class="text-amber-300 underline decoration-dashed">?</span>
+      `;
+      document.getElementById('promptGuidance').innerHTML = 
+        `5 Red on the top row, plus <span class="text-cyan-300 font-bold">${q.bit}</span> Blue on the bottom row. What is the total?`;
+    }
+
+    function renderNeighboursUI() {
+      const q = currentQ;
+      // TRADITIONAL EQUATION FORMAT: [base] + 1 = ?  OR  [base] - 1 = ?
+      if (q.op === 'more') {
+        document.getElementById('equationDisplay').innerHTML = `
+          <span class="text-cyan-400 font-bold">${q.base}</span>
+          <span class="text-slate-400">+</span>
+          <span class="text-emerald-400 font-bold">1</span>
+          <span class="text-slate-400">=</span>
+          <span class="text-amber-300 underline decoration-dashed">?</span>
+        `;
+        document.getElementById('promptGuidance').innerHTML = 
+          `What is <strong>1 more</strong> than <span class="text-cyan-300 font-bold">${q.base}</span>? (Its next-door neighbour to the right!)`;
+      } else {
+        document.getElementById('equationDisplay').innerHTML = `
+          <span class="text-cyan-400 font-bold">${q.base}</span>
+          <span class="text-slate-400">−</span>
+          <span class="text-rose-400 font-bold">1</span>
+          <span class="text-slate-400">=</span>
+          <span class="text-amber-300 underline decoration-dashed">?</span>
+        `;
+        document.getElementById('promptGuidance').innerHTML = 
+          `What is <strong>1 less</strong> than <span class="text-cyan-300 font-bold">${q.base}</span>? (Its next-door neighbour to the left!)`;
+      }
+    }
+
+    /* =====================================================================
+       VISUAL RENDERING (TEN FRAMES, DICE, NUMBER TRACKS)
+       ===================================================================== */
+    function renderVisualModel(solved = false) {
+      const container = document.getElementById('visualDisplayArea');
+      container.innerHTML = '';
+      const q = currentQ;
+
+      if (q.type === 'subitise') {
+        document.getElementById('visualHeaderTitle').textContent = `Subitising Pattern Recognition`;
+        container.innerHTML = renderSubitiseVisual(q, solved);
+        
+        // Handle Flash Timer
+        if (flashTimerMode === 'flash_1s' && !solved) {
+          const target = document.getElementById('flashTarget');
+          if (target) {
+            setTimeout(() => {
+              target.innerHTML = `
+                <div class="flex flex-col items-center justify-center p-6 text-center animate-pop">
+                  <span class="text-4xl mb-2">👁️⚡</span>
+                  <span class="font-kids text-amber-300 font-bold text-lg">Quick Flash Hidden!</span>
+                  <span class="text-xs text-slate-400">Can you remember how many you saw?</span>
+                </div>
+              `;
+            }, 1000);
+          }
+        }
+      } else if (q.type === 'five_bit') {
+        document.getElementById('visualHeaderTitle').textContent = `5-and-a-Bit Hungarian Ten-Frame`;
+        container.innerHTML = renderFiveBitVisual(q, solved);
+      } else if (q.type === 'neighbours') {
+        document.getElementById('visualHeaderTitle').textContent = `Number Neighbours Number Track`;
+        container.innerHTML = renderNeighboursVisual(q, solved);
+      }
+    }
+
+    // 1. Subitise Visual Renderer
+    function renderSubitiseVisual(q, solved) {
+      if (q.subType === 'frame') {
+        // Hungarian / Standard Ten Frame (5 on top, 5 on bottom)
+        let slots = '';
+        for (let i = 1; i <= 10; i++) {
+          const filled = i <= q.count;
+          slots += `
+            <div class="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl border-2 border-slate-700 bg-slate-900/90 flex items-center justify-center shadow-inner">
+              ${filled ? `<div class="counter-dot bg-cyan-400 shadow-md shadow-cyan-500/50 animate-pop"></div>` : ''}
+            </div>
+          `;
+        }
+        return `
+          <div id="flashTarget" class="flex flex-col items-center gap-2">
+            <div class="grid grid-cols-5 gap-2 p-3 bg-slate-950 rounded-2xl border-2 border-slate-800 shadow-xl">
+              ${slots}
+            </div>
+            ${solved ? `<span class="font-kids text-emerald-400 font-bold text-sm">Pattern confirmed: ${q.count} counters!</span>` : ''}
+          </div>
+        `;
+      } else if (q.subType === 'dice') {
+        // Standard Dice Configuration
+        const pipMap = {
+          1: [4],
+          2: [0, 8],
+          3: [0, 4, 8],
+          4: [0, 2, 6, 8],
+          5: [0, 2, 4, 6, 8],
+          6: [0, 2, 3, 5, 6, 8]
+        };
+        const activePips = pipMap[q.count] || [4];
+        let pipsHtml = '';
+        for (let i = 0; i < 9; i++) {
+          if (activePips.includes(i)) {
+            pipsHtml += `<div class="die-pip"></div>`;
+          } else {
+            pipsHtml += `<div></div>`;
+          }
+        }
+        return `
+          <div id="flashTarget" class="flex flex-col items-center gap-2">
+            <div class="die-face">
+              ${pipsHtml}
+            </div>
+            ${solved ? `<span class="font-kids text-emerald-400 font-bold text-sm">Dice face confirmed: ${q.count}!</span>` : ''}
+          </div>
+        `;
+      } else {
+        // Scatter
+        let dots = '';
+        for (let i = 0; i < q.count; i++) {
+          const rotate = (i * 37) % 360;
+          dots += `
+            <div class="counter-dot bg-amber-400 shadow-md shadow-amber-500/50 animate-pop" style="transform: rotate(${rotate}deg);"></div>
+          `;
+        }
+        return `
+          <div id="flashTarget" class="flex flex-col items-center gap-2">
+            <div class="flex flex-wrap items-center justify-center gap-3 p-4 max-w-sm">
+              ${dots}
+            </div>
+            ${solved ? `<span class="font-kids text-emerald-400 font-bold text-sm">Scatter confirmed: ${q.count}!</span>` : ''}
+          </div>
+        `;
+      }
+    }
+
+    // 2. 5-and-a-Bit Visual Renderer (Dual-Color 10-Frame)
+    function renderFiveBitVisual(q, solved) {
+      let topRow = '';
+      for (let i = 1; i <= 5; i++) {
+        topRow += `
+          <div class="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl border-2 border-slate-700 bg-slate-900/90 flex items-center justify-center">
+            <div class="counter-dot bg-rose-500 shadow-md shadow-rose-500/50 animate-pop"></div>
+          </div>
+        `;
+      }
+
+      let botRow = '';
+      for (let i = 1; i <= 5; i++) {
+        const filled = i <= q.bit;
+        botRow += `
+          <div class="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl border-2 border-slate-700 bg-slate-900/90 flex items-center justify-center">
+            ${filled ? `<div class="counter-dot bg-cyan-400 shadow-md shadow-cyan-500/50 animate-pop"></div>` : ''}
+          </div>
+        `;
+      }
+
+      return `
+        <div class="flex flex-col items-center gap-3 animate-pop">
+          <!-- Top Row (5 Red) + Bottom Row (Bit Blue) -->
+          <div class="p-3 bg-slate-950 rounded-2xl border-2 border-slate-800 shadow-xl flex flex-col gap-2">
+            <div class="grid grid-cols-5 gap-2">${topRow}</div>
+            <div class="grid grid-cols-5 gap-2">${botRow}</div>
+          </div>
+
+          <!-- Strategy Breakdown Card (Strict Traditional Format: 5 + bit = answer) -->
+          <div class="flex items-center gap-3 font-kids text-sm sm:text-base">
+            <span class="px-2.5 py-1 rounded-xl bg-rose-950/80 border border-rose-500/50 text-rose-300 font-bold">5 Red</span>
+            <span class="text-slate-500 font-bold">+</span>
+            <span class="px-2.5 py-1 rounded-xl bg-cyan-950/80 border border-cyan-500/50 text-cyan-300 font-bold">${q.bit} Blue</span>
+            <span class="text-slate-500 font-bold">=</span>
+            <span class="px-2.5 py-1 rounded-xl bg-slate-900 border border-slate-800 text-amber-300 font-bold">
+              ${solved ? q.answer : '?'}
+            </span>
+          </div>
+        </div>
+      `;
+    }
+
+    // 3. Number Neighbours Number Track Renderer
+    function renderNeighboursVisual(q, solved) {
+      const minNum = Math.max(1, q.base - 2);
+      const maxNum = q.base + 2;
+      let trackCells = '';
+
+      for (let n = minNum; n <= maxNum; n++) {
+        const isBase = (n === q.base);
+        const isTarget = (q.op === 'more' ? n === q.base + 1 : n === q.base - 1);
+
+        let cellClass = 'bg-slate-900 text-slate-400 border-slate-800';
+        if (isBase) {
+          cellClass = 'bg-cyan-500/20 text-cyan-300 border-cyan-400 font-black scale-105';
+        } else if (isTarget && solved) {
+          cellClass = 'bg-emerald-500/20 text-emerald-300 border-emerald-400 font-black scale-105';
+        }
+
+        trackCells += `
+          <div class="w-12 h-14 sm:w-16 sm:h-16 rounded-2xl border-2 ${cellClass} flex flex-col items-center justify-center font-kids text-2xl transition-all shadow-md">
+            <span>${n}</span>
+            ${isBase ? `<span class="text-[9px] text-cyan-400 font-mono font-bold uppercase tracking-wider">Start</span>` : ''}
+            ${isTarget && solved ? `<span class="text-[9px] text-emerald-400 font-mono font-bold uppercase tracking-wider">Neighbour</span>` : ''}
+          </div>
+        `;
+      }
+
+      const stepSymbol = q.op === 'more' ? '+1' : '−1';
+      const stepWord = q.op === 'more' ? 'Jump 1 forward (right)' : 'Jump 1 backward (left)';
+
+      return `
+        <div class="flex flex-col items-center gap-3 animate-pop">
+          <div class="flex items-center gap-1.5 sm:gap-2 p-3 bg-slate-950 rounded-2xl border border-slate-800 shadow-inner">
+            ${trackCells}
+          </div>
+
+          <div class="text-xs font-kids text-slate-300 text-center">
+            ${stepWord}: <span class="font-bold text-amber-300">${q.base} ${stepSymbol} = ${solved ? q.answer : '?'}</span>
+          </div>
+        </div>
+      `;
+    }
+
+    /* =====================================================================
+       INPUT HANDLING & TRADITIONAL ANSWER CHECK
+       ===================================================================== */
+    function keypadAction(action) {
+      if (isProcessing) return;
+      playTone('click');
+      if (action === 'clear') {
+        currentInput = '';
+      } else if (action === 'backspace') {
+        currentInput = currentInput.slice(0, -1);
+      } else {
+        if (currentInput.length < 3) {
+          currentInput += action.toString();
+        }
+      }
+      updateInputDisplay();
+    }
+
+    function clearInput() {
+      currentInput = '';
+      updateInputDisplay();
+    }
+
+    function updateInputDisplay() {
+      const el = document.getElementById('inputScreen');
+      el.textContent = currentInput === '' ? '?' : currentInput;
+    }
+
+    function submitAnswer() {
+      if (isProcessing || currentInput === '') return;
+      const userVal = parseInt(currentInput, 10);
+
+      if (userVal === currentQ.answer) {
+        handleSuccess();
+      } else {
+        handleMistake();
+      }
+    }
+
+    function handleSuccess() {
+      isProcessing = true;
+      playTone('correct');
+      streak++;
+      if (streak > maxStreak) maxStreak = streak;
+      score += 10;
+      updateStats();
+
+      renderVisualModel(true);
+
+      // CRITICAL: TRADITIONAL EQUATION CONFIRMATION ([A] + [B] = [Ans])
+      let solvedEqText = '';
+      if (currentQ.type === 'subitise') {
+        solvedEqText = `Pattern = ${currentQ.answer}`;
+      } else if (currentQ.type === 'five_bit') {
+        solvedEqText = `5 + ${currentQ.bit} = ${currentQ.answer}`;
+      } else if (currentQ.type === 'neighbours') {
+        solvedEqText = currentQ.op === 'more' ? `${currentQ.base} + 1 = ${currentQ.answer}` : `${currentQ.base} − 1 = ${currentQ.answer}`;
+      }
+
+      flashFeedback(`⭐ Brilliant! Correct: ${solvedEqText}`, true);
+
+      setTimeout(() => {
+        isProcessing = false;
+        generateQuestion();
+      }, 1500);
+    }
+
+    function handleMistake() {
+      playTone('wrong');
+      streak = 0;
+      updateStats();
+
+      let hint = `Check your number again!`;
+      if (currentQ.type === 'five_bit') {
+        hint = `Remember: 5 on the top row, then add on the blue counters!`;
+      } else if (currentQ.type === 'neighbours') {
+        hint = currentQ.op === 'more' ? `Look for the next number on the number track (+1)!` : `Look for the number just before it (−1)!`;
+      }
+
+      flashFeedback(hint, false);
+      clearInput();
+    }
+
+    function flashFeedback(msg, isSuccess) {
+      const fb = document.getElementById('feedbackBanner');
+      fb.textContent = msg;
+      fb.className = `w-full text-center text-base sm:text-lg font-bold min-h-[26px] transition-all ${
+        isSuccess ? 'text-emerald-400 animate-pop' : 'text-rose-400'
+      }`;
+    }
+
+    function clearFeedback() {
+      document.getElementById('feedbackBanner').textContent = '';
+    }
+
+    function updateStats() {
+      document.getElementById('streakBadge').textContent = `🔥 ${streak}`;
+      document.getElementById('scoreDisplay').textContent = score;
+    }
+
+    function resetMetrics() {
+      streak = 0;
+      score = 0;
+      updateStats();
+      generateQuestion();
+    }
+
+    /* =====================================================================
+       60s SPRINT TIMER
+       ===================================================================== */
+    function startSprint() {
+      clearInterval(sprintTimerInterval);
+      sprintTimeLeft = 60;
+      document.getElementById('sprintTimerCount').textContent = `${sprintTimeLeft}s`;
+
+      sprintTimerInterval = setInterval(() => {
+        sprintTimeLeft--;
+        document.getElementById('sprintTimerCount').textContent = `${sprintTimeLeft}s`;
+        if (sprintTimeLeft <= 0) {
+          clearInterval(sprintTimerInterval);
+          finishSprint();
+        }
+      }, 1000);
+    }
+
+    function finishSprint() {
+      playTone('correct');
+      document.getElementById('modalScore').textContent = score;
+      document.getElementById('modalStreak').textContent = maxStreak;
+      document.getElementById('sprintModal').classList.remove('hidden');
+    }
+
+    function closeSprintModal() {
+      document.getElementById('sprintModal').classList.add('hidden');
+      score = 0;
+      streak = 0;
+      updateStats();
+      startSprint();
+      generateQuestion();
+    }
+
+    /* =====================================================================
+       PHYSICAL KEYBOARD LISTENERS
+       ===================================================================== */
+    function setupKeyboard() {
+      window.addEventListener('keydown', (e) => {
+        if (e.key >= '0' && e.key <= '9') {
+          keypadAction(parseInt(e.key, 10));
+        } else if (e.key === 'Enter') {
+          submitAnswer();
+        } else if (e.key === 'Backspace') {
+          keypadAction('backspace');
+        } else if (e.key === 'Escape') {
+          keypadAction('clear');
+        }
+      });
+    }
+  </script>
+</body>
+</html>
