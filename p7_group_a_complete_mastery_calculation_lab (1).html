@@ -1,0 +1,2022 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>P7 Group A: Complete Mastery & Calculation Lab</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Fredoka, Inter, JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #090d16;
+      --panel-bg: #111827;
+      --panel-border: #1f293d;
+      --accent-cyan: #38bdf8;
+      --accent-amber: #fbbf24;
+      --accent-emerald: #34d399;
+      --accent-rose: #f87171;
+      --accent-purple: #c084fc;
+      --accent-indigo: #818cf8;
+    }
+
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: #f8fafc;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .font-kids { font-family: 'Fredoka', cursive, sans-serif; }
+    .font-mono-code { font-family: 'JetBrains Mono', monospace; }
+
+    @keyframes popIn {
+      0% { transform: scale(0.7); opacity: 0; }
+      70% { transform: scale(1.05); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .animate-pop { animation: popIn 0.28s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+
+    /* Algorithm Column Styling */
+    .algo-grid {
+      display: grid;
+      grid-template-columns: 44px 64px 64px 64px;
+      gap: 4px;
+      text-align: center;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.85rem;
+    }
+
+    .grid-header {
+      font-size: 0.85rem;
+      color: #94a3b8;
+      border-bottom: 2px solid #334155;
+      padding-bottom: 6px;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .cell {
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .striked {
+      position: relative;
+      color: #94a3b8;
+    }
+    .striked::after {
+      content: '';
+      position: absolute;
+      top: 15%;
+      left: 20%;
+      width: 60%;
+      height: 70%;
+      border-top: 4px solid var(--accent-rose);
+      transform: rotate(-35deg);
+    }
+
+    .cell-borrowed-new {
+      position: absolute;
+      top: -12px;
+      font-size: 1.15rem;
+      color: var(--accent-cyan);
+      font-weight: 900;
+      background: #090d16;
+      border: 1px solid var(--accent-cyan);
+      padding: 0 4px;
+      border-radius: 4px;
+    }
+
+    .ans-slot {
+      border: 2px dashed #475569;
+      border-radius: 8px;
+      background: rgba(0,0,0,0.3);
+      color: var(--accent-amber);
+      height: 48px;
+    }
+    .ans-slot.active {
+      border-color: var(--accent-cyan);
+      background: rgba(56, 189, 248, 0.1);
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
+    }
+    .ans-slot.filled {
+      border-style: solid;
+      border-color: var(--accent-emerald);
+      color: var(--accent-emerald);
+    }
+
+    .carry-row-slot {
+      height: 28px;
+      font-size: 0.95rem;
+      color: var(--accent-purple);
+      border-bottom: 1px dashed #334155;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .pv-col {
+      min-width: 58px;
+      transition: all 0.2s ease;
+    }
+
+    .pv-spotlight {
+      transition: all 0.25s ease;
+    }
+    .pv-spotlight.glow {
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 16px rgba(56, 189, 248, 0.45);
+      transform: translateY(-3px);
+    }
+  </style>
+</head>
+<body class="selection:bg-amber-400 selection:text-slate-950">
+
+  <!-- TOP HEADER & BRAND -->
+  <header class="bg-slate-900 border-b border-slate-800 px-3 py-2.5 sm:px-6 shadow-xl sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+      
+      <!-- Brand & Focus Group -->
+      <div class="flex items-center space-x-3">
+        <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-cyan-400 via-indigo-500 to-emerald-400 flex items-center justify-center font-kids text-xl font-black text-slate-950 shadow-md">
+          P7
+        </div>
+        <div>
+          <h1 class="font-kids text-lg sm:text-2xl font-bold tracking-wide text-cyan-300 leading-none">
+            P7 Group A: Mastery & Calculation Lab
+          </h1>
+          <p class="text-[11px] text-slate-400 font-medium">CCEA KS2 Numeracy • Concrete Regrouping, Mental Fluency & Diagnostic Reasoning</p>
+        </div>
+      </div>
+
+      <!-- Action Toggles -->
+      <div class="flex items-center gap-2">
+        <button onclick="toggleSound()" id="soundToggleBtn" class="w-9 h-9 rounded-xl bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-200 transition" title="Toggle Sound">
+          <svg id="soundOnIcon" class="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path></svg>
+          <svg id="soundOffIcon" class="w-5 h-5 hidden text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15zM17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"></path></svg>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- 9 CORE UNIFIED MODULE TABS -->
+    <div class="max-w-7xl mx-auto mt-2.5 overflow-x-auto pb-1">
+      <nav class="flex items-center gap-1.5 bg-slate-950 p-1.5 rounded-2xl border border-slate-800 text-xs font-semibold whitespace-nowrap min-w-max">
+        <button id="navBtnMod1" onclick="switchModule(1)" class="px-3 py-1.5 rounded-xl font-bold transition-all bg-cyan-400 text-slate-950 shadow-md">
+          1. Column Addition ➕
+        </button>
+        <button id="navBtnMod2" onclick="switchModule(2)" class="px-3 py-1.5 rounded-xl font-bold transition-all text-slate-300 hover:text-white">
+          2. Column Subtraction ➖
+        </button>
+        <button id="navBtnMod3" onclick="switchModule(3)" class="px-3 py-1.5 rounded-xl font-bold transition-all text-slate-300 hover:text-white">
+          3. PV Add-On (±1000) ⚡
+        </button>
+        <button id="navBtnMod4" onclick="switchModule(4)" class="px-3 py-1.5 rounded-xl font-bold transition-all text-slate-300 hover:text-white">
+          4. PV Slider & Scaling ➗✖️
+        </button>
+        <button id="navBtnMod5" onclick="switchModule(5)" class="px-3 py-1.5 rounded-xl font-bold transition-all text-slate-300 hover:text-white">
+          5. Flexible Partitioning 🧱
+        </button>
+        <button id="navBtnMod6" onclick="switchModule(6)" class="px-3 py-1.5 rounded-xl font-bold transition-all text-slate-300 hover:text-white">
+          6. Bridging Ladders (1000) 🪜
+        </button>
+        <button id="navBtnMod7" onclick="switchModule(7)" class="px-3 py-1.5 rounded-xl font-bold transition-all text-slate-300 hover:text-white">
+          7. Mental Compensation 🦘
+        </button>
+        <button id="navBtnMod8" onclick="switchModule(8)" class="px-3 py-1.5 rounded-xl font-bold transition-all text-slate-300 hover:text-white">
+          8. Spot the Mistake 🕵️
+        </button>
+        <button id="navBtnMod9" onclick="switchModule(9)" class="px-3 py-1.5 rounded-xl font-bold transition-all text-slate-300 hover:text-white">
+          9. Fact Triangles 🔺
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- SUB-BAR CONTROLS & STREAK TRACKER -->
+  <section class="max-w-7xl w-full mx-auto my-2 px-3 flex flex-wrap items-center justify-between gap-2.5 text-xs sm:text-sm bg-slate-900/60 p-2.5 rounded-2xl border border-slate-800/80">
+    <div id="subBarControls" class="flex items-center gap-1.5 flex-wrap">
+      <!-- Dynamic per module -->
+    </div>
+
+    <div class="flex items-center gap-4 font-kids ml-auto">
+      <div class="flex items-center gap-1.5 text-amber-400 font-bold text-sm sm:text-base">
+        <span>Streak:</span>
+        <span id="streakBadge" class="bg-amber-500/20 px-2.5 py-0.5 rounded-full border border-amber-500/40">🔥 0</span>
+      </div>
+      <div class="flex items-center gap-1.5 text-emerald-400 font-bold text-sm sm:text-base">
+        <span>Score:</span>
+        <span id="scoreDisplay">0</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAIN PLAYSPACE STAGE -->
+  <main class="max-w-5xl w-full mx-auto px-3 py-1 flex-1 flex flex-col justify-between items-center gap-3">
+    
+    <!-- STAGE CARD -->
+    <div class="w-full bg-slate-900 rounded-3xl border border-slate-800 shadow-2xl p-4 sm:p-6 flex flex-col justify-between gap-3 min-h-[460px]">
+      
+      <!-- DYNAMIC CONTENT CONTAINER (SWITCHES BETWEEN COLUMN LAYOUT AND STANDARD PROMPTS) -->
+      <div id="stageContentContainer" class="w-full flex flex-col items-center">
+        <!-- Injected per module -->
+      </div>
+
+      <!-- VISUAL THINKING MODEL STAGE (LOCKED STRICTLY UNTIL ANSWER SUBMITTED FOR STRATEGY MODULES) -->
+      <div id="visualWrapper" class="w-full">
+        <div class="w-full flex items-center justify-between text-xs px-2 mb-1 text-slate-400">
+          <div class="flex items-center gap-1.5">
+            <span class="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse"></span>
+            <span id="visualHeaderTitle" class="font-semibold text-slate-300">Classroom Visual Model</span>
+          </div>
+          <span id="visualStatusBadge" class="text-slate-500 text-[11px] font-mono">Whiteboard Ready</span>
+        </div>
+
+        <!-- Dynamic Visual Display Surface -->
+        <div id="visualDisplayArea" class="w-full bg-slate-950/90 border border-slate-800 rounded-2xl p-4 sm:p-5 flex flex-col items-center justify-center min-h-[180px] overflow-x-auto shadow-inner">
+          <!-- Injected Visualizer -->
+        </div>
+      </div>
+
+      <!-- INTERACTIVE INPUT ZONE & ACTIVPANEL NUMPAD -->
+      <div id="inputModuleContainer" class="w-full max-w-lg mx-auto flex flex-col items-center gap-2">
+        
+        <!-- Screen & Clear Controls -->
+        <div class="w-full flex items-center justify-between gap-3">
+          <div id="inputScreen" class="flex-grow h-14 bg-slate-950 border-2 border-cyan-400/80 rounded-2xl flex items-center justify-center font-kids text-3xl sm:text-4xl font-bold text-cyan-300 shadow-inner tracking-widest">
+            ?
+          </div>
+          <button onclick="keypadAction('backspace')" class="px-4 h-14 bg-slate-800 hover:bg-slate-700 active:scale-95 rounded-2xl text-xs font-bold text-slate-300 uppercase tracking-wider transition">
+            ⌫ Del
+          </button>
+          <button onclick="keypadAction('clear')" class="px-4 h-14 bg-slate-800 hover:bg-slate-700 active:scale-95 rounded-2xl text-xs font-bold text-slate-300 uppercase tracking-wider transition">
+            Clear
+          </button>
+        </div>
+
+        <!-- Touch-Friendly Whiteboard Keypad (Includes Decimal Point) -->
+        <div class="grid grid-cols-11 gap-1.5 w-full">
+          <button onclick="keypadAction('1')" class="h-12 bg-slate-800 hover:bg-slate-700 active:bg-cyan-500 active:text-slate-950 text-white font-kids font-bold text-xl rounded-xl shadow transition">1</button>
+          <button onclick="keypadAction('2')" class="h-12 bg-slate-800 hover:bg-slate-700 active:bg-cyan-500 active:text-slate-950 text-white font-kids font-bold text-xl rounded-xl shadow transition">2</button>
+          <button onclick="keypadAction('3')" class="h-12 bg-slate-800 hover:bg-slate-700 active:bg-cyan-500 active:text-slate-950 text-white font-kids font-bold text-xl rounded-xl shadow transition">3</button>
+          <button onclick="keypadAction('4')" class="h-12 bg-slate-800 hover:bg-slate-700 active:bg-cyan-500 active:text-slate-950 text-white font-kids font-bold text-xl rounded-xl shadow transition">4</button>
+          <button onclick="keypadAction('5')" class="h-12 bg-slate-800 hover:bg-slate-700 active:bg-cyan-500 active:text-slate-950 text-white font-kids font-bold text-xl rounded-xl shadow transition">5</button>
+          <button onclick="keypadAction('6')" class="h-12 bg-slate-800 hover:bg-slate-700 active:bg-cyan-500 active:text-slate-950 text-white font-kids font-bold text-xl rounded-xl shadow transition">6</button>
+          <button onclick="keypadAction('7')" class="h-12 bg-slate-800 hover:bg-slate-700 active:bg-cyan-500 active:text-slate-950 text-white font-kids font-bold text-xl rounded-xl shadow transition">7</button>
+          <button onclick="keypadAction('8')" class="h-12 bg-slate-800 hover:bg-slate-700 active:bg-cyan-500 active:text-slate-950 text-white font-kids font-bold text-xl rounded-xl shadow transition">8</button>
+          <button onclick="keypadAction('9')" class="h-12 bg-slate-800 hover:bg-slate-700 active:bg-cyan-500 active:text-slate-950 text-white font-kids font-bold text-xl rounded-xl shadow transition">9</button>
+          <button onclick="keypadAction('0')" class="h-12 bg-slate-800 hover:bg-slate-700 active:bg-cyan-500 active:text-slate-950 text-white font-kids font-bold text-xl rounded-xl shadow transition">0</button>
+          <button onclick="keypadAction('.')" class="h-12 bg-slate-800 hover:bg-slate-700 active:bg-cyan-500 active:text-slate-950 text-cyan-300 font-kids font-bold text-2xl rounded-xl shadow transition">.</button>
+        </div>
+
+        <!-- Submit Button -->
+        <button id="submitBtn" onclick="submitAnswer()" class="w-full h-14 py-3 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 font-kids text-2xl font-bold text-slate-950 rounded-2xl shadow-lg active:scale-98 transition flex items-center justify-center gap-2">
+          <span>Check Answer</span>
+          <span>✨</span>
+        </button>
+      </div>
+
+      <!-- FEEDBACK BANNER -->
+      <div id="feedbackBanner" class="w-full text-center text-sm sm:text-base font-bold min-h-[26px]"></div>
+
+    </div>
+
+    <!-- QUICK SKIP / NEXT BUTTONS -->
+    <div class="flex gap-3 text-xs sm:text-sm">
+      <button onclick="generateQuestion()" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white rounded-xl border border-slate-800 font-semibold transition">
+        Next Problem ⏩
+      </button>
+      <button onclick="resetMetrics()" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-rose-400 rounded-xl border border-slate-800 font-semibold transition">
+        Reset Score 🔄
+      </button>
+    </div>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-slate-950 border-t border-slate-900 px-4 py-2.5 text-center text-xs text-slate-500">
+    <p>P7 Group A Intervention (Che, Leah, Eireann, Ellie, Lillie, Ayse, Aaliyah): <em>Multi-digit regrouping, place value scaling, bridging ladders, and mathematical reasoning.</em></p>
+  </footer>
+
+  <!-- CORE LOGIC & WEB AUDIO SCRIPT -->
+  <script>
+    /* =====================================================================
+       WEB AUDIO SYNTHESIS ENGINE (ZERO EXTERNAL MEDIA FILES)
+       ===================================================================== */
+    let audioCtx = null;
+    let soundEnabled = true;
+
+    function getAudioCtx() {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      return audioCtx;
+    }
+
+    function playTone(type) {
+      if (!soundEnabled) return;
+      try {
+        const ctx = getAudioCtx();
+        const now = ctx.currentTime;
+
+        if (type === 'click') {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(450, now);
+          osc.frequency.exponentialRampToValueAtTime(900, now + 0.05);
+          gain.gain.setValueAtTime(0.18, now);
+          gain.gain.linearRampToValueAtTime(0, now + 0.05);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.06);
+        } else if (type === 'correct') {
+          [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, now + i * 0.06);
+            gain.gain.setValueAtTime(0.2, now + i * 0.06);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.06 + 0.3);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now + i * 0.06);
+            osc.stop(now + i * 0.06 + 0.31);
+          });
+        } else if (type === 'wrong') {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(220, now);
+          osc.frequency.linearRampToValueAtTime(130, now + 0.22);
+          gain.gain.setValueAtTime(0.18, now);
+          gain.gain.linearRampToValueAtTime(0, now + 0.22);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.23);
+        }
+      } catch (e) {
+        console.warn('Audio error:', e);
+      }
+    }
+
+    function toggleSound() {
+      soundEnabled = !soundEnabled;
+      document.getElementById('soundOnIcon').classList.toggle('hidden', !soundEnabled);
+      document.getElementById('soundOffIcon').classList.toggle('hidden', soundEnabled);
+    }
+
+    /* =====================================================================
+       GLOBAL APPLICATION STATE
+       ===================================================================== */
+    let currentModule = 1;
+    let streak = 0;
+    let score = 0;
+    let activeInput = '';
+    let isProcessing = false;
+    let currentQ = {};
+
+    // Sub-level states
+    let addLvl = 1; // 1: 2-digit carry, 2: 3-digit double carry
+    let subLvl = 1; // 1: 2-digit, 2: 3-digit, 3: zero void
+    let addOnLvl = 1; // 1 to 6
+    let mod4Type = 'mixed';
+    let mod5Type = 'decomp';
+    let mod6Type = 'comp1000';
+    let mod7Type = 'nearAdd';
+    let mod8Idx = 0;
+    let mod9Mode = 'mixed';
+
+    // Module 1 (Addition Engine) State
+    let addState = {
+      top: 48,
+      bottom: 37,
+      step: 'calc_units', // 'calc_units', 'ask_carry_val', 'calc_tens', 'complete'
+      uCarry: 0,
+      tCarry: 0,
+      ansUnits: null,
+      ansTens: null,
+      ansHundreds: null
+    };
+
+    // Module 2 (Subtraction Engine) State
+    let subState = {
+      top: 52,
+      bottom: 27,
+      originalTop: 52,
+      hTop: 0, tTop: 5, uTop: 2,
+      hBot: 0, tBot: 2, uBot: 7,
+      uBorrowDone: false,
+      tBorrowDone: false,
+      activeCol: 'units',
+      step: 'check_can_sub', // 'check_can_sub', 'ask_how_many', 'ask_lender_new', 'ask_target_new', 'calc_col', 'complete'
+      ansUnits: null,
+      ansTens: null,
+      ansHundreds: null
+    };
+
+    /* =====================================================================
+       INITIALIZATION
+       ===================================================================== */
+    window.addEventListener('DOMContentLoaded', () => {
+      renderSubBar();
+      generateQuestion();
+      setupKeyboard();
+    });
+
+    function switchModule(modId) {
+      playTone('click');
+      currentModule = modId;
+      for (let i = 1; i <= 9; i++) {
+        document.getElementById(`navBtnMod${i}`).className = 
+          i === modId 
+            ? 'px-3 py-1.5 rounded-xl font-bold transition-all bg-cyan-400 text-slate-950 shadow-md'
+            : 'px-3 py-1.5 rounded-xl font-bold transition-all text-slate-300 hover:text-white';
+      }
+      renderSubBar();
+      streak = 0;
+      updateStats();
+      generateQuestion();
+    }
+
+    function renderSubBar() {
+      const container = document.getElementById('subBarControls');
+      container.innerHTML = '';
+
+      if (currentModule === 1) {
+        container.innerHTML = `
+          <span class="text-slate-400 font-semibold mr-1">Progression:</span>
+          <button onclick="setAddLvl(1)" class="px-2.5 py-1 rounded-xl font-bold ${addLvl===1?'bg-cyan-400 text-slate-950':'bg-slate-800 text-slate-300'}">L1: 2-Digit Carry (U ➔ T)</button>
+          <button onclick="setAddLvl(2)" class="px-2.5 py-1 rounded-xl font-bold ${addLvl===2?'bg-cyan-400 text-slate-950':'bg-slate-800 text-slate-300'}">L2: 3-Digit Double Carry (5,684 + 2,749)</button>
+        `;
+      } else if (currentModule === 2) {
+        container.innerHTML = `
+          <span class="text-slate-400 font-semibold mr-1">Decomposition:</span>
+          <button onclick="setSubLvl(1)" class="px-2.5 py-1 rounded-xl font-bold ${subLvl===1?'bg-cyan-400 text-slate-950':'bg-slate-800 text-slate-300'}">L1: 2-Digit Exchange (52 − 27)</button>
+          <button onclick="setSubLvl(2)" class="px-2.5 py-1 rounded-xl font-bold ${subLvl===2?'bg-cyan-400 text-slate-950':'bg-slate-800 text-slate-300'}">L2: 3-Digit Exchange</button>
+          <button onclick="setSubLvl(3)" class="px-2.5 py-1 rounded-xl font-bold ${subLvl===3?'bg-cyan-400 text-slate-950':'bg-slate-800 text-slate-300'}">L3: Across Zero Void (403 − 178)</button>
+        `;
+      } else if (currentModule === 3) {
+        container.innerHTML = `
+          <span class="text-slate-400 font-semibold mr-1">Scale:</span>
+          <button onclick="setAddOnLvl(1)" class="px-2.5 py-1 rounded-xl font-bold ${addOnLvl===1?'bg-cyan-400 text-slate-950':'bg-slate-800 text-slate-300'}">±10 to 90</button>
+          <button onclick="setAddOnLvl(2)" class="px-2.5 py-1 rounded-xl font-bold ${addOnLvl===2?'bg-cyan-400 text-slate-950':'bg-slate-800 text-slate-300'}">Crossing 100</button>
+          <button onclick="setAddOnLvl(3)" class="px-2.5 py-1 rounded-xl font-bold ${addOnLvl===3?'bg-cyan-400 text-slate-950':'bg-slate-800 text-slate-300'}">±100 to 900</button>
+          <button onclick="setAddOnLvl(4)" class="px-2.5 py-1 rounded-xl font-bold ${addOnLvl===4?'bg-cyan-400 text-slate-950':'bg-slate-800 text-slate-300'}">Crossing 1,000</button>
+          <button onclick="setAddOnLvl(5)" class="px-2.5 py-1 rounded-xl font-bold ${addOnLvl===5?'bg-cyan-400 text-slate-950':'bg-slate-800 text-slate-300'}">±1,000 to 4,000</button>
+        `;
+      } else if (currentModule === 4) {
+        container.innerHTML = `
+          <span class="text-slate-400 font-semibold mr-1">Scaling:</span>
+          <button onclick="setMod4Type('whole_x100')" class="px-2.5 py-1 rounded-xl font-bold ${mod4Type==='whole_x100'?'bg-cyan-400 text-slate-950':'bg-slate-800 text-slate-300'}">Whole ×100 (408 × 100)</button>
+          <button onclick="setMod4Type('dec_x10')" class="px-2.5 py-1 rounded-xl font-bold ${mod4Type==='dec_x10'?'bg-cyan-400 text-slate-950':'bg-slate-800 text-slate-300'}">Decimals ×10/100 (6.7 × 10)</button>
+          <button onclick="setMod4Type('div')" class="px-2.5 py-1 rounded-xl font-bold ${mod4Type==='div'?'bg-cyan-400 text-slate-950':'bg-slate-800 text-slate-300'}">Divide ÷10/100</button>
+          <button onclick="setMod4Type('mixed')" class="px-2.5 py-1 rounded-xl font-bold ${mod4Type==='mixed'?'bg-cyan-400 text-slate-950':'bg-slate-800 text-slate-300'}">Mixed</button>
+        `;
+      } else if (currentModule === 5) {
+        container.innerHTML = `
+          <span class="text-slate-400 font-semibold mr-1">Partitioning:</span>
+          <button onclick="setMod5Type('decomp')" class="px-2.5 py-1 rounded-xl font-bold ${mod5Type==='decomp'?'bg-cyan-400 text-slate-950':'bg-slate-800 text-slate-300'}">Non-Standard (4,350 = 3,000 + ? + 50)</button>
+          <button onclick="setMod5Type('total_magnitude')" class="px-2.5 py-1 rounded-xl font-bold ${mod5Type==='total_magnitude'?'bg-cyan-400 text-slate-950':'bg-slate-800 text-slate-300'}">Total Magnitude (How many 100s in 8,400?)</button>
+        `;
+      } else if (currentModule === 6) {
+        container.innerHTML = `
+          <span class="text-slate-400 font-semibold mr-1">Bridging:</span>
+          <button onclick="setMod6Type('comp1000')" class="px-2.5 py-1 rounded-xl font-bold ${mod6Type==='comp1000'?'bg-cyan-400 text-slate-950':'bg-slate-800 text-slate-300'}">Complements to 1,000 (365 + ? = 1,000)</button>
+          <button onclick="setMod6Type('boundary1000')" class="px-2.5 py-1 rounded-xl font-bold ${mod6Type==='boundary1000'?'bg-cyan-400 text-slate-950':'bg-slate-800 text-slate-300'}">Boundary Cross (2,995 + 100)</button>
+        `;
+      } else if (currentModule === 7) {
+        container.innerHTML = `
+          <span class="text-slate-400 font-semibold mr-1">Compensation:</span>
+          <button onclick="setMod7Type('nearAdd')" class="px-2.5 py-1 rounded-xl font-bold ${mod7Type==='nearAdd'?'bg-cyan-400 text-slate-950':'bg-slate-800 text-slate-300'}">Near Tens Addition (+39 ➔ +40 − 1)</button>
+          <button onclick="setMod7Type('nearSub')" class="px-2.5 py-1 rounded-xl font-bold ${mod7Type==='nearSub'?'bg-cyan-400 text-slate-950':'bg-slate-800 text-slate-300'}">Near Tens Subtraction (−29 ➔ −30 + 1)</button>
+        `;
+      } else if (currentModule === 8) {
+        container.innerHTML = `<span class="text-amber-400 font-semibold">Diagnostic Error Clinic:</span> <span class="text-slate-300 text-xs">Analyze authentic slips from Che, Leah, Eireann, Ellie & Lillie!</span>`;
+      } else if (currentModule === 9) {
+        container.innerHTML = `
+          <span class="text-slate-400 font-semibold mr-1">Fact Triangle:</span>
+          <button onclick="setMod9Mode('missing_product')" class="px-2.5 py-1 rounded-xl font-bold ${mod9Mode==='missing_product'?'bg-cyan-400 text-slate-950':'bg-slate-800 text-slate-300'}">Product (7 × 8 = ?)</button>
+          <button onclick="setMod9Mode('missing_factor')" class="px-2.5 py-1 rounded-xl font-bold ${mod9Mode==='missing_factor'?'bg-cyan-400 text-slate-950':'bg-slate-800 text-slate-300'}">Factor (6 × ? = 42)</button>
+          <button onclick="setMod9Mode('division')" class="px-2.5 py-1 rounded-xl font-bold ${mod9Mode==='division'?'bg-cyan-400 text-slate-950':'bg-slate-800 text-slate-300'}">Division (56 ÷ 8 = ?)</button>
+          <button onclick="setMod9Mode('mixed')" class="px-2.5 py-1 rounded-xl font-bold ${mod9Mode==='mixed'?'bg-cyan-400 text-slate-950':'bg-slate-800 text-slate-300'}">Mixed</button>
+        `;
+      }
+    }
+
+    function setAddLvl(lvl) { playTone('click'); addLvl = lvl; renderSubBar(); generateQuestion(); }
+    function setSubLvl(lvl) { playTone('click'); subLvl = lvl; renderSubBar(); generateQuestion(); }
+    function setAddOnLvl(lvl) { playTone('click'); addOnLvl = lvl; renderSubBar(); generateQuestion(); }
+    function setMod4Type(t) { playTone('click'); mod4Type = t; renderSubBar(); generateQuestion(); }
+    function setMod5Type(t) { playTone('click'); mod5Type = t; renderSubBar(); generateQuestion(); }
+    function setMod6Type(t) { playTone('click'); mod6Type = t; renderSubBar(); generateQuestion(); }
+    function setMod7Type(t) { playTone('click'); mod7Type = t; renderSubBar(); generateQuestion(); }
+    function setMod9Mode(m) { playTone('click'); mod9Mode = m; renderSubBar(); generateQuestion(); }
+
+    /* =====================================================================
+       QUESTION GENERATION DISPATCHER
+       ===================================================================== */
+    function generateQuestion() {
+      clearInput();
+      clearFeedback();
+      const stage = document.getElementById('stageContentContainer');
+      const visualArea = document.getElementById('visualDisplayArea');
+      const visualWrap = document.getElementById('visualWrapper');
+      visualArea.innerHTML = '';
+      visualWrap.classList.remove('hidden');
+
+      if (currentModule === 1) {
+        initAdditionModule(stage);
+      } else if (currentModule === 2) {
+        initSubtractionModule(stage);
+      } else if (currentModule === 3) {
+        initAddOnModule(stage);
+      } else if (currentModule === 4) {
+        initScalingModule(stage);
+      } else if (currentModule === 5) {
+        initPartitionModule(stage);
+      } else if (currentModule === 6) {
+        initBridgingModule(stage);
+      } else if (currentModule === 7) {
+        initCompensationModule(stage);
+      } else if (currentModule === 8) {
+        initMistakeModule(stage);
+      } else if (currentModule === 9) {
+        initInverseModule(stage);
+      }
+    }
+
+    /* ---------------------------------------------------------------------
+       MODULE 4: PLACE VALUE SLIDER & SCALING (DYNAMIC PROCEDURAL GENERATOR)
+       --------------------------------------------------------------------- */
+    function initScalingModule(stage) {
+      document.getElementById('visualHeaderTitle').textContent = 'Place Value Slider Column Shift Machine';
+      document.getElementById('visualStatusBadge').textContent = 'Dynamic Decimal Scaling';
+
+      let opMode = mod4Type;
+      if (opMode === 'mixed') {
+        const types = ['whole_x100', 'dec_x10', 'div'];
+        opMode = types[Math.floor(Math.random() * types.length)];
+      }
+
+      let num, op, factor, answer, displayFormula;
+
+      if (opMode === 'whole_x100') {
+        // Multi-digit numbers with internal zero traps (e.g. 408, 305, 509, 704, 206)
+        const hundreds = Math.floor(Math.random() * 8) + 2; // 2 to 9
+        const units = Math.floor(Math.random() * 8) + 1;    // 1 to 8 (non-zero)
+        const hasZeroTens = Math.random() > 0.35;
+        num = hasZeroTens ? hundreds * 100 + units : hundreds * 100 + (Math.floor(Math.random() * 8) + 1) * 10 + units;
+        factor = 100;
+        op = '×';
+        answer = (num * factor).toString();
+      } else if (opMode === 'dec_x10') {
+        // 1 or 2 decimal place scaling (e.g. 6.7, 4.25, 0.8, 12.4, 3.06)
+        const isTwoDec = Math.random() > 0.5;
+        factor = Math.random() > 0.5 ? 10 : 100;
+        if (isTwoDec) {
+          const whole = Math.floor(Math.random() * 15) + 1;
+          const dec = Math.floor(Math.random() * 90) + 10;
+          num = parseFloat(`${whole}.${dec}`);
+        } else {
+          const whole = Math.floor(Math.random() * 20) + 1;
+          const tenths = Math.floor(Math.random() * 9) + 1;
+          num = parseFloat(`${whole}.${tenths}`);
+        }
+        op = '×';
+        answer = (Math.round(num * factor * 100) / 100).toString();
+      } else {
+        // Division: multiples of 10 or 100 shifting right
+        factor = Math.random() > 0.5 ? 10 : 100;
+        const base = Math.floor(Math.random() * 85) + 12;
+        num = factor === 10 ? base * 10 : base * 100;
+        // Occasionally include a single decimal division result (e.g. 67 ÷ 10 = 6.7)
+        if (Math.random() > 0.6) {
+          num = Math.floor(Math.random() * 89) + 11;
+          factor = 10;
+        }
+        op = '÷';
+        answer = (Math.round((num / factor) * 100) / 100).toString();
+      }
+
+      currentQ = {
+        module: 4,
+        num: num,
+        op: op,
+        factor: factor,
+        answer: answer
+      };
+
+      stage.innerHTML = `
+        <div class="text-[11px] font-mono uppercase tracking-wider text-cyan-400 font-semibold mb-1">Place Value Scaling & Shift</div>
+        <div class="bg-slate-950 border-2 border-slate-800 px-6 py-3 rounded-2xl flex items-center justify-center gap-3 font-kids text-3xl sm:text-5xl font-bold tracking-wider shadow-inner text-cyan-300 min-h-[78px] mb-2">
+          <span>${num}</span>
+          <span class="text-slate-400">${op}</span>
+          <span class="text-indigo-400">${factor}</span>
+          <span class="text-slate-400">=</span>
+          <span class="text-amber-300 underline decoration-dashed">?</span>
+        </div>
+        <p class="text-xs sm:text-sm text-slate-300 text-center max-w-xl">
+          ${op === '×' 
+            ? `Place Value Rule: When multiplying by ${factor}, digits slide <strong class="text-emerald-400">LEFT</strong> by ${factor===100?'2 columns':'1 column'}. Unlearn "add a zero"!`
+            : `Place Value Rule: When dividing by ${factor}, digits slide <strong class="text-rose-400">RIGHT</strong> by ${factor===100?'2 columns':'1 column'}.`}
+        </p>
+      `;
+
+      renderStrategyLockedNotice('Place Value Slider Machine');
+    }
+
+    /* ---------------------------------------------------------------------
+       MODULE 5: FLEXIBLE PARTITIONING & TOTAL MAGNITUDE (PROCEDURAL GENERATOR)
+       --------------------------------------------------------------------- */
+    function initPartitionModule(stage) {
+      document.getElementById('visualHeaderTitle').textContent = 'Flexible Regrouping & Magnitude Model';
+      document.getElementById('visualStatusBadge').textContent = 'Procedural CPA Generator';
+
+      if (mod5Type === 'decomp') {
+        // Generate flexible non-standard decomposition (unlimited variants):
+        // e.g. Total = thousands + hundreds + tens
+        // Standard: 4,000 + 300 + 50
+        // Flexible: 3,000 + 1,300 + 50 (or 2,000 + 2,300 + 50)
+        const totalTh = Math.floor(Math.random() * 6) + 3; // 3 to 8 thousands
+        const totalH = Math.floor(Math.random() * 7) + 2;  // 2 to 8 hundreds
+        const totalT = (Math.floor(Math.random() * 8) + 1) * 10; // 10 to 80 tens
+        const total = totalTh * 1000 + totalH * 100 + totalT;
+
+        // Number of thousands to unpack into hundreds (1 or 2)
+        const unpackedTh = Math.random() > 0.5 ? 1 : 2;
+        const keptTh = (totalTh - unpackedTh) * 1000;
+        const regroupedH = (unpackedTh * 1000) + (totalH * 100);
+
+        // Randomise which slot is the unknown [ ? ]
+        // 0: Missing regrouped hundreds (classic error: writing 300 instead of 1,300)
+        // 1: Missing kept thousands
+        // 2: Missing tens
+        const missingSlot = Math.random() > 0.3 ? 0 : (Math.random() > 0.5 ? 1 : 2);
+
+        let equationHtml = '';
+        let ans = '';
+
+        if (missingSlot === 0) {
+          ans = regroupedH.toString();
+          equationHtml = `
+            <span class="text-cyan-400 font-bold">${total.toLocaleString()}</span>
+            <span class="text-slate-400 font-bold">=</span>
+            <span class="text-indigo-400 font-bold">${keptTh.toLocaleString()}</span>
+            <span class="text-slate-400 font-bold">+</span>
+            <span class="text-amber-300 underline decoration-dashed">[ ? ]</span>
+            <span class="text-slate-400 font-bold">+</span>
+            <span class="text-indigo-400 font-bold">${totalT}</span>
+          `;
+        } else if (missingSlot === 1) {
+          ans = keptTh.toString();
+          equationHtml = `
+            <span class="text-cyan-400 font-bold">${total.toLocaleString()}</span>
+            <span class="text-slate-400 font-bold">=</span>
+            <span class="text-amber-300 underline decoration-dashed">[ ? ]</span>
+            <span class="text-slate-400 font-bold">+</span>
+            <span class="text-indigo-400 font-bold">${regroupedH.toLocaleString()}</span>
+            <span class="text-slate-400 font-bold">+</span>
+            <span class="text-indigo-400 font-bold">${totalT}</span>
+          `;
+        } else {
+          ans = totalT.toString();
+          equationHtml = `
+            <span class="text-cyan-400 font-bold">${total.toLocaleString()}</span>
+            <span class="text-slate-400 font-bold">=</span>
+            <span class="text-indigo-400 font-bold">${keptTh.toLocaleString()}</span>
+            <span class="text-slate-400 font-bold">+</span>
+            <span class="text-indigo-400 font-bold">${regroupedH.toLocaleString()}</span>
+            <span class="text-slate-400 font-bold">+</span>
+            <span class="text-amber-300 underline decoration-dashed">[ ? ]</span>
+          `;
+        }
+
+        currentQ = {
+          module: 5,
+          subType: 'decomp',
+          total: total,
+          keptTh: keptTh,
+          regroupedH: regroupedH,
+          totalT: totalT,
+          missingSlot: missingSlot,
+          answer: ans
+        };
+
+        stage.innerHTML = `
+          <div class="text-[11px] font-mono uppercase tracking-wider text-cyan-400 font-semibold mb-1">Non-Standard Flexible Partitioning</div>
+          <div class="bg-slate-950 border-2 border-slate-800 px-6 py-3 rounded-2xl flex items-center justify-center gap-3 font-kids text-2xl sm:text-4xl font-bold tracking-wider shadow-inner text-cyan-300 min-h-[78px] mb-2 max-w-full overflow-x-auto">
+            ${equationHtml}
+          </div>
+          <p class="text-xs sm:text-sm text-slate-300 text-center max-w-xl">
+            Regrouping Challenge: The thousands have been decomposed to unpack extra hundreds. What number must go into the missing box?
+          </p>
+        `;
+      } else {
+        // Total Multiplicative Magnitude (Hundreds or Tens altogether)
+        // e.g. How many hundreds in 8,400? -> 84
+        // e.g. How many tens in 3,650? -> 365
+        const isHundreds = Math.random() > 0.45;
+        let total, unitName, ans, formula;
+
+        if (isHundreds) {
+          const hCount = Math.floor(Math.random() * 85) + 12; // 12 to 96 hundreds
+          total = hCount * 100;
+          unitName = 'hundreds';
+          ans = hCount.toString();
+          formula = `${hCount} × 100 = ${total.toLocaleString()}`;
+        } else {
+          const tCount = Math.floor(Math.random() * 120) + 15; // 15 to 135 tens
+          total = tCount * 10;
+          unitName = 'tens';
+          ans = tCount.toString();
+          formula = `${tCount} × 10 = ${total.toLocaleString()}`;
+        }
+
+        currentQ = {
+          module: 5,
+          subType: 'total_magnitude',
+          total: total,
+          unitName: unitName,
+          formula: formula,
+          answer: ans
+        };
+
+        stage.innerHTML = `
+          <div class="text-[11px] font-mono uppercase tracking-wider text-cyan-400 font-semibold mb-1">Total Multiplicative Magnitude</div>
+          <div class="bg-slate-950 border-2 border-slate-800 px-6 py-3 rounded-2xl flex flex-col items-center justify-center gap-1 font-kids text-2xl sm:text-3xl font-bold tracking-wider shadow-inner text-amber-300 min-h-[78px] mb-2">
+            <div>How many <span class="text-cyan-400 underline">${unitName}</span> are in <span class="text-white">${total.toLocaleString()}</span> altogether?</div>
+          </div>
+          <p class="text-xs sm:text-sm text-slate-300 text-center max-w-xl">
+            Remember: Look across the entire number's magnitude, not just the single column marker!
+          </p>
+        `;
+      }
+
+      renderStrategyLockedNotice('Decomposition & Magnitude Base-10 Model');
+    }
+
+    /* ---------------------------------------------------------------------
+       MODULE 6: BRIDGING LADDERS TO 100 & 1,000 (PROCEDURAL GENERATOR)
+       --------------------------------------------------------------------- */
+    function initBridgingModule(stage) {
+      document.getElementById('visualHeaderTitle').textContent = 'Multi-Stage Bridging Ladder';
+      document.getElementById('visualStatusBadge').textContent = 'Number Line Landmarks';
+
+      if (mod6Type === 'comp1000') {
+        // e.g. 365 + ? = 1,000 (unlimited variants)
+        const hundreds = Math.floor(Math.random() * 7) + 1; // 1 to 7
+        const tens = Math.floor(Math.random() * 8) + 1;     // 1 to 8
+        const units = Math.floor(Math.random() * 8) + 1;    // 1 to 8
+        const start = hundreds * 100 + tens * 10 + units;
+        const complement = 1000 - start;
+
+        const nextHundred = Math.ceil(start / 100) * 100;
+        const jump1 = nextHundred - start;
+        const jump2 = 1000 - nextHundred;
+
+        currentQ = {
+          module: 6,
+          subType: 'comp1000',
+          start: start,
+          nextHundred: nextHundred,
+          jump1: jump1,
+          jump2: jump2,
+          answer: complement.toString()
+        };
+
+        stage.innerHTML = `
+          <div class="text-[11px] font-mono uppercase tracking-wider text-cyan-400 font-semibold mb-1">Complements to 1,000 Ladder</div>
+          <div class="bg-slate-950 border-2 border-slate-800 px-6 py-3 rounded-2xl flex items-center justify-center gap-3 font-kids text-3xl sm:text-5xl font-bold tracking-wider shadow-inner text-cyan-300 min-h-[78px] mb-2">
+            <span>${start}</span>
+            <span class="text-slate-400">+</span>
+            <span class="text-amber-300 underline decoration-dashed">?</span>
+            <span class="text-slate-400">=</span>
+            <span class="text-emerald-400">1,000</span>
+          </div>
+          <p class="text-xs sm:text-sm text-slate-300 text-center max-w-xl">
+            Bridging Strategy: Jump to the next century landmark (<strong class="text-amber-300">${nextHundred}</strong>) first, then leap to 1,000!
+          </p>
+        `;
+      } else {
+        // Crossing boundary shifts (e.g. 2,995 + 100; 4,980 + 100; 7,429 + 100; 3,005 - 100)
+        const isAdd = Math.random() > 0.35;
+        let start, shift, ans, note;
+
+        if (isAdd) {
+          const crossesThousand = Math.random() > 0.4;
+          if (crossesThousand) {
+            // e.g. 2,995 + 100 = 3,095
+            const th = Math.floor(Math.random() * 5) + 1;
+            const u = Math.floor(Math.random() * 85) + 10;
+            start = th * 1000 + 900 + u;
+            shift = 100;
+            ans = (start + shift).toString();
+            note = `${Math.floor(start/100)} hundreds + 1 hundred = ${Math.floor((start+shift)/100)} hundreds!`;
+          } else {
+            // Normal hundred shift: 7,429 + 100 = 7,529
+            const th = Math.floor(Math.random() * 6) + 2;
+            const h = Math.floor(Math.random() * 7) + 1;
+            const rest = Math.floor(Math.random() * 80) + 11;
+            start = th * 1000 + h * 100 + rest;
+            shift = 100;
+            ans = (start + shift).toString();
+            note = `Only the hundreds place value changes (${h}00 ➔ ${h+1}00).`;
+          }
+        } else {
+          // e.g. 3,005 - 100 = 2,905
+          const th = Math.floor(Math.random() * 5) + 2;
+          const rest = Math.floor(Math.random() * 80) + 10;
+          start = th * 1000 + rest;
+          shift = 100;
+          ans = (start - shift).toString();
+          note = `${th*10} hundreds − 1 hundred = ${(th*10)-1} hundreds!`;
+        }
+
+        currentQ = {
+          module: 6,
+          subType: 'boundary1000',
+          start: start,
+          shift: shift,
+          isAdd: isAdd,
+          note: note,
+          answer: ans
+        };
+
+        stage.innerHTML = `
+          <div class="text-[11px] font-mono uppercase tracking-wider text-cyan-400 font-semibold mb-1">Place Value Boundary Shift</div>
+          <div class="bg-slate-950 border-2 border-slate-800 px-6 py-3 rounded-2xl flex items-center justify-center gap-3 font-kids text-3xl sm:text-5xl font-bold tracking-wider shadow-inner text-cyan-300 min-h-[78px] mb-2">
+            <span>${start.toLocaleString()}</span>
+            <span class="text-slate-400">${isAdd ? '+' : '−'}</span>
+            <span class="text-indigo-400">${shift}</span>
+            <span class="text-slate-400">=</span>
+            <span class="text-amber-300 underline decoration-dashed">?</span>
+          </div>
+          <p class="text-xs sm:text-sm text-slate-300 text-center max-w-xl">
+            Watch the place value transition closely across the 1,000 threshold.
+          </p>
+        `;
+      }
+
+      renderStrategyLockedNotice('Bridging Ladder Visual Model');
+    }
+
+    /* ---------------------------------------------------------------------
+       MODULE 7: MENTAL COMPENSATION (PROCEDURAL GENERATOR)
+       --------------------------------------------------------------------- */
+    function initCompensationModule(stage) {
+      document.getElementById('visualHeaderTitle').textContent = 'Two-Stage Compensation Jump Model';
+      document.getElementById('visualStatusBadge').textContent = 'Mental Shortcut Efficiency';
+
+      const nearPool = [19, 29, 39, 49, 59];
+      const near = nearPool[Math.floor(Math.random() * nearPool.length)];
+      const friendlyTen = near + 1;
+
+      if (mod7Type === 'nearAdd') {
+        const base = Math.floor(Math.random() * 450) + 120;
+        const total = base + near;
+
+        currentQ = {
+          module: 7,
+          mode: 'add',
+          base: base,
+          near: near,
+          friendlyTen: friendlyTen,
+          answer: total.toString()
+        };
+
+        stage.innerHTML = `
+          <div class="text-[11px] font-mono uppercase tracking-wider text-cyan-400 font-semibold mb-1">Mental Compensation (+${near})</div>
+          <div class="bg-slate-950 border-2 border-slate-800 px-6 py-3 rounded-2xl flex items-center justify-center gap-3 font-kids text-3xl sm:text-5xl font-bold tracking-wider shadow-inner text-cyan-300 min-h-[78px] mb-2">
+            <span>${base}</span>
+            <span class="text-slate-400">+</span>
+            <span class="text-indigo-400">${near}</span>
+            <span class="text-slate-400">=</span>
+            <span class="text-amber-300 underline decoration-dashed">?</span>
+          </div>
+          <p class="text-xs sm:text-sm text-slate-300 text-center max-w-xl">
+            Efficiency Shortcut: Add <strong class="text-cyan-400">+${friendlyTen}</strong> first. Did you add 1 too many? Adjust by compensating!
+          </p>
+        `;
+      } else {
+        const base = Math.floor(Math.random() * 450) + 180;
+        const total = base - near;
+
+        currentQ = {
+          module: 7,
+          mode: 'sub',
+          base: base,
+          near: near,
+          friendlyTen: friendlyTen,
+          answer: total.toString()
+        };
+
+        stage.innerHTML = `
+          <div class="text-[11px] font-mono uppercase tracking-wider text-cyan-400 font-semibold mb-1">Mental Compensation (−${near})</div>
+          <div class="bg-slate-950 border-2 border-slate-800 px-6 py-3 rounded-2xl flex items-center justify-center gap-3 font-kids text-3xl sm:text-5xl font-bold tracking-wider shadow-inner text-cyan-300 min-h-[78px] mb-2">
+            <span>${base}</span>
+            <span class="text-slate-400">−</span>
+            <span class="text-rose-400">${near}</span>
+            <span class="text-slate-400">=</span>
+            <span class="text-amber-300 underline decoration-dashed">?</span>
+          </div>
+          <p class="text-xs sm:text-sm text-slate-300 text-center max-w-xl">
+            Inverse Rule: Subtract <strong class="text-rose-400">−${friendlyTen}</strong> first. If you took away 1 too many, remember to <strong class="text-emerald-400">ADD 1 back</strong>!
+          </p>
+        `;
+      }
+
+      renderStrategyLockedNotice('Compensation Number Line');
+    }
+
+    /* ---------------------------------------------------------------------
+       MODULE 8: SPOT THE MISTAKE (EXPANDED DIAGNOSTIC REPERTOIRE)
+       --------------------------------------------------------------------- */
+    const authenticErrorPool = [
+      {
+        pupil: "Ellie",
+        claim: "6.7 × 10 = 6.70",
+        quote: "You just add a zero on the end when multiplying by 10!",
+        options: [
+          { text: "Adding a zero to a decimal doesn't change its value (6.70 = 6.7). Digits must slide left across the decimal point.", correct: true },
+          { text: "You should add two zeros instead of one.", correct: false },
+          { text: "The decimal point moves to the left.", correct: false }
+        ],
+        explanation: "Digits slide 1 column to the left across the fixed decimal point. 6.7 becomes 67.",
+        correctedAns: "67"
+      },
+      {
+        pupil: "Che",
+        claim: "52 − 29 = 21",
+        quote: "I did 52 − 30 = 22, and then 22 − 1 = 21.",
+        options: [
+          { text: "Subtracting 30 took away 1 too many, so you must ADD 1 back (+1), making 23.", correct: true },
+          { text: "You should have subtracted 20 instead of 30.", correct: false },
+          { text: "52 − 30 is 20, not 22.", correct: false }
+        ],
+        explanation: "Because Che subtracted 30 instead of 29, he subtracted 1 too many. He must add 1 back (22 + 1 = 23).",
+        correctedAns: "23"
+      },
+      {
+        pupil: "Leah",
+        claim: "There are 4 hundreds in 8,400.",
+        quote: "Look at the hundreds column, the digit is 4, so there are 4 hundreds.",
+        options: [
+          { text: "The digit 4 is in the hundreds place, but the total magnitude of 8,400 is 84 hundreds (84 × 100 = 8,400).", correct: true },
+          { text: "There are 400 hundreds in 8,400.", correct: false },
+          { text: "There are only 8 hundreds in 8,400.", correct: false }
+        ],
+        explanation: "Every 1,000 contains 10 hundreds. 8 thousands = 80 hundreds, plus 4 more hundreds gives 84 hundreds altogether.",
+        correctedAns: "84"
+      },
+      {
+        pupil: "Lillie",
+        claim: "365 + 745 = 1,000",
+        quote: "5+5=10, 6+4=10, 3+7=10, so it makes 1,000!",
+        options: [
+          { text: "Treating each column as an independent bond to 10 causes extra regroupings and totals 1,110.", correct: true },
+          { text: "300 + 700 does not equal 1,000.", correct: false },
+          { text: "The answer should end in zero.", correct: false }
+        ],
+        explanation: "The units bond to 10, but the tens and hundreds must bond to 9 to compensate for the carry. 365 + 635 = 1,000.",
+        correctedAns: "1110"
+      },
+      {
+        pupil: "Eireann",
+        claim: "To make 7,429 bigger by 100, the new number is 79.",
+        quote: "I changed one digit to make it 100 bigger.",
+        options: [
+          { text: "Only the hundreds column should increase by 1 (4 hundreds ➔ 5 hundreds), making 7,529.", correct: true },
+          { text: "You must add 100 to the units column.", correct: false },
+          { text: "The whole number should be replaced with 109.", correct: false }
+        ],
+        explanation: "Adding 100 modifies the hundreds place value column: 7,429 + 100 = 7,529.",
+        correctedAns: "7529"
+      },
+      {
+        pupil: "Che & Ellie",
+        claim: "403 − 178 = 375",
+        quote: "In the units I did 8 − 3 = 5 because you can't take 8 from 3.",
+        options: [
+          { text: "Reversal error: you cannot flip digits to 8 − 3. You must exchange across the zero from hundreds to tens, then tens to units.", correct: true },
+          { text: "400 − 100 is 200, not 300.", correct: false },
+          { text: "You should add the numbers instead.", correct: false }
+        ],
+        explanation: "403 regrouped is 3 hundreds, 9 tens, and 13 units. 13 − 8 = 5, 9 − 7 = 2, 3 − 1 = 2 ➔ 225.",
+        correctedAns: "225"
+      },
+      {
+        pupil: "Ayse",
+        claim: "4,350 = 3,000 + 300 + 50",
+        quote: "I decomposed 4,350 into thousands, hundreds, and tens.",
+        options: [
+          { text: "Decomposing 4 thousands into 3 thousands leaves 1 thousand (1,000) that must be added to 300, making 1,300.", correct: true },
+          { text: "The tens column should be 500, not 50.", correct: false },
+          { text: "3,000 + 300 + 50 equals 4,350.", correct: false }
+        ],
+        explanation: "3,000 + 300 + 50 is only 3,350. To equal 4,350, the missing hundreds must be 1,300.",
+        correctedAns: "1300"
+      }
+    ];
+
+    function initMistakeModule(stage) {
+      document.getElementById('visualHeaderTitle').textContent = 'Misconception Analysis & Reasoned Diagnosis';
+      document.getElementById('visualStatusBadge').textContent = 'Authentic KS2 Scripts';
+
+      const item = authenticErrorPool[mod8Idx % authenticErrorPool.length];
+      currentQ = {
+        module: 8,
+        caseData: item,
+        selectedOption: null,
+        answer: item.correctedAns
+      };
+
+      stage.innerHTML = `
+        <div class="text-[11px] font-mono uppercase tracking-wider text-rose-400 font-semibold mb-1">Diagnostic Pupil Error Review</div>
+        <div class="bg-slate-950 border-2 border-slate-800 p-4 rounded-2xl flex flex-col items-center justify-center gap-1 min-h-[82px] mb-2 max-w-xl text-center">
+          <span class="text-xs font-mono uppercase text-slate-400 font-bold">Pupil: ${item.pupil}</span>
+          <span class="font-kids text-2xl sm:text-3xl font-bold text-amber-300">${item.claim}</span>
+          <span class="text-xs sm:text-sm text-slate-300 italic">"${item.quote}"</span>
+        </div>
+        <p class="text-xs sm:text-sm text-slate-300 text-center max-w-xl">
+          Select the correct mathematical flaw in the visual area, then type the true corrected value below!
+        </p>
+      `;
+
+      // Render Multiple Choice Options in Visual Area
+      const visualArea = document.getElementById('visualDisplayArea');
+      let optionsHtml = '';
+      item.options.forEach((opt, i) => {
+        optionsHtml += `
+          <button onclick="selectMistakeOption(${i})" id="optBtn${i}" class="w-full text-left p-3 rounded-xl border border-slate-700 bg-slate-900 hover:border-cyan-400 text-xs sm:text-sm transition flex items-start gap-2.5">
+            <span class="w-5 h-5 rounded-full bg-slate-800 text-cyan-400 font-mono flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">${String.fromCharCode(65 + i)}</span>
+            <span class="text-slate-200">${opt.text}</span>
+          </button>
+        `;
+      });
+
+      visualArea.innerHTML = `
+        <div class="w-full max-w-xl flex flex-col gap-2 animate-pop">
+          <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Step 1: Identify the underlying mathematical flaw:</span>
+          ${optionsHtml}
+          <div id="m8ReasoningReveal" class="hidden mt-2 p-3 rounded-xl bg-slate-900 border border-emerald-500/50 text-xs text-slate-300"></div>
+        </div>
+      `;
+    }
+
+    function selectMistakeOption(idx) {
+      playTone('click');
+      currentQ.selectedOption = idx;
+      currentQ.caseData.options.forEach((_, i) => {
+        const btn = document.getElementById(`optBtn${i}`);
+        if (i === idx) {
+          btn.className = 'w-full text-left p-3 rounded-xl border-2 border-cyan-400 bg-cyan-950/40 text-xs sm:text-sm transition flex items-start gap-2.5';
+        } else {
+          btn.className = 'w-full text-left p-3 rounded-xl border border-slate-700 bg-slate-900 text-xs sm:text-sm transition flex items-start gap-2.5 opacity-60';
+        }
+      });
+    }
+
+    /* ---------------------------------------------------------------------
+       VISUAL PLACEHOLDERS & UNLOCK ENGINE
+       --------------------------------------------------------------------- */
+    function renderStrategyLockedNotice(title) {
+      const area = document.getElementById('visualDisplayArea');
+      area.innerHTML = `
+        <div class="flex flex-col items-center justify-center gap-2 py-5 px-3 text-center max-w-md w-full animate-pop">
+          <div class="w-12 h-12 rounded-2xl bg-slate-900 border-2 border-dashed border-cyan-500/40 flex items-center justify-center text-2xl shadow-inner">
+            🧠
+          </div>
+          <div>
+            <div class="font-kids text-base font-bold text-cyan-300">${title} Locked</div>
+            <p class="text-xs text-slate-400">Compute your answer using place value strategies. Enter your result to unlock the full step-by-step visual demonstration!</p>
+          </div>
+          <div class="bg-slate-900 text-[11px] font-mono text-amber-400 px-3 py-1 rounded-lg border border-slate-800">
+            🔒 Non-leaking mode active
+          </div>
+        </div>
+      `;
+    }
+
+    function unlockVisualModel() {
+      document.getElementById('visualStatusBadge').textContent = '🔓 Visual Model Unlocked';
+      document.getElementById('visualStatusBadge').className = 'text-emerald-400 text-[11px] font-mono font-bold';
+      const area = document.getElementById('visualDisplayArea');
+      const q = currentQ;
+
+      if (q.module === 4) {
+        area.innerHTML = renderPVChartVisual(q);
+      } else if (q.module === 5) {
+        area.innerHTML = renderPartitionVisual(q);
+      } else if (q.module === 6) {
+        area.innerHTML = renderBridgingVisual(q);
+      } else if (q.module === 7) {
+        area.innerHTML = renderCompensationVisual(q);
+      } else if (q.module === 8) {
+        const card = document.getElementById('m8ReasoningReveal');
+        if (card) {
+          card.classList.remove('hidden');
+          card.innerHTML = `
+            <div class="text-emerald-400 font-bold mb-1">Reasoning Walkthrough:</div>
+            <div>${q.caseData.explanation} Correct Answer: <strong>${q.caseData.correctedAns}</strong>.</div>
+            <button onclick="advanceToNextProblem()" class="w-full mt-3 py-2 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-kids text-sm font-bold rounded-xl shadow transition">
+              Next Problem ➔
+            </button>
+          `;
+        }
+      }
+    }
+
+    function advanceToNextProblem() {
+      playTone('click');
+      if (currentModule === 8) mod8Idx++;
+      generateQuestion();
+    }
+
+    /* Visualizer: Place Value Chart */
+    function renderPVChartVisual(q) {
+      const isMul = q.op === '×';
+      return `
+        <div class="flex flex-col items-center gap-3 w-full max-w-xl animate-pop">
+          <div class="w-full bg-slate-900 border border-slate-800 rounded-2xl p-3 overflow-x-auto">
+            <div class="grid grid-cols-6 gap-1 text-center font-kids text-xs font-bold text-cyan-400 pb-2 border-b border-slate-800">
+              <div class="pv-col">Th (1000)</div>
+              <div class="pv-col">H (100)</div>
+              <div class="pv-col">T (10)</div>
+              <div class="pv-col">U (1)</div>
+              <div class="pv-col text-indigo-300">t (0.1)</div>
+              <div class="pv-col text-indigo-300">h (0.01)</div>
+            </div>
+            <div class="text-center font-kids text-xs font-bold text-amber-400 py-1.5">
+              ${isMul ? `⬅️ SHIFTING DIGITS ${q.factor===100?'2 PLACES':'1 PLACE'} LEFT` : `➡️ SHIFTING DIGITS ${q.factor===100?'2 PLACES':'1 PLACE'} RIGHT`}
+            </div>
+            <div class="text-center font-kids text-lg text-emerald-400 font-bold py-1">
+              ${q.num} ${q.op} ${q.factor} = ${q.answer}
+            </div>
+          </div>
+          <p class="text-xs text-slate-300 text-center">
+            The decimal point never moves. Digits shift columns to represent multiplication or division!
+          </p>
+          <button onclick="advanceToNextProblem()" class="w-full max-w-md py-2.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-kids text-base font-bold rounded-xl shadow transition">
+            Next Problem ➔
+          </button>
+        </div>
+      `;
+    }
+
+    /* Visualizer: Flexible Partitioning */
+    function renderPartitionVisual(q) {
+      if (q.subType === 'decomp') {
+        return `
+          <div class="flex flex-col items-center gap-3 w-full max-w-lg animate-pop">
+            <div class="w-full bg-slate-900 border border-slate-800 rounded-2xl p-3.5 text-center font-kids">
+              <div class="text-xs text-slate-400 mb-1">Standard vs Flexible Regrouping:</div>
+              <div class="text-slate-300 text-sm mb-2">
+                Standard: <span class="text-cyan-300 font-bold">${q.total.toLocaleString()} = ${Math.floor(q.total/1000)*1000} + ${(Math.floor((q.total%1000)/100))*100} + ${q.totalT}</span>
+              </div>
+              <div class="p-2.5 rounded-xl bg-slate-950 border border-emerald-500/50 text-emerald-300 text-base font-bold">
+                Flexible: ${q.total.toLocaleString()} = ${q.keptTh.toLocaleString()} + <span class="text-amber-400 underline">${q.regroupedH.toLocaleString()}</span> + ${q.totalT}
+              </div>
+            </div>
+            <p class="text-xs text-slate-300 text-center">
+              Thousands were unpacked and combined with existing hundreds to form <strong>${q.regroupedH.toLocaleString()}</strong>!
+            </p>
+            <button onclick="advanceToNextProblem()" class="w-full max-w-md py-2.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-kids text-base font-bold rounded-xl shadow transition">
+              Next Problem ➔
+            </button>
+          </div>
+        `;
+      } else {
+        return `
+          <div class="flex flex-col items-center gap-3 w-full max-w-lg animate-pop">
+            <div class="w-full bg-slate-900 border border-emerald-500/50 p-4 rounded-2xl text-center">
+              <span class="text-xs text-slate-400 uppercase font-mono block mb-1">Multiplicative Total:</span>
+              <span class="font-kids text-2xl text-emerald-400 font-bold">${q.formula}</span>
+            </div>
+            <p class="text-xs text-slate-300 text-center">
+              There are <strong>${q.answer} ${q.unitName}</strong> altogether throughout the number.
+            </p>
+            <button onclick="advanceToNextProblem()" class="w-full max-w-md py-2.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-kids text-base font-bold rounded-xl shadow transition">
+              Next Problem ➔
+            </button>
+          </div>
+        `;
+      }
+    }
+
+    /* Visualizer: Bridging Ladder */
+    function renderBridgingVisual(q) {
+      if (q.subType === 'comp1000') {
+        return `
+          <div class="flex flex-col items-center gap-3 w-full max-w-xl animate-pop">
+            <div class="w-full bg-slate-900 border border-slate-800 rounded-2xl p-3">
+              <div class="text-xs font-bold text-center text-slate-400 mb-2 uppercase">2-Step Mental Bridging Ladder:</div>
+              <div class="flex items-center justify-around font-kids text-sm sm:text-base">
+                <div class="text-cyan-400 font-bold">${q.start}</div>
+                <div class="text-indigo-400 font-bold">➔ +${q.jump1} ➔</div>
+                <div class="text-amber-400 font-bold">${q.nextHundred}</div>
+                <div class="text-indigo-400 font-bold">➔ +${q.jump2} ➔</div>
+                <div class="text-emerald-400 font-bold">1,000</div>
+              </div>
+              <div class="mt-2.5 p-2 bg-slate-950 rounded-xl text-center text-xs font-kids text-emerald-400 font-bold">
+                Total Complement Jump = ${q.jump1} + ${q.jump2} = ${q.answer}
+              </div>
+            </div>
+            <button onclick="advanceToNextProblem()" class="w-full max-w-md py-2.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-kids text-base font-bold rounded-xl shadow transition">
+              Next Problem ➔
+            </button>
+          </div>
+        `;
+      } else {
+        return `
+          <div class="flex flex-col items-center gap-3 w-full max-w-md animate-pop">
+            <div class="w-full bg-slate-900 border border-emerald-500/50 p-3.5 rounded-2xl text-center">
+              <div class="font-kids text-2xl text-emerald-400 font-bold mb-1">${q.start.toLocaleString()} ${q.isAdd?'+':'−'} ${q.shift} = ${q.answer}</div>
+              <div class="text-xs text-slate-300">${q.note}</div>
+            </div>
+            <button onclick="advanceToNextProblem()" class="w-full max-w-md py-2.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-kids text-base font-bold rounded-xl shadow transition">
+              Next Problem ➔
+            </button>
+          </div>
+        `;
+      }
+    }
+
+    /* Visualizer: Compensation */
+    function renderCompensationVisual(q) {
+      const isAdd = q.mode === 'add';
+      const mid = isAdd ? q.base + q.friendlyTen : q.base - q.friendlyTen;
+
+      return `
+        <div class="flex flex-col items-center gap-3 w-full max-w-lg animate-pop">
+          <div class="w-full bg-slate-900 border border-slate-800 p-3 rounded-2xl text-center text-xs font-kids">
+            ${isAdd
+              ? `Step 1: ${q.base} + <strong class="text-indigo-400">${q.friendlyTen}</strong> = ${mid} ➔ Step 2: Compensate <strong class="text-rose-400">− 1</strong> = <strong class="text-emerald-400 text-base">${q.answer}</strong>!`
+              : `Step 1: ${q.base} − <strong class="text-rose-400">${q.friendlyTen}</strong> = ${mid} ➔ Step 2: Compensate <strong class="text-emerald-400">+ 1</strong> = <strong class="text-emerald-400 text-base">${q.answer}</strong>!`
+            }
+          </div>
+          <button onclick="advanceToNextProblem()" class="w-full max-w-md py-2.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-kids text-base font-bold rounded-xl shadow transition">
+            Next Problem ➔
+          </button>
+        </div>
+      `;
+    }
+
+    /* ---------------------------------------------------------------------
+       ANSWER SUBMISSION & VALIDATION
+       --------------------------------------------------------------------- */
+    function submitAnswer() {
+      if (isProcessing) return;
+
+      // In Module 1 & 2, if question is already complete, clicking again advances
+      if (currentModule === 1 && addState.step === 'complete') {
+        generateQuestion();
+        return;
+      }
+      if (currentModule === 2 && subState.step === 'complete') {
+        generateQuestion();
+        return;
+      }
+
+      if (currentModule === 1) {
+        // Module 1 Addition Flow
+        const a = addState;
+        const topDigits = a.top.toString().padStart(3, ' ').split('');
+        const botDigits = a.bottom.toString().padStart(3, ' ').split('');
+        const v = parseInt(activeInput.trim(), 10);
+
+        if (isNaN(v)) {
+          flashFeedback('Type your answer using the keypad first!', false);
+          return;
+        }
+
+        if (a.step === 'calc_units') {
+          const expected = parseInt(topDigits[2], 10) + parseInt(botDigits[2], 10);
+          if (v === expected) {
+            playTone('correct');
+            a.ansUnits = v % 10;
+            if (v >= 10) {
+              a.step = 'ask_carry_val';
+            } else {
+              a.step = 'calc_tens';
+            }
+            clearInput();
+            renderAdditionView();
+          } else {
+            playTone('wrong');
+            flashFeedback('Check unit sum!', false);
+          }
+        } else if (a.step === 'calc_tens') {
+          const expected = parseInt(topDigits[1], 10) + parseInt(botDigits[1], 10) + a.uCarry;
+          if (v === expected) {
+            playTone('correct');
+            a.ansTens = v % 10;
+            a.ansHundreds = Math.floor(v / 10) || null;
+            a.step = 'complete';
+            streak++; score += 15; updateStats();
+            clearInput();
+            renderAdditionView();
+          } else {
+            playTone('wrong');
+            flashFeedback('Include the carried 1 in your tens!', false);
+          }
+        }
+        return;
+      }
+
+      if (currentModule === 2) {
+        // Module 2 Subtraction Flow
+        const s = subState;
+        const v = parseInt(activeInput.trim(), 10);
+
+        if (isNaN(v)) {
+          flashFeedback('Type your answer using the keypad first!', false);
+          return;
+        }
+
+        if (s.step === 'ask_lender_new') {
+          const expected = (s.activeCol === 'units') ? s.tTop - 1 : s.hTop - 1;
+          if (v === expected) {
+            playTone('correct');
+            if (s.activeCol === 'units') { s.tTop = expected; s.tBorrowDone = true; }
+            else { s.hTop = expected; }
+            s.step = 'ask_target_new';
+            clearInput();
+            renderSubtractionView();
+          } else {
+            playTone('wrong');
+            flashFeedback(`Lender loses 1 ten. Try again!`, false);
+          }
+        } else if (s.step === 'ask_target_new') {
+          const expected = (s.activeCol === 'units') ? s.uTop + 10 : s.tTop + 10;
+          if (v === expected) {
+            playTone('correct');
+            if (s.activeCol === 'units') { s.uTop = expected; s.uBorrowDone = true; }
+            else { s.tTop = expected; }
+            s.step = 'calc_col';
+            clearInput();
+            renderSubtractionView();
+          } else {
+            playTone('wrong');
+            flashFeedback(`Add 10 to your column!`, false);
+          }
+        } else if (s.step === 'calc_col') {
+          const topD = s.activeCol === 'units' ? s.uTop : (s.activeCol === 'tens' ? s.tTop : s.hTop);
+          const botD = s.activeCol === 'units' ? s.uBot : (s.activeCol === 'tens' ? s.tBot : s.hBot);
+          const expected = topD - botD;
+
+          if (v === expected) {
+            playTone('correct');
+            if (s.activeCol === 'units') {
+              s.ansUnits = v;
+              s.activeCol = 'tens';
+              s.step = 'check_can_sub';
+            } else if (s.activeCol === 'tens') {
+              s.ansTens = v;
+              if (s.hTop > 0 || s.hBot > 0) {
+                s.activeCol = 'hundreds';
+                s.step = 'calc_col';
+              } else {
+                s.step = 'complete';
+                streak++; score += 20; updateStats();
+              }
+            } else if (s.activeCol === 'hundreds') {
+              s.ansHundreds = v;
+              s.step = 'complete';
+              streak++; score += 20; updateStats();
+            }
+            clearInput();
+            renderSubtractionView();
+          } else {
+            playTone('wrong');
+            flashFeedback(`Check your difference: ${topD} − ${botD}`, false);
+          }
+        }
+        return;
+      }
+
+      // Modules 3 through 9 Answer Evaluation
+      if (currentModule === 8) {
+        if (currentQ.selectedOption === null) {
+          playTone('wrong');
+          flashFeedback('Please select a diagnostic option first!', false);
+          return;
+        }
+        if (activeInput.trim() === '') {
+          playTone('wrong');
+          flashFeedback('Enter the corrected calculation on the keypad!', false);
+          return;
+        }
+      } else {
+        if (activeInput.trim() === '') return;
+      }
+
+      const userVal = activeInput.trim();
+      const expected = currentQ.answer.toString().trim();
+      const cleanUser = userVal.replace(/,/g, '');
+      const cleanExpected = expected.replace(/,/g, '');
+
+      let isCorrect = (cleanUser === cleanExpected);
+
+      if (currentModule === 8) {
+        const optionCorrect = currentQ.caseData.options[currentQ.selectedOption].correct;
+        isCorrect = isCorrect && optionCorrect;
+      }
+
+      if (isCorrect) {
+        playTone('correct');
+        streak++;
+        score += 15;
+        updateStats();
+        unlockVisualModel();
+        flashFeedback(`⭐ Outstanding Thinking! Correct answer is ${currentQ.answer}`, true);
+      } else {
+        playTone('wrong');
+        streak = 0;
+        updateStats();
+        flashFeedback('Check your calculation and try again!', false);
+        clearInput();
+      }
+    }
+
+    /* ---------------------------------------------------------------------
+       MODULE 1: COLUMN ADDITION WITH CARRYING & PROMPT FLOW
+       --------------------------------------------------------------------- */
+    function initAdditionModule(stage) {
+      document.getElementById('visualHeaderTitle').textContent = 'Base-10 Regrouping & Place Value Mat';
+      document.getElementById('visualStatusBadge').textContent = 'Live Manipulatives Sync';
+
+      if (addLvl === 1) {
+        const t1 = Math.floor(Math.random() * 4) + 2;
+        const u1 = Math.floor(Math.random() * 4) + 6;
+        const t2 = Math.floor(Math.random() * 3) + 1;
+        const u2 = Math.floor(Math.random() * 4) + 5;
+        addState.top = t1 * 10 + u1;
+        addState.bottom = t2 * 10 + u2;
+      } else {
+        const h1 = Math.floor(Math.random() * 3) + 2;
+        const t1 = Math.floor(Math.random() * 4) + 6;
+        const u1 = Math.floor(Math.random() * 4) + 6;
+        const h2 = Math.floor(Math.random() * 2) + 1;
+        const t2 = Math.floor(Math.random() * 4) + 5;
+        const u2 = Math.floor(Math.random() * 4) + 5;
+        addState.top = h1 * 100 + t1 * 10 + u1;
+        addState.bottom = h2 * 100 + t2 * 10 + u2;
+      }
+
+      addState.step = 'calc_units';
+      addState.uCarry = 0;
+      addState.tCarry = 0;
+      addState.ansUnits = null;
+      addState.ansTens = null;
+      addState.ansHundreds = null;
+      currentQ = { module: 1, top: addState.top, bottom: addState.bottom };
+
+      renderAdditionView();
+    }
+
+    function renderAdditionView() {
+      const a = addState;
+      const stage = document.getElementById('stageContentContainer');
+      const topDigits = a.top.toString().padStart(3, ' ').split('');
+      const botDigits = a.bottom.toString().padStart(3, ' ').split('');
+      const u1 = parseInt(topDigits[2], 10);
+      const u2 = parseInt(botDigits[2], 10);
+
+      let promptGuide = '';
+      if (a.step === 'calc_units') {
+        promptGuide = `Add the Units column: What is <span class="text-cyan-400 font-bold">${u1} + ${u2}</span>?`;
+      } else if (a.step === 'ask_carry_val') {
+        promptGuide = `Regrouping check: Unit digit <span class="text-amber-400 font-bold">${a.ansUnits}</span> stays in Units. Tap below to carry 1 Ten!`;
+      } else if (a.step === 'calc_tens') {
+        const t1 = parseInt(topDigits[1], 10);
+        const t2 = parseInt(botDigits[1], 10);
+        promptGuide = `Now add the Tens column (including the carried 1): <span class="text-cyan-400 font-bold">${t1} + ${t2} + ${a.uCarry} = ?</span>`;
+      } else if (a.step === 'complete') {
+        promptGuide = `🎉 Calculation complete: ${a.top} + ${a.bottom} = ${a.top + a.bottom}!`;
+      }
+
+      stage.innerHTML = `
+        <div class="text-[11px] font-mono uppercase tracking-wider text-cyan-400 font-semibold mb-2">Column Addition with Regrouping</div>
+        <div class="w-full flex flex-col md:flex-row items-center justify-around gap-6">
+          <div class="bg-slate-950 p-4 rounded-2xl border-2 border-slate-800 shadow-xl">
+            <div class="algo-grid">
+              <div class="grid-header"></div>
+              <div class="grid-header">H</div>
+              <div class="grid-header">T</div>
+              <div class="grid-header">U</div>
+
+              <div class="carry-row-slot"></div>
+              <div class="carry-row-slot">${a.tCarry > 0 ? a.tCarry : ''}</div>
+              <div class="carry-row-slot font-bold text-cyan-400">${a.uCarry > 0 ? a.uCarry : ''}</div>
+              <div class="carry-row-slot"></div>
+
+              <div class="cell"></div>
+              <div class="cell">${topDigits[0].trim()}</div>
+              <div class="cell">${topDigits[1]}</div>
+              <div class="cell">${topDigits[2]}</div>
+
+              <div class="cell text-amber-400 font-bold">+</div>
+              <div class="cell">${botDigits[0].trim()}</div>
+              <div class="cell">${botDigits[1]}</div>
+              <div class="cell">${botDigits[2]}</div>
+
+              <div class="col-span-4 h-1 bg-slate-700 rounded my-1"></div>
+
+              <div class="cell"></div>
+              <div class="cell ans-slot ${a.ansHundreds!==null?'filled':''}">${a.ansHundreds!==null?a.ansHundreds:''}</div>
+              <div class="cell ans-slot ${a.ansTens!==null?'filled':''}">${a.ansTens!==null?a.ansTens:''}</div>
+              <div class="cell ans-slot ${a.ansUnits!==null?'filled':''}">${a.ansUnits!==null?a.ansUnits:''}</div>
+            </div>
+          </div>
+
+          <div class="max-w-md w-full bg-slate-950/80 p-4 rounded-2xl border border-slate-800 flex flex-col gap-3">
+            <div class="text-xs font-mono text-cyan-400 uppercase tracking-wider">Step-by-Step Column Prompt:</div>
+            <div class="text-base sm:text-lg font-kids text-slate-200">${promptGuide}</div>
+            ${a.step === 'ask_carry_val' ? `
+              <button onclick="handleCarryUnitsPick()" class="w-full py-3 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-kids font-bold rounded-xl transition shadow">
+                ✨ Bundle 10 Units ➔ Carry 1 Ten
+              </button>
+            ` : ''}
+            ${a.step === 'complete' ? `
+              <button onclick="generateQuestion()" class="w-full py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-kids font-bold rounded-xl transition shadow">
+                Next Calculation ➔
+              </button>
+            ` : ''}
+          </div>
+        </div>
+      `;
+
+      renderBase10Mat(a.top, a.bottom, a.uCarry);
+      clearInput();
+    }
+
+    function handleCarryUnitsPick() {
+      playTone('click');
+      addState.uCarry = 1;
+      addState.step = 'calc_tens';
+      renderAdditionView();
+    }
+
+    function renderBase10Mat(top, bottom, carry) {
+      const area = document.getElementById('visualDisplayArea');
+      const topT = Math.floor((top % 100) / 10);
+      const topU = top % 10;
+      const botT = Math.floor((bottom % 100) / 10);
+      const botU = bottom % 10;
+
+      let topRods = Array(topT).fill('🟩').join(' ');
+      let topCubes = Array(topU).fill('🟨').join(' ');
+      let botRods = Array(botT).fill('🟩').join(' ');
+      let botCubes = Array(botU).fill('🟨').join(' ');
+
+      area.innerHTML = `
+        <div class="w-full max-w-lg grid grid-cols-2 gap-3 font-kids text-xs sm:text-sm animate-pop">
+          <div class="bg-slate-900 border border-slate-800 p-3 rounded-xl flex flex-col items-center">
+            <span class="text-cyan-400 font-bold mb-1">Tens (10s Rods)</span>
+            <div class="text-base sm:text-xl py-1 min-h-[32px]">${topRods || '—'}</div>
+            <div class="text-base sm:text-xl py-1 border-t border-slate-800 w-full text-center">${botRods || '—'}</div>
+            ${carry > 0 ? `<div class="mt-1 text-emerald-400 font-bold text-xs bg-emerald-950 px-2 py-0.5 rounded border border-emerald-500/50">+1 Regrouped Ten (Carry)</div>` : ''}
+          </div>
+          <div class="bg-slate-900 border border-slate-800 p-3 rounded-xl flex flex-col items-center">
+            <span class="text-amber-400 font-bold mb-1">Units (1s Cubes)</span>
+            <div class="text-base sm:text-xl py-1 min-h-[32px]">${topCubes || '—'}</div>
+            <div class="text-base sm:text-xl py-1 border-t border-slate-800 w-full text-center">${botCubes || '—'}</div>
+            <div class="mt-1 text-slate-400 text-[11px] font-mono">10 Units = 1 Ten</div>
+          </div>
+        </div>
+      `;
+    }
+
+    /* ---------------------------------------------------------------------
+       MODULE 2: STEP-BY-STEP SUBTRACTION BORROWING FLOW
+       --------------------------------------------------------------------- */
+    function initSubtractionModule(stage) {
+      document.getElementById('visualHeaderTitle').textContent = 'Subtraction Decomposition & Exchange Mat';
+      document.getElementById('visualStatusBadge').textContent = 'Anti-Reversal Guard Active';
+
+      if (subLvl === 1) {
+        const tens = Math.floor(Math.random() * 5) + 3;
+        const uTop = Math.floor(Math.random() * 4) + 1;
+        const subTens = Math.floor(Math.random() * (tens - 2)) + 1;
+        const uBot = Math.floor(Math.random() * 4) + 6;
+        subState.top = tens * 10 + uTop;
+        subState.bottom = subTens * 10 + uBot;
+        subState.hTop = 0; subState.tTop = tens; subState.uTop = uTop;
+        subState.hBot = 0; subState.tBot = subTens; subState.uBot = uBot;
+      } else if (subLvl === 2) {
+        const h = Math.floor(Math.random() * 4) + 2;
+        const t = Math.floor(Math.random() * 5) + 2;
+        const u = Math.floor(Math.random() * 3) + 1;
+        const hSub = Math.floor(Math.random() * (h - 1)) + 1;
+        const tSub = Math.floor(Math.random() * t);
+        const uSub = Math.floor(Math.random() * 4) + 6;
+        subState.top = h * 100 + t * 10 + u;
+        subState.bottom = hSub * 100 + tSub * 10 + uSub;
+        subState.hTop = h; subState.tTop = t; subState.uTop = u;
+        subState.hBot = hSub; subState.tBot = tSub; subState.uBot = uSub;
+      } else {
+        const h = Math.floor(Math.random() * 4) + 3;
+        const t = 0;
+        const u = Math.floor(Math.random() * 4) + 1;
+        const hSub = Math.floor(Math.random() * (h - 2)) + 1;
+        const tSub = Math.floor(Math.random() * 5) + 3;
+        const uSub = Math.floor(Math.random() * 4) + 6;
+        subState.top = h * 100 + t * 10 + u;
+        subState.bottom = hSub * 100 + tSub * 10 + uSub;
+        subState.hTop = h; subState.tTop = t; subState.uTop = u;
+        subState.hBot = hSub; subState.tBot = tSub; subState.uBot = uSub;
+      }
+
+      subState.originalTop = subState.top;
+      subState.uBorrowDone = false;
+      subState.tBorrowDone = false;
+      subState.activeCol = 'units';
+      subState.step = 'check_can_sub';
+      subState.ansUnits = null;
+      subState.ansTens = null;
+      subState.ansHundreds = null;
+      currentQ = { module: 2, top: subState.top, bottom: subState.bottom };
+
+      renderSubtractionView();
+    }
+
+    function renderSubtractionView() {
+      const stage = document.getElementById('stageContentContainer');
+      const s = subState;
+
+      const hTopDisplay = s.hTop > 0 ? s.hTop : '';
+      const hBotDisplay = s.hBot > 0 ? s.hBot : '';
+      const uTopClass = s.uBorrowDone ? 'striked' : '';
+      const tTopClass = s.tBorrowDone ? 'striked' : '';
+      const uNewDisplay = s.uBorrowDone ? `<span class="cell-borrowed-new">${s.uTop}</span>` : '';
+      const tNewDisplay = s.tBorrowDone ? `<span class="cell-borrowed-new">${s.tTop}</span>` : '';
+
+      let guideContent = '';
+      if (s.step === 'check_can_sub') {
+        const topD = s.activeCol === 'units' ? s.uTop : s.tTop;
+        const botD = s.activeCol === 'units' ? s.uBot : s.tBot;
+        guideContent = `
+          <div class="text-xs font-mono text-cyan-400 uppercase tracking-wider">Step Check:</div>
+          <div class="text-base sm:text-lg font-kids text-slate-200">
+            Can we subtract the ${s.activeCol.toUpperCase()} column (<span class="text-cyan-400 font-bold">${topD} − ${botD}</span>) without borrowing?
+          </div>
+          <div class="flex gap-2.5 mt-2">
+            <button onclick="handleSubCheckChoice(true)" class="flex-1 py-2.5 bg-slate-800 hover:bg-slate-700 text-emerald-400 font-kids font-bold rounded-xl border border-emerald-500/40 transition">
+              Yes, we can
+            </button>
+            <button onclick="handleSubCheckChoice(false)" class="flex-1 py-2.5 bg-slate-800 hover:bg-slate-700 text-rose-400 font-kids font-bold rounded-xl border border-rose-500/40 transition">
+              No, need to borrow
+            </button>
+          </div>
+        `;
+      } else if (s.step === 'ask_how_many') {
+        guideContent = `
+          <div class="text-xs font-mono text-cyan-400 uppercase tracking-wider">Exchange Step:</div>
+          <div class="text-base sm:text-lg font-kids text-slate-200">
+            Correct! We need to borrow. Tap to exchange 1 Ten from the column to the left:
+          </div>
+          <button onclick="handleBorrowQtySubmit(1)" class="w-full mt-2 py-3 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-kids font-bold rounded-xl transition shadow">
+            💥 Unpack 1 Ten ➔ 10 Units
+          </button>
+        `;
+      } else if (s.step === 'ask_lender_new') {
+        const oldVal = s.tTop;
+        guideContent = `
+          <div class="text-xs font-mono text-cyan-400 uppercase tracking-wider">Tens Column Regroup:</div>
+          <div class="text-base sm:text-lg font-kids text-slate-200">
+            The Tens column had <strong>${oldVal}</strong> and gave away 1 ten. What does it become?
+          </div>
+          <div class="text-xs text-slate-400 mt-1 font-mono">Type the new tens digit on the numpad and press Check Answer!</div>
+        `;
+      } else if (s.step === 'ask_target_new') {
+        const oldUnits = s.uTop - 10;
+        guideContent = `
+          <div class="text-xs font-mono text-cyan-400 uppercase tracking-wider">Units Column Regroup:</div>
+          <div class="text-base sm:text-lg font-kids text-slate-200">
+            1 ten became 10 units! Add them to your ${oldUnits} units. What does the Units column become?
+          </div>
+          <div class="text-xs text-slate-400 mt-1 font-mono">Type the regrouped units value on the numpad and press Check Answer!</div>
+        `;
+      } else if (s.step === 'calc_col') {
+        const topD = s.activeCol === 'units' ? s.uTop : (s.activeCol === 'tens' ? s.tTop : s.hTop);
+        const botD = s.activeCol === 'units' ? s.uBot : (s.activeCol === 'tens' ? s.tBot : s.hBot);
+        guideContent = `
+          <div class="text-xs font-mono text-cyan-400 uppercase tracking-wider">Now Subtract ${s.activeCol.toUpperCase()}:</div>
+          <div class="text-2xl font-kids text-amber-300 font-bold mt-1">
+            ${topD} − ${botD} = ?
+          </div>
+          <div class="text-xs text-slate-400 mt-1 font-mono">Calculate the difference and enter it using the keypad.</div>
+        `;
+      } else if (s.step === 'complete') {
+        guideContent = `
+          <div class="text-xs font-mono text-emerald-400 uppercase tracking-wider">Calculation Complete:</div>
+          <div class="text-2xl font-kids text-emerald-300 font-bold mt-1">
+            ${s.originalTop} − ${s.bottom} = ${s.originalTop - s.bottom}
+          </div>
+          <button onclick="generateQuestion()" class="w-full mt-2 py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-kids font-bold rounded-xl transition shadow">
+            Next Subtraction ➔
+          </button>
+        `;
+      }
+
+      stage.innerHTML = `
+        <div class="text-[11px] font-mono uppercase tracking-wider text-cyan-400 font-semibold mb-2">Column Subtraction with Decomposition</div>
+        <div class="w-full flex flex-col md:flex-row items-center justify-around gap-6">
+          <div class="bg-slate-950 p-4 rounded-2xl border-2 border-slate-800 shadow-xl">
+            <div class="algo-grid">
+              <div class="grid-header"></div>
+              <div class="grid-header">H</div>
+              <div class="grid-header">T</div>
+              <div class="grid-header">U</div>
+
+              <div class="cell"></div>
+              <div class="cell">${hTopDisplay}</div>
+              <div class="cell ${tTopClass}">${s.tTop}${tNewDisplay}</div>
+              <div class="cell ${uTopClass}">${s.uTop}${uNewDisplay}</div>
+
+              <div class="cell text-rose-400 font-bold">−</div>
+              <div class="cell">${hBotDisplay}</div>
+              <div class="cell">${s.tBot}</div>
+              <div class="cell">${s.uBot}</div>
+
+              <div class="col-span-4 h-1 bg-slate-700 rounded my-1"></div>
+
+              <div class="cell"></div>
+              <div class="cell ans-slot ${s.ansHundreds!==null?'filled':''}">${s.ansHundreds!==null?s.ansHundreds:''}</div>
+              <div class="cell ans-slot ${s.ansTens!==null?'filled':''}">${s.ansTens!==null?s.ansTens:''}</div>
+              <div class="cell ans-slot ${s.ansUnits!==null?'filled':''}">${s.ansUnits!==null?s.ansUnits:''}</div>
+            </div>
+          </div>
+
+          <div class="max-w-md w-full bg-slate-950/80 p-4 rounded-2xl border border-slate-800 flex flex-col gap-2">
+            ${guideContent}
+          </div>
+        </div>
+      `;
+
+      renderBase10Mat(s.uTop, s.bottom, 0);
+      clearInput();
+    }
+
+    function handleSubCheckChoice(userSaidYes) {
+      const s = subState;
+      const topD = s.activeCol === 'units' ? s.uTop : s.tTop;
+      const botD = s.activeCol === 'units' ? s.uBot : s.tBot;
+
+      if (userSaidYes) {
+        if (topD < botD) {
+          playTone('wrong');
+          flashFeedback(`⚠️ REVERSAL TRAP: ${topD} is smaller than ${botD}. You cannot flip it to ${botD} − ${topD}! Unpack a ten!`, false);
+        } else {
+          playTone('click');
+          s.step = 'calc_col';
+          renderSubtractionView();
+        }
+      } else {
+        if (topD >= botD) {
+          playTone('wrong');
+          flashFeedback(`Look closely: ${topD} is greater than ${botD}. You can subtract without borrowing!`, false);
+        } else {
+          playTone('click');
+          s.step = 'ask_how_many';
+          renderSubtractionView();
+        }
+      }
+    }
+
+    function handleBorrowQtySubmit(qty) {
+      playTone('click');
+      subState.step = 'ask_lender_new';
+      renderSubtractionView();
+    }
+
+    /* ---------------------------------------------------------------------
+       MODULE 3: PLACE VALUE ADD-ON MACHINE (10, 20... 1000)
+       --------------------------------------------------------------------- */
+    function initAddOnModule(stage) {
+      document.getElementById('visualHeaderTitle').textContent = 'Place Value Anchor Spotlight';
+      document.getElementById('visualStatusBadge').textContent = 'Direct Mental Scaling';
+
+      const isAdd = Math.random() > 0.4;
+      let base, change;
+
+      if (addOnLvl === 1) {
+        const t = Math.floor(Math.random() * 4) + 2;
+        const addT = Math.floor(Math.random() * 3) + 1;
+        base = Math.floor(Math.random() * 5 + 1) * 100 + t * 10 + Math.floor(Math.random() * 9 + 1);
+        change = addT * 10;
+      } else if (addOnLvl === 2) {
+        base = Math.floor(Math.random() * 4 + 2) * 100 + (Math.floor(Math.random() * 3) + 7) * 10 + 5;
+        change = (Math.floor(Math.random() * 3) + 3) * 10;
+      } else if (addOnLvl === 3) {
+        base = Math.floor(Math.random() * 4 + 1) * 1000 + Math.floor(Math.random() * 4 + 1) * 100 + 40;
+        change = (Math.floor(Math.random() * 4) + 2) * 100;
+      } else if (addOnLvl === 4) {
+        base = Math.floor(Math.random() * 3 + 1) * 1000 + (Math.floor(Math.random() * 3) + 7) * 100 + 20;
+        change = (Math.floor(Math.random() * 3) + 4) * 100;
+      } else {
+        base = Math.floor(Math.random() * 3 + 1) * 1000 + Math.floor(Math.random() * 8 + 1) * 100 + 25;
+        change = (Math.floor(Math.random() * 3) + 1) * 1000;
+      }
+
+      const total = isAdd ? base + change : base - change;
+      currentQ = {
+        module: 3,
+        base: base,
+        change: change,
+        isAdd: isAdd,
+        answer: total.toString()
+      };
+
+      stage.innerHTML = `
+        <div class="text-[11px] font-mono uppercase tracking-wider text-cyan-400 font-semibold mb-1">Place Value Add-On (±10, 20... 1000)</div>
+        <div class="bg-slate-950 border-2 border-slate-800 px-6 py-3 rounded-2xl flex items-center justify-center gap-3 font-kids text-3xl sm:text-5xl font-bold tracking-wider shadow-inner text-cyan-300 min-h-[78px] mb-2">
+          <span>${base}</span>
+          <span class="text-amber-400">${isAdd ? '+' : '−'}</span>
+          <span class="text-indigo-400">${change}</span>
+          <span class="text-slate-400">=</span>
+          <span class="text-amber-300 underline decoration-dashed">?</span>
+        </div>
+        <p class="text-xs sm:text-sm text-slate-300 text-center max-w-xl">
+          Mental Strategy: Keep the unaffected columns locked! Modify only the active place value unit.
+        </p>
+      `;
+
+      const area = document.getElementById('visualDisplayArea');
+      area.innerHTML = `
+        <div class="w-full max-w-md grid grid-cols-4 gap-2 text-center font-kids">
+          <div class="p-2.5 rounded-xl border ${change>=1000?'border-cyan-400 bg-cyan-950/30 text-cyan-300':'border-slate-800 bg-slate-900 text-slate-400'}">
+            <span class="text-[10px] block">Th (1000)</span>
+            <span class="text-xl font-bold">${Math.floor(base/1000)||'0'}</span>
+          </div>
+          <div class="p-2.5 rounded-xl border ${change>=100&&change<1000?'border-cyan-400 bg-cyan-950/30 text-cyan-300':'border-slate-800 bg-slate-900 text-slate-400'}">
+            <span class="text-[10px] block">H (100)</span>
+            <span class="text-xl font-bold">${Math.floor((base%1000)/100)}</span>
+          </div>
+          <div class="p-2.5 rounded-xl border ${change>=10&&change<100?'border-cyan-400 bg-cyan-950/30 text-cyan-300':'border-slate-800 bg-slate-900 text-slate-400'}">
+            <span class="text-[10px] block">T (10)</span>
+            <span class="text-xl font-bold">${Math.floor((base%100)/10)}</span>
+          </div>
+          <div class="p-2.5 rounded-xl border border-slate-800 bg-slate-900 text-slate-400">
+            <span class="text-[10px] block">U (1)</span>
+            <span class="text-xl font-bold">${base%10}</span>
+          </div>
+        </div>
+      `;
+    }
+
+    /* ---------------------------------------------------------------------
+       MODULE 9: INVERSE FACT FAMILY TRIANGLES
+       --------------------------------------------------------------------- */
+    function initInverseModule(stage) {
+      document.getElementById('visualHeaderTitle').textContent = 'Multiplicative Fact Triangle';
+      document.getElementById('visualStatusBadge').textContent = 'Inverse Relationships';
+
+      const tables = [3, 4, 6, 7, 8, 9, 12];
+      const a = tables[Math.floor(Math.random() * tables.length)];
+      const b = Math.floor(Math.random() * 8) + 2;
+      const prod = a * b;
+
+      let mode = mod9Mode;
+      if (mode === 'mixed') {
+        const modes = ['missing_product', 'missing_factor', 'division'];
+        mode = modes[Math.floor(Math.random() * modes.length)];
+      }
+
+      let ans, promptEq;
+      if (mode === 'missing_product') {
+        ans = prod.toString();
+        promptEq = `${a} × ${b} = ?`;
+      } else if (mode === 'missing_factor') {
+        ans = b.toString();
+        promptEq = `${a} × ? = ${prod}`;
+      } else {
+        ans = a.toString();
+        promptEq = `${prod} ÷ ${b} = ?`;
+      }
+
+      currentQ = {
+        module: 9,
+        a: a,
+        b: b,
+        prod: prod,
+        answer: ans
+      };
+
+      stage.innerHTML = `
+        <div class="text-[11px] font-mono uppercase tracking-wider text-cyan-400 font-semibold mb-1">Inverse Fact Family Triangle</div>
+        <div class="bg-slate-950 border-2 border-slate-800 px-6 py-3 rounded-2xl flex items-center justify-center gap-3 font-kids text-3xl sm:text-5xl font-bold tracking-wider shadow-inner text-cyan-300 min-h-[78px] mb-2">
+          ${promptEq.replace('?', '<span class="text-amber-300 underline decoration-dashed">?</span>')}
+        </div>
+        <p class="text-xs sm:text-sm text-slate-300 text-center max-w-xl">
+          Use the inverse link: multiplication and division are opposites!
+        </p>
+      `;
+
+      const area = document.getElementById('visualDisplayArea');
+      area.innerHTML = `
+        <div class="flex flex-col items-center gap-2 animate-pop">
+          <svg viewBox="0 0 200 160" class="w-44 h-36">
+            <polygon points="100,20 25,140 175,140" fill="#0f172a" stroke="#38bdf8" stroke-width="4"/>
+            <circle cx="100" cy="24" r="20" fill="#090d16" stroke="#c084fc" stroke-width="3"/>
+            <text x="100" y="30" text-anchor="middle" fill="#c084fc" font-size="14" font-weight="bold">${mode==='missing_product'?'?':prod}</text>
+            <circle cx="35" cy="135" r="18" fill="#090d16" stroke="#38bdf8" stroke-width="3"/>
+            <text x="35" y="140" text-anchor="middle" fill="#38bdf8" font-size="13" font-weight="bold">${a}</text>
+            <circle cx="165" cy="135" r="18" fill="#090d16" stroke="#34d399" stroke-width="3"/>
+            <text x="165" y="140" text-anchor="middle" fill="#34d399" font-size="13" font-weight="bold">${mode==='missing_factor'?'?':b}</text>
+          </svg>
+        </div>
+      `;
+    }
+
+    /* ---------------------------------------------------------------------
+       KEYPAD & INPUT HANDLING
+       --------------------------------------------------------------------- */
+    function keypadAction(val) {
+      if (isProcessing) return;
+      playTone('click');
+      if (val === 'clear') {
+        clearInput();
+      } else if (val === 'backspace') {
+        activeInput = activeInput.slice(0, -1);
+        updateInputScreen();
+      } else {
+        if (activeInput.length < 8) {
+          activeInput += val.toString();
+          updateInputScreen();
+        }
+      }
+    }
+
+    function clearInput() {
+      activeInput = '';
+      updateInputScreen();
+    }
+
+    function updateInputScreen() {
+      const scr = document.getElementById('inputScreen');
+      if (scr) scr.textContent = activeInput === '' ? '?' : activeInput;
+    }
+
+    function clearFeedback() {
+      const fb = document.getElementById('feedbackBanner');
+      if (fb) fb.textContent = '';
+    }
+
+    function flashFeedback(msg, isSuccess) {
+      const fb = document.getElementById('feedbackBanner');
+      if (fb) {
+        fb.textContent = msg;
+        fb.className = `w-full text-center text-sm sm:text-base font-bold min-h-[26px] transition-all ${
+          isSuccess ? 'text-emerald-400 animate-pop' : 'text-rose-400'
+        }`;
+      }
+    }
+
+    function updateStats() {
+      document.getElementById('streakBadge').textContent = `🔥 ${streak}`;
+      document.getElementById('scoreDisplay').textContent = score;
+    }
+
+    function resetMetrics() {
+      streak = 0;
+      score = 0;
+      updateStats();
+      generateQuestion();
+    }
+
+    function setupKeyboard() {
+      window.addEventListener('keydown', (e) => {
+        if ((e.key >= '0' && e.key <= '9') || e.key === '.') {
+          keypadAction(e.key);
+        } else if (e.key === 'Enter') {
+          submitAnswer();
+        } else if (e.key === 'Backspace') {
+          keypadAction('backspace');
+        } else if (e.key === 'Escape') {
+          keypadAction('clear');
+        }
+      });
+    }
+  </script>
+</body>
+</html>
