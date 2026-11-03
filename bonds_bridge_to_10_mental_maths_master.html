@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bonds & Bridge to 10: Mental Maths Master</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Inter & Fredoka -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+    }
+    .font-kids {
+      font-family: 'Fredoka', cursive, sans-serif;
+    }
+    @keyframes popIn {
+      0% { transform: scale(0.6); opacity: 0; }
+      70% { transform: scale(1.1); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .animate-pop {
+      animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+    .ten-frame-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      grid-template-rows: repeat(2, minmax(0, 1fr));
+      gap: 0.65rem;
+    }
+    .counter-cell {
+      aspect-ratio: 1 / 1;
+      border: 2.5px dashed rgba(255, 255, 255, 0.22);
+      border-radius: 9999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+    .counter-circle {
+      width: 86%;
+      height: 86%;
+      border-radius: 9999px;
+      box-shadow: inset 0 -3px 5px rgba(0,0,0,0.35), 0 3px 6px rgba(0,0,0,0.35);
+      transition: transform 0.25s ease;
+    }
+  </style>
+</head>
+<body class="bg-slate-900 text-white min-h-screen flex flex-col justify-between p-2 sm:p-4 selection:bg-amber-400 selection:text-slate-950">
+
+  <!-- TOP HEADER & PRIMARY NAVIGATION -->
+  <header class="max-w-4xl w-full mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 pb-2 border-b border-slate-800">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-amber-500 flex items-center justify-center font-kids font-bold text-slate-950 text-xl shadow-lg">
+        B10
+      </div>
+      <div>
+        <h1 class="font-kids text-xl sm:text-2xl font-bold tracking-wide text-amber-400">Bonds & Bridge to 10</h1>
+        <p class="text-xs text-slate-400">Part-Whole Foundations & Tens Crossing • NI Curriculum</p>
+      </div>
+    </div>
+
+    <!-- PRIMARY MODES SELECTOR -->
+    <nav class="flex items-center bg-slate-800/90 p-1 rounded-xl border border-slate-700 text-xs sm:text-sm font-semibold">
+      <button id="navModeBonds" onclick="switchMainMode('bonds')" class="px-3 py-1.5 rounded-lg transition-all bg-amber-500 text-slate-950 shadow font-bold">
+        1. Bonds Within 10
+      </button>
+      <button id="navModeBridge" onclick="switchMainMode('bridge')" class="px-3 py-1.5 rounded-lg transition-all text-slate-300 hover:text-white">
+        2. Guided Bridging
+      </button>
+      <button id="navModeRush" onclick="switchMainMode('rush')" class="px-3 py-1.5 rounded-lg transition-all text-slate-300 hover:text-white">
+        3. Fast Fire Rush
+      </button>
+    </nav>
+  </header>
+
+  <!-- SUB-BAR: TARGET SELECTION & STATS -->
+  <section class="max-w-4xl w-full mx-auto my-2 flex flex-wrap items-center justify-between gap-2 text-xs sm:text-sm bg-slate-800/50 p-2.5 rounded-xl border border-slate-800">
+    <!-- Bonds Sub-filter -->
+    <div id="bondsTargetSelector" class="flex items-center gap-1.5 flex-wrap">
+      <span class="text-slate-400 text-xs font-medium mr-1">Target Number Bond:</span>
+      <button onclick="setBondsTarget(5)" class="bond-btn px-2.5 py-1 rounded-md text-xs font-bold bg-slate-700 hover:bg-slate-600">Bonds to 5</button>
+      <button onclick="setBondsTarget(6)" class="bond-btn px-2.5 py-1 rounded-md text-xs font-bold bg-slate-700 hover:bg-slate-600">6</button>
+      <button onclick="setBondsTarget(7)" class="bond-btn px-2.5 py-1 rounded-md text-xs font-bold bg-amber-500 text-slate-950">7</button>
+      <button onclick="setBondsTarget(8)" class="bond-btn px-2.5 py-1 rounded-md text-xs font-bold bg-slate-700 hover:bg-slate-600">8</button>
+      <button onclick="setBondsTarget(9)" class="bond-btn px-2.5 py-1 rounded-md text-xs font-bold bg-slate-700 hover:bg-slate-600">9</button>
+      <button onclick="setBondsTarget(10)" class="bond-btn px-2.5 py-1 rounded-md text-xs font-bold bg-slate-700 hover:bg-slate-600">Bonds to 10</button>
+      <button onclick="setBondsTarget('mixed')" class="bond-btn px-2.5 py-1 rounded-md text-xs font-bold bg-slate-700 hover:bg-slate-600">Mixed (5-10)</button>
+    </div>
+
+    <!-- Bridging Sub-filter (Hidden in Bonds mode) -->
+    <div id="bridgeTierSelector" class="hidden flex items-center gap-1.5 flex-wrap">
+      <span class="text-slate-400 text-xs font-medium mr-1">Bridging Level:</span>
+      <button onclick="setBridgeTier('single')" class="tier-btn px-2.5 py-1 rounded-md text-xs font-bold bg-amber-500 text-slate-950">Bridge 10 (e.g. 8 + 5)</button>
+      <button onclick="setBridgeTier('decade')" class="tier-btn px-2.5 py-1 rounded-md text-xs font-bold bg-slate-700 hover:bg-slate-600">Decade Bridge (e.g. 28 + 6)</button>
+    </div>
+
+    <!-- Live Metrics -->
+    <div class="flex items-center gap-4 font-kids ml-auto">
+      <div class="flex items-center gap-1.5 text-amber-400 font-bold">
+        <span>Streak:</span>
+        <span id="streakCount">🔥 0</span>
+      </div>
+      <div class="flex items-center gap-1.5 text-emerald-400 font-bold">
+        <span>Score:</span>
+        <span id="scoreDisplay">0</span>
+      </div>
+      <div id="timerContainer" class="hidden flex items-center gap-1 text-rose-400 font-bold">
+        <span>⏱️</span>
+        <span id="timeRemaining">60s</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAIN INTERACTIVE STAGE -->
+  <main class="max-w-3xl w-full mx-auto bg-slate-800/80 rounded-2xl border border-slate-700/80 shadow-2xl p-4 sm:p-6 flex flex-col items-center justify-between gap-4 flex-grow my-1 relative overflow-hidden">
+    
+    <!-- QUESTION DISPLAY PANEL -->
+    <div class="w-full flex flex-col items-center">
+      <div id="equationBox" class="bg-slate-900/90 border-2 border-slate-700 px-8 py-3 rounded-2xl flex items-center justify-center gap-3.5 font-kids text-5xl sm:text-6xl font-bold tracking-wider shadow-inner text-amber-300 min-h-[85px]">
+        <!-- Dynamic math equation -->
+      </div>
+      
+      <!-- Guided Step Prompt -->
+      <div id="promptGuidance" class="mt-2 text-base sm:text-lg font-semibold text-slate-200 text-center min-h-[26px]">
+        What goes with 4 to make 7?
+      </div>
+    </div>
+
+    <!-- 3-WAY VISUAL REPRESENTATION TOGGLE BAR -->
+    <div class="w-full flex items-center justify-between text-xs px-2 text-slate-400">
+      <div class="flex items-center gap-1.5">
+        <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
+        <span id="visualTitle" class="font-semibold text-slate-300">Classroom Visualizer</span>
+      </div>
+      <div class="flex items-center gap-1 bg-slate-900/80 p-0.5 rounded-lg border border-slate-700">
+        <button id="toggleCherryBtn" onclick="switchVisualRep('cherry')" class="px-3 py-1.5 rounded text-xs font-bold transition-all bg-slate-700 text-white">
+          Cherry Diagram
+        </button>
+        <button id="toggleFrameBtn" onclick="switchVisualRep('frame')" class="px-3 py-1.5 rounded text-xs font-bold transition-all text-slate-400 hover:text-white">
+          Ten-Frame
+        </button>
+        <button id="toggleLineBtn" onclick="switchVisualRep('line')" class="px-3 py-1.5 rounded text-xs font-bold transition-all text-slate-400 hover:text-white">
+          Jump Line
+        </button>
+      </div>
+    </div>
+
+    <!-- DYNAMIC VISUAL CONTAINER -->
+    <div id="visualDisplayArea" class="w-full bg-slate-900/70 border border-slate-700/70 rounded-xl p-4 sm:p-6 flex items-center justify-center min-h-[220px]">
+      <!-- Visuals injected here (Large Cherry SVG, Ten-Frame, or Jump Line) -->
+    </div>
+
+    <!-- INPUT & NUMPAD CONTROLS -->
+    <div class="w-full max-w-md flex flex-col items-center gap-2">
+      <!-- Input Display Screen -->
+      <div class="w-full flex items-center justify-between gap-3">
+        <div id="activeInputScreen" class="flex-grow h-15 py-2 bg-slate-950 border-2 border-amber-400/80 rounded-xl flex items-center justify-center font-kids text-4xl font-bold text-amber-400 shadow-inner tracking-widest">
+          ?
+        </div>
+        <button onclick="clearCurrentInput()" class="px-5 h-15 bg-slate-700 hover:bg-slate-600 rounded-xl text-xs font-bold text-slate-200 uppercase tracking-wider active:scale-95 transition-all">
+          Clear
+        </button>
+      </div>
+
+      <!-- Quick Numpad Grid -->
+      <div class="grid grid-cols-10 gap-1.5 w-full">
+        <button onclick="pressDigit(1)" class="numpad-btn h-12 bg-slate-700/90 hover:bg-slate-600 text-white font-kids font-bold text-xl rounded-lg shadow active:scale-95 transition-all">1</button>
+        <button onclick="pressDigit(2)" class="numpad-btn h-12 bg-slate-700/90 hover:bg-slate-600 text-white font-kids font-bold text-xl rounded-lg shadow active:scale-95 transition-all">2</button>
+        <button onclick="pressDigit(3)" class="numpad-btn h-12 bg-slate-700/90 hover:bg-slate-600 text-white font-kids font-bold text-xl rounded-lg shadow active:scale-95 transition-all">3</button>
+        <button onclick="pressDigit(4)" class="numpad-btn h-12 bg-slate-700/90 hover:bg-slate-600 text-white font-kids font-bold text-xl rounded-lg shadow active:scale-95 transition-all">4</button>
+        <button onclick="pressDigit(5)" class="numpad-btn h-12 bg-slate-700/90 hover:bg-slate-600 text-white font-kids font-bold text-xl rounded-lg shadow active:scale-95 transition-all">5</button>
+        <button onclick="pressDigit(6)" class="numpad-btn h-12 bg-slate-700/90 hover:bg-slate-600 text-white font-kids font-bold text-xl rounded-lg shadow active:scale-95 transition-all">6</button>
+        <button onclick="pressDigit(7)" class="numpad-btn h-12 bg-slate-700/90 hover:bg-slate-600 text-white font-kids font-bold text-xl rounded-lg shadow active:scale-95 transition-all">7</button>
+        <button onclick="pressDigit(8)" class="numpad-btn h-12 bg-slate-700/90 hover:bg-slate-600 text-white font-kids font-bold text-xl rounded-lg shadow active:scale-95 transition-all">8</button>
+        <button onclick="pressDigit(9)" class="numpad-btn h-12 bg-slate-700/90 hover:bg-slate-600 text-white font-kids font-bold text-xl rounded-lg shadow active:scale-95 transition-all">9</button>
+        <button onclick="pressDigit(0)" class="numpad-btn h-12 bg-slate-700/90 hover:bg-slate-600 text-white font-kids font-bold text-xl rounded-lg shadow active:scale-95 transition-all">0</button>
+      </div>
+
+      <!-- Action Button -->
+      <button id="submitActionBtn" onclick="submitCurrentAnswer()" class="w-full h-14 py-3 mt-1 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 font-kids text-2xl font-bold text-slate-950 rounded-xl shadow-lg active:scale-98 transition-all flex items-center justify-center gap-2">
+        <span>Check Answer</span>
+        <span>✨</span>
+      </button>
+    </div>
+
+    <!-- FEEDBACK BANNER -->
+    <div id="feedbackBox" class="w-full text-center text-base sm:text-lg font-bold min-h-[26px] transition-all"></div>
+  </main>
+
+  <footer class="max-w-4xl w-full mx-auto text-center text-xs text-slate-500 pt-1">
+    Interactive Whiteboard & Tablet Friendly • Tap on-screen keypad or press 0-9 & Enter on keyboard
+  </footer>
+
+  <!-- CORE LOGIC & WEB AUDIO SCRIPT -->
+  <script>
+    let audioCtx = null;
+    function getAudioCtx() {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      return audioCtx;
+    }
+
+    function playSound(type) {
+      try {
+        const ctx = getAudioCtx();
+        const now = ctx.currentTime;
+
+        if (type === 'pop') {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(320, now);
+          osc.frequency.exponentialRampToValueAtTime(640, now + 0.08);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.linearRampToValueAtTime(0, now + 0.08);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.09);
+        } else if (type === 'correct') {
+          [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, now + i * 0.07);
+            gain.gain.setValueAtTime(0.25, now + i * 0.07);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.07 + 0.35);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now + i * 0.07);
+            osc.stop(now + i * 0.07 + 0.36);
+          });
+        } else if (type === 'tryAgain') {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(220, now);
+          osc.frequency.exponentialRampToValueAtTime(146, now + 0.25);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.linearRampToValueAtTime(0, now + 0.25);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.26);
+        }
+      } catch (e) {
+        console.warn('Audio play error:', e);
+      }
+    }
+
+    /* =====================================================================
+       STATE MANAGEMENT
+       ===================================================================== */
+    let currentMode = 'bonds';
+    let bondsTarget = 7;
+    let bridgeTier = 'single';
+    let activeVisual = 'cherry'; // 'cherry', 'frame', or 'line'
+
+    let currentInput = '';
+    let streak = 0;
+    let score = 0;
+    let questionData = {};
+    let bridgeStep = 1;
+    let isProcessing = false;
+
+    let timerInterval = null;
+    let rushTimeLeft = 60;
+
+    window.addEventListener('DOMContentLoaded', () => {
+      generateQuestion();
+      setupKeyboardListeners();
+    });
+
+    function switchMainMode(mode) {
+      playSound('pop');
+      currentMode = mode;
+      
+      document.querySelectorAll('header nav button').forEach(b => {
+        b.className = 'px-3 py-1.5 rounded-lg transition-all text-slate-300 hover:text-white';
+      });
+      if (mode === 'bonds') {
+        document.getElementById('navModeBonds').className = 'px-3 py-1.5 rounded-lg transition-all bg-amber-500 text-slate-950 shadow font-bold';
+        document.getElementById('bondsTargetSelector').classList.remove('hidden');
+        document.getElementById('bridgeTierSelector').classList.add('hidden');
+        document.getElementById('timerContainer').classList.add('hidden');
+        clearInterval(timerInterval);
+      } else if (mode === 'bridge') {
+        document.getElementById('navModeBridge').className = 'px-3 py-1.5 rounded-lg transition-all bg-amber-500 text-slate-950 shadow font-bold';
+        document.getElementById('bondsTargetSelector').classList.add('hidden');
+        document.getElementById('bridgeTierSelector').classList.remove('hidden');
+        document.getElementById('timerContainer').classList.add('hidden');
+        clearInterval(timerInterval);
+      } else if (mode === 'rush') {
+        document.getElementById('navModeRush').className = 'px-3 py-1.5 rounded-lg transition-all bg-amber-500 text-slate-950 shadow font-bold';
+        document.getElementById('bondsTargetSelector').classList.add('hidden');
+        document.getElementById('bridgeTierSelector').classList.add('hidden');
+        document.getElementById('timerContainer').classList.remove('hidden');
+        startRushTimer();
+      }
+
+      streak = 0;
+      updateMetrics();
+      generateQuestion();
+    }
+
+    function setBondsTarget(target) {
+      playSound('pop');
+      bondsTarget = target;
+      document.querySelectorAll('.bond-btn').forEach(btn => {
+        btn.className = 'bond-btn px-2.5 py-1 rounded-md text-xs font-bold bg-slate-700 hover:bg-slate-600 text-white';
+      });
+      event.target.className = 'bond-btn px-2.5 py-1 rounded-md text-xs font-bold bg-amber-500 text-slate-950';
+      generateQuestion();
+    }
+
+    function setBridgeTier(tier) {
+      playSound('pop');
+      bridgeTier = tier;
+      document.querySelectorAll('.tier-btn').forEach(btn => {
+        btn.className = 'tier-btn px-2.5 py-1 rounded-md text-xs font-bold bg-slate-700 hover:bg-slate-600 text-white';
+      });
+      event.target.className = 'tier-btn px-2.5 py-1 rounded-md text-xs font-bold bg-amber-500 text-slate-950';
+      generateQuestion();
+    }
+
+    function switchVisualRep(rep) {
+      playSound('pop');
+      activeVisual = rep;
+      
+      const cBtn = document.getElementById('toggleCherryBtn');
+      const fBtn = document.getElementById('toggleFrameBtn');
+      const lBtn = document.getElementById('toggleLineBtn');
+
+      [cBtn, fBtn, lBtn].forEach(b => {
+        b.className = 'px-3 py-1.5 rounded text-xs font-bold transition-all text-slate-400 hover:text-white';
+      });
+
+      if (rep === 'cherry') cBtn.className = 'px-3 py-1.5 rounded text-xs font-bold transition-all bg-slate-700 text-white';
+      else if (rep === 'frame') fBtn.className = 'px-3 py-1.5 rounded text-xs font-bold transition-all bg-slate-700 text-white';
+      else if (rep === 'line') lBtn.className = 'px-3 py-1.5 rounded text-xs font-bold transition-all bg-slate-700 text-white';
+
+      renderVisualizer();
+    }
+
+    /* =====================================================================
+       QUESTION GENERATION
+       ===================================================================== */
+    function generateQuestion() {
+      clearCurrentInput();
+      clearFeedback();
+      bridgeStep = 1;
+
+      if (currentMode === 'bonds') {
+        let whole = bondsTarget;
+        if (whole === 'mixed') {
+          whole = Math.floor(Math.random() * 6) + 5;
+        }
+        
+        const part1 = Math.floor(Math.random() * (whole - 1)) + 1;
+        const part2 = whole - part1;
+
+        questionData = {
+          type: 'bonds',
+          whole: whole,
+          part1: part1,
+          part2: part2,
+          correctAnswer: part2
+        };
+
+        renderBondsUI();
+      } else if (currentMode === 'bridge') {
+        let num1, num2;
+        if (bridgeTier === 'single') {
+          num1 = Math.floor(Math.random() * 4) + 6;
+          const minAddend = 11 - num1;
+          num2 = Math.floor(Math.random() * (9 - minAddend + 1)) + minAddend;
+        } else {
+          const tens = (Math.floor(Math.random() * 6) + 2) * 10;
+          const units = Math.floor(Math.random() * 4) + 6;
+          num1 = tens + units;
+          const minAddend = 11 - units;
+          num2 = Math.floor(Math.random() * (9 - minAddend + 1)) + minAddend;
+        }
+
+        const nextTen = Math.ceil(num1 / 10) * 10;
+        const bondNeeded = nextTen - num1;
+        const leftover = num2 - bondNeeded;
+        const finalSum = num1 + num2;
+
+        questionData = {
+          type: 'bridge',
+          num1: num1,
+          num2: num2,
+          nextTen: nextTen,
+          bondNeeded: bondNeeded,
+          leftover: leftover,
+          finalSum: finalSum,
+          step: 1
+        };
+
+        renderBridgeUI();
+      } else if (currentMode === 'rush') {
+        const pick = Math.random();
+        if (pick < 0.5) {
+          const part1 = Math.floor(Math.random() * 9) + 1;
+          questionData = {
+            type: 'rush_bonds',
+            whole: 10,
+            part1: part1,
+            correctAnswer: 10 - part1
+          };
+        } else {
+          const num1 = Math.floor(Math.random() * 4) + 6;
+          const num2 = Math.floor(Math.random() * 4) + (11 - num1);
+          questionData = {
+            type: 'rush_bridge',
+            num1: num1,
+            num2: num2,
+            correctAnswer: num1 + num2
+          };
+        }
+        renderRushUI();
+      }
+
+      renderVisualizer();
+    }
+
+    /* =====================================================================
+       UI RENDERING
+       ===================================================================== */
+    function renderBondsUI() {
+      const eq = document.getElementById('equationBox');
+      eq.innerHTML = `
+        <span class="text-rose-400">${questionData.part1}</span>
+        <span class="text-slate-400">+</span>
+        <span class="text-emerald-400 underline decoration-dashed underline-offset-8">?</span>
+        <span class="text-slate-400">=</span>
+        <span class="text-amber-400">${questionData.whole}</span>
+      `;
+      document.getElementById('promptGuidance').innerHTML = 
+        `What goes with <span class="text-rose-400 font-bold">${questionData.part1}</span> to make <span class="text-amber-400 font-bold">${questionData.whole}</span>?`;
+    }
+
+    function renderBridgeUI() {
+      const eq = document.getElementById('equationBox');
+      const q = questionData;
+
+      if (bridgeStep === 1) {
+        eq.innerHTML = `
+          <span class="text-blue-400">${q.num1}</span>
+          <span class="text-slate-400">+</span>
+          <span class="text-amber-400">${q.num2}</span>
+          <span class="text-slate-400">=</span>
+          <span class="text-slate-300">?</span>
+        `;
+        document.getElementById('promptGuidance').innerHTML = 
+          `Step 1: How many does <span class="text-blue-400 font-bold">${q.num1}</span> need to reach friendly <span class="text-amber-400 font-bold">${q.nextTen}</span>?`;
+      } else if (bridgeStep === 2) {
+        eq.innerHTML = `
+          <span class="text-slate-400 text-3xl">Split ${q.num2}:</span>
+          <span class="text-emerald-400">${q.bondNeeded}</span>
+          <span class="text-slate-400">+</span>
+          <span class="text-purple-400 underline decoration-dashed">?</span>
+          <span class="text-slate-400">=</span>
+          <span class="text-amber-400">${q.num2}</span>
+        `;
+        document.getElementById('promptGuidance').innerHTML = 
+          `Step 2: We split <span class="text-amber-400 font-bold">${q.num2}</span> into <span class="text-emerald-400 font-bold">${q.bondNeeded}</span> and what leftover?`;
+      } else if (bridgeStep === 3) {
+        eq.innerHTML = `
+          <span class="text-emerald-400">${q.nextTen}</span>
+          <span class="text-slate-400">+</span>
+          <span class="text-purple-400">${q.leftover}</span>
+          <span class="text-slate-400">=</span>
+          <span class="text-amber-300 underline decoration-dashed">?</span>
+        `;
+        document.getElementById('promptGuidance').innerHTML = 
+          `Step 3: Combine! <span class="text-emerald-400 font-bold">${q.nextTen}</span> + <span class="text-purple-400 font-bold">${q.leftover}</span> = ?`;
+      }
+    }
+
+    function renderRushUI() {
+      const eq = document.getElementById('equationBox');
+      if (questionData.type === 'rush_bonds') {
+        eq.innerHTML = `
+          <span class="text-rose-400">${questionData.part1}</span>
+          <span class="text-slate-400">+</span>
+          <span class="text-emerald-400 underline decoration-dashed">?</span>
+          <span class="text-slate-400">=</span>
+          <span class="text-amber-400">10</span>
+        `;
+        document.getElementById('promptGuidance').innerHTML = `Quick! Bond to 10 for ${questionData.part1}`;
+      } else {
+        eq.innerHTML = `
+          <span class="text-blue-400">${questionData.num1}</span>
+          <span class="text-slate-400">+</span>
+          <span class="text-amber-400">${questionData.num2}</span>
+          <span class="text-slate-400">=</span>
+          <span class="text-emerald-400 underline decoration-dashed">?</span>
+        `;
+        document.getElementById('promptGuidance').innerHTML = `Bridge & calculate rapid total!`;
+      }
+    }
+
+    /* =====================================================================
+       DYNAMIC VISUALIZERS (Cherry Diagram, Ten-Frames & Empty Number Line)
+       ===================================================================== */
+    function renderVisualizer(isCompleted = false) {
+      const container = document.getElementById('visualDisplayArea');
+      container.innerHTML = '';
+
+      if (currentMode === 'bonds' || questionData.type === 'rush_bonds') {
+        const whole = questionData.whole;
+        const p1 = questionData.part1;
+        const p2 = isCompleted ? questionData.part2 : '?';
+
+        if (activeVisual === 'cherry') {
+          container.innerHTML = renderLargeCherrySVG(whole, p1, p2, isCompleted);
+        } else if (activeVisual === 'frame') {
+          container.innerHTML = renderLargeTenFrameBonds(whole, p1, isCompleted ? questionData.part2 : 0);
+        } else if (activeVisual === 'line') {
+          container.innerHTML = renderBondsNumberLine(whole, p1, p2, isCompleted);
+        }
+      } else {
+        const q = questionData;
+        if (activeVisual === 'cherry') {
+          container.innerHTML = renderLargeBridgeCherrySVG(q, bridgeStep, isCompleted);
+        } else if (activeVisual === 'frame') {
+          container.innerHTML = renderLargeDoubleTenFrame(q, bridgeStep, isCompleted);
+        } else if (activeVisual === 'line') {
+          container.innerHTML = renderBridgeNumberLine(q, bridgeStep, isCompleted);
+        }
+      }
+    }
+
+    // Cherry Diagram
+    function renderLargeCherrySVG(whole, part1, part2, completed) {
+      return `
+        <svg viewBox="0 0 360 200" class="w-full max-w-sm h-48 sm:h-52">
+          <line x1="180" y1="52" x2="85" y2="145" stroke="#64748b" stroke-width="6" stroke-linecap="round"/>
+          <line x1="180" y1="52" x2="275" y2="145" stroke="#64748b" stroke-width="6" stroke-linecap="round"/>
+          
+          <circle cx="180" cy="50" r="38" fill="#1e293b" stroke="#f59e0b" stroke-width="5" />
+          <text x="180" y="61" font-size="28" font-family="Fredoka, sans-serif" font-weight="bold" fill="#f59e0b" text-anchor="middle">${whole}</text>
+          
+          <circle cx="85" cy="148" r="34" fill="#1e293b" stroke="#f43f5e" stroke-width="4.5" />
+          <text x="85" y="158" font-size="26" font-family="Fredoka, sans-serif" font-weight="bold" fill="#f43f5e" text-anchor="middle">${part1}</text>
+          
+          <circle cx="275" cy="148" r="34" fill="#1e293b" stroke="${completed ? '#10b981' : '#38bdf8'}" stroke-width="4.5" class="${completed ? 'animate-pop' : ''}" />
+          <text x="275" y="159" font-size="${part2 === '?' ? '30' : '26'}" font-family="Fredoka, sans-serif" font-weight="bold" fill="${completed ? '#10b981' : '#38bdf8'}" text-anchor="middle">${part2}</text>
+        </svg>
+      `;
+    }
+
+    // Ten Frame (Uniform Slots)
+    function renderLargeTenFrameBonds(whole, part1, answeredPart2) {
+      let cellsHTML = '';
+      for (let i = 0; i < 10; i++) {
+        if (i < part1) {
+          cellsHTML += `
+            <div class="counter-cell bg-slate-950/70 border-slate-600">
+              <div class="counter-circle bg-rose-500 animate-pop"></div>
+            </div>`;
+        } else if (i < (part1 + answeredPart2)) {
+          cellsHTML += `
+            <div class="counter-cell bg-slate-950/70 border-emerald-500/60">
+              <div class="counter-circle bg-emerald-400 animate-pop"></div>
+            </div>`;
+        } else {
+          cellsHTML += `
+            <div class="counter-cell bg-slate-950/50 border-slate-700"></div>`;
+        }
+      }
+
+      return `
+        <div class="flex flex-col items-center gap-3">
+          <div class="text-sm sm:text-base font-kids font-bold text-amber-400">Target Bond: ${whole}</div>
+          <div class="ten-frame-grid bg-slate-950/95 p-3.5 rounded-2xl border-2 border-slate-600 shadow-2xl w-72 sm:w-80">
+            ${cellsHTML}
+          </div>
+        </div>
+      `;
+    }
+
+    // Empty Number Line for Bonds
+    function renderBondsNumberLine(whole, part1, part2, completed) {
+      const jumpLabel = completed ? `+${part2}` : `+?`;
+      return `
+        <div class="flex flex-col items-center w-full max-w-md">
+          <div class="text-xs font-kids text-slate-300 mb-2">Jump along the number line to reach <span class="text-amber-400 font-bold">${whole}</span></div>
+          <svg viewBox="0 0 360 140" class="w-full h-36">
+            <!-- Base Line -->
+            <line x1="40" y1="100" x2="320" y2="100" stroke="#94a3b8" stroke-width="4" stroke-linecap="round"/>
+            
+            <!-- Ticks -->
+            <line x1="70" y1="90" x2="70" y2="110" stroke="#f43f5e" stroke-width="4"/>
+            <text x="70" y="130" font-size="22" font-family="Fredoka" font-weight="bold" fill="#f43f5e" text-anchor="middle">${part1}</text>
+            
+            <line x1="290" y1="90" x2="290" y2="110" stroke="#f59e0b" stroke-width="4"/>
+            <text x="290" y="130" font-size="22" font-family="Fredoka" font-weight="bold" fill="#f59e0b" text-anchor="middle">${whole}</text>
+            
+            <!-- Jump Arc -->
+            <path d="M 70 90 Q 180 20 290 90" fill="none" stroke="${completed ? '#10b981' : '#38bdf8'}" stroke-width="4" stroke-dasharray="${completed ? 'none' : '6,6'}"/>
+            
+            <!-- Jump Label -->
+            <rect x="155" y="24" width="50" height="30" rx="8" fill="#1e293b" stroke="${completed ? '#10b981' : '#38bdf8'}" stroke-width="2"/>
+            <text x="180" y="45" font-size="18" font-family="Fredoka" font-weight="bold" fill="${completed ? '#10b981' : '#38bdf8'}" text-anchor="middle">${jumpLabel}</text>
+          </svg>
+        </div>
+      `;
+    }
+
+    // Bridging Cherry SVG
+    function renderLargeBridgeCherrySVG(q, step, completed) {
+      const p1 = step >= 2 ? q.bondNeeded : '?';
+      const p2 = step >= 3 ? q.leftover : '?';
+      
+      return `
+        <div class="flex flex-col items-center w-full">
+          <div class="text-sm font-kids text-slate-300 mb-1">Decompose <span class="text-amber-400 font-bold text-base">${q.num2}</span> to reach friendly ten</div>
+          <svg viewBox="0 0 340 180" class="w-full max-w-sm h-44 sm:h-48">
+            <line x1="170" y1="45" x2="90" y2="130" stroke="#64748b" stroke-width="5" stroke-linecap="round"/>
+            <line x1="170" y1="45" x2="250" y2="130" stroke="#64748b" stroke-width="5" stroke-linecap="round"/>
+            
+            <circle cx="170" cy="42" r="32" fill="#1e293b" stroke="#f59e0b" stroke-width="4.5"/>
+            <text x="170" y="52" font-size="24" font-family="Fredoka" font-weight="bold" fill="#f59e0b" text-anchor="middle">${q.num2}</text>
+            
+            <circle cx="90" cy="132" r="28" fill="#1e293b" stroke="#10b981" stroke-width="4"/>
+            <text x="90" y="141" font-size="22" font-family="Fredoka" font-weight="bold" fill="#10b981" text-anchor="middle">${p1}</text>
+            
+            <circle cx="250" cy="132" r="28" fill="#1e293b" stroke="#c084fc" stroke-width="4"/>
+            <text x="250" y="141" font-size="22" font-family="Fredoka" font-weight="bold" fill="#c084fc" text-anchor="middle">${p2}</text>
+          </svg>
+        </div>
+      `;
+    }
+
+    // Double Ten-Frame for Bridging
+    function renderLargeDoubleTenFrame(q, step, completed) {
+      const units1 = q.num1 % 10;
+      let frame1Counters = units1;
+      let frame2Counters = 0;
+
+      if (step >= 2) frame1Counters = 10;
+      if (step >= 3) frame2Counters = q.leftover;
+
+      function buildCells(filledCount, colorClass) {
+        let html = '';
+        for (let i = 0; i < 10; i++) {
+          if (i < filledCount) {
+            html += `<div class="counter-cell border-slate-600 bg-slate-950"><div class="counter-circle ${colorClass} animate-pop"></div></div>`;
+          } else {
+            html += `<div class="counter-cell border-slate-700/70 bg-slate-950/40"></div>`;
+          }
+        }
+        return html;
+      }
+
+      return `
+        <div class="flex items-center gap-4 flex-wrap justify-center">
+          <div class="flex flex-col items-center">
+            <span class="text-xs sm:text-sm font-kids text-slate-300 mb-1">Tens Frame 1</span>
+            <div class="ten-frame-grid bg-slate-950 p-2.5 rounded-xl border-2 border-slate-700 w-52 sm:w-56">
+              ${buildCells(frame1Counters, 'bg-blue-400')}
+            </div>
+          </div>
+          <div class="text-2xl font-bold text-slate-400 font-kids">+</div>
+          <div class="flex flex-col items-center">
+            <span class="text-xs sm:text-sm font-kids text-slate-300 mb-1">Tens Frame 2</span>
+            <div class="ten-frame-grid bg-slate-950 p-2.5 rounded-xl border-2 border-slate-700 w-52 sm:w-56">
+              ${buildCells(frame2Counters, 'bg-purple-400')}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Empty Number Line for Bridging (Two Distinct Jumps)
+    function renderBridgeNumberLine(q, step, completed) {
+      const jump1Label = step >= 2 ? `+${q.bondNeeded}` : `+?`;
+      const jump2Label = step >= 3 ? `+${q.leftover}` : `+?`;
+      const midPoint = q.nextTen;
+      const endPoint = step >= 3 ? q.finalSum : '?';
+
+      return `
+        <div class="flex flex-col items-center w-full max-w-lg">
+          <div class="text-xs font-kids text-slate-300 mb-2">Bridge to <span class="text-emerald-400 font-bold">${midPoint}</span>, then add the rest!</div>
+          <svg viewBox="0 0 420 150" class="w-full h-38">
+            <!-- Base Line -->
+            <line x1="30" y1="105" x2="390" y2="105" stroke="#94a3b8" stroke-width="4" stroke-linecap="round"/>
+            
+            <!-- Start Tick -->
+            <line x1="50" y1="95" x2="50" y2="115" stroke="#60a5fa" stroke-width="4"/>
+            <text x="50" y="135" font-size="20" font-family="Fredoka" font-weight="bold" fill="#60a5fa" text-anchor="middle">${q.num1}</text>
+            
+            <!-- Mid Milestone Tick (Friendly Ten) -->
+            <line x1="210" y1="95" x2="210" y2="115" stroke="#10b981" stroke-width="4"/>
+            <text x="210" y="135" font-size="20" font-family="Fredoka" font-weight="bold" fill="#10b981" text-anchor="middle">${midPoint}</text>
+            
+            <!-- End Tick (Final Total) -->
+            <line x1="370" y1="95" x2="370" y2="115" stroke="#f59e0b" stroke-width="4"/>
+            <text x="370" y="135" font-size="20" font-family="Fredoka" font-weight="bold" fill="#f59e0b" text-anchor="middle">${endPoint}</text>
+            
+            <!-- Jump 1 Arc -->
+            <path d="M 50 95 Q 130 30 210 95" fill="none" stroke="${step >= 2 ? '#10b981' : '#38bdf8'}" stroke-width="4" stroke-dasharray="${step >= 2 ? 'none' : '5,5'}"/>
+            <rect x="105" y="32" width="50" height="26" rx="6" fill="#1e293b" stroke="${step >= 2 ? '#10b981' : '#38bdf8'}" stroke-width="2"/>
+            <text x="130" y="50" font-size="16" font-family="Fredoka" font-weight="bold" fill="${step >= 2 ? '#10b981' : '#38bdf8'}" text-anchor="middle">${jump1Label}</text>
+            
+            <!-- Jump 2 Arc -->
+            <path d="M 210 95 Q 290 30 370 95" fill="none" stroke="${step >= 3 ? '#c084fc' : '#64748b'}" stroke-width="4" stroke-dasharray="${step >= 3 ? 'none' : '5,5'}"/>
+            <rect x="265" y="32" width="50" height="26" rx="6" fill="#1e293b" stroke="${step >= 3 ? '#c084fc' : '#64748b'}" stroke-width="2"/>
+            <text x="290" y="50" font-size="16" font-family="Fredoka" font-weight="bold" fill="${step >= 3 ? '#c084fc' : '#64748b'}" text-anchor="middle">${jump2Label}</text>
+          </svg>
+        </div>
+      `;
+    }
+
+    /* =====================================================================
+       INPUT & SUBMISSION HANDLING
+       ===================================================================== */
+    function pressDigit(num) {
+      if (isProcessing) return;
+      playSound('pop');
+      if (currentInput.length < 3) {
+        currentInput += num.toString();
+        updateInputScreen();
+      }
+    }
+
+    function clearCurrentInput() {
+      currentInput = '';
+      updateInputScreen();
+    }
+
+    function updateInputScreen() {
+      const screen = document.getElementById('activeInputScreen');
+      screen.textContent = currentInput === '' ? '?' : currentInput;
+    }
+
+    function submitCurrentAnswer() {
+      if (isProcessing || currentInput === '') return;
+      const userVal = parseInt(currentInput, 10);
+
+      if (currentMode === 'bonds') {
+        if (userVal === questionData.correctAnswer) {
+          handleSuccess(`⭐ Perfect! ${questionData.part1} + ${userVal} = ${questionData.whole}!`, () => {
+            renderVisualizer(true);
+          });
+        } else {
+          handleMistake(`Not quite. Try counting up from ${questionData.part1} to ${questionData.whole}!`);
+        }
+      } else if (currentMode === 'bridge') {
+        const q = questionData;
+        if (bridgeStep === 1) {
+          if (userVal === q.bondNeeded) {
+            playSound('correct');
+            flashFeedback(`⭐ Yes! ${q.num1} + ${userVal} = ${q.nextTen}!`, true);
+            bridgeStep = 2;
+            clearCurrentInput();
+            renderBridgeUI();
+            renderVisualizer();
+          } else {
+            handleMistake(`Check your bond! What added to ${q.num1} makes ${q.nextTen}?`);
+          }
+        } else if (bridgeStep === 2) {
+          if (userVal === q.leftover) {
+            playSound('correct');
+            flashFeedback(`⭐ Great split! ${q.bondNeeded} + ${userVal} = ${q.num2}!`, true);
+            bridgeStep = 3;
+            clearCurrentInput();
+            renderBridgeUI();
+            renderVisualizer();
+          } else {
+            handleMistake(`Think bonds: what goes with ${q.bondNeeded} to make ${q.num2}?`);
+          }
+        } else if (bridgeStep === 3) {
+          if (userVal === q.finalSum) {
+            handleSuccess(`🎉 Brilliant! ${q.num1} + ${q.num2} = ${q.finalSum}!`, () => {
+              renderVisualizer(true);
+            });
+          } else {
+            handleMistake(`Almost! Add ${q.nextTen} + ${q.leftover}.`);
+          }
+        }
+      } else if (currentMode === 'rush') {
+        if (userVal === questionData.correctAnswer) {
+          playSound('correct');
+          streak++;
+          score += 10;
+          updateMetrics();
+          generateQuestion();
+        } else {
+          playSound('tryAgain');
+          streak = 0;
+          updateMetrics();
+          flashFeedback('Oops! Keep pushing!', false);
+          clearCurrentInput();
+        }
+      }
+    }
+
+    function handleSuccess(msg, visualCallback) {
+      isProcessing = true;
+      playSound('correct');
+      streak++;
+      score += (currentMode === 'bridge' ? 15 : 10);
+      updateMetrics();
+      flashFeedback(msg, true);
+      if (visualCallback) visualCallback();
+
+      setTimeout(() => {
+        isProcessing = false;
+        generateQuestion();
+      }, 1400);
+    }
+
+    function handleMistake(msg) {
+      playSound('tryAgain');
+      streak = 0;
+      updateMetrics();
+      flashFeedback(msg, false);
+      clearCurrentInput();
+    }
+
+    function flashFeedback(msg, isSuccess) {
+      const fb = document.getElementById('feedbackBox');
+      fb.textContent = msg;
+      fb.className = `w-full text-center text-base sm:text-lg font-bold min-h-[26px] transition-all ${
+        isSuccess ? 'text-emerald-400 animate-pop' : 'text-rose-400'
+      }`;
+    }
+
+    function clearFeedback() {
+      const fb = document.getElementById('feedbackBox');
+      fb.textContent = '';
+    }
+
+    function updateMetrics() {
+      document.getElementById('streakCount').textContent = `🔥 ${streak}`;
+      document.getElementById('scoreDisplay').textContent = score;
+    }
+
+    function startRushTimer() {
+      clearInterval(timerInterval);
+      rushTimeLeft = 60;
+      document.getElementById('timeRemaining').textContent = `${rushTimeLeft}s`;
+
+      timerInterval = setInterval(() => {
+        rushTimeLeft--;
+        document.getElementById('timeRemaining').textContent = `${rushTimeLeft}s`;
+        if (rushTimeLeft <= 0) {
+          clearInterval(timerInterval);
+          alert(`⏰ Time is up!\nYour final score is: ${score}`);
+          switchMainMode('bonds');
+        }
+      }, 1000);
+    }
+
+    function setupKeyboardListeners() {
+      window.addEventListener('keydown', (e) => {
+        if (e.key >= '0' && e.key <= '9') {
+          pressDigit(parseInt(e.key, 10));
+        } else if (e.key === 'Enter') {
+          submitCurrentAnswer();
+        } else if (e.key === 'Backspace' || e.key === 'Escape') {
+          clearCurrentInput();
+        }
+      });
+    }
+  </script>
+</body>
+</html>
