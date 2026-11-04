@@ -22,110 +22,105 @@
     }
     /* Anti-peek curtain pattern */
     .locked-pattern {
-      background-color: #0f172a;
-      background-image: radial-gradient(#1e293b 1.5px, transparent 1.5px), radial-gradient(#1e293b 1.5px, #0f172a 1.5px);
+      background-color: #0b1120;
+      background-image: radial-gradient(#1e293b 1.5px, transparent 1.5px), radial-gradient(#1e293b 1.5px, #0b1120 1.5px);
       background-size: 24px 24px;
       background-position: 0 0, 12px 12px;
     }
     /* Number line smooth SVG animations */
-    .jump-arc {
+    .jump-arc-forward-1, .jump-arc-back-1 {
       stroke-dasharray: 600;
       stroke-dashoffset: 600;
-      animation: drawArc 0.9s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+      animation: drawArc 0.75s cubic-bezier(0.4, 0, 0.2, 1) forwards;
     }
-    .jump-arc-2 {
+    .jump-arc-forward-2, .jump-arc-back-2 {
       stroke-dasharray: 600;
       stroke-dashoffset: 600;
-      animation: drawArc 0.9s cubic-bezier(0.4, 0, 0.2, 1) 0.5s forwards;
+      animation: drawArc 0.75s cubic-bezier(0.4, 0, 0.2, 1) 0.45s forwards;
     }
     @keyframes drawArc {
       to {
         stroke-dashoffset: 0;
       }
     }
-    /* Custom button bounce for whiteboards */
     .key-tap:active {
-      transform: scale(0.94);
-    }
-    /* Floating pulse */
-    @keyframes gentle-pulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.02); }
-    }
-    .pulse-target {
-      animation: gentle-pulse 2.2s infinite ease-in-out;
+      transform: scale(0.93);
     }
   </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between selection:bg-amber-400 selection:text-slate-900">
 
   <!-- TOP HEADER / CONTROL STRIP -->
-  <header class="bg-slate-900/95 border-b border-slate-800 px-4 py-3 sticky top-0 z-40 backdrop-blur-md">
+  <header class="bg-slate-900/95 border-b border-slate-800 px-4 py-2.5 sticky top-0 z-40 backdrop-blur-md">
     <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
       
-      <!-- Brand & Mode Title -->
+      <!-- Brand & Title -->
       <div class="flex items-center gap-3">
-        <div class="h-10 w-10 rounded-xl bg-gradient-to-tr from-amber-500 to-orange-400 flex items-center justify-center font-num text-2xl font-black text-slate-950 shadow-lg shadow-amber-500/20">
-          #
+        <div class="h-10 w-10 rounded-xl bg-gradient-to-tr from-sky-400 via-amber-400 to-rose-400 flex items-center justify-center font-num text-2xl font-black text-slate-950 shadow-md">
+          ±
         </div>
         <div>
           <div class="flex items-center gap-2">
-            <h1 class="font-bold text-lg text-white leading-none tracking-tight">Hands Down, Minds On!</h1>
-            <span id="antiCheatBadge" class="bg-emerald-500/20 text-emerald-300 text-xs font-semibold px-2.5 py-0.5 rounded-full border border-emerald-500/30 flex items-center gap-1">
-              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-              Anti-Peek Vault Active
+            <h1 class="font-bold text-base sm:text-lg text-white leading-none tracking-tight">Bridging & Bonds Mastery Suite</h1>
+            <span id="antiCheatBadge" class="bg-emerald-500/15 text-emerald-300 text-[11px] font-semibold px-2 py-0.5 rounded-full border border-emerald-500/30 flex items-center gap-1">
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+              Anti-Peek Vault ON
             </span>
           </div>
-          <p id="modeSubheading" class="text-xs text-slate-400 mt-0.5">Tier 3 Intervention: Foundation & Mental Bridging</p>
+          <p id="modeSubheading" class="text-xs text-slate-400 mt-0.5">Primary 4/5 Intervention • Addition & Subtraction</p>
         </div>
       </div>
 
-      <!-- Mode Selector Tabs -->
-      <div class="flex items-center flex-wrap gap-1 bg-slate-950/80 p-1 rounded-xl border border-slate-800 text-xs">
-        <button onclick="setMode(1)" id="modeBtn1" class="mode-tab px-3 py-1.5 rounded-lg font-medium transition-all text-slate-400 hover:text-white">W1-2: Bonds to 10</button>
-        <button onclick="setMode(2)" id="modeBtn2" class="mode-tab px-3 py-1.5 rounded-lg font-medium transition-all text-slate-400 hover:text-white">W3: Clear to 10</button>
-        <button onclick="setMode(3)" id="modeBtn3" class="mode-tab px-3 py-1.5 rounded-lg font-medium transition-all text-slate-400 hover:text-white">W4: Drop & Bond</button>
-        <button onclick="setMode(4)" id="modeBtn4" class="mode-tab px-3 py-1.5 rounded-lg font-medium transition-all text-amber-950 bg-amber-400 font-bold shadow">W5-6: Full Bridge</button>
-        <button onclick="setMode(5)" id="modeBtn5" class="mode-tab px-3 py-1.5 rounded-lg font-medium transition-all text-slate-400 hover:text-white">Take from 10</button>
+      <!-- Operation Selector (+, -, ±) -->
+      <div class="flex items-center gap-1 bg-slate-950/80 p-1 rounded-xl border border-slate-800">
+        <span class="text-[10px] font-bold text-slate-400 uppercase px-2">Op:</span>
+        <button onclick="setOperation('add')" id="opBtn-add" class="px-2.5 py-1 rounded-lg text-xs font-black transition text-slate-400 hover:text-white">＋ Add</button>
+        <button onclick="setOperation('sub')" id="opBtn-sub" class="px-2.5 py-1 rounded-lg text-xs font-black transition text-slate-400 hover:text-white">− Sub</button>
+        <button onclick="setOperation('mixed')" id="opBtn-mixed" class="px-2.5 py-1 rounded-lg text-xs font-black transition text-amber-950 bg-amber-400 shadow">± Both</button>
       </div>
 
-      <!-- Quick Teacher Actions -->
+      <!-- Quick Actions -->
       <div class="flex items-center gap-2">
         <button onclick="toggleTeacherHint()" id="hintBtn" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition flex items-center gap-1.5">
-          <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-          <span id="hintBtnText">Teacher Scaffolding</span>
+          <svg class="w-3.5 h-3.5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <span id="hintBtnText">Clue</span>
         </button>
-        <button onclick="newProblem()" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 transition shadow-md shadow-amber-500/20 flex items-center gap-1.5">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+        <button onclick="newProblem()" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-amber-400 hover:bg-amber-300 text-slate-950 transition shadow-md flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
           Next Problem
         </button>
       </div>
 
     </div>
+
+    <!-- Secondary Mode Bar (5 Distinct Pedagogical Modules) -->
+    <div class="max-w-7xl mx-auto flex items-center gap-1 overflow-x-auto pt-2 pb-0.5 text-xs border-t border-slate-800/60 mt-2">
+      <button onclick="setMode(1)" id="modeBtn1" class="mode-tab whitespace-nowrap px-3 py-1 rounded-lg font-medium transition text-slate-400 hover:text-white">1. Bonds to 10</button>
+      <button onclick="setMode(2)" id="modeBtn2" class="mode-tab whitespace-nowrap px-3 py-1 rounded-lg font-medium transition text-slate-400 hover:text-white">2. Clear / Reach 10</button>
+      <button onclick="setMode(3)" id="modeBtn3" class="mode-tab whitespace-nowrap px-3 py-1 rounded-lg font-medium transition text-slate-400 hover:text-white">3. Decade ± Digit</button>
+      <button onclick="setMode(4)" id="modeBtn4" class="mode-tab whitespace-nowrap px-3 py-1 rounded-lg font-bold transition text-amber-950 bg-amber-400 shadow">4. Full Bridging (±)</button>
+      <button onclick="setMode(5)" id="modeBtn5" class="mode-tab whitespace-nowrap px-3 py-1 rounded-lg font-medium transition text-slate-400 hover:text-white">5. Inverse Fact Mirror ⇄</button>
+    </div>
   </header>
 
-  <!-- MAIN INTERACTIVE STAGE -->
-  <main class="max-w-7xl mx-auto px-4 py-4 w-full flex-1 flex flex-col gap-4">
+  <!-- MAIN STAGE -->
+  <main class="max-w-7xl mx-auto px-4 py-3 w-full flex-1 flex flex-col gap-3">
     
-    <!-- TOP ROW: PROBLEM STATEMENT & ANSWER INPUT KEYPAD -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+    <!-- TOP ROW: PROBLEM CARD & TOUCH KEYPAD -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-3">
       
-      <!-- Big Active Card: Problem Display & State (Left 7 Cols) -->
-      <div class="lg:col-span-7 bg-slate-900 border border-slate-800 rounded-3xl p-6 flex flex-col justify-between shadow-2xl relative overflow-hidden">
+      <!-- Left 7 Cols: Problem Banner -->
+      <div class="lg:col-span-7 bg-slate-900 border border-slate-800 rounded-3xl p-5 flex flex-col justify-between shadow-2xl relative overflow-hidden">
         
-        <!-- Glow accents -->
-        <div class="absolute -top-16 -right-16 w-48 h-48 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
-        <div class="absolute -bottom-16 -left-16 w-48 h-48 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
-
         <div>
-          <!-- Subhead Rule Tag -->
-          <div class="flex items-center justify-between gap-2 mb-3">
-            <span id="strategyRuleTag" class="text-xs uppercase tracking-widest font-black text-amber-400 bg-amber-400/10 px-3 py-1 rounded-full border border-amber-400/20">
-              Backward Bridging Rule
+          <!-- Strategy & Pupil Tag -->
+          <div class="flex items-center justify-between gap-2 mb-2">
+            <span id="strategyRuleTag" class="text-[11px] uppercase tracking-wider font-extrabold text-amber-400 bg-amber-400/10 px-3 py-1 rounded-full border border-amber-400/20">
+              Forward / Backward Bridging
             </span>
-            <div id="pupilNameBadge" class="text-xs font-semibold text-slate-400 flex items-center gap-1.5">
-              <span>Pupil Turn:</span>
-              <span id="currentPupilName" class="text-amber-300 font-bold bg-slate-800 px-2 py-0.5 rounded-md border border-slate-700">Ariana</span>
+            <div class="text-xs font-semibold text-slate-400 flex items-center gap-1.5">
+              <span>Pupil:</span>
+              <span id="currentPupilName" class="text-amber-300 font-bold bg-slate-800 px-2.5 py-0.5 rounded-lg border border-slate-700">Ariana Flynn</span>
               <button onclick="cyclePupil()" title="Change Pupil" class="hover:text-white p-1 rounded hover:bg-slate-700 text-slate-400">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
               </button>
@@ -133,78 +128,76 @@
           </div>
 
           <!-- Problem Expression Prompt -->
-          <div class="my-3 text-center py-5 bg-slate-950/70 border border-slate-800/80 rounded-2xl relative">
+          <div class="my-2 text-center py-4 bg-slate-950/70 border border-slate-800/80 rounded-2xl relative">
             <div id="equationDisplay" class="font-num text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight text-white flex items-center justify-center gap-3">
-              <span id="numA" class="text-sky-300">52</span>
-              <span class="text-rose-400">−</span>
-              <span id="numB" class="text-amber-300">7</span>
+              <span id="numA" class="text-sky-300">48</span>
+              <span id="opSymbol" class="text-amber-400">＋</span>
+              <span id="numB" class="text-pink-300">7</span>
               <span class="text-slate-500">=</span>
-              <span id="targetPlaceholder" class="min-w-[80px] sm:min-w-[100px] h-16 sm:h-20 bg-slate-800/80 border-2 border-dashed border-amber-400/80 rounded-2xl flex items-center justify-center text-amber-400 font-bold px-3">
+              <span id="targetPlaceholder" class="min-w-[75px] sm:min-w-[95px] h-16 sm:h-20 bg-slate-800/90 border-2 border-dashed border-amber-400 rounded-2xl flex items-center justify-center text-amber-400 font-bold px-3">
                 <span id="userEnteredVal" class="text-4xl sm:text-5xl font-num">?</span>
               </span>
             </div>
 
-            <!-- Optional Teacher Clue (Hidden by default to prevent peeking) -->
-            <div id="teacherHintBox" class="hidden mt-3 px-4 py-2 bg-indigo-950/70 border border-indigo-500/40 rounded-xl text-xs text-indigo-200 max-w-md mx-auto">
-              <span class="font-bold text-indigo-300">💡 Teacher Clue:</span> <span id="teacherHintText">Jump back to the friendly decade first!</span>
+            <!-- Optional Clue for Teacher -->
+            <div id="teacherHintBox" class="hidden mt-2 px-3 py-1.5 bg-indigo-950/80 border border-indigo-500/40 rounded-xl text-xs text-indigo-200 max-w-md mx-auto">
+              <span class="font-bold text-indigo-300">💡 Teacher Clue:</span> <span id="teacherHintText">Jump to the friendly ten first!</span>
             </div>
           </div>
         </div>
 
-        <!-- Feedback & Response Banner -->
-        <div id="feedbackBanner" class="p-3.5 rounded-2xl text-center font-bold text-sm transition-all duration-300 bg-slate-950/60 border border-slate-800 text-slate-400 flex items-center justify-center gap-2">
-          <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-          <span id="feedbackText">Hands on table! Calculate without touching fingers. Enter your answer to reveal the bridge proof.</span>
+        <!-- Feedback & Guidance -->
+        <div id="feedbackBanner" class="p-3 rounded-2xl text-center font-bold text-xs sm:text-sm bg-slate-950/60 border border-slate-800 text-slate-400 flex items-center justify-center gap-2">
+          <svg class="w-4 h-4 text-amber-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+          <span id="feedbackText">Hands on table! Mental bridge only. Input answer to unlock visual proof.</span>
         </div>
 
       </div>
 
-      <!-- Big Keypad & Interactive Pad (Right 5 Cols) -->
-      <div class="lg:col-span-5 bg-slate-900 border border-slate-800 rounded-3xl p-5 flex flex-col justify-between shadow-2xl">
-        <div class="flex items-center justify-between mb-2">
-          <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Whiteboard Touch Keypad</span>
-          <span class="text-[11px] text-slate-500">Keyboard typing supported</span>
+      <!-- Right 5 Cols: Tactile Keypad -->
+      <div class="lg:col-span-5 bg-slate-900 border border-slate-800 rounded-3xl p-4 flex flex-col justify-between shadow-2xl">
+        <div class="flex items-center justify-between mb-1.5">
+          <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Whiteboard Touch Keypad</span>
+          <span class="text-[10px] text-slate-500">Keyboard entry enabled</span>
         </div>
 
-        <!-- Keypad Grid (3x4) with large tactile touch targets -->
         <div class="grid grid-cols-3 gap-2 flex-1 my-1">
-          <button onclick="pressDigit('1')" class="key-tap h-14 sm:h-16 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white font-num text-3xl font-bold shadow-md border-b-4 border-slate-950 flex items-center justify-center transition">1</button>
-          <button onclick="pressDigit('2')" class="key-tap h-14 sm:h-16 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white font-num text-3xl font-bold shadow-md border-b-4 border-slate-950 flex items-center justify-center transition">2</button>
-          <button onclick="pressDigit('3')" class="key-tap h-14 sm:h-16 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white font-num text-3xl font-bold shadow-md border-b-4 border-slate-950 flex items-center justify-center transition">3</button>
+          <button onclick="pressDigit('1')" class="key-tap h-12 sm:h-14 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white font-num text-2xl sm:text-3xl font-bold shadow border-b-4 border-slate-950 flex items-center justify-center transition">1</button>
+          <button onclick="pressDigit('2')" class="key-tap h-12 sm:h-14 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white font-num text-2xl sm:text-3xl font-bold shadow border-b-4 border-slate-950 flex items-center justify-center transition">2</button>
+          <button onclick="pressDigit('3')" class="key-tap h-12 sm:h-14 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white font-num text-2xl sm:text-3xl font-bold shadow border-b-4 border-slate-950 flex items-center justify-center transition">3</button>
 
-          <button onclick="pressDigit('4')" class="key-tap h-14 sm:h-16 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white font-num text-3xl font-bold shadow-md border-b-4 border-slate-950 flex items-center justify-center transition">4</button>
-          <button onclick="pressDigit('5')" class="key-tap h-14 sm:h-16 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white font-num text-3xl font-bold shadow-md border-b-4 border-slate-950 flex items-center justify-center transition">5</button>
-          <button onclick="pressDigit('6')" class="key-tap h-14 sm:h-16 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white font-num text-3xl font-bold shadow-md border-b-4 border-slate-950 flex items-center justify-center transition">6</button>
+          <button onclick="pressDigit('4')" class="key-tap h-12 sm:h-14 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white font-num text-2xl sm:text-3xl font-bold shadow border-b-4 border-slate-950 flex items-center justify-center transition">4</button>
+          <button onclick="pressDigit('5')" class="key-tap h-12 sm:h-14 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white font-num text-2xl sm:text-3xl font-bold shadow border-b-4 border-slate-950 flex items-center justify-center transition">5</button>
+          <button onclick="pressDigit('6')" class="key-tap h-12 sm:h-14 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white font-num text-2xl sm:text-3xl font-bold shadow border-b-4 border-slate-950 flex items-center justify-center transition">6</button>
 
-          <button onclick="pressDigit('7')" class="key-tap h-14 sm:h-16 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white font-num text-3xl font-bold shadow-md border-b-4 border-slate-950 flex items-center justify-center transition">7</button>
-          <button onclick="pressDigit('8')" class="key-tap h-14 sm:h-16 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white font-num text-3xl font-bold shadow-md border-b-4 border-slate-950 flex items-center justify-center transition">8</button>
-          <button onclick="pressDigit('9')" class="key-tap h-14 sm:h-16 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white font-num text-3xl font-bold shadow-md border-b-4 border-slate-950 flex items-center justify-center transition">9</button>
+          <button onclick="pressDigit('7')" class="key-tap h-12 sm:h-14 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white font-num text-2xl sm:text-3xl font-bold shadow border-b-4 border-slate-950 flex items-center justify-center transition">7</button>
+          <button onclick="pressDigit('8')" class="key-tap h-12 sm:h-14 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white font-num text-2xl sm:text-3xl font-bold shadow border-b-4 border-slate-950 flex items-center justify-center transition">8</button>
+          <button onclick="pressDigit('9')" class="key-tap h-12 sm:h-14 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white font-num text-2xl sm:text-3xl font-bold shadow border-b-4 border-slate-950 flex items-center justify-center transition">9</button>
 
-          <button onclick="clearInput()" class="key-tap h-14 sm:h-16 rounded-2xl bg-rose-950/60 hover:bg-rose-900/80 text-rose-300 font-bold text-sm uppercase tracking-wider border-b-4 border-rose-950 flex items-center justify-center transition">Clear</button>
-          <button onclick="pressDigit('0')" class="key-tap h-14 sm:h-16 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white font-num text-3xl font-bold shadow-md border-b-4 border-slate-950 flex items-center justify-center transition">0</button>
-          <button onclick="backspaceDigit()" class="key-tap h-14 sm:h-16 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xl border-b-4 border-slate-950 flex items-center justify-center transition">⌫</button>
+          <button onclick="clearInput()" class="key-tap h-12 sm:h-14 rounded-2xl bg-rose-950/60 hover:bg-rose-900/80 text-rose-300 font-bold text-xs uppercase tracking-wider border-b-4 border-rose-950 flex items-center justify-center transition">Clear</button>
+          <button onclick="pressDigit('0')" class="key-tap h-12 sm:h-14 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white font-num text-2xl sm:text-3xl font-bold shadow border-b-4 border-slate-950 flex items-center justify-center transition">0</button>
+          <button onclick="backspaceDigit()" class="key-tap h-12 sm:h-14 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-lg border-b-4 border-slate-950 flex items-center justify-center transition">⌫</button>
         </div>
 
-        <!-- Submit & Manual Teacher Reveal Actions -->
         <div class="grid grid-cols-2 gap-2 mt-2">
-          <button onclick="checkAnswer()" id="submitBtn" class="key-tap h-14 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-slate-950 font-black text-lg tracking-wide uppercase shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2 transition">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+          <button onclick="checkAnswer()" id="submitBtn" class="key-tap h-13 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-base uppercase tracking-wider shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-1.5 transition">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
             Submit
           </button>
-          <button onclick="forceTeacherReveal()" class="key-tap h-14 rounded-2xl bg-slate-800 hover:bg-slate-700 text-amber-300 font-bold text-xs uppercase tracking-wider border border-slate-700 flex items-center justify-center gap-1.5 transition">
+          <button onclick="forceTeacherReveal()" class="key-tap h-13 rounded-2xl bg-slate-800 hover:bg-slate-700 text-amber-300 font-bold text-xs uppercase tracking-wider border border-slate-700 flex items-center justify-center gap-1.5 transition">
             <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-            Teacher Reveal
+            Model / Reveal
           </button>
         </div>
       </div>
 
     </div>
 
-    <!-- BOTTOM ROW: THE SECURE VISUAL PROOF & BRIDGE VAULT -->
-    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 shadow-2xl relative overflow-hidden min-h-[300px] flex flex-col justify-between">
+    <!-- BOTTOM ROW: VISUAL PROOF & BRIDGE VAULT -->
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-4 shadow-2xl relative overflow-hidden min-h-[300px] flex flex-col justify-between">
       
-      <!-- Top Status of Vault -->
-      <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+      <!-- Vault Header -->
+      <div class="flex items-center justify-between pb-2.5 border-b border-slate-800">
         <div class="flex items-center gap-2">
           <div id="vaultDot" class="w-3 h-3 rounded-full bg-rose-500 animate-pulse"></div>
           <span class="text-xs font-bold uppercase tracking-wider text-slate-300">Concrete & Number Line Proof Engine</span>
@@ -214,74 +207,78 @@
         </span>
       </div>
 
-      <!-- LOCKED STATE OVERLAY (Anti-Cheating Curtain) -->
-      <div id="lockedCurtain" class="locked-pattern absolute inset-x-0 bottom-0 top-12 z-20 flex flex-col items-center justify-center p-6 text-center transition-all duration-500">
-        <div class="w-16 h-16 rounded-2xl bg-slate-900/90 border-2 border-slate-700 flex items-center justify-center text-amber-400 mb-3 shadow-xl">
-          <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+      <!-- ANTI-CHEATING CURTAIN -->
+      <div id="lockedCurtain" class="locked-pattern absolute inset-x-0 bottom-0 top-11 z-20 flex flex-col items-center justify-center p-6 text-center transition-all duration-500">
+        <div class="w-14 h-14 rounded-2xl bg-slate-900/90 border-2 border-slate-700 flex items-center justify-center text-amber-400 mb-2 shadow-xl">
+          <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
         </div>
-        <h3 class="text-lg font-bold text-white mb-1">Visual Bridge Vault Locked</h3>
-        <p class="text-xs text-slate-400 max-w-md mb-4">
-          No dots, intermediate leaps, or counters are revealed yet! Work out the calculation in your head first, then enter your answer to unlock the step-by-step visual proof.
+        <h3 class="text-base font-bold text-white mb-1">Visual Proof Vault Locked</h3>
+        <p class="text-xs text-slate-400 max-w-md mb-3">
+          Dots, number jumps, and the friendly 10 are hidden to stop cheating! Calculate in your mind first, then enter your answer to unlock the step-by-step visual bridge.
         </p>
-        <div class="inline-flex items-center gap-2 text-xs font-semibold text-amber-300 bg-amber-400/10 border border-amber-400/20 px-3.5 py-1.5 rounded-full">
-          <span>Hands flat on desk • Trust your bonds to 10</span>
+        <div class="inline-flex items-center gap-2 text-xs font-semibold text-amber-300 bg-amber-400/10 border border-amber-400/20 px-3 py-1 rounded-full">
+          <span>Hands off fingers • Use friendly ten bonds</span>
         </div>
       </div>
 
-      <!-- UNLOCKED VISUAL PROOF CONTAINER -->
-      <div id="visualProofContainer" class="py-2 flex flex-col gap-5 opacity-0 transition-opacity duration-500">
+      <!-- UNLOCKED VISUAL PROOF -->
+      <div id="visualProofContainer" class="py-2 flex flex-col gap-3 opacity-0 transition-opacity duration-500">
         
-        <!-- 1. The Dynamic Dual-Stage Number Line (Scalable SVG) -->
-        <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800">
+        <!-- SVG Number Line (Forward, Backward, or Inverse Mirror) -->
+        <div class="bg-slate-950 p-3 rounded-2xl border border-slate-800">
           <div class="flex items-center justify-between mb-1">
-            <span class="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+            <span id="lineHeaderLabel" class="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
               Dual-Stage Number Line Jump
             </span>
-            <span id="proofBadge" class="text-xs font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">Verified</span>
+            <div class="flex items-center gap-2">
+              <span id="operationIndicator" class="text-xs font-semibold px-2 py-0.5 rounded border"></span>
+              <span class="text-xs font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">Verified</span>
+            </div>
           </div>
           
-          <div class="w-full overflow-x-auto py-2">
+          <div class="w-full overflow-x-auto py-1">
             <svg id="numberLineSvg" class="w-full h-36 min-w-[580px]" viewBox="0 0 700 130">
-              <!-- Dynamically rendered via JS -->
+              <!-- Rendered via JS -->
             </svg>
           </div>
         </div>
 
-        <!-- 2. Dual Ten-Frames or Part-Whole Representation -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Secondary Breakdown: Cherry Model + Stem Sentence -->
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-3">
           
-          <!-- Concrete Frame Box -->
-          <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 flex flex-col justify-between">
-            <div class="flex items-center justify-between mb-2">
-              <span class="text-xs font-bold text-sky-400 uppercase tracking-wider">Concrete 10-Frame / Rod Status</span>
-              <span id="frameExplainTag" class="text-[11px] text-slate-400">Loose ones removed first</span>
+          <!-- Cherry Partition Model (Left 5 cols) -->
+          <div class="md:col-span-5 bg-slate-950 p-3 rounded-2xl border border-slate-800 flex flex-col justify-between">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-[11px] font-bold text-sky-400 uppercase tracking-wider">Partition Model</span>
+              <span class="text-[10px] text-slate-400">Target Split</span>
             </div>
-            <div id="concreteModelView" class="py-2 min-h-[90px] flex items-center justify-center gap-3">
-              <!-- Dynamically populated with ten frames -->
+            
+            <div id="partitionModelContent" class="py-1 flex items-center justify-center">
+              <!-- Dynamically built cherry part-whole -->
             </div>
           </div>
 
-          <!-- Spoken Stem Sentence & Reasoning Box -->
-          <div class="bg-gradient-to-br from-slate-950 to-slate-900 p-4 rounded-2xl border border-slate-800 flex flex-col justify-between">
+          <!-- Stem Sentence & Reasoning (Right 7 cols) -->
+          <div class="md:col-span-7 bg-gradient-to-br from-slate-950 to-slate-900 p-3 rounded-2xl border border-slate-800 flex flex-col justify-between">
             <div class="flex items-center justify-between mb-1">
-              <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-1">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
+              <span class="text-[11px] font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-1">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
                 Classroom Stem Sentence
               </span>
-              <button onclick="playSpeechStem()" class="text-xs text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 px-2 py-0.5 rounded border border-slate-700 flex items-center gap-1">
-                <svg class="w-3.5 h-3.5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
-                Read Aloud
+              <button onclick="playSpeechStem()" class="text-[11px] text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 px-2 py-0.5 rounded border border-slate-700 flex items-center gap-1">
+                <svg class="w-3 h-3 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
+                Speak
               </button>
             </div>
-            <div class="py-2">
-              <p id="stemSentenceText" class="text-sm md:text-base font-semibold text-slate-200 leading-relaxed italic">
-                "First I jump back 2 to reach the friendly ten 50, then I jump back the remaining 5 to land on 45."
-              </p>
-            </div>
-            <div class="pt-2 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
-              <span>Why it works: <strong class="text-amber-300 font-semibold" id="whyItWorksText">Bonds to 10 (10 − 5 = 5)</strong></span>
-              <span class="text-emerald-400 font-bold">No fingers used!</span>
+            
+            <p id="stemSentenceText" class="text-xs sm:text-sm font-semibold text-slate-200 italic my-1 leading-snug">
+              <!-- Stem sentence text -->
+            </p>
+            
+            <div class="pt-1.5 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400">
+              <span>Why it works: <strong class="text-amber-300 font-semibold" id="whyItWorksText">Bonds to 10</strong></span>
+              <span class="text-emerald-400 font-bold">No finger counting!</span>
             </div>
           </div>
 
@@ -293,41 +290,41 @@
 
   </main>
 
-  <!-- FOOTER PUPIL ROTATION & CLASS METRICS -->
-  <footer class="bg-slate-900 border-t border-slate-800 px-4 py-2.5 text-xs text-slate-400">
+  <!-- FOOTER PUPIL ROTATION & STATS -->
+  <footer class="bg-slate-900 border-t border-slate-800 px-4 py-2 text-xs text-slate-400">
     <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
-      <div class="flex items-center gap-4">
+      <div class="flex items-center gap-3">
         <span class="font-bold text-slate-300">Tier 3 Intervention Group:</span>
-        <div class="flex items-center gap-2">
-          <button onclick="setSpecificPupil('Ariana')" id="pupilTab-Ariana" class="px-2.5 py-1 rounded-lg bg-amber-400 text-slate-950 font-bold transition">Ariana (99/76)</button>
-          <button onclick="setSpecificPupil('Aleen')" id="pupilTab-Aleen" class="px-2.5 py-1 rounded-lg bg-slate-800 text-slate-300 hover:text-white transition">Aleen (88/69)</button>
-          <button onclick="setSpecificPupil('Brooke')" id="pupilTab-Brooke" class="px-2.5 py-1 rounded-lg bg-slate-800 text-slate-300 hover:text-white transition">Brooke (89/72)</button>
+        <div class="flex items-center gap-1.5">
+          <button onclick="setSpecificPupil('Ariana')" id="pupilTab-Ariana" class="px-2.5 py-1 rounded-lg bg-amber-400 text-slate-950 font-bold transition">Ariana Flynn (99/76)</button>
+          <button onclick="setSpecificPupil('Aleen')" id="pupilTab-Aleen" class="px-2.5 py-1 rounded-lg bg-slate-800 text-slate-300 hover:text-white transition">Aleen Alkhalil (88/69)</button>
+          <button onclick="setSpecificPupil('Brooke')" id="pupilTab-Brooke" class="px-2.5 py-1 rounded-lg bg-slate-800 text-slate-300 hover:text-white transition">Brooke Kearney (89/72)</button>
         </div>
       </div>
       <div class="flex items-center gap-3">
-        <span id="streakCounter" class="bg-slate-800 px-3 py-1 rounded-lg border border-slate-700 text-slate-300">
-          Class Streak: <strong class="text-amber-400 font-num text-sm">0</strong>
+        <span id="pupilStatsDisplay" class="bg-slate-800 px-3 py-1 rounded-lg border border-slate-700 text-slate-300">
+          Ariana: <strong class="text-emerald-400 font-num">0</strong> correct / <strong class="text-slate-400 font-num">0</strong> tries
         </span>
-        <span class="text-slate-500">P2/3 Diagnostic Mastery Suite</span>
+        <span class="text-slate-500 hidden sm:inline">P2/3 to P4/5 Diagnostic Foundations</span>
       </div>
     </div>
   </footer>
 
-  <!-- JAVASCRIPT LOGIC -->
+  <!-- SCRIPT LOGIC -->
   <script>
     // --- STATE MANAGEMENT ---
     const pupils = [
-      { name: "Ariana", cat: 99, ptm: 76 },
-      { name: "Aleen", cat: 88, ptm: 69 },
-      { name: "Brooke", cat: 89, ptm: 72 }
+      { name: "Ariana Flynn", short: "Ariana", cat: 99, ptm: 76, correct: 0, tries: 0 },
+      { name: "Aleen Alkhalil", short: "Aleen", cat: 88, ptm: 69, correct: 0, tries: 0 },
+      { name: "Brooke Kearney", short: "Brooke", cat: 89, ptm: 72, correct: 0, tries: 0 }
     ];
     let currentPupilIndex = 0;
-    let currentMode = 4; // Default to Week 5-6 Bridging
+    let currentMode = 4; // Default: Mode 4 Full Bridging
+    let selectedOp = 'mixed'; // 'add', 'sub', 'mixed'
     let currentProblem = null;
     let userInput = "";
     let isVaultUnlocked = false;
     let teacherHintShown = false;
-    let streak = 0;
 
     // --- SYNTH AUDIO (Tone.js) ---
     let synth = null;
@@ -335,7 +332,7 @@
       if (!synth && window.Tone) {
         synth = new Tone.PolySynth(Tone.Synth, {
           oscillator: { type: "triangle" },
-          envelope: { attack: 0.005, decay: 0.1, sustain: 0.1, release: 0.3 }
+          envelope: { attack: 0.005, decay: 0.08, sustain: 0.1, release: 0.25 }
         }).toDestination();
         Tone.start();
       }
@@ -347,202 +344,271 @@
         if (!synth) return;
         const now = Tone.now();
         if (type === "tap") {
-          synth.triggerAttackRelease("C5", "32n", now, 0.15);
+          synth.triggerAttackRelease("C5", "32n", now, 0.1);
         } else if (type === "correct") {
-          synth.triggerAttackRelease(["C5", "E5", "G5"], "16n", now, 0.4);
-          setTimeout(() => synth.triggerAttackRelease(["C6"], "8n", Tone.now(), 0.5), 120);
+          synth.triggerAttackRelease(["C5", "E5", "G5"], "16n", now, 0.35);
+          setTimeout(() => synth.triggerAttackRelease(["C6"], "8n", Tone.now(), 0.45), 110);
         } else if (type === "wrong") {
-          synth.triggerAttackRelease(["Eb4", "D4"], "8n", now, 0.3);
+          synth.triggerAttackRelease(["Eb4", "D4"], "8n", now, 0.25);
         } else if (type === "unlock") {
-          synth.triggerAttackRelease(["G4", "C5", "E5", "G5"], "16n", now, 0.3);
+          synth.triggerAttackRelease(["G4", "B4", "D5", "G5"], "16n", now, 0.3);
         }
       } catch (e) {
-        // Fallback silently if audio blocked
+        // Fallback silently
       }
     }
 
-    // --- MODE PRESETS & GENERATOR ---
+    // --- OPERATION TOGGLE ---
+    function setOperation(op) {
+      selectedOp = op;
+      ['add', 'sub', 'mixed'].forEach(item => {
+        const btn = document.getElementById(`opBtn-${item}`);
+        if (item === op) {
+          btn.className = "px-2.5 py-1 rounded-lg text-xs font-black transition text-amber-950 bg-amber-400 shadow";
+        } else {
+          btn.className = "px-2.5 py-1 rounded-lg text-xs font-black transition text-slate-400 hover:text-white";
+        }
+      });
+      newProblem();
+    }
+
+    // --- MODE SELECTOR ---
     function setMode(modeNum) {
       currentMode = modeNum;
-      
-      // Update UI Tabs
       for (let i = 1; i <= 5; i++) {
         const btn = document.getElementById(`modeBtn${i}`);
         if (i === modeNum) {
-          btn.className = "mode-tab px-3 py-1.5 rounded-lg font-black transition-all text-amber-950 bg-amber-400 shadow";
+          btn.className = "mode-tab whitespace-nowrap px-3 py-1 rounded-lg font-bold transition text-amber-950 bg-amber-400 shadow";
         } else {
-          btn.className = "mode-tab px-3 py-1.5 rounded-lg font-medium transition-all text-slate-400 hover:text-white";
+          btn.className = "mode-tab whitespace-nowrap px-3 py-1 rounded-lg font-medium transition text-slate-400 hover:text-white";
         }
       }
 
-      // Update Subheading descriptions
-      const subs = {
-        1: "Pillar 1: Automatic Bonds to 10 & Single Splits (Weeks 1 & 2)",
-        2: "Pillar 2: 'Clear the Deck' to Friendly 10 (Week 3)",
-        3: "Pillar 2: 'Drop and Bond' Decade Minus 1-Digit (Week 4)",
-        4: "Pillar 3: The Full Mental Bridge (Weeks 5 & 6) [e.g. 52 - 7]",
-        5: "Pillar 3 Alternative: 'Take from 10' Strategy [42 + (10 - 7)]"
+      const descriptions = {
+        1: "Pillar 1: Automatic Bonds & Complements to 10",
+        2: "Pillar 2: Reach or Clear the Friendly 10 (Single Step)",
+        3: "Pillar 2: Decade ± Single Digit ('Drop/Rise & Bond')",
+        4: "Pillar 3: Full Mental Bridging (Both Addition & Subtraction)",
+        5: "Pillar 3 Inverse Fact Mirror: Addition & Subtraction Linked ⇄"
       };
-      document.getElementById('modeSubheading').innerText = subs[modeNum];
-      
+      document.getElementById('modeSubheading').innerText = descriptions[modeNum];
+
       const tagMap = {
-        1: "Bonds within 10 Mastery",
-        2: "Clear to Friendly Ten",
-        3: "Drop & Bond Strategy",
-        4: "Backward Bridging Rule",
-        5: "Take from 10 Rule"
+        1: "Bonds to 10 Mastery",
+        2: "Reach / Clear to Friendly 10",
+        3: "Decade ± Single Digit",
+        4: "Two-Stage Bridging (±)",
+        5: "Inverse Fact Families (⇄)"
       };
       document.getElementById('strategyRuleTag').innerText = tagMap[modeNum];
 
       newProblem();
     }
 
-    // Problem Generator
+    // --- PROBLEM GENERATOR (BOTH ADDITION & SUBTRACTION) ---
     function generateProblemData() {
-      let a = 52, b = 7, ans = 45;
-      let intermediate = 50;
-      let jump1 = 2;
-      let jump2 = 5;
-      let stem = "";
-      let hint = "";
-      let why = "";
-
-      if (currentMode === 1) {
-        // Mode 1: Bonds to 10 or single splits
-        const type = Math.random() > 0.5 ? 'bond' : 'split';
-        if (type === 'bond') {
-          a = 10;
-          b = Math.floor(Math.random() * 8) + 1; // 1 to 8
-          ans = a - b;
-          intermediate = 10;
-          jump1 = b;
-          jump2 = 0;
-          stem = `10 take away ${b} is exactly ${ans} because ${b} and ${ans} are number bond partners to 10.`;
-          hint = `Think of ${b}'s best friend to make a full 10!`;
-          why = `Bond Complements to 10: ${b} + ${ans} = 10`;
-        } else {
-          // Decomposition drill: e.g. Split 7 to match 3
-          const whole = Math.floor(Math.random() * 5) + 5; // 5 to 9
-          const part1 = Math.floor(Math.random() * 3) + 2; // 2 to 4
-          a = whole;
-          b = part1;
-          ans = whole - part1;
-          intermediate = whole;
-          jump1 = part1;
-          jump2 = 0;
-          stem = `When we split ${whole} with ${part1}, the missing part is ${ans}.`;
-          hint = `If you have ${whole} counters and slide ${part1} away, how many stay?`;
-          why = `Part-Whole Decomposition: ${part1} + ${ans} = ${whole}`;
-        }
-      } 
-      else if (currentMode === 2) {
-        // Mode 2: Clear the deck to the friendly ten (e.g. 52 - 2 = 50, 74 - 4 = 70)
-        const tens = [30, 40, 50, 60, 70, 80][Math.floor(Math.random() * 6)];
-        const ones = Math.floor(Math.random() * 7) + 2; // 2 to 8
-        a = tens + ones;
-        b = ones;
-        ans = tens;
-        intermediate = tens;
-        jump1 = ones;
-        jump2 = 0;
-        stem = `When we subtract all ${b} loose ones from ${a}, we land safely on the friendly ten ${ans}.`;
-        hint = `Look at the ones digit! Take all of them away to reach the flat zero ten.`;
-        why = `Place Value: ${a} has ${ones} ones. Clearing them leaves exactly ${tens}.`;
-      } 
-      else if (currentMode === 3) {
-        // Mode 3: Decade minus single digit (e.g. 50 - 4 = 46, 80 - 3 = 77)
-        const tens = [30, 40, 50, 60, 70, 80][Math.floor(Math.random() * 6)];
-        b = Math.floor(Math.random() * 7) + 2; // 2 to 8
-        a = tens;
-        ans = tens - b;
-        intermediate = tens - 10;
-        jump1 = b;
-        jump2 = 0;
-        const tensDrop = tens - 10;
-        const friend = 10 - b;
-        stem = `Start at ${tens}. Drop one ten down to ${tensDrop}, then find ${b}'s partner to 10 (${friend}). The answer is ${ans}.`;
-        hint = `Drop the tens digit by one, then find ${b}'s number bond partner to 10!`;
-        why = `Decade Drop & Bond: 10 − ${b} = ${friend}, so ${tens} − ${b} = ${ans}.`;
-      } 
-      else if (currentMode === 4) {
-        // Mode 4: Full Bridge across the decade (e.g. 52 - 7, 43 - 5, 84 - 8, 35 - 8)
-        const pairs = [
-          { a: 52, b: 7 }, { a: 43, b: 5 }, { a: 84, b: 8 }, { a: 35, b: 8 },
-          { a: 63, b: 6 }, { a: 72, b: 5 }, { a: 91, b: 4 }, { a: 45, b: 8 },
-          { a: 83, b: 6 }, { a: 54, b: 7 }, { a: 62, b: 5 }, { a: 74, b: 8 }
-        ];
-        const selected = pairs[Math.floor(Math.random() * pairs.length)];
-        a = selected.a;
-        b = selected.b;
-        jump1 = a % 10; // Units to reach friendly ten
-        intermediate = a - jump1;
-        jump2 = b - jump1;
-        ans = intermediate - jump2;
-        stem = `First jump back ${jump1} to reach the friendly ten ${intermediate}, then jump back the remaining ${jump2} to land on ${ans}.`;
-        hint = `Step 1: Jump back ${jump1} to hit ${intermediate}. Step 2: Split ${b} into ${jump1} and what?`;
-        why = `Two-stage partition: ${b} = ${jump1} + ${jump2}. Friendly ten bridge at ${intermediate}.`;
-      } 
-      else if (currentMode === 5) {
-        // Mode 5: Take from 10 strategy (e.g. 52 - 7 -> 42 + (10 - 7) = 45)
-        const pairs = [
-          { a: 52, b: 7 }, { a: 43, b: 6 }, { a: 65, b: 8 }, { a: 74, b: 9 },
-          { a: 83, b: 5 }, { a: 34, b: 7 }, { a: 92, b: 6 }, { a: 41, b: 4 }
-        ];
-        const selected = pairs[Math.floor(Math.random() * pairs.length)];
-        a = selected.a;
-        b = selected.b;
-        ans = a - b;
-        const remainingTensAndOnes = a - 10;
-        const bondFromTen = 10 - b;
-        jump1 = 10;
-        jump2 = bondFromTen;
-        intermediate = remainingTensAndOnes;
-        stem = `Pull out 10 from ${a} (leaving ${remainingTensAndOnes}). Take ${b} from 10 to get ${bondFromTen}. Finally, add ${remainingTensAndOnes} + ${bondFromTen} = ${ans}.`;
-        hint = `Break ${a} into ${remainingTensAndOnes} and 10. Subtract ${b} from the 10 first!`;
-        why = `Take from 10: (10 − ${b} = ${bondFromTen}) + ${remainingTensAndOnes} = ${ans}`;
+      // Determine actual operation for this turn
+      let op = selectedOp;
+      if (op === 'mixed') {
+        op = Math.random() > 0.5 ? 'add' : 'sub';
       }
 
-      return { a, b, ans, intermediate, jump1, jump2, stem, hint, why };
+      let a, b, ans, intermediate, jump1, jump2, stem, hint, why;
+      let isInverseMirror = (currentMode === 5);
+
+      if (currentMode === 1) {
+        // Mode 1: Bonds to 10
+        if (op === 'add') {
+          b = Math.floor(Math.random() * 8) + 1; // 1 to 8
+          a = 10 - b;
+          ans = 10;
+          intermediate = 10;
+          jump1 = b; jump2 = 0;
+          stem = `${a} plus ${b} makes the full friendly 10 because ${a} and ${b} are bond partners.`;
+          hint = `How many more does ${a} need to make 10?`;
+          why = `Number Bonds to 10: ${a} + ${b} = 10`;
+        } else {
+          a = 10;
+          b = Math.floor(Math.random() * 8) + 1;
+          ans = 10 - b;
+          intermediate = 10;
+          jump1 = b; jump2 = 0;
+          stem = `10 take away ${b} leaves ${ans} because ${b}'s partner to make 10 is ${ans}.`;
+          hint = `Think of ${b}'s best friend to make 10!`;
+          why = `Bond Complements: 10 − ${b} = ${ans}`;
+        }
+      }
+      else if (currentMode === 2) {
+        // Mode 2: Reach the next friendly ten (Addition) OR Clear to friendly ten (Subtraction)
+        const decade = [30, 40, 50, 60, 70, 80][Math.floor(Math.random() * 6)];
+        const ones = Math.floor(Math.random() * 7) + 2; // 2 to 8
+
+        if (op === 'add') {
+          // e.g. 46 + 4 = 50
+          a = decade - ones; // e.g. 50 - 4 = 46
+          b = ones; // 4
+          ans = decade; // 50
+          intermediate = decade;
+          jump1 = ones; jump2 = 0;
+          stem = `Start at ${a}. Add ${b} to reach the next friendly ten ${decade}!`;
+          hint = `What is ${a % 10}'s friend to make the next full 10?`;
+          why = `Bonding to the next multiple of 10: ${a} + ${b} = ${decade}`;
+        } else {
+          // e.g. 54 - 4 = 50
+          a = decade + ones;
+          b = ones;
+          ans = decade;
+          intermediate = decade;
+          jump1 = ones; jump2 = 0;
+          stem = `Start at ${a}. Take away all ${b} loose ones to land squarely on ${decade}!`;
+          hint = `Clear all the loose units to drop directly to the ten!`;
+          why = `Clearing units to the multiple of 10: ${a} − ${b} = ${decade}`;
+        }
+      }
+      else if (currentMode === 3) {
+        // Mode 3: Decade + digit (e.g. 50 + 6 = 56) OR Decade - digit (e.g. 50 - 4 = 46)
+        const decade = [30, 40, 50, 60, 70, 80][Math.floor(Math.random() * 6)];
+        b = Math.floor(Math.random() * 7) + 2; // 2 to 8
+
+        if (op === 'add') {
+          a = decade;
+          ans = decade + b;
+          intermediate = decade;
+          jump1 = b; jump2 = 0;
+          stem = `${decade} plus ${b} is simply ${ans}. No bridge needed from a flat ten!`;
+          hint = `You can hear the answer in the words! ${decade} and ${b}.`;
+          why = `Decade addition: ${decade} + ${b} = ${ans}`;
+        } else {
+          a = decade;
+          ans = decade - b;
+          intermediate = decade - 10;
+          jump1 = b; jump2 = 0;
+          const dropTens = decade - 10;
+          const friend = 10 - b;
+          stem = `${decade} drops one ten down to ${dropTens}, and ${b}'s bond friend is ${friend}, making ${ans}.`;
+          hint = `Drop the tens digit by 1, then find ${b}'s partner to 10!`;
+          why = `Decade subtraction: ${decade} − ${b} = ${ans} (using 10 − ${b} = ${friend})`;
+        }
+      }
+      else if (currentMode === 4) {
+        // Mode 4: Full Bridging (Addition: 48 + 7 = 55; Subtraction: 52 - 7 = 45)
+        if (op === 'add') {
+          const addPairs = [
+            { a: 48, b: 7 }, { a: 37, b: 6 }, { a: 69, b: 5 }, { a: 58, b: 6 },
+            { a: 28, b: 5 }, { a: 76, b: 8 }, { a: 47, b: 8 }, { a: 88, b: 4 },
+            { a: 39, b: 7 }, { a: 57, b: 6 }, { a: 68, b: 7 }, { a: 79, b: 6 }
+          ];
+          const item = addPairs[Math.floor(Math.random() * addPairs.length)];
+          a = item.a;
+          b = item.b;
+          jump1 = 10 - (a % 10); // Jump forward to hit the friendly ten
+          intermediate = a + jump1;
+          jump2 = b - jump1;
+          ans = intermediate + jump2;
+          stem = `${a} needs ${jump1} to reach the friendly ten ${intermediate}. We split ${b} into ${jump1} and ${jump2}. ${intermediate} plus ${jump2} is ${ans}!`;
+          hint = `Step 1: Jump +${jump1} to make ${intermediate}. Step 2: Split ${b} into ${jump1} and what?`;
+          why = `Forward Bridging: Split ${b} into (${jump1} + ${jump2}). ${a} + ${jump1} = ${intermediate}, then ${intermediate} + ${jump2} = ${ans}.`;
+        } else {
+          const subPairs = [
+            { a: 52, b: 7 }, { a: 43, b: 5 }, { a: 84, b: 8 }, { a: 35, b: 8 },
+            { a: 63, b: 6 }, { a: 72, b: 5 }, { a: 91, b: 4 }, { a: 45, b: 8 },
+            { a: 83, b: 6 }, { a: 54, b: 7 }, { a: 62, b: 5 }, { a: 74, b: 8 }
+          ];
+          const item = subPairs[Math.floor(Math.random() * subPairs.length)];
+          a = item.a;
+          b = item.b;
+          jump1 = a % 10; // Jump back to hit friendly ten
+          intermediate = a - jump1;
+          jump2 = b - jump1;
+          ans = intermediate - jump2;
+          stem = `First jump back ${jump1} to hit the friendly ten ${intermediate}. We split ${b} into ${jump1} and ${jump2}. ${intermediate} take away ${jump2} is ${ans}!`;
+          hint = `Step 1: Clear loose units (−${jump1}) to land on ${intermediate}. Step 2: Subtract remaining ${jump2}!`;
+          why = `Backward Bridging: Split ${b} into (${jump1} + ${jump2}). ${a} − ${jump1} = ${intermediate}, then ${intermediate} − ${jump2} = ${ans}.`;
+        }
+      }
+      else if (currentMode === 5) {
+        // Mode 5: Inverse Fact Mirror (e.g. 45 + 7 = 52 <--> 52 - 7 = 45)
+        const inversePairs = [
+          { start: 45, addend: 7, top: 52 },
+          { start: 38, addend: 5, top: 43 },
+          { start: 76, addend: 8, top: 84 },
+          { start: 27, addend: 8, top: 35 },
+          { start: 57, addend: 6, top: 63 },
+          { start: 67, addend: 5, top: 72 }
+        ];
+        const pair = inversePairs[Math.floor(Math.random() * inversePairs.length)];
+        
+        // Randomly pick which question direction is presented to pupil
+        if (op === 'add') {
+          a = pair.start;
+          b = pair.addend;
+          ans = pair.top;
+          jump1 = 10 - (a % 10);
+          intermediate = a + jump1;
+          jump2 = b - jump1;
+          stem = `Inverse Fact Mirror: ${a} + ${b} = ${ans}. If we reverse the journey, ${ans} − ${b} = ${a}!`;
+          hint = `Addition and Subtraction are exact opposites along the number line!`;
+          why = `Inverse Relationship: ${a} + ${b} = ${ans} ⇄ ${ans} − ${b} = ${a}`;
+        } else {
+          a = pair.top;
+          b = pair.addend;
+          ans = pair.start;
+          jump1 = a % 10;
+          intermediate = a - jump1;
+          jump2 = b - jump1;
+          stem = `Inverse Fact Mirror: ${a} − ${b} = ${ans}. If we reverse the journey, ${ans} + ${b} = ${a}!`;
+          hint = `Addition and Subtraction undo each other. Look at the return jump!`;
+          why = `Inverse Relationship: ${a} − ${b} = ${ans} ⇄ ${ans} + ${b} = ${a}`;
+        }
+      }
+
+      return { op, a, b, ans, intermediate, jump1, jump2, stem, hint, why, isInverseMirror };
     }
 
-    // --- SETUP NEW PROBLEM ---
+    // --- SETUP NEW QUESTION ---
     function newProblem() {
       userInput = "";
       isVaultUnlocked = false;
       teacherHintShown = false;
       document.getElementById('teacherHintBox').classList.add('hidden');
-      document.getElementById('hintBtnText').innerText = "Teacher Scaffolding";
+      document.getElementById('hintBtnText').innerText = "Clue";
 
       currentProblem = generateProblemData();
 
-      // Anti-Cheat: Strictly reset and lock the curtain
+      // Reset Anti-Cheat Locked Curtain
       const curtain = document.getElementById('lockedCurtain');
       curtain.classList.remove('opacity-0', 'pointer-events-none');
-      
+
       const proofCont = document.getElementById('visualProofContainer');
       proofCont.classList.add('opacity-0');
-      
+
       const vaultStatus = document.getElementById('vaultStatusText');
       vaultStatus.innerText = "🔒 LOCKED: Answer required to prevent peeking";
       vaultStatus.className = "text-xs font-mono text-rose-400 bg-rose-500/10 px-2.5 py-1 rounded-md border border-rose-500/20";
-      
+
       const dot = document.getElementById('vaultDot');
       dot.className = "w-3 h-3 rounded-full bg-rose-500 animate-pulse";
 
-      // Render Equation
+      // Display Problem Numbers
       document.getElementById('numA').innerText = currentProblem.a;
+      document.getElementById('opSymbol').innerText = currentProblem.op === 'add' ? '＋' : '−';
+      document.getElementById('opSymbol').className = currentProblem.op === 'add' ? 'text-emerald-400' : 'text-rose-400';
       document.getElementById('numB').innerText = currentProblem.b;
-      document.getElementById('userEnteredVal').innerText = "?";
-      document.getElementById('userEnteredVal').classList.remove('text-emerald-400', 'text-rose-400');
-      document.getElementById('userEnteredVal').classList.add('text-amber-400');
+
+      const userDisplay = document.getElementById('userEnteredVal');
+      userDisplay.innerText = "?";
+      userDisplay.className = "text-4xl sm:text-5xl font-num text-amber-400";
 
       document.getElementById('teacherHintText').innerText = currentProblem.hint;
 
-      // Reset feedback banner
-      setFeedbackBanner("neutral", "Hands flat on table! Calculate mentally. Enter answer to unlock visual proof.");
+      // Reset Submit button
+      const subBtn = document.getElementById('submitBtn');
+      subBtn.innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg> Submit`;
+
+      setFeedbackBanner("neutral", "Hands flat on table! Mental bridge only. Input answer to unlock visual proof.");
     }
 
-    // --- KEYPAD & INPUT LOGIC ---
+    // --- KEYPAD INPUTS ---
     function pressDigit(d) {
       if (isVaultUnlocked) return;
       playTone("tap");
@@ -568,14 +634,9 @@
 
     function updateInputDisplay() {
       const el = document.getElementById('userEnteredVal');
-      if (userInput === "") {
-        el.innerText = "?";
-      } else {
-        el.innerText = userInput;
-      }
+      el.innerText = userInput === "" ? "?" : userInput;
     }
 
-    // Physical Keyboard support for whiteboards or laptops
     window.addEventListener('keydown', (e) => {
       if (e.key >= '0' && e.key <= '9') {
         pressDigit(e.key);
@@ -588,7 +649,7 @@
       }
     });
 
-    // --- TEACHER SCAFFOLDING / CLUE ---
+    // --- TEACHER SCAFFOLDING CLUE ---
     function toggleTeacherHint() {
       teacherHintShown = !teacherHintShown;
       const box = document.getElementById('teacherHintBox');
@@ -598,11 +659,11 @@
         textBtn.innerText = "Hide Clue";
       } else {
         box.classList.add('hidden');
-        textBtn.innerText = "Teacher Scaffolding";
+        textBtn.innerText = "Clue";
       }
     }
 
-    // --- CHECK ANSWER & UNLOCK VAULT ---
+    // --- SUBMISSION & ANSWER CHECK ---
     function checkAnswer() {
       if (isVaultUnlocked) {
         newProblem();
@@ -610,32 +671,32 @@
       }
 
       if (userInput === "") {
-        setFeedbackBanner("warn", "Please enter your answer first before unlocking the visual model!");
+        setFeedbackBanner("warn", "Enter your answer on the keypad first!");
         return;
       }
 
-      const pupilAnswer = parseInt(userInput, 10);
-      if (pupilAnswer === currentProblem.ans) {
-        // Correct
+      const pupil = pupils[currentPupilIndex];
+      pupil.tries++;
+
+      const val = parseInt(userInput, 10);
+      if (val === currentProblem.ans) {
+        pupil.correct++;
         playTone("correct");
-        streak++;
-        updateStreakDisplay();
-        setFeedbackBanner("success", `Spot on, ${pupils[currentPupilIndex].name}! Fantastic mental math! The proof vault is unlocked.`);
+        updatePupilStats();
+        setFeedbackBanner("success", `Superb work, ${pupil.short}! Exact answer found without fingers. Visual proof unlocked!`);
         unlockVault(true);
       } else {
-        // Incorrect
         playTone("wrong");
-        streak = 0;
-        updateStreakDisplay();
-        setFeedbackBanner("error", `Not quite (${pupilAnswer}). Look carefully at your bond to 10 or try again before revealing!`);
-        document.getElementById('userEnteredVal').classList.remove('text-amber-400');
-        document.getElementById('userEnteredVal').classList.add('text-rose-400');
+        updatePupilStats();
+        setFeedbackBanner("error", `Not quite (${val}). Try thinking: how far is it to the friendly ten?`);
+        const userDisplay = document.getElementById('userEnteredVal');
+        userDisplay.className = "text-4xl sm:text-5xl font-num text-rose-400";
       }
     }
 
     function forceTeacherReveal() {
       playTone("unlock");
-      setFeedbackBanner("warn", `Teacher override unlocked for group demonstration with ${pupils[currentPupilIndex].name}.`);
+      setFeedbackBanner("warn", `Teacher Demonstration Mode active for ${pupils[currentPupilIndex].name}.`);
       document.getElementById('userEnteredVal').innerText = currentProblem.ans;
       unlockVault(false);
     }
@@ -646,76 +707,59 @@
       textEl.innerText = text;
 
       if (type === "success") {
-        banner.className = "p-3.5 rounded-2xl text-center font-bold text-sm bg-emerald-950/80 border border-emerald-500/50 text-emerald-300 flex items-center justify-center gap-2 shadow-lg";
+        banner.className = "p-3 rounded-2xl text-center font-bold text-xs sm:text-sm bg-emerald-950/80 border border-emerald-500/50 text-emerald-300 flex items-center justify-center gap-2 shadow-lg";
       } else if (type === "error") {
-        banner.className = "p-3.5 rounded-2xl text-center font-bold text-sm bg-rose-950/80 border border-rose-500/50 text-rose-300 flex items-center justify-center gap-2 shadow-lg";
+        banner.className = "p-3 rounded-2xl text-center font-bold text-xs sm:text-sm bg-rose-950/80 border border-rose-500/50 text-rose-300 flex items-center justify-center gap-2 shadow-lg";
       } else if (type === "warn") {
-        banner.className = "p-3.5 rounded-2xl text-center font-bold text-sm bg-amber-950/80 border border-amber-500/50 text-amber-300 flex items-center justify-center gap-2 shadow-lg";
+        banner.className = "p-3 rounded-2xl text-center font-bold text-xs sm:text-sm bg-amber-950/80 border border-amber-500/50 text-amber-300 flex items-center justify-center gap-2 shadow-lg";
       } else {
-        banner.className = "p-3.5 rounded-2xl text-center font-bold text-sm bg-slate-950/60 border border-slate-800 text-slate-400 flex items-center justify-center gap-2";
+        banner.className = "p-3 rounded-2xl text-center font-bold text-xs sm:text-sm bg-slate-950/60 border border-slate-800 text-slate-400 flex items-center justify-center gap-2";
       }
     }
 
-    // --- VAULT UNLOCK & VISUAL REVEAL ---
+    // --- VAULT UNLOCK & VISUAL ENGINE ---
     function unlockVault(isCorrect) {
       isVaultUnlocked = true;
 
-      // Update submit button text to "Next Problem"
       const subBtn = document.getElementById('submitBtn');
       subBtn.innerHTML = `<span>Next Question ➔</span>`;
-      
-      // Update Vault Status bar
+
       const vaultStatus = document.getElementById('vaultStatusText');
-      vaultStatus.innerText = "🔓 UNLOCKED: Step-by-Step Proof Active";
+      vaultStatus.innerText = "🔓 UNLOCKED: Visual Bridge & Partition Proof";
       vaultStatus.className = "text-xs font-mono text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-md border border-emerald-500/20";
 
       const dot = document.getElementById('vaultDot');
       dot.className = "w-3 h-3 rounded-full bg-emerald-400";
 
-      // Hide locked curtain with fade
-      const curtain = document.getElementById('lockedCurtain');
-      curtain.classList.add('opacity-0', 'pointer-events-none');
+      document.getElementById('lockedCurtain').classList.add('opacity-0', 'pointer-events-none');
+      document.getElementById('visualProofContainer').classList.remove('opacity-0');
 
-      // Show Proof Box
-      const proofCont = document.getElementById('visualProofContainer');
-      proofCont.classList.remove('opacity-0');
-
-      // Populate text
       document.getElementById('stemSentenceText').innerText = `"${currentProblem.stem}"`;
       document.getElementById('whyItWorksText').innerText = currentProblem.why;
 
-      // Render Visual Models
-      renderNumberLine();
-      renderConcreteModel();
-    }
-
-    // --- DYNAMIC NUMBER LINE RENDERING (SVG) ---
-    function renderNumberLine() {
-      const svg = document.getElementById('numberLineSvg');
-      svg.innerHTML = ""; // Clear existing
-
-      const p = currentProblem;
-      const width = 700;
-      const height = 130;
-      const lineY = 85;
-
-      // Determine 3 landmark values on line: start (right), middle, end (left)
-      let endVal = p.ans;
-      let midVal = p.intermediate;
-      let startVal = p.a;
-
-      let xStart = 580;
-      let xMid = 350;
-      let xEnd = 120;
-
-      if (currentMode === 2 || currentMode === 1 || currentMode === 3) {
-        // Single jump displays
-        xStart = 550;
-        xEnd = 160;
-        xMid = null;
+      // Update badge
+      const opBadge = document.getElementById('operationIndicator');
+      if (currentProblem.op === 'add') {
+        opBadge.innerText = "Addition Bridge (Forward ➔)";
+        opBadge.className = "text-xs font-bold text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded border border-sky-500/20";
+      } else {
+        opBadge.innerText = "Subtraction Bridge (Backward ⬅)";
+        opBadge.className = "text-xs font-bold text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded border border-rose-500/20";
       }
 
-      // Draw horizontal baseline
+      renderNumberLine();
+      renderPartitionModel();
+    }
+
+    // --- RENDER DUAL-JUMP NUMBER LINE (SVG) ---
+    function renderNumberLine() {
+      const svg = document.getElementById('numberLineSvg');
+      svg.innerHTML = "";
+
+      const p = currentProblem;
+      const lineY = 85;
+
+      // Base line
       const baseLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
       baseLine.setAttribute("x1", "40");
       baseLine.setAttribute("y1", lineY);
@@ -726,48 +770,129 @@
       baseLine.setAttribute("stroke-linecap", "round");
       svg.appendChild(baseLine);
 
-      // Start tick and label (e.g. 52)
-      drawTick(svg, xStart, lineY, startVal, "#38bdf8", "Start");
+      if (p.isInverseMirror) {
+        // INVERSE FACT MIRROR: Shows forward addition arc on top, backward subtraction return arc underneath!
+        const xStart = 140;
+        const xMid = 350;
+        const xEnd = 560;
 
-      if (xMid !== null && currentMode >= 4) {
-        // Dual jump backward: Jump 1 (start -> mid)
-        const arc1 = createArcPath(xStart, xMid, lineY, 45);
-        arc1.setAttribute("class", "jump-arc");
-        arc1.setAttribute("stroke", "#f43f5e");
-        arc1.setAttribute("stroke-width", "4");
-        arc1.setAttribute("fill", "none");
-        svg.appendChild(arc1);
+        // Draw forward arcs (Addition: xStart -> xEnd)
+        const forwardArc1 = createArcPath(xStart, xMid, lineY, 40);
+        forwardArc1.setAttribute("stroke", "#38bdf8");
+        forwardArc1.setAttribute("stroke-width", "3.5");
+        forwardArc1.setAttribute("fill", "none");
+        svg.appendChild(forwardArc1);
 
-        // Jump 1 label
-        drawText(svg, (xStart + xMid) / 2, lineY - 48, `− ${p.jump1}`, "#fda4af", "14px", true);
+        const forwardArc2 = createArcPath(xMid, xEnd, lineY, 40);
+        forwardArc2.setAttribute("stroke", "#38bdf8");
+        forwardArc2.setAttribute("stroke-width", "3.5");
+        forwardArc2.setAttribute("fill", "none");
+        svg.appendChild(forwardArc2);
 
-        // Friendly Ten Landmark (Safe Island in green)
-        drawTick(svg, xMid, lineY, midVal, "#10b981", "Friendly 10", true);
+        drawText(svg, 350, 30, `＋ ${p.b} Forward Journey`, "#38bdf8", "13px", true);
 
-        // Jump 2 (mid -> end)
-        const arc2 = createArcPath(xMid, xEnd, lineY, 45);
-        arc2.setAttribute("class", "jump-arc-2");
-        arc2.setAttribute("stroke", "#f59e0b");
-        arc2.setAttribute("stroke-width", "4");
-        arc2.setAttribute("fill", "none");
-        svg.appendChild(arc2);
+        // Draw backward return arc underneath baseline (Subtraction return: xEnd -> xStart)
+        const returnArc = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        returnArc.setAttribute("d", `M ${xEnd} ${lineY} Q 350 ${lineY + 45} ${xStart} ${lineY}`);
+        returnArc.setAttribute("stroke", "#f43f5e");
+        returnArc.setAttribute("stroke-width", "3.5");
+        returnArc.setAttribute("stroke-dasharray", "6,6");
+        returnArc.setAttribute("fill", "none");
+        svg.appendChild(returnArc);
 
-        // Jump 2 label
-        drawText(svg, (xMid + xEnd) / 2, lineY - 48, `− ${p.jump2}`, "#fde68a", "14px", true);
+        drawText(svg, 350, lineY + 38, `− ${p.b} Return Journey (Inverse)`, "#fb7185", "12px", true);
 
-        // End tick (e.g. 45)
-        drawTick(svg, xEnd, lineY, endVal, "#fbbf24", "Final Answer");
+        // Landmarks
+        const minVal = Math.min(p.a, p.ans);
+        const maxVal = Math.max(p.a, p.ans);
+        drawTick(svg, xStart, lineY, minVal, "#38bdf8", "Start / Home");
+        drawTick(svg, xMid, lineY, p.intermediate, "#10b981", "Friendly 10", true);
+        drawTick(svg, xEnd, lineY, maxVal, "#fbbf24", "Peak Land");
+        return;
+      }
+
+      if (p.op === 'add') {
+        // FORWARD ADDITION BRIDGING (Left to Right)
+        const xStart = 130;
+        const xMid = 350;
+        const xEnd = 570;
+
+        drawTick(svg, xStart, lineY, p.a, "#38bdf8", "Start");
+
+        if (currentMode >= 4) {
+          // Arc 1: Jump to Friendly Ten
+          const arc1 = createArcPath(xStart, xMid, lineY, 45);
+          arc1.setAttribute("class", "jump-arc-forward-1");
+          arc1.setAttribute("stroke", "#38bdf8");
+          arc1.setAttribute("stroke-width", "4");
+          arc1.setAttribute("fill", "none");
+          svg.appendChild(arc1);
+          drawText(svg, (xStart + xMid) / 2, lineY - 48, `＋ ${p.jump1}`, "#7dd3fc", "15px", true);
+
+          // Safe Island
+          drawTick(svg, xMid, lineY, p.intermediate, "#10b981", "Safe Island (10)", true);
+
+          // Arc 2: Jump from Friendly Ten to final
+          const arc2 = createArcPath(xMid, xEnd, lineY, 45);
+          arc2.setAttribute("class", "jump-arc-forward-2");
+          arc2.setAttribute("stroke", "#c084fc");
+          arc2.setAttribute("stroke-width", "4");
+          arc2.setAttribute("fill", "none");
+          svg.appendChild(arc2);
+          drawText(svg, (xMid + xEnd) / 2, lineY - 48, `＋ ${p.jump2}`, "#e9d5ff", "15px", true);
+
+          drawTick(svg, xEnd, lineY, p.ans, "#fbbf24", "Landing");
+        } else {
+          // Single direct jump
+          const singleArc = createArcPath(xStart, xEnd, lineY, 50);
+          singleArc.setAttribute("stroke", "#38bdf8");
+          singleArc.setAttribute("stroke-width", "4");
+          singleArc.setAttribute("fill", "none");
+          svg.appendChild(singleArc);
+          drawText(svg, (xStart + xEnd) / 2, lineY - 55, `＋ ${p.b}`, "#7dd3fc", "15px", true);
+          drawTick(svg, xEnd, lineY, p.ans, "#10b981", "Answer");
+        }
       } else {
-        // Single jump
-        const singleArc = createArcPath(xStart, xEnd, lineY, 55);
-        singleArc.setAttribute("class", "jump-arc");
-        singleArc.setAttribute("stroke", "#38bdf8");
-        singleArc.setAttribute("stroke-width", "4");
-        singleArc.setAttribute("fill", "none");
-        svg.appendChild(singleArc);
+        // BACKWARD SUBTRACTION BRIDGING (Right to Left)
+        const xStart = 570;
+        const xMid = 350;
+        const xEnd = 130;
 
-        drawText(svg, (xStart + xEnd) / 2, lineY - 58, `− ${p.b}`, "#bae6fd", "15px", true);
-        drawTick(svg, xEnd, lineY, endVal, "#10b981", "Answer");
+        drawTick(svg, xStart, lineY, p.a, "#38bdf8", "Start");
+
+        if (currentMode >= 4) {
+          // Arc 1: Backward to Friendly Ten
+          const arc1 = createArcPath(xStart, xMid, lineY, 45);
+          arc1.setAttribute("class", "jump-arc-back-1");
+          arc1.setAttribute("stroke", "#f43f5e");
+          arc1.setAttribute("stroke-width", "4");
+          arc1.setAttribute("fill", "none");
+          svg.appendChild(arc1);
+          drawText(svg, (xStart + xMid) / 2, lineY - 48, `− ${p.jump1}`, "#fda4af", "15px", true);
+
+          // Safe Island
+          drawTick(svg, xMid, lineY, p.intermediate, "#10b981", "Friendly 10", true);
+
+          // Arc 2: Backward to Final Answer
+          const arc2 = createArcPath(xMid, xEnd, lineY, 45);
+          arc2.setAttribute("class", "jump-arc-back-2");
+          arc2.setAttribute("stroke", "#f59e0b");
+          arc2.setAttribute("stroke-width", "4");
+          arc2.setAttribute("fill", "none");
+          svg.appendChild(arc2);
+          drawText(svg, (xMid + xEnd) / 2, lineY - 48, `− ${p.jump2}`, "#fde68a", "15px", true);
+
+          drawTick(svg, xEnd, lineY, p.ans, "#fbbf24", "Landing");
+        } else {
+          // Single backward jump
+          const singleArc = createArcPath(xStart, xEnd, lineY, 50);
+          singleArc.setAttribute("stroke", "#f43f5e");
+          singleArc.setAttribute("stroke-width", "4");
+          singleArc.setAttribute("fill", "none");
+          svg.appendChild(singleArc);
+          drawText(svg, (xStart + xEnd) / 2, lineY - 55, `− ${p.b}`, "#fda4af", "15px", true);
+          drawTick(svg, xEnd, lineY, p.ans, "#10b981", "Answer");
+        }
       }
     }
 
@@ -780,7 +905,6 @@
     }
 
     function drawTick(svg, x, y, val, color, sublabel, isIsland = false) {
-      // Tick line
       const tick = document.createElementNS("http://www.w3.org/2000/svg", "line");
       tick.setAttribute("x1", x);
       tick.setAttribute("y1", y - 10);
@@ -790,7 +914,6 @@
       tick.setAttribute("stroke-width", isIsland ? "5" : "3");
       svg.appendChild(tick);
 
-      // Node point circle
       const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
       circle.setAttribute("cx", x);
       circle.setAttribute("cy", y);
@@ -798,23 +921,21 @@
       circle.setAttribute("fill", color);
       svg.appendChild(circle);
 
-      // Value number
       const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
       text.setAttribute("x", x);
-      text.setAttribute("y", y + 28);
+      text.setAttribute("y", y + 26);
       text.setAttribute("text-anchor", "middle");
       text.setAttribute("fill", color);
       text.setAttribute("font-family", "Fredoka, cursive, sans-serif");
-      text.setAttribute("font-size", isIsland ? "22px" : "18px");
+      text.setAttribute("font-size", isIsland ? "20px" : "17px");
       text.setAttribute("font-weight", "bold");
       text.textContent = val;
       svg.appendChild(text);
 
-      // Sub-label (e.g. "Friendly 10")
       if (sublabel) {
         const sub = document.createElementNS("http://www.w3.org/2000/svg", "text");
         sub.setAttribute("x", x);
-        sub.setAttribute("y", y + 42);
+        sub.setAttribute("y", y + 40);
         sub.setAttribute("text-anchor", "middle");
         sub.setAttribute("fill", isIsland ? "#34d399" : "#94a3b8");
         sub.setAttribute("font-size", "9px");
@@ -836,107 +957,80 @@
       svg.appendChild(text);
     }
 
-    // --- CONCRETE 10-FRAME / BASE-10 MODEL BUILDER ---
-    function renderConcreteModel() {
-      const cont = document.getElementById('concreteModelView');
+    // --- RENDER CHERRY PART-WHOLE / TEN-FRAME REPRESENTATION ---
+    function renderPartitionModel() {
+      const cont = document.getElementById('partitionModelContent');
       cont.innerHTML = "";
 
       const p = currentProblem;
-      const explainTag = document.getElementById('frameExplainTag');
+      const isAdd = p.op === 'add';
 
-      if (currentMode === 1) {
-        // Single 10-Frame complement visual
-        explainTag.innerText = `Bond Complement of ${p.b}`;
-        const frame = createTenFrameElement(10, p.b, 10 - p.b);
-        cont.appendChild(frame);
-      } else {
-        // Dual representation showing the friendly ten & cleared units
-        explainTag.innerText = `Friendly 10: [${p.intermediate}] + Remaining: [${p.jump2 || 0}]`;
-        
-        // Block 1: Base-10 Friendly Ten Landmark
-        const tenDiv = document.createElement('div');
-        tenDiv.className = "flex flex-col items-center bg-slate-900 border border-emerald-500/30 rounded-xl p-2.5";
-        tenDiv.innerHTML = `
-          <span class="text-[10px] uppercase font-bold text-emerald-400 mb-1">Friendly Ten</span>
-          <div class="flex items-center gap-1.5 py-1">
-            <span class="font-num text-3xl font-black text-emerald-300">${p.intermediate}</span>
-          </div>
-          <span class="text-[10px] text-slate-400">Anchor Multiplier</span>
-        `;
-        cont.appendChild(tenDiv);
-
-        // Block 2: Part-Whole Subtrahend Decomposition
-        const splitDiv = document.createElement('div');
-        splitDiv.className = "flex flex-col items-center bg-slate-900 border border-slate-700 rounded-xl p-2.5";
-        
-        if (currentMode >= 4) {
-          splitDiv.innerHTML = `
-            <span class="text-[10px] uppercase font-bold text-amber-400 mb-1">Subtrahend Split (${p.b})</span>
-            <div class="flex items-center gap-3 py-1">
+      if (currentMode >= 4) {
+        // Cherry Model splitting the single digit
+        cont.innerHTML = `
+          <div class="flex flex-col items-center">
+            <!-- Whole (Number being split) -->
+            <div class="w-12 h-12 rounded-2xl bg-amber-400 text-slate-950 font-num font-black text-2xl flex items-center justify-center shadow-md">
+              ${p.b}
+            </div>
+            <!-- Branch connectors -->
+            <div class="w-24 h-4 flex justify-between px-4 my-1">
+              <div class="w-0.5 h-full bg-slate-600 rotate-[-25deg] origin-top"></div>
+              <div class="w-0.5 h-full bg-slate-600 rotate-[25deg] origin-top"></div>
+            </div>
+            <!-- Two parts -->
+            <div class="flex items-center gap-6">
               <div class="flex flex-col items-center">
-                <span class="text-xs text-rose-400 font-bold">1st Jump</span>
-                <span class="font-num text-2xl font-bold text-rose-400">−${p.jump1}</span>
+                <div class="w-10 h-10 rounded-xl ${isAdd ? 'bg-sky-500 text-slate-950' : 'bg-rose-500 text-white'} font-num font-bold text-xl flex items-center justify-center shadow">
+                  ${p.jump1}
+                </div>
+                <span class="text-[9px] font-bold text-slate-400 mt-1">${isAdd ? 'To make 10' : 'To clear ones'}</span>
               </div>
-              <span class="text-slate-600 font-bold">+</span>
               <div class="flex flex-col items-center">
-                <span class="text-xs text-amber-400 font-bold">2nd Jump</span>
-                <span class="font-num text-2xl font-bold text-amber-300">−${p.jump2}</span>
+                <div class="w-10 h-10 rounded-xl ${isAdd ? 'bg-purple-500 text-white' : 'bg-amber-500 text-slate-950'} font-num font-bold text-xl flex items-center justify-center shadow">
+                  ${p.jump2}
+                </div>
+                <span class="text-[9px] font-bold text-slate-400 mt-1">Remaining</span>
               </div>
             </div>
-            <span class="text-[10px] text-slate-400">Total Removed: ${p.b}</span>
-          `;
-        } else {
-          splitDiv.innerHTML = `
-            <span class="text-[10px] uppercase font-bold text-sky-400 mb-1">Direct Jump</span>
-            <div class="font-num text-3xl font-bold text-sky-300 py-1">−${p.b}</div>
-            <span class="text-[10px] text-slate-400">Complement Friend: ${10 - (p.b % 10)}</span>
-          `;
-        }
-        cont.appendChild(splitDiv);
+          </div>
+        `;
+      } else {
+        // Single 10-frame or direct bond block
+        cont.innerHTML = `
+          <div class="flex items-center gap-4 py-2">
+            <div class="flex flex-col items-center p-2.5 bg-slate-900 border border-slate-700 rounded-xl">
+              <span class="text-[10px] text-slate-400 font-bold uppercase mb-1">Friendly Target</span>
+              <span class="font-num text-3xl font-black text-emerald-400">${p.intermediate}</span>
+            </div>
+            <div class="flex flex-col items-center p-2.5 bg-slate-900 border border-slate-700 rounded-xl">
+              <span class="text-[10px] text-slate-400 font-bold uppercase mb-1">Step Jump</span>
+              <span class="font-num text-3xl font-black ${isAdd ? 'text-sky-300' : 'text-rose-400'}">${isAdd ? '+' : '−'}${p.b}</span>
+            </div>
+          </div>
+        `;
       }
     }
 
-    function createTenFrameElement(totalCells, filledA, filledB) {
-      const wrapper = document.createElement('div');
-      wrapper.className = "bg-slate-900 border border-slate-700 rounded-xl p-2 inline-block";
-      const grid = document.createElement('div');
-      grid.className = "grid grid-cols-5 gap-1.5";
-
-      for (let i = 0; i < totalCells; i++) {
-        const dot = document.createElement('div');
-        dot.className = "w-6 h-6 rounded-lg flex items-center justify-center font-bold text-xs";
-        if (i < filledA) {
-          dot.classList.add("bg-sky-500", "text-slate-950");
-          dot.innerText = i + 1;
-        } else {
-          dot.classList.add("bg-amber-400/80", "text-slate-950");
-          dot.innerText = i + 1;
-        }
-        grid.appendChild(dot);
-      }
-      wrapper.appendChild(grid);
-      return wrapper;
-    }
-
-    // --- SPEECH SYNTHESIS (Stem Sentence Read Aloud) ---
+    // --- SPEECH SYNTHESIS ---
     function playSpeechStem() {
       if ('speechSynthesis' in window) {
         window.speechSynthesis.cancel();
         const utter = new SpeechSynthesisUtterance(currentProblem.stem);
-        utter.rate = 0.88; // Slower cadence for primary comprehension
+        utter.rate = 0.88;
         utter.pitch = 1.05;
         window.speechSynthesis.speak(utter);
       }
     }
 
-    // --- PUPIL ROTATION TRACKING ---
+    // --- PUPIL SWITCHER & PROGRESS TRACKER ---
     function cyclePupil() {
       currentPupilIndex = (currentPupilIndex + 1) % pupils.length;
       updatePupilUI();
     }
 
-    function setSpecificPupil(name) {
-      const idx = pupils.findIndex(p => p.name.toLowerCase() === name.toLowerCase());
+    function setSpecificPupil(shortName) {
+      const idx = pupils.findIndex(p => p.short.toLowerCase() === shortName.toLowerCase());
       if (idx !== -1) {
         currentPupilIndex = idx;
         updatePupilUI();
@@ -949,22 +1043,26 @@
       
       ['Ariana', 'Aleen', 'Brooke'].forEach(n => {
         const btn = document.getElementById(`pupilTab-${n}`);
-        if (n.toLowerCase() === p.name.toLowerCase()) {
+        if (n.toLowerCase() === p.short.toLowerCase()) {
           btn.className = "px-2.5 py-1 rounded-lg bg-amber-400 text-slate-950 font-bold transition";
         } else {
           btn.className = "px-2.5 py-1 rounded-lg bg-slate-800 text-slate-300 hover:text-white transition";
         }
       });
+      updatePupilStats();
     }
 
-    function updateStreakDisplay() {
-      document.getElementById('streakCounter').innerHTML = `Class Streak: <strong class="text-amber-400 font-num text-sm">${streak}</strong>`;
+    function updatePupilStats() {
+      const p = pupils[currentPupilIndex];
+      document.getElementById('pupilStatsDisplay').innerHTML = `
+        ${p.short}: <strong class="text-emerald-400 font-num">${p.correct}</strong> correct / <strong class="text-slate-400 font-num">${p.tries}</strong> tries
+      `;
     }
 
-    // --- INITIALIZATION ---
+    // --- INIT ---
     window.onload = function () {
       updatePupilUI();
-      setMode(4); // Start on Week 5-6 full mental bridge
+      setMode(4); // Start on Full Bridging Mode
     };
   </script>
 </body>
