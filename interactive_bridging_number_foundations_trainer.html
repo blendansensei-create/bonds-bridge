@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Number Foundations & Mental Bridging Trainer</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet">
+  <!-- Tone.js for clean synth audio effects (no external audio files) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+  
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    .font-num {
+      font-family: 'Fredoka', cursive, sans-serif;
+    }
+    /* Anti-peek curtain pattern */
+    .locked-pattern {
+      background-color: #0f172a;
+      background-image: radial-gradient(#1e293b 1.5px, transparent 1.5px), radial-gradient(#1e293b 1.5px, #0f172a 1.5px);
+      background-size: 24px 24px;
+      background-position: 0 0, 12px 12px;
+    }
+    /* Number line smooth SVG animations */
+    .jump-arc {
+      stroke-dasharray: 600;
+      stroke-dashoffset: 600;
+      animation: drawArc 0.9s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+    .jump-arc-2 {
+      stroke-dasharray: 600;
+      stroke-dashoffset: 600;
+      animation: drawArc 0.9s cubic-bezier(0.4, 0, 0.2, 1) 0.5s forwards;
+    }
+    @keyframes drawArc {
+      to {
+        stroke-dashoffset: 0;
+      }
+    }
+    /* Custom button bounce for whiteboards */
+    .key-tap:active {
+      transform: scale(0.94);
+    }
+    /* Floating pulse */
+    @keyframes gentle-pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+    }
+    .pulse-target {
+      animation: gentle-pulse 2.2s infinite ease-in-out;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between selection:bg-amber-400 selection:text-slate-900">
+
+  <!-- TOP HEADER / CONTROL STRIP -->
+  <header class="bg-slate-900/95 border-b border-slate-800 px-4 py-3 sticky top-0 z-40 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+      
+      <!-- Brand & Mode Title -->
+      <div class="flex items-center gap-3">
+        <div class="h-10 w-10 rounded-xl bg-gradient-to-tr from-amber-500 to-orange-400 flex items-center justify-center font-num text-2xl font-black text-slate-950 shadow-lg shadow-amber-500/20">
+          #
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="font-bold text-lg text-white leading-none tracking-tight">Hands Down, Minds On!</h1>
+            <span id="antiCheatBadge" class="bg-emerald-500/20 text-emerald-300 text-xs font-semibold px-2.5 py-0.5 rounded-full border border-emerald-500/30 flex items-center gap-1">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+              Anti-Peek Vault Active
+            </span>
+          </div>
+          <p id="modeSubheading" class="text-xs text-slate-400 mt-0.5">Tier 3 Intervention: Foundation & Mental Bridging</p>
+        </div>
+      </div>
+
+      <!-- Mode Selector Tabs -->
+      <div class="flex items-center flex-wrap gap-1 bg-slate-950/80 p-1 rounded-xl border border-slate-800 text-xs">
+        <button onclick="setMode(1)" id="modeBtn1" class="mode-tab px-3 py-1.5 rounded-lg font-medium transition-all text-slate-400 hover:text-white">W1-2: Bonds to 10</button>
+        <button onclick="setMode(2)" id="modeBtn2" class="mode-tab px-3 py-1.5 rounded-lg font-medium transition-all text-slate-400 hover:text-white">W3: Clear to 10</button>
+        <button onclick="setMode(3)" id="modeBtn3" class="mode-tab px-3 py-1.5 rounded-lg font-medium transition-all text-slate-400 hover:text-white">W4: Drop & Bond</button>
+        <button onclick="setMode(4)" id="modeBtn4" class="mode-tab px-3 py-1.5 rounded-lg font-medium transition-all text-amber-950 bg-amber-400 font-bold shadow">W5-6: Full Bridge</button>
+        <button onclick="setMode(5)" id="modeBtn5" class="mode-tab px-3 py-1.5 rounded-lg font-medium transition-all text-slate-400 hover:text-white">Take from 10</button>
+      </div>
+
+      <!-- Quick Teacher Actions -->
+      <div class="flex items-center gap-2">
+        <button onclick="toggleTeacherHint()" id="hintBtn" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition flex items-center gap-1.5">
+          <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <span id="hintBtnText">Teacher Scaffolding</span>
+        </button>
+        <button onclick="newProblem()" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 transition shadow-md shadow-amber-500/20 flex items-center gap-1.5">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+          Next Problem
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- MAIN INTERACTIVE STAGE -->
+  <main class="max-w-7xl mx-auto px-4 py-4 w-full flex-1 flex flex-col gap-4">
+    
+    <!-- TOP ROW: PROBLEM STATEMENT & ANSWER INPUT KEYPAD -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+      
+      <!-- Big Active Card: Problem Display & State (Left 7 Cols) -->
+      <div class="lg:col-span-7 bg-slate-900 border border-slate-800 rounded-3xl p-6 flex flex-col justify-between shadow-2xl relative overflow-hidden">
+        
+        <!-- Glow accents -->
+        <div class="absolute -top-16 -right-16 w-48 h-48 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -bottom-16 -left-16 w-48 h-48 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div>
+          <!-- Subhead Rule Tag -->
+          <div class="flex items-center justify-between gap-2 mb-3">
+            <span id="strategyRuleTag" class="text-xs uppercase tracking-widest font-black text-amber-400 bg-amber-400/10 px-3 py-1 rounded-full border border-amber-400/20">
+              Backward Bridging Rule
+            </span>
+            <div id="pupilNameBadge" class="text-xs font-semibold text-slate-400 flex items-center gap-1.5">
+              <span>Pupil Turn:</span>
+              <span id="currentPupilName" class="text-amber-300 font-bold bg-slate-800 px-2 py-0.5 rounded-md border border-slate-700">Ariana</span>
+              <button onclick="cyclePupil()" title="Change Pupil" class="hover:text-white p-1 rounded hover:bg-slate-700 text-slate-400">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Problem Expression Prompt -->
+          <div class="my-3 text-center py-5 bg-slate-950/70 border border-slate-800/80 rounded-2xl relative">
+            <div id="equationDisplay" class="font-num text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight text-white flex items-center justify-center gap-3">
+              <span id="numA" class="text-sky-300">52</span>
+              <span class="text-rose-400">−</span>
+              <span id="numB" class="text-amber-300">7</span>
+              <span class="text-slate-500">=</span>
+              <span id="targetPlaceholder" class="min-w-[80px] sm:min-w-[100px] h-16 sm:h-20 bg-slate-800/80 border-2 border-dashed border-amber-400/80 rounded-2xl flex items-center justify-center text-amber-400 font-bold px-3">
+                <span id="userEnteredVal" class="text-4xl sm:text-5xl font-num">?</span>
+              </span>
+            </div>
+
+            <!-- Optional Teacher Clue (Hidden by default to prevent peeking) -->
+            <div id="teacherHintBox" class="hidden mt-3 px-4 py-2 bg-indigo-950/70 border border-indigo-500/40 rounded-xl text-xs text-indigo-200 max-w-md mx-auto">
+              <span class="font-bold text-indigo-300">💡 Teacher Clue:</span> <span id="teacherHintText">Jump back to the friendly decade first!</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Feedback & Response Banner -->
+        <div id="feedbackBanner" class="p-3.5 rounded-2xl text-center font-bold text-sm transition-all duration-300 bg-slate-950/60 border border-slate-800 text-slate-400 flex items-center justify-center gap-2">
+          <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+          <span id="feedbackText">Hands on table! Calculate without touching fingers. Enter your answer to reveal the bridge proof.</span>
+        </div>
+
+      </div>
+
+      <!-- Big Keypad & Interactive Pad (Right 5 Cols) -->
+      <div class="lg:col-span-5 bg-slate-900 border border-slate-800 rounded-3xl p-5 flex flex-col justify-between shadow-2xl">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Whiteboard Touch Keypad</span>
+          <span class="text-[11px] text-slate-500">Keyboard typing supported</span>
+        </div>
+
+        <!-- Keypad Grid (3x4) with large tactile touch targets -->
+        <div class="grid grid-cols-3 gap-2 flex-1 my-1">
+          <button onclick="pressDigit('1')" class="key-tap h-14 sm:h-16 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white font-num text-3xl font-bold shadow-md border-b-4 border-slate-950 flex items-center justify-center transition">1</button>
+          <button onclick="pressDigit('2')" class="key-tap h-14 sm:h-16 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white font-num text-3xl font-bold shadow-md border-b-4 border-slate-950 flex items-center justify-center transition">2</button>
+          <button onclick="pressDigit('3')" class="key-tap h-14 sm:h-16 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white font-num text-3xl font-bold shadow-md border-b-4 border-slate-950 flex items-center justify-center transition">3</button>
+
+          <button onclick="pressDigit('4')" class="key-tap h-14 sm:h-16 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white font-num text-3xl font-bold shadow-md border-b-4 border-slate-950 flex items-center justify-center transition">4</button>
+          <button onclick="pressDigit('5')" class="key-tap h-14 sm:h-16 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white font-num text-3xl font-bold shadow-md border-b-4 border-slate-950 flex items-center justify-center transition">5</button>
+          <button onclick="pressDigit('6')" class="key-tap h-14 sm:h-16 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white font-num text-3xl font-bold shadow-md border-b-4 border-slate-950 flex items-center justify-center transition">6</button>
+
+          <button onclick="pressDigit('7')" class="key-tap h-14 sm:h-16 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white font-num text-3xl font-bold shadow-md border-b-4 border-slate-950 flex items-center justify-center transition">7</button>
+          <button onclick="pressDigit('8')" class="key-tap h-14 sm:h-16 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white font-num text-3xl font-bold shadow-md border-b-4 border-slate-950 flex items-center justify-center transition">8</button>
+          <button onclick="pressDigit('9')" class="key-tap h-14 sm:h-16 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white font-num text-3xl font-bold shadow-md border-b-4 border-slate-950 flex items-center justify-center transition">9</button>
+
+          <button onclick="clearInput()" class="key-tap h-14 sm:h-16 rounded-2xl bg-rose-950/60 hover:bg-rose-900/80 text-rose-300 font-bold text-sm uppercase tracking-wider border-b-4 border-rose-950 flex items-center justify-center transition">Clear</button>
+          <button onclick="pressDigit('0')" class="key-tap h-14 sm:h-16 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white font-num text-3xl font-bold shadow-md border-b-4 border-slate-950 flex items-center justify-center transition">0</button>
+          <button onclick="backspaceDigit()" class="key-tap h-14 sm:h-16 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xl border-b-4 border-slate-950 flex items-center justify-center transition">⌫</button>
+        </div>
+
+        <!-- Submit & Manual Teacher Reveal Actions -->
+        <div class="grid grid-cols-2 gap-2 mt-2">
+          <button onclick="checkAnswer()" id="submitBtn" class="key-tap h-14 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-slate-950 font-black text-lg tracking-wide uppercase shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2 transition">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+            Submit
+          </button>
+          <button onclick="forceTeacherReveal()" class="key-tap h-14 rounded-2xl bg-slate-800 hover:bg-slate-700 text-amber-300 font-bold text-xs uppercase tracking-wider border border-slate-700 flex items-center justify-center gap-1.5 transition">
+            <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+            Teacher Reveal
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- BOTTOM ROW: THE SECURE VISUAL PROOF & BRIDGE VAULT -->
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 shadow-2xl relative overflow-hidden min-h-[300px] flex flex-col justify-between">
+      
+      <!-- Top Status of Vault -->
+      <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+        <div class="flex items-center gap-2">
+          <div id="vaultDot" class="w-3 h-3 rounded-full bg-rose-500 animate-pulse"></div>
+          <span class="text-xs font-bold uppercase tracking-wider text-slate-300">Concrete & Number Line Proof Engine</span>
+        </div>
+        <span id="vaultStatusText" class="text-xs font-mono text-rose-400 bg-rose-500/10 px-2.5 py-1 rounded-md border border-rose-500/20">
+          🔒 LOCKED: Answer required to prevent peeking
+        </span>
+      </div>
+
+      <!-- LOCKED STATE OVERLAY (Anti-Cheating Curtain) -->
+      <div id="lockedCurtain" class="locked-pattern absolute inset-x-0 bottom-0 top-12 z-20 flex flex-col items-center justify-center p-6 text-center transition-all duration-500">
+        <div class="w-16 h-16 rounded-2xl bg-slate-900/90 border-2 border-slate-700 flex items-center justify-center text-amber-400 mb-3 shadow-xl">
+          <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+        </div>
+        <h3 class="text-lg font-bold text-white mb-1">Visual Bridge Vault Locked</h3>
+        <p class="text-xs text-slate-400 max-w-md mb-4">
+          No dots, intermediate leaps, or counters are revealed yet! Work out the calculation in your head first, then enter your answer to unlock the step-by-step visual proof.
+        </p>
+        <div class="inline-flex items-center gap-2 text-xs font-semibold text-amber-300 bg-amber-400/10 border border-amber-400/20 px-3.5 py-1.5 rounded-full">
+          <span>Hands flat on desk • Trust your bonds to 10</span>
+        </div>
+      </div>
+
+      <!-- UNLOCKED VISUAL PROOF CONTAINER -->
+      <div id="visualProofContainer" class="py-2 flex flex-col gap-5 opacity-0 transition-opacity duration-500">
+        
+        <!-- 1. The Dynamic Dual-Stage Number Line (Scalable SVG) -->
+        <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800">
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+              Dual-Stage Number Line Jump
+            </span>
+            <span id="proofBadge" class="text-xs font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">Verified</span>
+          </div>
+          
+          <div class="w-full overflow-x-auto py-2">
+            <svg id="numberLineSvg" class="w-full h-36 min-w-[580px]" viewBox="0 0 700 130">
+              <!-- Dynamically rendered via JS -->
+            </svg>
+          </div>
+        </div>
+
+        <!-- 2. Dual Ten-Frames or Part-Whole Representation -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          
+          <!-- Concrete Frame Box -->
+          <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 flex flex-col justify-between">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-bold text-sky-400 uppercase tracking-wider">Concrete 10-Frame / Rod Status</span>
+              <span id="frameExplainTag" class="text-[11px] text-slate-400">Loose ones removed first</span>
+            </div>
+            <div id="concreteModelView" class="py-2 min-h-[90px] flex items-center justify-center gap-3">
+              <!-- Dynamically populated with ten frames -->
+            </div>
+          </div>
+
+          <!-- Spoken Stem Sentence & Reasoning Box -->
+          <div class="bg-gradient-to-br from-slate-950 to-slate-900 p-4 rounded-2xl border border-slate-800 flex flex-col justify-between">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
+                Classroom Stem Sentence
+              </span>
+              <button onclick="playSpeechStem()" class="text-xs text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 px-2 py-0.5 rounded border border-slate-700 flex items-center gap-1">
+                <svg class="w-3.5 h-3.5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
+                Read Aloud
+              </button>
+            </div>
+            <div class="py-2">
+              <p id="stemSentenceText" class="text-sm md:text-base font-semibold text-slate-200 leading-relaxed italic">
+                "First I jump back 2 to reach the friendly ten 50, then I jump back the remaining 5 to land on 45."
+              </p>
+            </div>
+            <div class="pt-2 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
+              <span>Why it works: <strong class="text-amber-300 font-semibold" id="whyItWorksText">Bonds to 10 (10 − 5 = 5)</strong></span>
+              <span class="text-emerald-400 font-bold">No fingers used!</span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- FOOTER PUPIL ROTATION & CLASS METRICS -->
+  <footer class="bg-slate-900 border-t border-slate-800 px-4 py-2.5 text-xs text-slate-400">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-4">
+        <span class="font-bold text-slate-300">Tier 3 Intervention Group:</span>
+        <div class="flex items-center gap-2">
+          <button onclick="setSpecificPupil('Ariana')" id="pupilTab-Ariana" class="px-2.5 py-1 rounded-lg bg-amber-400 text-slate-950 font-bold transition">Ariana (99/76)</button>
+          <button onclick="setSpecificPupil('Aleen')" id="pupilTab-Aleen" class="px-2.5 py-1 rounded-lg bg-slate-800 text-slate-300 hover:text-white transition">Aleen (88/69)</button>
+          <button onclick="setSpecificPupil('Brooke')" id="pupilTab-Brooke" class="px-2.5 py-1 rounded-lg bg-slate-800 text-slate-300 hover:text-white transition">Brooke (89/72)</button>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <span id="streakCounter" class="bg-slate-800 px-3 py-1 rounded-lg border border-slate-700 text-slate-300">
+          Class Streak: <strong class="text-amber-400 font-num text-sm">0</strong>
+        </span>
+        <span class="text-slate-500">P2/3 Diagnostic Mastery Suite</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script>
+    // --- STATE MANAGEMENT ---
+    const pupils = [
+      { name: "Ariana", cat: 99, ptm: 76 },
+      { name: "Aleen", cat: 88, ptm: 69 },
+      { name: "Brooke", cat: 89, ptm: 72 }
+    ];
+    let currentPupilIndex = 0;
+    let currentMode = 4; // Default to Week 5-6 Bridging
+    let currentProblem = null;
+    let userInput = "";
+    let isVaultUnlocked = false;
+    let teacherHintShown = false;
+    let streak = 0;
+
+    // --- SYNTH AUDIO (Tone.js) ---
+    let synth = null;
+    function initAudio() {
+      if (!synth && window.Tone) {
+        synth = new Tone.PolySynth(Tone.Synth, {
+          oscillator: { type: "triangle" },
+          envelope: { attack: 0.005, decay: 0.1, sustain: 0.1, release: 0.3 }
+        }).toDestination();
+        Tone.start();
+      }
+    }
+
+    function playTone(type) {
+      try {
+        initAudio();
+        if (!synth) return;
+        const now = Tone.now();
+        if (type === "tap") {
+          synth.triggerAttackRelease("C5", "32n", now, 0.15);
+        } else if (type === "correct") {
+          synth.triggerAttackRelease(["C5", "E5", "G5"], "16n", now, 0.4);
+          setTimeout(() => synth.triggerAttackRelease(["C6"], "8n", Tone.now(), 0.5), 120);
+        } else if (type === "wrong") {
+          synth.triggerAttackRelease(["Eb4", "D4"], "8n", now, 0.3);
+        } else if (type === "unlock") {
+          synth.triggerAttackRelease(["G4", "C5", "E5", "G5"], "16n", now, 0.3);
+        }
+      } catch (e) {
+        // Fallback silently if audio blocked
+      }
+    }
+
+    // --- MODE PRESETS & GENERATOR ---
+    function setMode(modeNum) {
+      currentMode = modeNum;
+      
+      // Update UI Tabs
+      for (let i = 1; i <= 5; i++) {
+        const btn = document.getElementById(`modeBtn${i}`);
+        if (i === modeNum) {
+          btn.className = "mode-tab px-3 py-1.5 rounded-lg font-black transition-all text-amber-950 bg-amber-400 shadow";
+        } else {
+          btn.className = "mode-tab px-3 py-1.5 rounded-lg font-medium transition-all text-slate-400 hover:text-white";
+        }
+      }
+
+      // Update Subheading descriptions
+      const subs = {
+        1: "Pillar 1: Automatic Bonds to 10 & Single Splits (Weeks 1 & 2)",
+        2: "Pillar 2: 'Clear the Deck' to Friendly 10 (Week 3)",
+        3: "Pillar 2: 'Drop and Bond' Decade Minus 1-Digit (Week 4)",
+        4: "Pillar 3: The Full Mental Bridge (Weeks 5 & 6) [e.g. 52 - 7]",
+        5: "Pillar 3 Alternative: 'Take from 10' Strategy [42 + (10 - 7)]"
+      };
+      document.getElementById('modeSubheading').innerText = subs[modeNum];
+      
+      const tagMap = {
+        1: "Bonds within 10 Mastery",
+        2: "Clear to Friendly Ten",
+        3: "Drop & Bond Strategy",
+        4: "Backward Bridging Rule",
+        5: "Take from 10 Rule"
+      };
+      document.getElementById('strategyRuleTag').innerText = tagMap[modeNum];
+
+      newProblem();
+    }
+
+    // Problem Generator
+    function generateProblemData() {
+      let a = 52, b = 7, ans = 45;
+      let intermediate = 50;
+      let jump1 = 2;
+      let jump2 = 5;
+      let stem = "";
+      let hint = "";
+      let why = "";
+
+      if (currentMode === 1) {
+        // Mode 1: Bonds to 10 or single splits
+        const type = Math.random() > 0.5 ? 'bond' : 'split';
+        if (type === 'bond') {
+          a = 10;
+          b = Math.floor(Math.random() * 8) + 1; // 1 to 8
+          ans = a - b;
+          intermediate = 10;
+          jump1 = b;
+          jump2 = 0;
+          stem = `10 take away ${b} is exactly ${ans} because ${b} and ${ans} are number bond partners to 10.`;
+          hint = `Think of ${b}'s best friend to make a full 10!`;
+          why = `Bond Complements to 10: ${b} + ${ans} = 10`;
+        } else {
+          // Decomposition drill: e.g. Split 7 to match 3
+          const whole = Math.floor(Math.random() * 5) + 5; // 5 to 9
+          const part1 = Math.floor(Math.random() * 3) + 2; // 2 to 4
+          a = whole;
+          b = part1;
+          ans = whole - part1;
+          intermediate = whole;
+          jump1 = part1;
+          jump2 = 0;
+          stem = `When we split ${whole} with ${part1}, the missing part is ${ans}.`;
+          hint = `If you have ${whole} counters and slide ${part1} away, how many stay?`;
+          why = `Part-Whole Decomposition: ${part1} + ${ans} = ${whole}`;
+        }
+      } 
+      else if (currentMode === 2) {
+        // Mode 2: Clear the deck to the friendly ten (e.g. 52 - 2 = 50, 74 - 4 = 70)
+        const tens = [30, 40, 50, 60, 70, 80][Math.floor(Math.random() * 6)];
+        const ones = Math.floor(Math.random() * 7) + 2; // 2 to 8
+        a = tens + ones;
+        b = ones;
+        ans = tens;
+        intermediate = tens;
+        jump1 = ones;
+        jump2 = 0;
+        stem = `When we subtract all ${b} loose ones from ${a}, we land safely on the friendly ten ${ans}.`;
+        hint = `Look at the ones digit! Take all of them away to reach the flat zero ten.`;
+        why = `Place Value: ${a} has ${ones} ones. Clearing them leaves exactly ${tens}.`;
+      } 
+      else if (currentMode === 3) {
+        // Mode 3: Decade minus single digit (e.g. 50 - 4 = 46, 80 - 3 = 77)
+        const tens = [30, 40, 50, 60, 70, 80][Math.floor(Math.random() * 6)];
+        b = Math.floor(Math.random() * 7) + 2; // 2 to 8
+        a = tens;
+        ans = tens - b;
+        intermediate = tens - 10;
+        jump1 = b;
+        jump2 = 0;
+        const tensDrop = tens - 10;
+        const friend = 10 - b;
+        stem = `Start at ${tens}. Drop one ten down to ${tensDrop}, then find ${b}'s partner to 10 (${friend}). The answer is ${ans}.`;
+        hint = `Drop the tens digit by one, then find ${b}'s number bond partner to 10!`;
+        why = `Decade Drop & Bond: 10 − ${b} = ${friend}, so ${tens} − ${b} = ${ans}.`;
+      } 
+      else if (currentMode === 4) {
+        // Mode 4: Full Bridge across the decade (e.g. 52 - 7, 43 - 5, 84 - 8, 35 - 8)
+        const pairs = [
+          { a: 52, b: 7 }, { a: 43, b: 5 }, { a: 84, b: 8 }, { a: 35, b: 8 },
+          { a: 63, b: 6 }, { a: 72, b: 5 }, { a: 91, b: 4 }, { a: 45, b: 8 },
+          { a: 83, b: 6 }, { a: 54, b: 7 }, { a: 62, b: 5 }, { a: 74, b: 8 }
+        ];
+        const selected = pairs[Math.floor(Math.random() * pairs.length)];
+        a = selected.a;
+        b = selected.b;
+        jump1 = a % 10; // Units to reach friendly ten
+        intermediate = a - jump1;
+        jump2 = b - jump1;
+        ans = intermediate - jump2;
+        stem = `First jump back ${jump1} to reach the friendly ten ${intermediate}, then jump back the remaining ${jump2} to land on ${ans}.`;
+        hint = `Step 1: Jump back ${jump1} to hit ${intermediate}. Step 2: Split ${b} into ${jump1} and what?`;
+        why = `Two-stage partition: ${b} = ${jump1} + ${jump2}. Friendly ten bridge at ${intermediate}.`;
+      } 
+      else if (currentMode === 5) {
+        // Mode 5: Take from 10 strategy (e.g. 52 - 7 -> 42 + (10 - 7) = 45)
+        const pairs = [
+          { a: 52, b: 7 }, { a: 43, b: 6 }, { a: 65, b: 8 }, { a: 74, b: 9 },
+          { a: 83, b: 5 }, { a: 34, b: 7 }, { a: 92, b: 6 }, { a: 41, b: 4 }
+        ];
+        const selected = pairs[Math.floor(Math.random() * pairs.length)];
+        a = selected.a;
+        b = selected.b;
+        ans = a - b;
+        const remainingTensAndOnes = a - 10;
+        const bondFromTen = 10 - b;
+        jump1 = 10;
+        jump2 = bondFromTen;
+        intermediate = remainingTensAndOnes;
+        stem = `Pull out 10 from ${a} (leaving ${remainingTensAndOnes}). Take ${b} from 10 to get ${bondFromTen}. Finally, add ${remainingTensAndOnes} + ${bondFromTen} = ${ans}.`;
+        hint = `Break ${a} into ${remainingTensAndOnes} and 10. Subtract ${b} from the 10 first!`;
+        why = `Take from 10: (10 − ${b} = ${bondFromTen}) + ${remainingTensAndOnes} = ${ans}`;
+      }
+
+      return { a, b, ans, intermediate, jump1, jump2, stem, hint, why };
+    }
+
+    // --- SETUP NEW PROBLEM ---
+    function newProblem() {
+      userInput = "";
+      isVaultUnlocked = false;
+      teacherHintShown = false;
+      document.getElementById('teacherHintBox').classList.add('hidden');
+      document.getElementById('hintBtnText').innerText = "Teacher Scaffolding";
+
+      currentProblem = generateProblemData();
+
+      // Anti-Cheat: Strictly reset and lock the curtain
+      const curtain = document.getElementById('lockedCurtain');
+      curtain.classList.remove('opacity-0', 'pointer-events-none');
+      
+      const proofCont = document.getElementById('visualProofContainer');
+      proofCont.classList.add('opacity-0');
+      
+      const vaultStatus = document.getElementById('vaultStatusText');
+      vaultStatus.innerText = "🔒 LOCKED: Answer required to prevent peeking";
+      vaultStatus.className = "text-xs font-mono text-rose-400 bg-rose-500/10 px-2.5 py-1 rounded-md border border-rose-500/20";
+      
+      const dot = document.getElementById('vaultDot');
+      dot.className = "w-3 h-3 rounded-full bg-rose-500 animate-pulse";
+
+      // Render Equation
+      document.getElementById('numA').innerText = currentProblem.a;
+      document.getElementById('numB').innerText = currentProblem.b;
+      document.getElementById('userEnteredVal').innerText = "?";
+      document.getElementById('userEnteredVal').classList.remove('text-emerald-400', 'text-rose-400');
+      document.getElementById('userEnteredVal').classList.add('text-amber-400');
+
+      document.getElementById('teacherHintText').innerText = currentProblem.hint;
+
+      // Reset feedback banner
+      setFeedbackBanner("neutral", "Hands flat on table! Calculate mentally. Enter answer to unlock visual proof.");
+    }
+
+    // --- KEYPAD & INPUT LOGIC ---
+    function pressDigit(d) {
+      if (isVaultUnlocked) return;
+      playTone("tap");
+      if (userInput.length < 3) {
+        userInput += d;
+        updateInputDisplay();
+      }
+    }
+
+    function backspaceDigit() {
+      if (isVaultUnlocked) return;
+      playTone("tap");
+      userInput = userInput.slice(0, -1);
+      updateInputDisplay();
+    }
+
+    function clearInput() {
+      if (isVaultUnlocked) return;
+      playTone("tap");
+      userInput = "";
+      updateInputDisplay();
+    }
+
+    function updateInputDisplay() {
+      const el = document.getElementById('userEnteredVal');
+      if (userInput === "") {
+        el.innerText = "?";
+      } else {
+        el.innerText = userInput;
+      }
+    }
+
+    // Physical Keyboard support for whiteboards or laptops
+    window.addEventListener('keydown', (e) => {
+      if (e.key >= '0' && e.key <= '9') {
+        pressDigit(e.key);
+      } else if (e.key === 'Backspace') {
+        backspaceDigit();
+      } else if (e.key === 'Enter') {
+        checkAnswer();
+      } else if (e.key === 'Escape') {
+        clearInput();
+      }
+    });
+
+    // --- TEACHER SCAFFOLDING / CLUE ---
+    function toggleTeacherHint() {
+      teacherHintShown = !teacherHintShown;
+      const box = document.getElementById('teacherHintBox');
+      const textBtn = document.getElementById('hintBtnText');
+      if (teacherHintShown) {
+        box.classList.remove('hidden');
+        textBtn.innerText = "Hide Clue";
+      } else {
+        box.classList.add('hidden');
+        textBtn.innerText = "Teacher Scaffolding";
+      }
+    }
+
+    // --- CHECK ANSWER & UNLOCK VAULT ---
+    function checkAnswer() {
+      if (isVaultUnlocked) {
+        newProblem();
+        return;
+      }
+
+      if (userInput === "") {
+        setFeedbackBanner("warn", "Please enter your answer first before unlocking the visual model!");
+        return;
+      }
+
+      const pupilAnswer = parseInt(userInput, 10);
+      if (pupilAnswer === currentProblem.ans) {
+        // Correct
+        playTone("correct");
+        streak++;
+        updateStreakDisplay();
+        setFeedbackBanner("success", `Spot on, ${pupils[currentPupilIndex].name}! Fantastic mental math! The proof vault is unlocked.`);
+        unlockVault(true);
+      } else {
+        // Incorrect
+        playTone("wrong");
+        streak = 0;
+        updateStreakDisplay();
+        setFeedbackBanner("error", `Not quite (${pupilAnswer}). Look carefully at your bond to 10 or try again before revealing!`);
+        document.getElementById('userEnteredVal').classList.remove('text-amber-400');
+        document.getElementById('userEnteredVal').classList.add('text-rose-400');
+      }
+    }
+
+    function forceTeacherReveal() {
+      playTone("unlock");
+      setFeedbackBanner("warn", `Teacher override unlocked for group demonstration with ${pupils[currentPupilIndex].name}.`);
+      document.getElementById('userEnteredVal').innerText = currentProblem.ans;
+      unlockVault(false);
+    }
+
+    function setFeedbackBanner(type, text) {
+      const banner = document.getElementById('feedbackBanner');
+      const textEl = document.getElementById('feedbackText');
+      textEl.innerText = text;
+
+      if (type === "success") {
+        banner.className = "p-3.5 rounded-2xl text-center font-bold text-sm bg-emerald-950/80 border border-emerald-500/50 text-emerald-300 flex items-center justify-center gap-2 shadow-lg";
+      } else if (type === "error") {
+        banner.className = "p-3.5 rounded-2xl text-center font-bold text-sm bg-rose-950/80 border border-rose-500/50 text-rose-300 flex items-center justify-center gap-2 shadow-lg";
+      } else if (type === "warn") {
+        banner.className = "p-3.5 rounded-2xl text-center font-bold text-sm bg-amber-950/80 border border-amber-500/50 text-amber-300 flex items-center justify-center gap-2 shadow-lg";
+      } else {
+        banner.className = "p-3.5 rounded-2xl text-center font-bold text-sm bg-slate-950/60 border border-slate-800 text-slate-400 flex items-center justify-center gap-2";
+      }
+    }
+
+    // --- VAULT UNLOCK & VISUAL REVEAL ---
+    function unlockVault(isCorrect) {
+      isVaultUnlocked = true;
+
+      // Update submit button text to "Next Problem"
+      const subBtn = document.getElementById('submitBtn');
+      subBtn.innerHTML = `<span>Next Question ➔</span>`;
+      
+      // Update Vault Status bar
+      const vaultStatus = document.getElementById('vaultStatusText');
+      vaultStatus.innerText = "🔓 UNLOCKED: Step-by-Step Proof Active";
+      vaultStatus.className = "text-xs font-mono text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-md border border-emerald-500/20";
+
+      const dot = document.getElementById('vaultDot');
+      dot.className = "w-3 h-3 rounded-full bg-emerald-400";
+
+      // Hide locked curtain with fade
+      const curtain = document.getElementById('lockedCurtain');
+      curtain.classList.add('opacity-0', 'pointer-events-none');
+
+      // Show Proof Box
+      const proofCont = document.getElementById('visualProofContainer');
+      proofCont.classList.remove('opacity-0');
+
+      // Populate text
+      document.getElementById('stemSentenceText').innerText = `"${currentProblem.stem}"`;
+      document.getElementById('whyItWorksText').innerText = currentProblem.why;
+
+      // Render Visual Models
+      renderNumberLine();
+      renderConcreteModel();
+    }
+
+    // --- DYNAMIC NUMBER LINE RENDERING (SVG) ---
+    function renderNumberLine() {
+      const svg = document.getElementById('numberLineSvg');
+      svg.innerHTML = ""; // Clear existing
+
+      const p = currentProblem;
+      const width = 700;
+      const height = 130;
+      const lineY = 85;
+
+      // Determine 3 landmark values on line: start (right), middle, end (left)
+      let endVal = p.ans;
+      let midVal = p.intermediate;
+      let startVal = p.a;
+
+      let xStart = 580;
+      let xMid = 350;
+      let xEnd = 120;
+
+      if (currentMode === 2 || currentMode === 1 || currentMode === 3) {
+        // Single jump displays
+        xStart = 550;
+        xEnd = 160;
+        xMid = null;
+      }
+
+      // Draw horizontal baseline
+      const baseLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      baseLine.setAttribute("x1", "40");
+      baseLine.setAttribute("y1", lineY);
+      baseLine.setAttribute("x2", "660");
+      baseLine.setAttribute("y2", lineY);
+      baseLine.setAttribute("stroke", "#475569");
+      baseLine.setAttribute("stroke-width", "3");
+      baseLine.setAttribute("stroke-linecap", "round");
+      svg.appendChild(baseLine);
+
+      // Start tick and label (e.g. 52)
+      drawTick(svg, xStart, lineY, startVal, "#38bdf8", "Start");
+
+      if (xMid !== null && currentMode >= 4) {
+        // Dual jump backward: Jump 1 (start -> mid)
+        const arc1 = createArcPath(xStart, xMid, lineY, 45);
+        arc1.setAttribute("class", "jump-arc");
+        arc1.setAttribute("stroke", "#f43f5e");
+        arc1.setAttribute("stroke-width", "4");
+        arc1.setAttribute("fill", "none");
+        svg.appendChild(arc1);
+
+        // Jump 1 label
+        drawText(svg, (xStart + xMid) / 2, lineY - 48, `− ${p.jump1}`, "#fda4af", "14px", true);
+
+        // Friendly Ten Landmark (Safe Island in green)
+        drawTick(svg, xMid, lineY, midVal, "#10b981", "Friendly 10", true);
+
+        // Jump 2 (mid -> end)
+        const arc2 = createArcPath(xMid, xEnd, lineY, 45);
+        arc2.setAttribute("class", "jump-arc-2");
+        arc2.setAttribute("stroke", "#f59e0b");
+        arc2.setAttribute("stroke-width", "4");
+        arc2.setAttribute("fill", "none");
+        svg.appendChild(arc2);
+
+        // Jump 2 label
+        drawText(svg, (xMid + xEnd) / 2, lineY - 48, `− ${p.jump2}`, "#fde68a", "14px", true);
+
+        // End tick (e.g. 45)
+        drawTick(svg, xEnd, lineY, endVal, "#fbbf24", "Final Answer");
+      } else {
+        // Single jump
+        const singleArc = createArcPath(xStart, xEnd, lineY, 55);
+        singleArc.setAttribute("class", "jump-arc");
+        singleArc.setAttribute("stroke", "#38bdf8");
+        singleArc.setAttribute("stroke-width", "4");
+        singleArc.setAttribute("fill", "none");
+        svg.appendChild(singleArc);
+
+        drawText(svg, (xStart + xEnd) / 2, lineY - 58, `− ${p.b}`, "#bae6fd", "15px", true);
+        drawTick(svg, xEnd, lineY, endVal, "#10b981", "Answer");
+      }
+    }
+
+    function createArcPath(x1, x2, y, h) {
+      const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      const midX = (x1 + x2) / 2;
+      const d = `M ${x1} ${y} Q ${midX} ${y - h} ${x2} ${y}`;
+      path.setAttribute("d", d);
+      return path;
+    }
+
+    function drawTick(svg, x, y, val, color, sublabel, isIsland = false) {
+      // Tick line
+      const tick = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      tick.setAttribute("x1", x);
+      tick.setAttribute("y1", y - 10);
+      tick.setAttribute("x2", x);
+      tick.setAttribute("y2", y + 10);
+      tick.setAttribute("stroke", color);
+      tick.setAttribute("stroke-width", isIsland ? "5" : "3");
+      svg.appendChild(tick);
+
+      // Node point circle
+      const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      circle.setAttribute("cx", x);
+      circle.setAttribute("cy", y);
+      circle.setAttribute("r", isIsland ? "7" : "5");
+      circle.setAttribute("fill", color);
+      svg.appendChild(circle);
+
+      // Value number
+      const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      text.setAttribute("x", x);
+      text.setAttribute("y", y + 28);
+      text.setAttribute("text-anchor", "middle");
+      text.setAttribute("fill", color);
+      text.setAttribute("font-family", "Fredoka, cursive, sans-serif");
+      text.setAttribute("font-size", isIsland ? "22px" : "18px");
+      text.setAttribute("font-weight", "bold");
+      text.textContent = val;
+      svg.appendChild(text);
+
+      // Sub-label (e.g. "Friendly 10")
+      if (sublabel) {
+        const sub = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        sub.setAttribute("x", x);
+        sub.setAttribute("y", y + 42);
+        sub.setAttribute("text-anchor", "middle");
+        sub.setAttribute("fill", isIsland ? "#34d399" : "#94a3b8");
+        sub.setAttribute("font-size", "9px");
+        sub.setAttribute("font-weight", "600");
+        sub.textContent = sublabel;
+        svg.appendChild(sub);
+      }
+    }
+
+    function drawText(svg, x, y, textString, color, size, isBold) {
+      const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      text.setAttribute("x", x);
+      text.setAttribute("y", y);
+      text.setAttribute("text-anchor", "middle");
+      text.setAttribute("fill", color);
+      text.setAttribute("font-size", size);
+      if (isBold) text.setAttribute("font-weight", "bold");
+      text.textContent = textString;
+      svg.appendChild(text);
+    }
+
+    // --- CONCRETE 10-FRAME / BASE-10 MODEL BUILDER ---
+    function renderConcreteModel() {
+      const cont = document.getElementById('concreteModelView');
+      cont.innerHTML = "";
+
+      const p = currentProblem;
+      const explainTag = document.getElementById('frameExplainTag');
+
+      if (currentMode === 1) {
+        // Single 10-Frame complement visual
+        explainTag.innerText = `Bond Complement of ${p.b}`;
+        const frame = createTenFrameElement(10, p.b, 10 - p.b);
+        cont.appendChild(frame);
+      } else {
+        // Dual representation showing the friendly ten & cleared units
+        explainTag.innerText = `Friendly 10: [${p.intermediate}] + Remaining: [${p.jump2 || 0}]`;
+        
+        // Block 1: Base-10 Friendly Ten Landmark
+        const tenDiv = document.createElement('div');
+        tenDiv.className = "flex flex-col items-center bg-slate-900 border border-emerald-500/30 rounded-xl p-2.5";
+        tenDiv.innerHTML = `
+          <span class="text-[10px] uppercase font-bold text-emerald-400 mb-1">Friendly Ten</span>
+          <div class="flex items-center gap-1.5 py-1">
+            <span class="font-num text-3xl font-black text-emerald-300">${p.intermediate}</span>
+          </div>
+          <span class="text-[10px] text-slate-400">Anchor Multiplier</span>
+        `;
+        cont.appendChild(tenDiv);
+
+        // Block 2: Part-Whole Subtrahend Decomposition
+        const splitDiv = document.createElement('div');
+        splitDiv.className = "flex flex-col items-center bg-slate-900 border border-slate-700 rounded-xl p-2.5";
+        
+        if (currentMode >= 4) {
+          splitDiv.innerHTML = `
+            <span class="text-[10px] uppercase font-bold text-amber-400 mb-1">Subtrahend Split (${p.b})</span>
+            <div class="flex items-center gap-3 py-1">
+              <div class="flex flex-col items-center">
+                <span class="text-xs text-rose-400 font-bold">1st Jump</span>
+                <span class="font-num text-2xl font-bold text-rose-400">−${p.jump1}</span>
+              </div>
+              <span class="text-slate-600 font-bold">+</span>
+              <div class="flex flex-col items-center">
+                <span class="text-xs text-amber-400 font-bold">2nd Jump</span>
+                <span class="font-num text-2xl font-bold text-amber-300">−${p.jump2}</span>
+              </div>
+            </div>
+            <span class="text-[10px] text-slate-400">Total Removed: ${p.b}</span>
+          `;
+        } else {
+          splitDiv.innerHTML = `
+            <span class="text-[10px] uppercase font-bold text-sky-400 mb-1">Direct Jump</span>
+            <div class="font-num text-3xl font-bold text-sky-300 py-1">−${p.b}</div>
+            <span class="text-[10px] text-slate-400">Complement Friend: ${10 - (p.b % 10)}</span>
+          `;
+        }
+        cont.appendChild(splitDiv);
+      }
+    }
+
+    function createTenFrameElement(totalCells, filledA, filledB) {
+      const wrapper = document.createElement('div');
+      wrapper.className = "bg-slate-900 border border-slate-700 rounded-xl p-2 inline-block";
+      const grid = document.createElement('div');
+      grid.className = "grid grid-cols-5 gap-1.5";
+
+      for (let i = 0; i < totalCells; i++) {
+        const dot = document.createElement('div');
+        dot.className = "w-6 h-6 rounded-lg flex items-center justify-center font-bold text-xs";
+        if (i < filledA) {
+          dot.classList.add("bg-sky-500", "text-slate-950");
+          dot.innerText = i + 1;
+        } else {
+          dot.classList.add("bg-amber-400/80", "text-slate-950");
+          dot.innerText = i + 1;
+        }
+        grid.appendChild(dot);
+      }
+      wrapper.appendChild(grid);
+      return wrapper;
+    }
+
+    // --- SPEECH SYNTHESIS (Stem Sentence Read Aloud) ---
+    function playSpeechStem() {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utter = new SpeechSynthesisUtterance(currentProblem.stem);
+        utter.rate = 0.88; // Slower cadence for primary comprehension
+        utter.pitch = 1.05;
+        window.speechSynthesis.speak(utter);
+      }
+    }
+
+    // --- PUPIL ROTATION TRACKING ---
+    function cyclePupil() {
+      currentPupilIndex = (currentPupilIndex + 1) % pupils.length;
+      updatePupilUI();
+    }
+
+    function setSpecificPupil(name) {
+      const idx = pupils.findIndex(p => p.name.toLowerCase() === name.toLowerCase());
+      if (idx !== -1) {
+        currentPupilIndex = idx;
+        updatePupilUI();
+      }
+    }
+
+    function updatePupilUI() {
+      const p = pupils[currentPupilIndex];
+      document.getElementById('currentPupilName').innerText = p.name;
+      
+      ['Ariana', 'Aleen', 'Brooke'].forEach(n => {
+        const btn = document.getElementById(`pupilTab-${n}`);
+        if (n.toLowerCase() === p.name.toLowerCase()) {
+          btn.className = "px-2.5 py-1 rounded-lg bg-amber-400 text-slate-950 font-bold transition";
+        } else {
+          btn.className = "px-2.5 py-1 rounded-lg bg-slate-800 text-slate-300 hover:text-white transition";
+        }
+      });
+    }
+
+    function updateStreakDisplay() {
+      document.getElementById('streakCounter').innerHTML = `Class Streak: <strong class="text-amber-400 font-num text-sm">${streak}</strong>`;
+    }
+
+    // --- INITIALIZATION ---
+    window.onload = function () {
+      updatePupilUI();
+      setMode(4); // Start on Week 5-6 full mental bridge
+    };
+  </script>
+</body>
+</html>
