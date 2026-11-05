@@ -1,0 +1,2114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bonds & Bridge to 10 - NI Curriculum</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #0d1527;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    .font-num {
+      font-family: 'Fredoka', cursive, sans-serif;
+    }
+    .jump-line-arc {
+      stroke-dasharray: 6 6;
+      animation: dashMove 1.4s linear infinite;
+    }
+    @keyframes dashMove {
+      to { stroke-dashoffset: -24; }
+    }
+    .key-btn:active {
+      transform: scale(0.94);
+    }
+    .frame-slot {
+      box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
+    }
+    @keyframes pulseGlow {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.05); opacity: 0.92; }
+    }
+    .pulse-badge {
+      animation: pulseGlow 1.8s ease-in-out infinite;
+    }
+    /* 100 Square Cell Transition */
+    .grid-cell {
+      transition: all 0.15s ease-in-out;
+    }
+    .grid-cell:hover {
+      transform: scale(1.08);
+      z-index: 10;
+    }
+    /* Custom Scrollbar for compact panels */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 9999px;
+    }
+  </style>
+</head>
+<body class="text-slate-100 min-h-screen flex flex-col justify-between selection:bg-amber-400 selection:text-slate-950 overflow-x-hidden">
+
+  <!-- TOP HEADER / BRAND & MODE NAVIGATION -->
+  <header class="bg-[#0b1120] border-b border-slate-800/80 px-3 sm:px-4 py-2 z-30 sticky top-0 shadow-md">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2.5">
+      
+      <!-- Brand Badge (B10) -->
+      <div class="flex items-center gap-2.5">
+        <div class="h-10 w-10 sm:h-11 sm:w-11 rounded-2xl bg-amber-400 flex items-center justify-center font-num text-xl sm:text-2xl font-black text-slate-950 shadow-lg shadow-amber-400/20">
+          B10
+        </div>
+        <div>
+          <h1 class="text-lg sm:text-xl md:text-2xl font-bold tracking-tight text-amber-400 leading-tight">Bonds &amp; Bridge to 10</h1>
+          <p class="text-[11px] sm:text-xs text-slate-400 font-medium">Part-Whole Foundations, Bridging, Patterns &amp; Fluency • NI Curriculum</p>
+        </div>
+      </div>
+
+      <!-- Top Primary Modes -->
+      <div class="flex items-center gap-1 bg-[#070d19] p-1 rounded-2xl border border-slate-800 flex-wrap">
+        <button onclick="setProgramMode('bonds')" id="btnProg-bonds" class="px-2.5 sm:px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold transition bg-amber-400 text-slate-950 shadow">
+          1. Bonds Within 10
+        </button>
+        <button onclick="setProgramMode('guided')" id="btnProg-guided" class="px-2.5 sm:px-3 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition text-slate-300 hover:text-white">
+          2. Guided Bridging
+        </button>
+        <button onclick="setProgramMode('oddseven')" id="btnProg-oddseven" class="px-2.5 sm:px-3 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition text-slate-300 hover:text-white">
+          3. Odds &amp; Evens
+        </button>
+        <button onclick="setProgramMode('doubles')" id="btnProg-doubles" class="px-2.5 sm:px-3 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition text-slate-300 hover:text-white">
+          4. Doubles &amp; Near
+        </button>
+        <button onclick="setProgramMode('fast')" id="btnProg-fast" class="px-2.5 sm:px-3 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition text-slate-300 hover:text-white">
+          5. Fast Fire Rush
+        </button>
+      </div>
+
+      <!-- 100-Square Drawer Toggle & Sound -->
+      <div class="flex items-center gap-2">
+        <button onclick="toggleHundredSquarePanel()" id="hundredSquareBtn" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border transition bg-emerald-500/20 text-emerald-300 border-emerald-500/40 hover:bg-emerald-500/30">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+          <span id="hundredSquareBtnLabel">100 Square: ON</span>
+        </button>
+
+        <!-- Whiteboard Quick Toggle -->
+        <button onclick="toggleWhiteboardToolbar()" id="btnWhiteboardToggle" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border transition bg-amber-400 text-slate-950 border-amber-300 shadow hover:bg-amber-300">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+          <span id="whiteboardToggleLabel">Whiteboard: ON</span>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- SUB-BAR CONTROLS & PUPIL TRACKER -->
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2.5 mt-2 pt-2 border-t border-slate-800/60">
+      
+      <!-- MODE 1: Target Bond Selector -->
+      <div id="subBar-bonds" class="flex items-center gap-1 overflow-x-auto text-xs py-0.5">
+        <span class="text-slate-400 font-semibold mr-1 text-[11px] uppercase tracking-wider">Target Bond:</span>
+        <button onclick="setTargetBond(5)" id="targetBtn-5" class="px-2.5 py-1 rounded-xl font-bold bg-[#1e293b] text-slate-300 hover:text-white border border-slate-700/60">Bonds to 5</button>
+        <button onclick="setTargetBond(6)" id="targetBtn-6" class="px-2 py-1 rounded-xl font-bold bg-[#1e293b] text-slate-300 hover:text-white border border-slate-700/60">6</button>
+        <button onclick="setTargetBond(7)" id="targetBtn-7" class="px-2 py-1 rounded-xl font-bold bg-[#1e293b] text-slate-300 hover:text-white border border-slate-700/60">7</button>
+        <button onclick="setTargetBond(8)" id="targetBtn-8" class="px-2 py-1 rounded-xl font-bold bg-[#1e293b] text-slate-300 hover:text-white border border-slate-700/60">8</button>
+        <button onclick="setTargetBond(9)" id="targetBtn-9" class="px-2 py-1 rounded-xl font-bold bg-[#1e293b] text-slate-300 hover:text-white border border-slate-700/60">9</button>
+        <button onclick="setTargetBond(10)" id="targetBtn-10" class="px-3 py-1 rounded-xl font-extrabold bg-amber-400 text-slate-950 border border-amber-300 shadow">Bonds to 10</button>
+        <button onclick="setTargetBond('mixed')" id="targetBtn-mixed" class="px-2.5 py-1 rounded-xl font-bold bg-[#1e293b] text-slate-300 hover:text-white border border-slate-700/60">Mixed (5-10)</button>
+        <span class="mx-1 text-slate-600">|</span>
+        <button onclick="setBondOp('add')" id="bondOp-add" class="px-2 py-1 rounded-lg text-xs font-black bg-amber-400 text-slate-950">＋</button>
+        <button onclick="setBondOp('sub')" id="bondOp-sub" class="px-2 py-1 rounded-lg text-xs font-black bg-[#1e293b] text-slate-300 hover:text-white">−</button>
+        <button onclick="setBondOp('mixed')" id="bondOp-mixed" class="px-2 py-1 rounded-lg text-xs font-black bg-[#1e293b] text-slate-300 hover:text-white">±</button>
+      </div>
+
+      <!-- MODE 2: Guided Bridging Filters -->
+      <div id="subBar-guided" class="hidden items-center gap-1.5 flex-wrap text-xs">
+        <span class="text-slate-400 font-bold uppercase tracking-wider text-[10px]">Range:</span>
+        <button onclick="setBridgeRange('to20')" id="bridgeRange-to20" class="px-2.5 py-1 rounded-xl font-extrabold bg-amber-400 text-slate-950 shadow">
+          ★ Bridge to 20 (Single Digit)
+        </button>
+        <button onclick="setBridgeRange('decades50')" id="bridgeRange-decades50" class="px-2.5 py-1 rounded-xl font-bold bg-[#1e293b] text-slate-300 hover:text-white border border-slate-700/60">
+          Decades (to 50)
+        </button>
+        <button onclick="setBridgeRange('decades100')" id="bridgeRange-decades100" class="px-2.5 py-1 rounded-xl font-bold bg-[#1e293b] text-slate-300 hover:text-white border border-slate-700/60">
+          Decades (to 100)
+        </button>
+        <button onclick="setBridgeRange('inverse')" id="bridgeRange-inverse" class="px-2.5 py-1 rounded-xl font-bold bg-[#1e293b] text-slate-300 hover:text-white border border-slate-700/60">
+          Inverse Mirror (⇄)
+        </button>
+
+        <span class="mx-1 text-slate-600">|</span>
+        <button onclick="setBridgeOp('add')" id="bridgeOp-add" class="px-2 py-0.5 rounded-lg text-xs font-black bg-amber-400 text-slate-950">＋ Add</button>
+        <button onclick="setBridgeOp('sub')" id="bridgeOp-sub" class="px-2 py-0.5 rounded-lg text-xs font-black bg-[#1e293b] text-slate-300 hover:text-white">− Sub</button>
+        <button onclick="setBridgeOp('mixed')" id="bridgeOp-mixed" class="px-2 py-0.5 rounded-lg text-xs font-black bg-[#1e293b] text-slate-300 hover:text-white">± Both</button>
+        
+        <span class="mx-1 text-slate-600">|</span>
+        <button onclick="toggleBridgeStepperMode()" id="btnStepperToggle" class="px-2.5 py-0.5 rounded-lg text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+          3-Stage Stepper: ON
+        </button>
+      </div>
+
+      <!-- MODE 3: Odds & Evens Filters -->
+      <div id="subBar-oddseven" class="hidden items-center gap-1.5 flex-wrap text-xs">
+        <span class="text-slate-400 font-bold uppercase tracking-wider text-[10px]">Challenge:</span>
+        <button onclick="setOddEvenRange('to20')" id="oeRange-to20" class="px-2.5 py-1 rounded-xl font-bold bg-amber-400 text-slate-950">Numbers 1 to 20</button>
+        <button onclick="setOddEvenRange('to100')" id="oeRange-to100" class="px-2.5 py-1 rounded-xl font-bold bg-[#1e293b] text-slate-300 hover:text-white">Numbers 1 to 100</button>
+        <button onclick="setOddEvenRange('pairs')" id="oeRange-pairs" class="px-2.5 py-1 rounded-xl font-bold bg-[#1e293b] text-slate-300 hover:text-white">Pair the Counters (Visual)</button>
+      </div>
+
+      <!-- MODE 4: Doubles & Near Doubles Filters -->
+      <div id="subBar-doubles" class="hidden items-center gap-1.5 flex-wrap text-xs">
+        <span class="text-slate-400 font-bold uppercase tracking-wider text-[10px]">Type:</span>
+        <button onclick="setDoublesMode('to10')" id="dblMode-to10" class="px-2.5 py-1 rounded-xl font-bold bg-amber-400 text-slate-950">Doubles to 10 (1+1 to 5+5)</button>
+        <button onclick="setDoublesMode('to20')" id="dblMode-to20" class="px-2.5 py-1 rounded-xl font-bold bg-[#1e293b] text-slate-300 hover:text-white">Doubles to 20 (6+6 to 10+10)</button>
+        <button onclick="setDoublesMode('nearPlus')" id="dblMode-nearPlus" class="px-2.5 py-1 rounded-xl font-bold bg-[#1e293b] text-slate-300 hover:text-white">Near Doubles (Double + 1)</button>
+        <button onclick="setDoublesMode('nearMinus')" id="dblMode-nearMinus" class="px-2.5 py-1 rounded-xl font-bold bg-[#1e293b] text-slate-300 hover:text-white">Near Doubles (Double − 1)</button>
+      </div>
+
+      <!-- MODE 5: Fast Fire Controls -->
+      <div id="subBar-fast" class="hidden items-center gap-2 text-xs">
+        <span class="text-amber-400 font-bold font-num text-sm">⏱ Fast Fire: 60 Seconds</span>
+        <button onclick="startFastFireTimer()" id="btnStartFastFire" class="px-3 py-1 rounded-xl font-black bg-rose-500 hover:bg-rose-400 text-white shadow">
+          START TIMER
+        </button>
+        <span id="fastFireCountdown" class="font-num text-lg font-bold text-white px-2">60s</span>
+      </div>
+
+      <!-- Right: Streaks, Score, Pupil Selector -->
+      <div class="flex items-center gap-2.5 text-xs font-bold ml-auto">
+        <div class="flex items-center gap-1 bg-[#131d33] px-2.5 py-1 rounded-xl border border-slate-800">
+          <span class="text-slate-400">Streak:</span>
+          <span class="text-amber-400 font-num text-sm flex items-center gap-0.5">🔥 <span id="streakCount">0</span></span>
+        </div>
+        <div class="flex items-center gap-1 bg-[#131d33] px-2.5 py-1 rounded-xl border border-slate-800">
+          <span class="text-slate-400">Score:</span>
+          <span class="text-emerald-400 font-num text-sm" id="scoreCount">0</span>
+        </div>
+
+        <!-- Pupil Rotation -->
+        <div class="flex items-center gap-1 bg-[#091122] p-1 rounded-xl border border-slate-800">
+          <button onclick="setPupil('Ariana')" id="pupil-Ariana" class="px-2 py-0.5 rounded-lg text-xs font-bold bg-amber-400 text-slate-950">Ariana</button>
+          <button onclick="setPupil('Aleen')" id="pupil-Aleen" class="px-2 py-0.5 rounded-lg text-xs font-semibold text-slate-300 hover:text-white">Aleen</button>
+          <button onclick="setPupil('Brooke')" id="pupil-Brooke" class="px-2 py-0.5 rounded-lg text-xs font-semibold text-slate-300 hover:text-white">Brooke</button>
+          <button onclick="setPupil('Class')" id="pupil-Class" class="px-2 py-0.5 rounded-lg text-xs font-semibold text-slate-300 hover:text-white">Class</button>
+        </div>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- MAIN DUAL-LAYOUT WRAPPER (Visualizer Left/Center + Live 100-Square Panel) -->
+  <main class="max-w-7xl mx-auto px-3 sm:px-4 py-3 w-full flex-1 flex flex-col lg:flex-row items-start justify-center gap-4 relative">
+    
+    <!-- LEFT / PRIMARY WORKSPACE (Question + Visualizer + Keypad) -->
+    <div class="flex-1 w-full flex flex-col items-center justify-start gap-3">
+      
+      <!-- BIG QUESTION CARD -->
+      <div class="w-full bg-[#111c34] border border-slate-800/90 rounded-[28px] p-4 sm:p-6 shadow-2xl flex flex-col items-center justify-center relative">
+        
+        <!-- STAGE STEP PROGRESS INDICATOR (For Guided Bridging) -->
+        <div id="bridgeStepIndicator" class="hidden w-full max-w-xl mb-3 flex items-center justify-between gap-1.5 px-1">
+          <div id="stepBadge-1" class="flex-1 py-1.5 px-2 rounded-xl text-center text-xs font-bold bg-amber-400 text-slate-950 shadow border border-amber-300 flex items-center justify-center gap-1 transition-all">
+            <span>①</span>
+            <span class="truncate">Hit 10/Decade</span>
+          </div>
+          <div class="text-slate-600 font-bold">➔</div>
+          <div id="stepBadge-2" class="flex-1 py-1.5 px-2 rounded-xl text-center text-xs font-semibold bg-[#182747] text-slate-400 border border-slate-700 flex items-center justify-center gap-1 transition-all">
+            <span>②</span>
+            <span class="truncate">Leftover</span>
+          </div>
+          <div class="text-slate-600 font-bold">➔</div>
+          <div id="stepBadge-3" class="flex-1 py-1.5 px-2 rounded-xl text-center text-xs font-semibold bg-[#182747] text-slate-400 border border-slate-700 flex items-center justify-center gap-1 transition-all">
+            <span>③</span>
+            <span class="truncate">Final Answer</span>
+          </div>
+        </div>
+
+        <!-- Rounded Question Badge -->
+        <div class="bg-[#182747] border border-slate-700/70 px-6 sm:px-8 py-3 rounded-2xl shadow-inner mb-2 w-full max-w-xl flex items-center justify-center">
+          <div id="equationDisplay" class="font-num text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white flex items-center justify-center gap-2 sm:gap-3 flex-wrap text-center">
+            <span id="qPartA" class="text-rose-400">8</span>
+            <span id="qOpSymbol" class="text-slate-300">＋</span>
+            <span id="qPartB" class="text-emerald-400">5</span>
+            <span class="text-slate-400">=</span>
+            <span id="qWhole" class="text-amber-400 underline decoration-dashed decoration-4 underline-offset-8 pulse-badge">?</span>
+          </div>
+        </div>
+
+        <!-- Subtitle Prompt -->
+        <p id="promptSubtext" class="text-sm sm:text-base font-bold text-slate-200 mt-1 text-center">
+          Bridge through 10: <span class="text-rose-400 font-num">8</span> + <span class="text-emerald-400 font-num">5</span> = <span class="text-amber-400 font-num">?</span>
+        </p>
+
+        <!-- LIVE SCAFFOLD CONTROLS BAR -->
+        <div class="w-full flex flex-wrap items-center justify-between gap-2.5 mt-3 pt-3 border-t border-slate-800/70">
+          
+          <!-- Visualizer Toggle -->
+          <button onclick="toggleVisualizer()" class="flex items-center gap-2 group cursor-pointer focus:outline-none">
+            <div id="visualizerLed" class="w-3.5 h-3.5 rounded-full bg-emerald-400 shadow-md shadow-emerald-400/50"></div>
+            <span class="text-xs sm:text-sm font-semibold text-slate-300 group-hover:text-white transition">Classroom Visualizer</span>
+          </button>
+
+          <!-- Anti-Cheat Status Badge -->
+          <div class="flex items-center gap-1.5 text-xs text-slate-400">
+            <span class="bg-[#182747] px-2.5 py-0.5 rounded-full border border-slate-700 text-slate-300 text-[11px] font-medium flex items-center gap-1">
+              <svg class="w-3 h-3 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+              Anti-Cheat Masked
+            </span>
+          </div>
+
+          <!-- Scaffold Selection Buttons -->
+          <div id="scaffoldButtonsRow" class="flex items-center bg-[#070e1b] p-1 rounded-2xl border border-slate-800 flex-wrap">
+            <button onclick="setScaffold('cherry')" id="scaffoldBtn-cherry" class="px-3 py-1 rounded-xl text-xs font-bold transition text-slate-300 hover:text-white">
+              Cherry Split
+            </button>
+            <button onclick="setScaffold('frame')" id="scaffoldBtn-frame" class="px-3 py-1 rounded-xl text-xs font-bold transition text-slate-300 hover:text-white">
+              Ten-Frames
+            </button>
+            <button onclick="setScaffold('jump')" id="scaffoldBtn-jump" class="px-3 py-1 rounded-xl text-xs font-bold transition bg-slate-800 text-white shadow border border-slate-700">
+              Jump Line
+            </button>
+            <button onclick="setScaffold('pairs')" id="scaffoldBtn-pairs" class="hidden px-3 py-1 rounded-xl text-xs font-bold transition text-slate-300 hover:text-white">
+              Pair View
+            </button>
+          </div>
+
+        </div>
+
+        <!-- VISUALIZER STAGE CONTAINER -->
+        <div id="visualizerContainer" class="w-full mt-2.5 bg-[#0a1122] border border-slate-800/80 rounded-2xl p-4 min-h-[190px] flex flex-col items-center justify-center transition-all">
+          
+          <!-- View 1: Cherry Part-Whole Diagram -->
+          <div id="viewCherry" class="w-full hidden flex-col items-center justify-center py-1">
+            <svg class="w-64 h-36" viewBox="0 0 260 145">
+              <line x1="130" y1="42" x2="68" y2="108" stroke="#334155" stroke-width="4.5" stroke-linecap="round" />
+              <line x1="130" y1="42" x2="192" y2="108" stroke="#334155" stroke-width="4.5" stroke-linecap="round" />
+              
+              <circle cx="130" cy="38" r="28" fill="#182747" stroke="#f59e0b" stroke-width="4.5" />
+              <text id="cherryWholeVal" x="130" y="46" text-anchor="middle" fill="#f59e0b" font-size="22" font-weight="bold" font-family="Fredoka, cursive, sans-serif">10</text>
+              
+              <circle cx="68" cy="110" r="25" fill="#182747" stroke="#f43f5e" stroke-width="4.5" />
+              <text id="cherryPartAVal" x="68" y="118" text-anchor="middle" fill="#f43f5e" font-size="20" font-weight="bold" font-family="Fredoka, cursive, sans-serif">4</text>
+              
+              <circle id="cherryUnknownCircle" cx="192" cy="110" r="25" fill="#182747" stroke="#0ea5e9" stroke-width="4.5" />
+              <text id="cherryPartBVal" x="192" y="119" text-anchor="middle" fill="#38bdf8" font-size="22" font-weight="bold" font-family="Fredoka, cursive, sans-serif">?</text>
+            </svg>
+          </div>
+
+          <!-- View 2: Ten-Frames (Supports Single Frame, Dual Frame to 20, or Mirror Double Rows) -->
+          <div id="viewFrame" class="w-full hidden flex-col items-center justify-center py-1">
+            <div id="frameTitleLabel" class="text-xs font-bold text-amber-400 mb-2 uppercase tracking-wider font-num">
+              Ten-Frame Representation
+            </div>
+            <div id="tenFrameStage" class="flex flex-wrap items-center justify-center gap-4">
+              <!-- Rendered dynamically -->
+            </div>
+            <span id="tenFrameMaskNotice" class="text-[11px] text-slate-400 mt-2 font-medium">
+              Unfilled spaces are masked so pupils do not cheat by counting empty slots!
+            </span>
+          </div>
+
+          <!-- View 3: Jump Line (Supports single-digit 10-cross, decade jump, or simple bonds) -->
+          <div id="viewJump" class="w-full flex flex-col items-center justify-center py-1">
+            <p id="jumpLineTitle" class="text-xs sm:text-sm font-semibold text-slate-300 mb-2 text-center">
+              Jump along the number line
+            </p>
+            <div class="w-full max-w-lg">
+              <svg id="jumpLineSvg" class="w-full h-32" viewBox="0 0 460 110">
+                <!-- SVG Content Rendered dynamically -->
+              </svg>
+            </div>
+          </div>
+
+          <!-- View 4: Pairs / Odds & Evens Visualizer -->
+          <div id="viewPairs" class="w-full hidden flex-col items-center justify-center py-1">
+            <div id="pairColumnContainer" class="flex items-end justify-center gap-3 py-2">
+              <!-- Column pairs rendered dynamically -->
+            </div>
+            <p id="pairExplainText" class="text-xs text-slate-300 font-semibold mt-2 text-center font-num">
+              Even numbers have an exact partner for every counter!
+            </p>
+          </div>
+
+          <!-- Post-Answer Stem Sentence Box -->
+        <div id="stemSentenceBox" class="hidden w-full mt-2.5 p-3 bg-emerald-950/80 border border-emerald-500/40 rounded-xl text-center">
+          <p id="stemSentenceText" class="text-xs sm:text-sm font-bold text-emerald-300 font-num">
+            "First jump 2 to reach 10, then jump remaining 3 to reach 13!"
+          </p>
+        </div>
+
+      </div>
+
+      <!-- STEP TARGET PROMPT BANNER (GUIDED BRIDGING ONLY) -->
+      <div id="bridgeStepPromptCard" class="hidden w-full max-w-md bg-[#162544] border-2 border-amber-400/80 rounded-2xl p-2.5 shadow-md flex items-center justify-between gap-2">
+        <div class="flex items-center gap-2">
+          <span id="bridgeStepNumberBadge" class="w-7 h-7 rounded-full bg-amber-400 text-slate-950 font-black font-num text-sm flex items-center justify-center shrink-0">1</span>
+          <div>
+            <div id="bridgeStepTitle" class="text-xs uppercase tracking-wider font-extrabold text-amber-300">Step 1: Jump to Friendly Ten</div>
+            <div id="bridgeStepQuestion" class="text-xs sm:text-sm font-bold text-slate-100">How much do we split off to hit the friendly ten?</div>
+          </div>
+        </div>
+        <div id="bridgeStepTargetBadge" class="text-right shrink-0 bg-[#0d1627] px-2.5 py-1 rounded-xl border border-slate-700">
+          <span class="text-[10px] text-slate-400 uppercase font-semibold block">Target</span>
+          <span id="bridgeStepTargetVal" class="text-xs font-black font-num text-amber-400">10</span>
+        </div>
+      </div>
+
+      <!-- TOUCH NUMBER PAD & SPECIAL CONTROLS (Odd/Even Quick Buttons or Numbers) -->
+      <div class="w-full max-w-md flex flex-col items-center gap-2">
+        
+        <!-- For Odds & Evens Mode: Quick Odd / Even Buttons -->
+        <div id="oddEvenChoiceRow" class="w-full hidden grid-cols-2 gap-3 mb-1">
+          <button onclick="submitOddEvenChoice('ODD')" class="key-btn h-14 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-num text-2xl font-black rounded-2xl shadow-lg border border-amber-300 flex items-center justify-center gap-2">
+            <span>⚡ ODD</span>
+            <span class="text-xs font-normal opacity-80">(Leaves 1 Out)</span>
+          </button>
+          <button onclick="submitOddEvenChoice('EVEN')" class="key-btn h-14 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-slate-950 font-num text-2xl font-black rounded-2xl shadow-lg border border-emerald-300 flex items-center justify-center gap-2">
+            <span>👥 EVEN</span>
+            <span class="text-xs font-normal opacity-80">(All in 2s)</span>
+          </button>
+        </div>
+
+        <!-- Input Display & Clear Button -->
+        <div id="standardInputRow" class="w-full flex items-center gap-2">
+          <div class="flex-1 h-14 bg-[#111c34] border-2 border-amber-400 rounded-2xl flex items-center justify-center shadow-lg">
+            <span id="activeInputSlot" class="font-num text-4xl font-bold text-amber-400">?</span>
+          </div>
+          <button onclick="clearCurrentInput()" class="h-14 px-5 bg-[#1e293b] hover:bg-slate-700 text-slate-300 font-bold text-xs uppercase tracking-wider rounded-2xl border border-slate-700 transition key-btn">
+            CLEAR
+          </button>
+        </div>
+
+        <!-- Tactile Numeric Keypad -->
+        <div id="standardKeypad" class="w-full bg-[#111c34] border border-slate-800 rounded-2xl p-2.5 shadow-xl">
+          <div class="grid grid-cols-5 gap-2">
+            <button onclick="inputDigit('1')" class="key-btn h-12 rounded-xl bg-[#1e293b] hover:bg-slate-700 text-white font-num text-2xl font-bold shadow flex items-center justify-center">1</button>
+            <button onclick="inputDigit('2')" class="key-btn h-12 rounded-xl bg-[#1e293b] hover:bg-slate-700 text-white font-num text-2xl font-bold shadow flex items-center justify-center">2</button>
+            <button onclick="inputDigit('3')" class="key-btn h-12 rounded-xl bg-[#1e293b] hover:bg-slate-700 text-white font-num text-2xl font-bold shadow flex items-center justify-center">3</button>
+            <button onclick="inputDigit('4')" class="key-btn h-12 rounded-xl bg-[#1e293b] hover:bg-slate-700 text-white font-num text-2xl font-bold shadow flex items-center justify-center">4</button>
+            <button onclick="inputDigit('5')" class="key-btn h-12 rounded-xl bg-[#1e293b] hover:bg-slate-700 text-white font-num text-2xl font-bold shadow flex items-center justify-center">5</button>
+            
+            <button onclick="inputDigit('6')" class="key-btn h-12 rounded-xl bg-[#1e293b] hover:bg-slate-700 text-white font-num text-2xl font-bold shadow flex items-center justify-center">6</button>
+            <button onclick="inputDigit('7')" class="key-btn h-12 rounded-xl bg-[#1e293b] hover:bg-slate-700 text-white font-num text-2xl font-bold shadow flex items-center justify-center">7</button>
+            <button onclick="inputDigit('8')" class="key-btn h-12 rounded-xl bg-[#1e293b] hover:bg-slate-700 text-white font-num text-2xl font-bold shadow flex items-center justify-center">8</button>
+            <button onclick="inputDigit('9')" class="key-btn h-12 rounded-xl bg-[#1e293b] hover:bg-slate-700 text-white font-num text-2xl font-bold shadow flex items-center justify-center">9</button>
+            <button onclick="inputDigit('0')" class="key-btn h-12 rounded-xl bg-[#1e293b] hover:bg-slate-700 text-white font-num text-2xl font-bold shadow flex items-center justify-center">0</button>
+          </div>
+
+          <div class="grid grid-cols-12 gap-2 mt-2">
+            <button onclick="inputBackspace()" class="col-span-4 key-btn h-12 rounded-xl bg-[#1c2438] hover:bg-slate-700 text-slate-300 font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-1 border border-slate-700">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2M3 12l6.414 6.414a2 2 0 001.414.586H19a2 2 0 002-2V7a2 2 0 00-2-2h-8.172a2 2 0 00-1.414.586L3 12z"/></svg>
+              DEL
+            </button>
+            <button onclick="submitAnswer()" id="submitActionBtn" class="col-span-8 key-btn h-12 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-sm uppercase tracking-wider shadow-lg flex items-center justify-center gap-1.5 transition">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+              SUBMIT ANSWER
+            </button>
+          </div>
+        </div>
+
+        <!-- Teacher Overrides & Skip -->
+        <div class="flex items-center gap-3 mt-0.5 text-xs text-slate-400">
+          <button onclick="forceTeacherReveal()" class="hover:text-amber-400 underline decoration-dotted">Teacher Reveal / Model</button>
+          <span>•</span>
+          <button onclick="generateQuestion()" class="hover:text-amber-400 underline decoration-dotted">Skip Question ➔</button>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- RIGHT / INTERACTIVE 100-SQUARE DOCK (Visible In All Sections) -->
+    <div id="hundredSquarePanel" class="w-full lg:w-[410px] bg-[#111c34] border border-slate-800 rounded-[24px] p-3.5 shadow-2xl flex flex-col shrink-0">
+      
+      <!-- Panel Header & Quick Patterns -->
+      <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+        <div class="flex items-center gap-1.5">
+          <span class="font-num text-base font-bold text-amber-400">Interactive 100 Square</span>
+          <span class="text-[10px] bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded font-mono">1–100</span>
+        </div>
+        <button onclick="clearHundredSquareHighlights()" class="text-[11px] text-slate-400 hover:text-rose-400 font-semibold underline">
+          Clear Grid
+        </button>
+      </div>
+
+      <!-- Quick Pattern Highlight Buttons -->
+      <div class="grid grid-cols-4 gap-1.5 py-2 text-[10px] font-bold">
+        <button onclick="highlightPattern('evens')" class="px-1.5 py-1 rounded bg-[#1e293b] hover:bg-emerald-600/30 text-emerald-300 border border-slate-700">Evens</button>
+        <button onclick="highlightPattern('odds')" class="px-1.5 py-1 rounded bg-[#1e293b] hover:bg-amber-600/30 text-amber-300 border border-slate-700">Odds</button>
+        <button onclick="highlightPattern('tens')" class="px-1.5 py-1 rounded bg-[#1e293b] hover:bg-sky-600/30 text-sky-300 border border-slate-700">Decades</button>
+        <button onclick="highlightPattern('fives')" class="px-1.5 py-1 rounded bg-[#1e293b] hover:bg-purple-600/30 text-purple-300 border border-slate-700">Fives</button>
+      </div>
+
+      <!-- Auto-Highlight Problem Checkbox -->
+      <div class="flex items-center justify-between bg-[#0a1122] px-2.5 py-1 rounded-lg border border-slate-800/80 mb-2">
+        <label for="autoHighlightCheck" class="text-[11px] text-slate-300 font-medium cursor-pointer flex items-center gap-1.5">
+          <input type="checkbox" id="autoHighlightCheck" checked onchange="refreshHundredSquareCurrentQuestion()" class="rounded border-slate-700 text-amber-400 focus:ring-0">
+          Auto-Illuminate Jump Path on Grid
+        </label>
+        <span class="text-[9px] text-amber-400 uppercase font-black">Live</span>
+      </div>
+
+      <!-- The 100-Square Grid (10x10) -->
+      <div id="grid100Container" class="grid grid-cols-10 gap-1 bg-[#090f1d] p-1.5 rounded-xl border border-slate-800">
+        <!-- Rendered via JS loop (1 to 100) -->
+      </div>
+
+      <!-- Legend below grid -->
+      <div class="flex items-center justify-between text-[10px] text-slate-400 pt-2 px-1">
+        <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-rose-500 inline-block"></span> Start</span>
+        <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-emerald-400 inline-block"></span> Friendly 10</span>
+        <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-amber-400 inline-block"></span> Answer</span>
+        <span class="text-[9px] text-slate-500">Tap tile to mark</span>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- INTERACTIVE WHITEBOARD CANVAS LAYER -->
+  <div id="whiteboardOverlayWrapper" class="fixed inset-0 z-40 pointer-events-none transition-colors duration-200">
+    <canvas id="whiteboardCanvas" class="w-full h-full block pointer-events-auto cursor-crosshair touch-none"></canvas>
+  </div>
+
+  <!-- FLOATING WHITEBOARD TOOLBAR -->
+  <div id="whiteboardToolbar" class="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 bg-[#0b1324]/95 backdrop-blur-md border-2 border-amber-400/80 rounded-2xl p-2 sm:p-2.5 shadow-2xl flex flex-wrap items-center justify-center gap-2 max-w-[96vw] transition-all duration-300">
+    
+    <!-- Move / Drag Handle & Tool Title -->
+    <div class="flex items-center gap-1.5 px-2 text-xs font-bold text-amber-400 border-r border-slate-700/80">
+      <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+      <span class="hidden sm:inline font-num text-sm">Board</span>
+    </div>
+
+    <!-- Mode Selector: Overlay vs Scratchpad -->
+    <div class="flex items-center bg-[#060c18] p-1 rounded-xl border border-slate-800">
+      <button onclick="setBoardMode('overlay')" id="btnBoardMode-overlay" class="px-2.5 py-1 rounded-lg text-xs font-bold transition bg-amber-400 text-slate-950">
+        Overlay
+      </button>
+      <button onclick="setBoardMode('scratch')" id="btnBoardMode-scratch" class="px-2.5 py-1 rounded-lg text-xs font-bold transition text-slate-300 hover:text-white">
+        Scratchpad
+      </button>
+    </div>
+
+    <!-- Tool Selector: Pen / High / Eraser / Pointer (Interact) -->
+    <div class="flex items-center bg-[#060c18] p-1 rounded-xl border border-slate-800">
+      <button onclick="setDrawTool('pen')" id="btnTool-pen" class="px-2.5 py-1 rounded-lg text-xs font-bold transition bg-slate-800 text-white shadow border border-slate-700 flex items-center gap-1">
+        <span>✏️ Pen</span>
+      </button>
+      <button onclick="setDrawTool('highlighter')" id="btnTool-highlighter" class="px-2.5 py-1 rounded-lg text-xs font-bold transition text-slate-300 hover:text-white flex items-center gap-1">
+        <span>🖍️ High</span>
+      </button>
+      <button onclick="setDrawTool('eraser')" id="btnTool-eraser" class="px-2.5 py-1 rounded-lg text-xs font-bold transition text-slate-300 hover:text-white flex items-center gap-1">
+        <span>🧹 Eraser</span>
+      </button>
+      <button onclick="setDrawTool('pointer')" id="btnTool-pointer" class="px-2.5 py-1 rounded-lg text-xs font-bold transition text-slate-300 hover:text-white flex items-center gap-1">
+        <span>👆 Touch</span>
+      </button>
+    </div>
+
+    <!-- Palette Colors -->
+    <div id="paletteGroup" class="flex items-center gap-1.5 px-1 bg-[#060c18] p-1 rounded-xl border border-slate-800">
+      <button onclick="setPenColor('#fde047')" class="w-6 h-6 rounded-full bg-yellow-300 border-2 border-yellow-200 ring-2 ring-transparent transition hover:scale-110" id="colorBtn-yellow"></button>
+      <button onclick="setPenColor('#ffffff')" class="w-6 h-6 rounded-full bg-white border-2 border-slate-200 ring-2 ring-transparent transition hover:scale-110" id="colorBtn-white"></button>
+      <button onclick="setPenColor('#38bdf8')" class="w-6 h-6 rounded-full bg-sky-400 border-2 border-sky-300 ring-2 ring-transparent transition hover:scale-110" id="colorBtn-cyan"></button>
+      <button onclick="setPenColor('#fb7185')" class="w-6 h-6 rounded-full bg-rose-400 border-2 border-rose-300 ring-2 ring-transparent transition hover:scale-110" id="colorBtn-rose"></button>
+      <button onclick="setPenColor('#4ade80')" class="w-6 h-6 rounded-full bg-emerald-400 border-2 border-emerald-300 ring-2 ring-transparent transition hover:scale-110" id="colorBtn-green"></button>
+      <button onclick="setPenColor('#fb923c')" class="w-6 h-6 rounded-full bg-orange-400 border-2 border-orange-300 ring-2 ring-transparent transition hover:scale-110" id="colorBtn-orange"></button>
+    </div>
+
+    <!-- Line Width / Thickness -->
+    <div class="flex items-center bg-[#060c18] p-1 rounded-xl border border-slate-800">
+      <button onclick="setPenWidth(3)" id="btnWidth-fine" class="px-2 py-1 text-xs font-bold text-slate-300 hover:text-white rounded-lg">Fine</button>
+      <button onclick="setPenWidth(7)" id="btnWidth-med" class="px-2 py-1 text-xs font-bold bg-slate-800 text-white rounded-lg border border-slate-700">Med</button>
+      <button onclick="setPenWidth(14)" id="btnWidth-thick" class="px-2 py-1 text-xs font-bold text-slate-300 hover:text-white rounded-lg">Thick</button>
+    </div>
+
+    <!-- Undo / Redo / Clear -->
+    <div class="flex items-center gap-1">
+      <button onclick="undoWhiteboardStroke()" title="Undo Stroke" class="p-1.5 rounded-xl bg-[#1e293b] hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 transition">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a5 5 0 015 5v2M3 10l6-6m-6 6l6 6"/></svg>
+      </button>
+      <button onclick="redoWhiteboardStroke()" title="Redo Stroke" class="p-1.5 rounded-xl bg-[#1e293b] hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 transition">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 10H11a5 5 0 00-5 5v2m15-7l-6-6m6 6l-6 6"/></svg>
+      </button>
+      <button onclick="clearWhiteboardCanvas()" class="px-2.5 py-1.5 rounded-xl bg-rose-600/30 hover:bg-rose-600 text-rose-300 hover:text-white font-bold text-xs border border-rose-500/40 transition">
+        Clear
+      </button>
+    </div>
+
+  </div>
+
+  <!-- SOUND & STATE ENGINE -->
+  <script>
+    // --- APP STATE ---
+    let programMode = 'guided'; // 'bonds', 'guided', 'oddseven', 'doubles', 'fast'
+    let targetBond = 10;
+    let bondOp = 'add';
+    let bridgeRange = 'to20'; // 'to20', 'decades50', 'decades100', 'inverse'
+    let bridgeOp = 'add'; // 'add', 'sub', 'mixed'
+    let oddEvenRange = 'to20'; // 'to20', 'to100', 'pairs'
+    let doublesMode = 'to10'; // 'to10', 'to20', 'nearPlus', 'nearMinus'
+    let currentScaffold = 'jump'; // 'cherry', 'frame', 'jump', 'pairs'
+    let visualizerActive = true;
+    let showHundredSquare = true;
+    let currentPupil = 'Ariana';
+    let currentInput = "";
+    let isAnswered = false;
+    let streak = 0;
+    let score = 0;
+    let manualHighlights = new Set();
+    let fastFireInterval = null;
+    let fastFireRemaining = 60;
+
+    // --- STEP-BY-STEP BRIDGING STAGE TRACKER ---
+    let bridgeStage = 1; // 1 = First partition (to friendly ten), 2 = Remaining partition, 3 = Final answer
+    let stage1Submitted = false;
+    let stage2Submitted = false;
+    let stepperModeActive = true;
+
+    // --- EXHAUSTIVE SHUFFLE-BAG QUESTION QUEUE SYSTEM ---
+    const questionBags = {};
+
+    function shuffleArray(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function getNextQuestionFromBag(bagKey, generatorFn) {
+      if (!questionBags[bagKey] || questionBags[bagKey].length === 0) {
+        questionBags[bagKey] = shuffleArray(generatorFn());
+      }
+      return questionBags[bagKey].pop();
+    }
+
+    // Generator 1: Bonds within 10
+    function generateBondsBag(target, op) {
+      const items = [];
+      const targets = (target === 'mixed') ? [5, 6, 7, 8, 9, 10] : [target];
+      targets.forEach(t => {
+        for (let a = 1; a < t; a++) {
+          const b = t - a;
+          if (op === 'add' || op === 'mixed') {
+            items.push({
+              type: 'bond',
+              op: 'add',
+              partA: a,
+              partB: b,
+              whole: t,
+              answer: b,
+              decade: t,
+              jump1: b,
+              jump2: 0,
+              stem: `${a} plus ${b} makes ${t}! The complement friend of ${a} is ${b}.`
+            });
+          }
+          if (op === 'sub' || op === 'mixed') {
+            items.push({
+              type: 'bond',
+              op: 'sub',
+              partA: t,
+              partB: a,
+              whole: b,
+              answer: b,
+              decade: t,
+              jump1: a,
+              jump2: 0,
+              stem: `${t} minus ${a} leaves ${b}! Use your bond to 10.`
+            });
+          }
+        }
+      });
+      return items;
+    }
+
+    // Generator 2: Guided Bridging
+    function generateBridgingBag(range, op) {
+      const items = [];
+
+      if (range === 'to20') {
+        // All Single-digit crossings: 9+(2..9), 8+(3..9), 7+(4..9), 6+(5..9)
+        if (op === 'add' || op === 'mixed') {
+          for (let a = 6; a <= 9; a++) {
+            const minB = 11 - a;
+            for (let b = minB; b <= 9; b++) {
+              const jump1 = 10 - a;
+              const jump2 = b - jump1;
+              const ans = 10 + jump2;
+              items.push({
+                type: 'bridge',
+                op: 'add',
+                partA: a,
+                partB: b,
+                whole: ans,
+                answer: ans,
+                decade: 10,
+                jump1: jump1,
+                jump2: jump2,
+                stem: `Step 1: ${a} + ${jump1} = 10. Step 2: Split ${b} into ${jump1} and ${jump2}. Step 3: 10 + ${jump2} = ${ans}!`
+              });
+            }
+          }
+        }
+        // Subtractions crossing 10: 11-(2..9), 12-(3..9), 13-(4..9), 14-(5..9), 15-(6..9), 16-(7..9), 17-(8..9), 18-9
+        if (op === 'sub' || op === 'mixed') {
+          for (let a = 11; a <= 18; a++) {
+            const minSub = a - 9;
+            for (let b = Math.max(2, minSub); b <= 9; b++) {
+              if (a - b < 10) {
+                const jump1 = a - 10;
+                const jump2 = b - jump1;
+                const ans = 10 - jump2;
+                items.push({
+                  type: 'bridge',
+                  op: 'sub',
+                  partA: a,
+                  partB: b,
+                  whole: ans,
+                  answer: ans,
+                  decade: 10,
+                  jump1: jump1,
+                  jump2: jump2,
+                  stem: `Step 1: ${a} − ${jump1} = 10. Step 2: Partition ${b} into ${jump1} and ${jump2}. Step 3: 10 − ${jump2} = ${ans}!`
+                });
+              }
+            }
+          }
+        }
+      } 
+      else if (range === 'decades50' || range === 'decades100') {
+        const minDec = 2;
+        const maxDec = (range === 'decades50') ? 4 : 9; // Decades: 20, 30, 40 (to 50) or up to 90 (to 100)
+
+        for (let d = minDec; d <= maxDec; d++) {
+          const decadeVal = d * 10;
+
+          if (op === 'add' || op === 'mixed') {
+            // Numbers ending in 6, 7, 8, 9 adding 3..9 to cross the decade
+            for (let u = 6; u <= 9; u++) {
+              const startA = decadeVal - (10 - u);
+              const jump1 = decadeVal - startA;
+              for (let jump2 = 1; jump2 <= 5; jump2++) {
+                const b = jump1 + jump2;
+                if (b <= 9) {
+                  const ans = decadeVal + jump2;
+                  items.push({
+                    type: 'bridge',
+                    op: 'add',
+                    partA: startA,
+                    partB: b,
+                    whole: ans,
+                    answer: ans,
+                    decade: decadeVal,
+                    jump1: jump1,
+                    jump2: jump2,
+                    stem: `Step 1: ${startA} + ${jump1} = ${decadeVal}. Step 2: Split ${b} into ${jump1} and ${jump2}. Step 3: ${decadeVal} + ${jump2} = ${ans}!`
+                  });
+                }
+              }
+            }
+          }
+
+          if (op === 'sub' || op === 'mixed') {
+            // Numbers ending in 1, 2, 3, 4 subtracting 3..9 to cross backwards
+            for (let u = 1; u <= 4; u++) {
+              const startA = decadeVal + u;
+              const jump1 = u;
+              for (let jump2 = 1; jump2 <= 5; jump2++) {
+                const b = jump1 + jump2;
+                if (b <= 9) {
+                  const ans = decadeVal - jump2;
+                  items.push({
+                    type: 'bridge',
+                    op: 'sub',
+                    partA: startA,
+                    partB: b,
+                    whole: ans,
+                    answer: ans,
+                    decade: decadeVal,
+                    jump1: jump1,
+                    jump2: jump2,
+                    stem: `Step 1: ${startA} − ${jump1} = ${decadeVal}. Step 2: Partition ${b} into ${jump1} and ${jump2}. Step 3: ${decadeVal} − ${jump2} = ${ans}!`
+                  });
+                }
+              }
+            }
+          }
+        }
+      }
+      else if (range === 'inverse') {
+        const anchors = [
+          { a: 7, b: 4, dec: 10 }, { a: 8, b: 5, dec: 10 }, { a: 9, b: 6, dec: 10 },
+          { a: 28, b: 5, dec: 30 }, { a: 37, b: 6, dec: 40 }, { a: 45, b: 7, dec: 50 },
+          { a: 58, b: 6, dec: 60 }, { a: 66, b: 7, dec: 70 }, { a: 75, b: 8, dec: 80 }, { a: 84, b: 8, dec: 90 }
+        ];
+        anchors.forEach(pair => {
+          const jump1 = pair.dec - pair.a;
+          const jump2 = pair.b - jump1;
+          const ans = pair.dec + jump2;
+          // Forward
+          items.push({
+            type: 'bridge',
+            op: 'add',
+            partA: pair.a,
+            partB: pair.b,
+            whole: ans,
+            answer: ans,
+            decade: pair.dec,
+            jump1: jump1,
+            jump2: jump2,
+            stem: `Step 1: ${pair.a} + ${jump1} = ${pair.dec}. Step 2: Remaining part is ${jump2}. Step 3: ${pair.dec} + ${jump2} = ${ans}!`
+          });
+          // Backward Return
+          items.push({
+            type: 'bridge',
+            op: 'sub',
+            partA: ans,
+            partB: pair.b,
+            whole: pair.a,
+            answer: pair.a,
+            decade: pair.dec,
+            jump1: jump2,
+            jump2: jump1,
+            stem: `Step 1: ${ans} − ${jump2} = ${pair.dec}. Step 2: Remaining part is ${jump1}. Step 3: ${pair.dec} − ${jump1} = ${pair.a}!`
+          });
+        });
+      }
+
+      return items;
+    }
+
+    // Generator 3: Doubles and Near Doubles
+    function generateDoublesBag(mode) {
+      const items = [];
+      let minN = 1, maxN = 10, bonus = 0;
+
+      if (mode === 'to10') { minN = 1; maxN = 5; bonus = 0; }
+      else if (mode === 'to20') { minN = 6; maxN = 12; bonus = 0; }
+      else if (mode === 'nearPlus') { minN = 3; maxN = 20; bonus = 1; }
+      else if (mode === 'nearMinus') { minN = 4; maxN = 20; bonus = -1; }
+
+      for (let n = minN; n <= maxN; n++) {
+        const partA = n;
+        const partB = n + bonus;
+        const ans = partA + partB;
+        let stem = `Double ${n} is ${n * 2}`;
+        if (bonus === 1) stem += `, plus 1 more makes ${ans}!`;
+        else if (bonus === -1) stem += `, minus 1 leaves ${ans}!`;
+        else stem += `!`;
+
+        items.push({
+          type: 'doubles',
+          op: 'add',
+          partA: partA,
+          partB: partB,
+          bonus: bonus,
+          baseNum: n,
+          whole: ans,
+          answer: ans,
+          decade: 10,
+          jump1: bonus === 0 ? n : 1,
+          jump2: 0,
+          stem: stem
+        });
+      }
+      return items;
+    }
+
+    // Generator 4: Odds & Evens
+    function generateOddsEvensBag(range) {
+      const items = [];
+      const maxVal = (range === 'to100') ? 100 : 20;
+      for (let i = 1; i <= maxVal; i++) {
+        const isEven = (i % 2 === 0);
+        items.push({
+          type: 'oddseven',
+          partA: i,
+          answer: isEven ? 'EVEN' : 'ODD',
+          stem: isEven 
+            ? `${i} is an EVEN number! It splits cleanly into 2 equal teams with zero left out.`
+            : `${i} is an ODD number! After pairing by 2s, there is 1 lonely counter sticking out.`
+        });
+      }
+      return items;
+    }
+
+    function toggleBridgeStepperMode() {
+      stepperModeActive = !stepperModeActive;
+      const btn = document.getElementById('btnStepperToggle');
+      if (stepperModeActive) {
+        btn.className = "px-2.5 py-0.5 rounded-lg text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40";
+        btn.innerText = "3-Stage Stepper: ON";
+      } else {
+        btn.className = "px-2.5 py-0.5 rounded-lg text-xs font-bold bg-slate-800 text-slate-400 border border-slate-700";
+        btn.innerText = "3-Stage Stepper: OFF";
+      }
+      generateQuestion();
+    }
+
+    // --- WHITEBOARD & ANNOTATION ENGINE STATE ---
+    let whiteboardActive = true;
+    let boardMode = 'overlay'; // 'overlay' (transparent) or 'scratch' (chalkboard backdrop)
+    let drawTool = 'pen'; // 'pen', 'highlighter', 'eraser', 'pointer'
+    let penColor = '#fde047';
+    let penWidth = 7;
+    let isDrawing = false;
+    let wbCanvas = null;
+    let wbCtx = null;
+    let strokeHistory = [];
+    let redoHistory = [];
+    let currentStroke = [];
+
+    let currentQ = {
+      type: 'bridge',
+      op: 'add',
+      partA: 8,
+      partB: 5,
+      whole: 13,
+      answer: 13,
+      decade: 10,
+      jump1: 2,
+      jump2: 3,
+      stem: "8 plus 2 makes friendly ten 10, then add 3 to make 13!"
+    };
+
+    // --- BUILT-IN WEB AUDIO CHIMES (Zero external network dependencies) ---
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    let audioCtx = null;
+
+    function playTone(freq, type, duration, delay = 0) {
+      try {
+        if (!audioCtx) audioCtx = new AudioCtx();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime + delay);
+        gain.gain.setValueAtTime(0.12, audioCtx.currentTime + delay);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + delay + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(audioCtx.currentTime + delay);
+        osc.stop(audioCtx.currentTime + delay + duration);
+      } catch (e) {}
+    }
+
+    function soundEffect(kind) {
+      if (kind === 'tap') {
+        playTone(523.25, 'triangle', 0.05); // C5
+      } else if (kind === 'correct') {
+        playTone(523.25, 'sine', 0.12, 0);   // C5
+        playTone(659.25, 'sine', 0.12, 0.08);// E5
+        playTone(783.99, 'sine', 0.15, 0.16);// G5
+        playTone(1046.50, 'sine', 0.3, 0.24);// C6
+      } else if (kind === 'wrong') {
+        playTone(280, 'sawtooth', 0.15);
+        playTone(220, 'sawtooth', 0.2, 0.08);
+      } else if (kind === 'reveal') {
+        playTone(440, 'triangle', 0.1);
+        playTone(587.33, 'triangle', 0.2, 0.08);
+      }
+    }
+
+    // --- NAVIGATION MODES ---
+    function setProgramMode(mode) {
+      programMode = mode;
+      ['bonds', 'guided', 'oddseven', 'doubles', 'fast'].forEach(m => {
+        const btn = document.getElementById(`btnProg-${m}`);
+        const sub = document.getElementById(`subBar-${m}`);
+        if (m === mode) {
+          btn.className = "px-2.5 sm:px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold transition bg-amber-400 text-slate-950 shadow";
+          if (sub) {
+            sub.classList.remove('hidden');
+            sub.classList.add('flex');
+          }
+        } else {
+          btn.className = "px-2.5 sm:px-3 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition text-slate-300 hover:text-white";
+          if (sub) {
+            sub.classList.add('hidden');
+            sub.classList.remove('flex');
+          }
+        }
+      });
+
+      // Scaffold options visibility per mode
+      const pairScaffoldBtn = document.getElementById('scaffoldBtn-pairs');
+      if (mode === 'oddseven') {
+        pairScaffoldBtn.classList.remove('hidden');
+        setScaffold('pairs');
+        document.getElementById('oddEvenChoiceRow').classList.remove('hidden');
+        document.getElementById('oddEvenChoiceRow').classList.add('grid');
+        document.getElementById('standardInputRow').classList.add('hidden');
+        document.getElementById('standardKeypad').classList.add('hidden');
+      } else {
+        pairScaffoldBtn.classList.add('hidden');
+        document.getElementById('oddEvenChoiceRow').classList.add('hidden');
+        document.getElementById('oddEvenChoiceRow').classList.remove('grid');
+        document.getElementById('standardInputRow').classList.remove('hidden');
+        document.getElementById('standardKeypad').classList.remove('hidden');
+        if (currentScaffold === 'pairs') setScaffold('jump');
+      }
+
+      generateQuestion();
+    }
+
+    // --- SUB-FILTERS ---
+    function setTargetBond(v) {
+      targetBond = v;
+      [5, 6, 7, 8, 9, 10, 'mixed'].forEach(val => {
+        const btn = document.getElementById(`targetBtn-${val}`);
+        if (val === v) {
+          btn.className = "px-3 py-1 rounded-xl font-extrabold bg-amber-400 text-slate-950 border border-amber-300 shadow";
+        } else {
+          btn.className = "px-2 py-1 rounded-xl font-bold bg-[#1e293b] text-slate-300 hover:text-white border border-slate-700/60";
+        }
+      });
+      generateQuestion();
+    }
+
+    function setBondOp(op) {
+      bondOp = op;
+      ['add', 'sub', 'mixed'].forEach(o => {
+        const btn = document.getElementById(`bondOp-${o}`);
+        btn.className = (o === op) ? "px-2 py-1 rounded-lg text-xs font-black bg-amber-400 text-slate-950" : "px-2 py-1 rounded-lg text-xs font-black bg-[#1e293b] text-slate-300 hover:text-white";
+      });
+      generateQuestion();
+    }
+
+    function setBridgeRange(r) {
+      bridgeRange = r;
+      ['to20', 'decades50', 'decades100', 'inverse'].forEach(range => {
+        const btn = document.getElementById(`bridgeRange-${range}`);
+        btn.className = (range === r) 
+          ? "px-2.5 py-1 rounded-xl font-extrabold bg-amber-400 text-slate-950 shadow" 
+          : "px-2.5 py-1 rounded-xl font-bold bg-[#1e293b] text-slate-300 hover:text-white border border-slate-700/60";
+      });
+      generateQuestion();
+    }
+
+    function setBridgeOp(op) {
+      bridgeOp = op;
+      ['add', 'sub', 'mixed'].forEach(o => {
+        const btn = document.getElementById(`bridgeOp-${o}`);
+        btn.className = (o === op) ? "px-2 py-0.5 rounded-lg text-xs font-black bg-amber-400 text-slate-950" : "px-2 py-0.5 rounded-lg text-xs font-black bg-[#1e293b] text-slate-300 hover:text-white";
+      });
+      generateQuestion();
+    }
+
+    function setOddEvenRange(r) {
+      oddEvenRange = r;
+      ['to20', 'to100', 'pairs'].forEach(range => {
+        const btn = document.getElementById(`oeRange-${range}`);
+        btn.className = (range === r) 
+          ? "px-2.5 py-1 rounded-xl font-bold bg-amber-400 text-slate-950" 
+          : "px-2.5 py-1 rounded-xl font-bold bg-[#1e293b] text-slate-300 hover:text-white";
+      });
+      generateQuestion();
+    }
+
+    function setDoublesMode(m) {
+      doublesMode = m;
+      ['to10', 'to20', 'nearPlus', 'nearMinus'].forEach(mode => {
+        const btn = document.getElementById(`dblMode-${mode}`);
+        btn.className = (mode === m) 
+          ? "px-2.5 py-1 rounded-xl font-bold bg-amber-400 text-slate-950" 
+          : "px-2.5 py-1 rounded-xl font-bold bg-[#1e293b] text-slate-300 hover:text-white";
+      });
+      generateQuestion();
+    }
+
+    function setPupil(name) {
+      currentPupil = name;
+      ['Ariana', 'Aleen', 'Brooke', 'Class'].forEach(n => {
+        const btn = document.getElementById(`pupil-${n}`);
+        btn.className = (n === name) ? "px-2 py-0.5 rounded-lg text-xs font-bold bg-amber-400 text-slate-950" : "px-2 py-0.5 rounded-lg text-xs font-semibold text-slate-300 hover:text-white";
+      });
+    }
+
+    // --- SCAFFOLD SWITCHER ---
+    function setScaffold(type) {
+      currentScaffold = type;
+      ['cherry', 'frame', 'jump', 'pairs'].forEach(s => {
+        const btn = document.getElementById(`scaffoldBtn-${s}`);
+        if (s === type) {
+          btn.className = "px-3 py-1 rounded-xl text-xs font-bold transition bg-slate-800 text-white shadow border border-slate-700";
+        } else {
+          btn.className = "px-3 py-1 rounded-xl text-xs font-bold transition text-slate-300 hover:text-white";
+        }
+      });
+
+      document.getElementById('viewCherry').classList.add('hidden');
+      document.getElementById('viewFrame').classList.add('hidden');
+      document.getElementById('viewJump').classList.add('hidden');
+      document.getElementById('viewPairs').classList.add('hidden');
+
+      if (type === 'cherry') document.getElementById('viewCherry').classList.remove('hidden');
+      if (type === 'frame') document.getElementById('viewFrame').classList.remove('hidden');
+      if (type === 'jump') document.getElementById('viewJump').classList.remove('hidden');
+      if (type === 'pairs') document.getElementById('viewPairs').classList.remove('hidden');
+
+      renderActiveVisualizer();
+    }
+
+    function toggleVisualizer() {
+      visualizerActive = !visualizerActive;
+      const led = document.getElementById('visualizerLed');
+      const box = document.getElementById('visualizerContainer');
+      if (visualizerActive) {
+        led.className = "w-3.5 h-3.5 rounded-full bg-emerald-400 shadow-md shadow-emerald-400/50";
+        box.classList.remove('opacity-0', 'pointer-events-none');
+      } else {
+        led.className = "w-3.5 h-3.5 rounded-full bg-slate-600";
+        box.classList.add('opacity-0', 'pointer-events-none');
+      }
+    }
+
+    function toggleHundredSquarePanel() {
+      showHundredSquare = !showHundredSquare;
+      const panel = document.getElementById('hundredSquarePanel');
+      const btn = document.getElementById('hundredSquareBtn');
+      const label = document.getElementById('hundredSquareBtnLabel');
+
+      if (showHundredSquare) {
+        panel.classList.remove('hidden');
+        btn.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border transition bg-emerald-500/20 text-emerald-300 border-emerald-500/40 hover:bg-emerald-500/30";
+        label.innerText = "100 Square: ON";
+      } else {
+        panel.classList.add('hidden');
+        btn.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border transition bg-slate-800 text-slate-400 border-slate-700 hover:bg-slate-700";
+        label.innerText = "100 Square: OFF";
+      }
+    }
+
+    // --- QUESTION GENERATOR ---
+    function generateQuestion() {
+      currentInput = "";
+      isAnswered = false;
+      bridgeStage = 1;
+      stage1Submitted = false;
+      stage2Submitted = false;
+      updateInputSlot();
+      document.getElementById('stemSentenceBox').classList.add('hidden');
+      document.getElementById('submitActionBtn').innerHTML = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg> SUBMIT ANSWER`;
+
+      // 1. BONDS WITHIN 10
+      if (programMode === 'bonds') {
+        document.getElementById('bridgeStepIndicator').classList.add('hidden');
+        document.getElementById('bridgeStepPromptCard').classList.add('hidden');
+
+        const bagKey = `bonds_${targetBond}_${bondOp}`;
+        currentQ = getNextQuestionFromBag(bagKey, () => generateBondsBag(targetBond, bondOp));
+
+        if (currentQ.op === 'add') {
+          setCardUI(currentQ.partA, "＋", "?", currentQ.whole, `What goes with <span class="text-rose-400 font-num">${currentQ.partA}</span> to make <span class="text-amber-400 font-num">${currentQ.whole}</span>?`);
+        } else {
+          setCardUI(currentQ.partA, "−", currentQ.partB, "?", `Take away from bond: <span class="text-rose-400 font-num">${currentQ.partA}</span> − <span class="text-emerald-400 font-num">${currentQ.partB}</span> = ?`);
+        }
+        document.getElementById('jumpLineTitle').innerHTML = `Jump along the number line to reach <strong class="text-amber-400 font-num">${currentQ.whole}</strong>`;
+      }
+
+      // 2. GUIDED BRIDGING (CROSSING 10 TO 20, DECADES TO 50, DECADES TO 100, INVERSE)
+      else if (programMode === 'guided') {
+        if (stepperModeActive) {
+          document.getElementById('bridgeStepIndicator').classList.remove('hidden');
+          document.getElementById('bridgeStepPromptCard').classList.remove('hidden');
+        } else {
+          document.getElementById('bridgeStepIndicator').classList.add('hidden');
+          document.getElementById('bridgeStepPromptCard').classList.add('hidden');
+        }
+
+        const bagKey = `bridge_${bridgeRange}_${bridgeOp}`;
+        currentQ = getNextQuestionFromBag(bagKey, () => generateBridgingBag(bridgeRange, bridgeOp));
+
+        const opSym = (currentQ.op === 'add') ? "＋" : "−";
+        const promptOp = (currentQ.op === 'add') ? "Bridge forward" : "Bridge backward";
+        setCardUI(
+          currentQ.partA,
+          opSym,
+          currentQ.partB,
+          "?",
+          `${promptOp}: <span class="text-rose-400 font-num">${currentQ.partA}</span> ${opSym} <span class="text-emerald-400 font-num">${currentQ.partB}</span> = <span class="text-amber-400 font-num">?</span>`
+        );
+        document.getElementById('jumpLineTitle').innerHTML = `Bridge via friendly ten <strong class="text-emerald-400 font-num">${currentQ.decade}</strong>`;
+
+        if (stepperModeActive) {
+          updateBridgeStageUI();
+        }
+      }
+
+      // 3. ODDS & EVENS
+      else if (programMode === 'oddseven') {
+        document.getElementById('bridgeStepIndicator').classList.add('hidden');
+        document.getElementById('bridgeStepPromptCard').classList.add('hidden');
+
+        const bagKey = `oddeven_${oddEvenRange}`;
+        currentQ = getNextQuestionFromBag(bagKey, () => generateOddsEvensBag(oddEvenRange));
+
+        setCardUI(currentQ.partA, "is", "ODD or EVEN?", "", `Examine the number <span class="text-amber-400 font-num text-2xl">${currentQ.partA}</span>: Can everyone find a pair?`);
+        document.getElementById('jumpLineTitle').innerHTML = `Number pattern for <strong class="text-amber-400 font-num">${currentQ.partA}</strong>`;
+      }
+
+      // 4. DOUBLES & NEAR DOUBLES
+      else if (programMode === 'doubles') {
+        document.getElementById('bridgeStepIndicator').classList.add('hidden');
+        document.getElementById('bridgeStepPromptCard').classList.add('hidden');
+
+        const bagKey = `doubles_${doublesMode}`;
+        currentQ = getNextQuestionFromBag(bagKey, () => generateDoublesBag(doublesMode));
+
+        const label = (currentQ.bonus === 0) 
+          ? `Double ${currentQ.baseNum}` 
+          : `Near Double: ${currentQ.partA} + ${currentQ.partB}`;
+        setCardUI(currentQ.partA, "＋", currentQ.partB, "?", `${label} = <span class="text-amber-400 font-num">?</span>`);
+        document.getElementById('jumpLineTitle').innerHTML = `Doubles mirror for <strong class="text-amber-400 font-num">${currentQ.partA} + ${currentQ.partB}</strong>`;
+      }
+
+      // 5. FAST FIRE RUSH (DYNAMIC MIXED POOL)
+      else if (programMode === 'fast') {
+        document.getElementById('bridgeStepIndicator').classList.add('hidden');
+        document.getElementById('bridgeStepPromptCard').classList.add('hidden');
+
+        const bagKey = `fast_mixed`;
+        currentQ = getNextQuestionFromBag(bagKey, () => {
+          const pool = [];
+          for (let a = 1; a < 10; a++) {
+            pool.push({
+              type: 'bond',
+              op: 'add',
+              partA: a,
+              partB: 10 - a,
+              whole: 10,
+              answer: 10 - a,
+              decade: 10,
+              jump1: 10 - a,
+              jump2: 0,
+              stem: `${a} + ${10 - a} = 10!`
+            });
+          }
+          for (let d = 1; d <= 10; d++) {
+            pool.push({
+              type: 'doubles',
+              op: 'add',
+              partA: d,
+              partB: d,
+              whole: d * 2,
+              answer: d * 2,
+              decade: 10,
+              jump1: d,
+              jump2: 0,
+              stem: `Double ${d} is ${d * 2}!`
+            });
+          }
+          return pool;
+        });
+
+        if (currentQ.type === 'bond') {
+          setCardUI(currentQ.partA, "＋", "?", 10, `Fast Fire: What pairs with ${currentQ.partA} to make 10?`);
+        } else {
+          setCardUI(currentQ.partA, "＋", currentQ.partB, "?", `Fast Fire: Double ${currentQ.partA}?`);
+        }
+      }
+
+      renderActiveVisualizer();
+      refreshHundredSquareCurrentQuestion();
+    }
+
+    // --- STEP-BY-STEP BRIDGING UI UPDATER ---
+    function updateBridgeStageUI() {
+      if (currentQ.type !== 'bridge') return;
+
+      const badge1 = document.getElementById('stepBadge-1');
+      const badge2 = document.getElementById('stepBadge-2');
+      const badge3 = document.getElementById('stepBadge-3');
+      const stepNumBadge = document.getElementById('bridgeStepNumberBadge');
+      const stepTitle = document.getElementById('bridgeStepTitle');
+      const stepQuestion = document.getElementById('bridgeStepQuestion');
+      const targetBadgeVal = document.getElementById('bridgeStepTargetVal');
+
+      const isAdd = currentQ.op === 'add';
+
+      // Reset styles
+      [badge1, badge2, badge3].forEach(b => {
+        b.className = "flex-1 py-1.5 px-2 rounded-xl text-center text-xs font-semibold bg-[#182747] text-slate-400 border border-slate-700 flex items-center justify-center gap-1 transition-all";
+      });
+
+      if (bridgeStage === 1) {
+        badge1.className = "flex-1 py-1.5 px-2 rounded-xl text-center text-xs font-bold bg-amber-400 text-slate-950 shadow border border-amber-300 flex items-center justify-center gap-1 transition-all";
+        stepNumBadge.innerText = "1";
+        stepTitle.innerText = "Step 1: Jump to Friendly Ten / Decade";
+        if (isAdd) {
+          stepQuestion.innerHTML = `From <span class="text-rose-400 font-num font-bold">${currentQ.partA}</span>, how much of <span class="text-emerald-400 font-num font-bold">${currentQ.partB}</span> is needed to reach <span class="text-amber-400 font-num font-bold">${currentQ.decade}</span>?`;
+        } else {
+          stepQuestion.innerHTML = `From <span class="text-rose-400 font-num font-bold">${currentQ.partA}</span>, how many loose units must we take away to land on <span class="text-amber-400 font-num font-bold">${currentQ.decade}</span>?`;
+        }
+        targetBadgeVal.innerText = currentQ.decade;
+      } else if (bridgeStage === 2) {
+        badge1.className = "flex-1 py-1.5 px-2 rounded-xl text-center text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/50 flex items-center justify-center gap-1";
+        badge2.className = "flex-1 py-1.5 px-2 rounded-xl text-center text-xs font-bold bg-amber-400 text-slate-950 shadow border border-amber-300 flex items-center justify-center gap-1 transition-all";
+        stepNumBadge.innerText = "2";
+        stepTitle.innerText = "Step 2: Remaining Partition";
+        stepQuestion.innerHTML = `We partitioned <span class="text-emerald-400 font-num font-bold">${currentQ.partB}</span> and used <span class="text-amber-400 font-num font-bold">${currentQ.jump1}</span>. What is the remaining part?`;
+        targetBadgeVal.innerText = `${currentQ.partB} − ${currentQ.jump1}`;
+      } else if (bridgeStage === 3) {
+        badge1.className = "flex-1 py-1.5 px-2 rounded-xl text-center text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/50 flex items-center justify-center gap-1";
+        badge2.className = "flex-1 py-1.5 px-2 rounded-xl text-center text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/50 flex items-center justify-center gap-1";
+        badge3.className = "flex-1 py-1.5 px-2 rounded-xl text-center text-xs font-bold bg-amber-400 text-slate-950 shadow border border-amber-300 flex items-center justify-center gap-1 transition-all";
+        stepNumBadge.innerText = "3";
+        stepTitle.innerText = "Step 3: Calculate Final Answer";
+        if (isAdd) {
+          stepQuestion.innerHTML = `Now combine friendly ten <span class="text-emerald-400 font-num font-bold">${currentQ.decade}</span> + remaining <span class="text-amber-400 font-num font-bold">${currentQ.jump2}</span>. What is the total?`;
+          targetBadgeVal.innerText = `${currentQ.decade} + ${currentQ.jump2}`;
+        } else {
+          stepQuestion.innerHTML = `Now take remainder from friendly ten: <span class="text-emerald-400 font-num font-bold">${currentQ.decade}</span> − <span class="text-amber-400 font-num font-bold">${currentQ.jump2}</span>. What is the final answer?`;
+          targetBadgeVal.innerText = `${currentQ.decade} − ${currentQ.jump2}`;
+        }
+      }
+    }
+
+    function setCardUI(a, op, b, w, promptHtml) {
+      document.getElementById('qPartA').innerText = a;
+      document.getElementById('qOpSymbol').innerText = op;
+      document.getElementById('qPartB').innerText = b;
+      document.getElementById('qWhole').innerText = w;
+      document.getElementById('promptSubtext').innerHTML = promptHtml;
+    }
+
+    // --- VISUALIZER ENGINE ---
+    function renderActiveVisualizer() {
+      // 1. Cherry Diagram
+      document.getElementById('cherryWholeVal').innerText = (isAnswered || currentQ.type === 'bond') ? currentQ.whole : '?';
+      document.getElementById('cherryPartAVal').innerText = currentQ.partA;
+      const chB = document.getElementById('cherryPartBVal');
+      if (currentQ.type === 'bond') {
+        chB.innerText = isAnswered ? currentQ.answer : '?';
+        chB.setAttribute('fill', isAnswered ? '#10b981' : '#38bdf8');
+      } else if (currentQ.type === 'bridge') {
+        // Show partition branches in cherry
+        if (bridgeStage === 1) {
+          chB.innerText = '?';
+        } else if (bridgeStage === 2) {
+          chB.innerText = `${currentQ.jump1} & ?`;
+        } else {
+          chB.innerText = `${currentQ.jump1} & ${currentQ.jump2}`;
+        }
+        chB.setAttribute('fill', '#38bdf8');
+      } else {
+        chB.innerText = currentQ.partB;
+        chB.setAttribute('fill', '#38bdf8');
+      }
+
+      // 2. Ten-Frame (Single, Dual to 20, or Doubles Mirror)
+      renderTenFrameSuite();
+
+      // 3. Jump Line
+      renderJumpLineSuite();
+
+      // 4. Pairs View (Odds & Evens)
+      renderPairsSuite();
+    }
+
+    function renderTenFrameSuite() {
+      const stage = document.getElementById('tenFrameStage');
+      stage.innerHTML = "";
+
+      if (currentQ.type === 'doubles') {
+        // Dual rows of equal colored counters
+        document.getElementById('frameTitleLabel').innerText = `Doubles Mirror (${currentQ.partA} & ${currentQ.partB})`;
+        const rowWrap = document.createElement('div');
+        rowWrap.className = "flex flex-col gap-2 bg-[#121e38] p-3 rounded-2xl border border-slate-700 shadow-inner";
+
+        for (let r = 0; r < 2; r++) {
+          const row = document.createElement('div');
+          row.className = "flex items-center gap-1.5";
+          const count = r === 0 ? currentQ.partA : currentQ.partB;
+          for (let c = 0; c < 10; c++) {
+            const dotSlot = document.createElement('div');
+            dotSlot.className = "w-7 h-7 sm:w-8 sm:h-8 rounded-full border border-slate-700 flex items-center justify-center";
+            if (c < count) {
+              const dot = document.createElement('div');
+              dot.className = (r === 0) ? "w-6 h-6 rounded-full bg-rose-500 shadow" : (c === count - 1 && currentQ.bonus !== 0) ? "w-6 h-6 rounded-full bg-amber-400 shadow ring-2 ring-white animate-pulse" : "w-6 h-6 rounded-full bg-sky-400 shadow";
+              dotSlot.appendChild(dot);
+            }
+            row.appendChild(dotSlot);
+          }
+          rowWrap.appendChild(row);
+        }
+        stage.appendChild(rowWrap);
+      } 
+      else if (currentQ.whole <= 20 || (currentQ.partA <= 20 && currentQ.op === 'sub')) {
+        // Dual 10-Frames (Up to 20)
+        document.getElementById('frameTitleLabel').innerText = `Twenty-Frame Representation`;
+        let totalCounters = currentQ.partA;
+        if (currentQ.op === 'add') {
+          if (bridgeStage === 2) totalCounters = currentQ.partA + currentQ.jump1;
+          else if (bridgeStage === 3 || isAnswered) totalCounters = currentQ.whole;
+        } else {
+          // subtraction
+          totalCounters = currentQ.partA;
+        }
+        
+        for (let f = 0; f < 2; f++) {
+          const frame = document.createElement('div');
+          frame.className = "bg-[#121e38] border-2 border-slate-700 rounded-2xl p-2 shadow-inner grid grid-cols-5 gap-2";
+          for (let s = 0; s < 10; s++) {
+            const idx = f * 10 + s;
+            const slot = document.createElement('div');
+            slot.className = "w-9 h-9 sm:w-10 sm:h-10 rounded-full border-2 border-slate-700/80 flex items-center justify-center frame-slot relative";
+            if (idx < totalCounters) {
+              const dot = document.createElement('div');
+              if (idx < currentQ.partA) {
+                dot.className = "w-7 h-7 rounded-full bg-rose-500 shadow-md";
+              } else if (idx < currentQ.partA + currentQ.jump1) {
+                dot.className = "w-7 h-7 rounded-full bg-emerald-400 shadow-md animate-scale";
+              } else {
+                dot.className = "w-7 h-7 rounded-full bg-amber-400 shadow-md animate-scale";
+              }
+              slot.appendChild(dot);
+            } else {
+              // Masked unrevealed slots
+              slot.classList.add('border-dashed', 'border-slate-800');
+            }
+            frame.appendChild(slot);
+          }
+          stage.appendChild(frame);
+        }
+      } 
+      else {
+        // Standard Single 10-Frame (Bonds to 10)
+        document.getElementById('frameTitleLabel').innerText = `Ten-Frame Representation`;
+        const frame = document.createElement('div');
+        frame.className = "bg-[#121e38] border-2 border-slate-700 rounded-2xl p-3 shadow-inner grid grid-cols-5 gap-2.5";
+        const totalSlots = currentQ.whole || 10;
+        const filled = currentQ.partA % 10;
+
+        for (let i = 0; i < totalSlots; i++) {
+          const slot = document.createElement('div');
+          slot.className = "w-10 h-10 sm:w-11 sm:h-11 rounded-full border-2 border-slate-700/80 flex items-center justify-center frame-slot relative";
+          if (i < filled) {
+            const dot = document.createElement('div');
+            dot.className = "w-7 h-7 rounded-full bg-rose-500 shadow-md";
+            slot.appendChild(dot);
+          } else {
+            if (isAnswered) {
+              const dot = document.createElement('div');
+              dot.className = "w-7 h-7 rounded-full bg-amber-400 shadow-md";
+              slot.appendChild(dot);
+            } else {
+              slot.classList.add('border-dashed', 'border-slate-800');
+            }
+          }
+          frame.appendChild(slot);
+        }
+        stage.appendChild(frame);
+      }
+    }
+
+    function renderJumpLineSuite() {
+      const svg = document.getElementById('jumpLineSvg');
+      svg.innerHTML = "";
+      const y = 80;
+
+      // Base line
+      const base = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      base.setAttribute("x1", "30");
+      base.setAttribute("y1", y);
+      base.setAttribute("x2", "430");
+      base.setAttribute("y2", y);
+      base.setAttribute("stroke", "#64748b");
+      base.setAttribute("stroke-width", "4");
+      base.setAttribute("stroke-linecap", "round");
+      svg.appendChild(base);
+
+      if (currentQ.type === 'bond') {
+        // Single jump bond to 10
+        const xStart = 70;
+        const xEnd = 390;
+        const midX = (xStart + xEnd) / 2;
+
+        const arc = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        arc.setAttribute("d", `M ${xStart} ${y} Q ${midX} ${y - 65} ${xEnd} ${y}`);
+        arc.setAttribute("stroke", isAnswered ? "#10b981" : "#0284c7");
+        arc.setAttribute("stroke-width", "4.5");
+        arc.setAttribute("fill", "none");
+        arc.setAttribute("class", "jump-line-arc");
+        svg.appendChild(arc);
+
+        drawJumpBadge(svg, midX, y - 68, isAnswered ? `+${currentQ.answer}` : "+?");
+        drawJumpTick(svg, xStart, y, currentQ.partA, "#f43f5e");
+        drawJumpTick(svg, xEnd, y, currentQ.whole, "#f59e0b");
+      } 
+      else {
+        // Two-Stage Decade or 10-Crossing Jump
+        const isAdd = currentQ.op === 'add';
+        const xStart = isAdd ? 60 : 400;
+        const xMid = 230;
+        const xEnd = isAdd ? 400 : 60;
+
+        // Jump 1 to friendly ten (Show value if Stage 1 is solved/bypassed)
+        const showJump1 = stage1Submitted || isAnswered;
+        const arc1 = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        arc1.setAttribute("d", `M ${xStart} ${y} Q ${(xStart + xMid) / 2} ${y - 50} ${xMid} ${y}`);
+        arc1.setAttribute("stroke", showJump1 ? "#10b981" : "#0284c7");
+        arc1.setAttribute("stroke-width", "4");
+        arc1.setAttribute("fill", "none");
+        arc1.setAttribute("class", "jump-line-arc");
+        svg.appendChild(arc1);
+
+        // Jump 2 to destination (Show value if Stage 2 is solved/bypassed)
+        const showJump2 = stage2Submitted || isAnswered;
+        const arc2 = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        arc2.setAttribute("d", `M ${xMid} ${y} Q ${(xMid + xEnd) / 2} ${y - 50} ${xEnd} ${y}`);
+        arc2.setAttribute("stroke", showJump2 ? "#10b981" : "#f59e0b");
+        arc2.setAttribute("stroke-width", "4");
+        arc2.setAttribute("fill", "none");
+        arc2.setAttribute("class", "jump-line-arc");
+        svg.appendChild(arc2);
+
+        // Badges
+        drawJumpBadge(svg, (xStart + xMid) / 2, y - 56, showJump1 ? `${isAdd ? '+' : '−'}${currentQ.jump1}` : `${isAdd ? '+' : '−'}?`);
+        drawJumpBadge(svg, (xMid + xEnd) / 2, y - 56, showJump2 ? `${isAdd ? '+' : '−'}${currentQ.jump2}` : `${isAdd ? '+' : '−'}?`);
+
+        // Ticks
+        drawJumpTick(svg, xStart, y, currentQ.partA, "#38bdf8");
+        drawJumpTick(svg, xMid, y, currentQ.decade, "#10b981", currentQ.decade === 10 ? "Friendly 10" : "Decade");
+        drawJumpTick(svg, xEnd, y, isAnswered ? currentQ.answer : "?", "#fbbf24");
+      }
+    }
+
+    function drawJumpTick(svg, x, y, val, color, label) {
+      const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      line.setAttribute("x1", x);
+      line.setAttribute("y1", y - 10);
+      line.setAttribute("x2", x);
+      line.setAttribute("y2", y + 10);
+      line.setAttribute("stroke", color);
+      line.setAttribute("stroke-width", "4");
+      svg.appendChild(line);
+
+      const txt = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      txt.setAttribute("x", x);
+      txt.setAttribute("y", y + 26);
+      txt.setAttribute("text-anchor", "middle");
+      txt.setAttribute("fill", color);
+      txt.setAttribute("font-size", "17");
+      txt.setAttribute("font-weight", "bold");
+      txt.setAttribute("font-family", "Fredoka, cursive, sans-serif");
+      txt.textContent = val;
+      svg.appendChild(txt);
+
+      if (label) {
+        const sub = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        sub.setAttribute("x", x);
+        sub.setAttribute("y", y + 38);
+        sub.setAttribute("text-anchor", "middle");
+        sub.setAttribute("fill", "#94a3b8");
+        sub.setAttribute("font-size", "9");
+        sub.setAttribute("font-weight", "bold");
+        sub.textContent = label;
+        svg.appendChild(sub);
+      }
+    }
+
+    function drawJumpBadge(svg, x, y, textVal) {
+      const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+      const r = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+      r.setAttribute("x", x - 24);
+      r.setAttribute("y", y);
+      r.setAttribute("width", "48");
+      r.setAttribute("height", "24");
+      r.setAttribute("rx", "7");
+      r.setAttribute("fill", "#0f172a");
+      r.setAttribute("stroke", "#38bdf8");
+      r.setAttribute("stroke-width", "1.5");
+      g.appendChild(r);
+
+      const t = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      t.setAttribute("x", x);
+      t.setAttribute("y", y + 16);
+      t.setAttribute("text-anchor", "middle");
+      t.setAttribute("fill", "#ffffff");
+      t.setAttribute("font-size", "13");
+      t.setAttribute("font-weight", "bold");
+      t.setAttribute("font-family", "Fredoka, cursive, sans-serif");
+      t.textContent = textVal;
+      g.appendChild(t);
+      svg.appendChild(g);
+    }
+
+    function renderPairsSuite() {
+      const container = document.getElementById('pairColumnContainer');
+      container.innerHTML = "";
+      const n = (currentQ.type === 'oddseven') ? currentQ.partA : 10;
+      const pairs = Math.floor(n / 2);
+      const hasOdd = (n % 2 !== 0);
+
+      // Render columns of pairs
+      const wrap = document.createElement('div');
+      wrap.className = "flex items-end gap-2 bg-[#121e38] p-3 rounded-2xl border border-slate-700 shadow-inner flex-wrap justify-center max-w-sm";
+
+      for (let i = 0; i < pairs; i++) {
+        const col = document.createElement('div');
+        col.className = "flex flex-col gap-1.5 p-1 bg-slate-800/80 rounded-xl border border-emerald-500/30";
+        col.innerHTML = `
+          <div class="w-6 h-6 rounded-full bg-emerald-400 shadow"></div>
+          <div class="w-6 h-6 rounded-full bg-emerald-400 shadow"></div>
+        `;
+        wrap.appendChild(col);
+      }
+
+      if (hasOdd) {
+        const oddCol = document.createElement('div');
+        oddCol.className = "flex flex-col gap-1.5 p-1 bg-amber-500/10 rounded-xl border-2 border-amber-400 border-dashed";
+        oddCol.innerHTML = `
+          <div class="w-6 h-6 rounded-full bg-amber-400 shadow ring-2 ring-white animate-bounce"></div>
+          <div class="w-6 h-6 rounded-full border border-dashed border-slate-600 opacity-40"></div>
+        `;
+        wrap.appendChild(oddCol);
+      }
+
+      container.appendChild(wrap);
+      document.getElementById('pairExplainText').innerText = hasOdd 
+        ? `${n} has 1 lonely counter without a partner ➔ ODD!`
+        : `${n} pairs up perfectly into teams of 2 ➔ EVEN!`;
+    }
+
+    // --- INTERACTIVE 100-SQUARE ENGINE ---
+    function initHundredSquare() {
+      const grid = document.getElementById('grid100Container');
+      grid.innerHTML = "";
+
+      for (let i = 1; i <= 100; i++) {
+        const cell = document.createElement('button');
+        cell.id = `sq-${i}`;
+        cell.className = "grid-cell aspect-square rounded-[5px] bg-[#16213b] hover:bg-slate-700 text-slate-300 font-num font-bold text-[10px] sm:text-[11px] flex items-center justify-center border border-slate-800/90";
+        cell.innerText = i;
+        cell.onclick = () => toggleManualTile(i);
+        grid.appendChild(cell);
+      }
+    }
+
+    function toggleManualTile(n) {
+      soundEffect('tap');
+      if (manualHighlights.has(n)) {
+        manualHighlights.delete(n);
+      } else {
+        manualHighlights.add(n);
+      }
+      refreshHundredSquareVisuals();
+    }
+
+    function clearHundredSquareHighlights() {
+      soundEffect('tap');
+      manualHighlights.clear();
+      refreshHundredSquareVisuals();
+    }
+
+    function highlightPattern(kind) {
+      soundEffect('tap');
+      manualHighlights.clear();
+      for (let i = 1; i <= 100; i++) {
+        if (kind === 'evens' && i % 2 === 0) manualHighlights.add(i);
+        if (kind === 'odds' && i % 2 !== 0) manualHighlights.add(i);
+        if (kind === 'tens' && i % 10 === 0) manualHighlights.add(i);
+        if (kind === 'fives' && i % 5 === 0) manualHighlights.add(i);
+      }
+      refreshHundredSquareVisuals();
+    }
+
+    function refreshHundredSquareCurrentQuestion() {
+      refreshHundredSquareVisuals();
+    }
+
+    function refreshHundredSquareVisuals() {
+      const autoOn = document.getElementById('autoHighlightCheck').checked;
+
+      for (let i = 1; i <= 100; i++) {
+        const cell = document.getElementById(`sq-${i}`);
+        if (!cell) continue;
+
+        // Reset default style
+        cell.className = "grid-cell aspect-square rounded-[5px] bg-[#16213b] hover:bg-slate-700 text-slate-300 font-num font-bold text-[10px] sm:text-[11px] flex items-center justify-center border border-slate-800/90";
+
+        // Manual user highlights
+        if (manualHighlights.has(i)) {
+          cell.className = "grid-cell aspect-square rounded-[5px] bg-purple-600 text-white font-num font-black text-[11px] flex items-center justify-center border border-purple-400 shadow-md";
+        }
+
+        // Live calculation highlights (Start, Decade, Answer)
+        if (autoOn) {
+          if (i === currentQ.partA) {
+            cell.className = "grid-cell aspect-square rounded-[5px] bg-rose-500 text-white font-num font-black text-[11px] flex items-center justify-center border-2 border-white shadow-lg ring-2 ring-rose-400 z-10 scale-105";
+          } else if (i === currentQ.decade) {
+            cell.className = "grid-cell aspect-square rounded-[5px] bg-emerald-500 text-slate-950 font-num font-black text-[11px] flex items-center justify-center border-2 border-emerald-300 shadow-lg z-10 scale-105";
+          } else if (isAnswered && i === currentQ.answer) {
+            cell.className = "grid-cell aspect-square rounded-[5px] bg-amber-400 text-slate-950 font-num font-black text-[11px] flex items-center justify-center border-2 border-amber-200 shadow-lg z-10 scale-105 animate-pulse";
+          }
+        }
+      }
+    }
+
+    // --- KEYPAD & STEPPED SUBMISSIONS ---
+    function inputDigit(d) {
+      if (isAnswered) return;
+      soundEffect('tap');
+      if (currentInput.length < 3) {
+        currentInput += d;
+        updateInputSlot();
+      }
+    }
+
+    function inputBackspace() {
+      if (isAnswered) return;
+      soundEffect('tap');
+      currentInput = currentInput.slice(0, -1);
+      updateInputSlot();
+    }
+
+    function clearCurrentInput() {
+      if (isAnswered) return;
+      soundEffect('tap');
+      currentInput = "";
+      updateInputSlot();
+    }
+
+    function updateInputSlot() {
+      const slot = document.getElementById('activeInputSlot');
+      slot.innerText = currentInput === "" ? "?" : currentInput;
+    }
+
+    function submitAnswer() {
+      if (isAnswered) {
+        generateQuestion();
+        return;
+      }
+      if (currentInput === "") return;
+
+      const val = parseInt(currentInput, 10);
+
+      // MULTI-STAGE STEP-BY-STEP FLOW FOR BRIDGING
+      if (currentQ.type === 'bridge' && stepperModeActive) {
+        if (bridgeStage === 1) {
+          // Check Stage 1: Jump to hit friendly ten (jump1)
+          if (val === currentQ.jump1) {
+            soundEffect('correct');
+            stage1Submitted = true;
+            bridgeStage = 2;
+            currentInput = "";
+            updateInputSlot();
+            updateBridgeStageUI();
+            renderActiveVisualizer();
+          } else {
+            handleMistake();
+          }
+          return;
+        } 
+        else if (bridgeStage === 2) {
+          // Check Stage 2: Remaining partition (jump2)
+          if (val === currentQ.jump2) {
+            soundEffect('correct');
+            stage2Submitted = true;
+            bridgeStage = 3;
+            currentInput = "";
+            updateInputSlot();
+            updateBridgeStageUI();
+            renderActiveVisualizer();
+          } else {
+            handleMistake();
+          }
+          return;
+        } 
+        else if (bridgeStage === 3) {
+          // Check Stage 3: Final total
+          if (val === currentQ.answer) {
+            soundEffect('correct');
+            streak++;
+            score += 10;
+            document.getElementById('streakCount').innerText = streak;
+            document.getElementById('scoreCount').innerText = score;
+            revealProof(true);
+          } else {
+            handleMistake();
+          }
+          return;
+        }
+      }
+
+      // STANDARD SINGLE-STAGE SUBMISSION FOR BONDS / DOUBLES / DIRECT BRIDGING
+      if (val === currentQ.answer) {
+        soundEffect('correct');
+        streak++;
+        score += 10;
+        document.getElementById('streakCount').innerText = streak;
+        document.getElementById('scoreCount').innerText = score;
+        revealProof(true);
+      } else {
+        handleMistake();
+      }
+    }
+
+    function handleMistake() {
+      soundEffect('wrong');
+      streak = 0;
+      document.getElementById('streakCount').innerText = streak;
+      const slot = document.getElementById('activeInputSlot');
+      slot.classList.add('text-rose-400');
+      setTimeout(() => slot.classList.remove('text-rose-400'), 400);
+    }
+
+    function submitOddEvenChoice(choice) {
+      if (isAnswered) {
+        generateQuestion();
+        return;
+      }
+
+      if (choice === currentQ.answer) {
+        soundEffect('correct');
+        streak++;
+        score += 10;
+        document.getElementById('streakCount').innerText = streak;
+        document.getElementById('scoreCount').innerText = score;
+        revealProof(true);
+      } else {
+        soundEffect('wrong');
+        streak = 0;
+        document.getElementById('streakCount').innerText = streak;
+      }
+    }
+
+    function forceTeacherReveal() {
+      soundEffect('reveal');
+      if (currentQ.type === 'bridge') {
+        stage1Submitted = true;
+        stage2Submitted = true;
+        bridgeStage = 3;
+      }
+      currentInput = currentQ.answer.toString();
+      updateInputSlot();
+      revealProof(false);
+    }
+
+    function revealProof(wasPupilCorrect) {
+      isAnswered = true;
+      document.getElementById('submitActionBtn').innerHTML = `<span>NEXT QUESTION ➔</span>`;
+
+      // Update question display badge
+      if (currentQ.type === 'bond') {
+        document.getElementById('qPartB').innerText = currentQ.answer;
+      } else if (currentQ.type === 'oddseven') {
+        document.getElementById('qWhole').innerText = currentQ.answer;
+      } else {
+        document.getElementById('qWhole').innerText = currentQ.answer;
+      }
+
+      // Show Stem Sentence
+      const stemBox = document.getElementById('stemSentenceBox');
+      document.getElementById('stemSentenceText').innerText = `"${currentQ.stem}"`;
+      stemBox.classList.remove('hidden');
+
+      if (currentQ.type === 'bridge') {
+        updateBridgeStageUI();
+      }
+
+      renderActiveVisualizer();
+      refreshHundredSquareVisuals();
+    }
+
+    // --- FAST FIRE TIMER ---
+    function startFastFireTimer() {
+      clearInterval(fastFireInterval);
+      fastFireRemaining = 60;
+      document.getElementById('fastFireCountdown').innerText = `${fastFireRemaining}s`;
+      document.getElementById('btnStartFastFire').innerText = "RESTART";
+      generateQuestion();
+
+      fastFireInterval = setInterval(() => {
+        fastFireRemaining--;
+        document.getElementById('fastFireCountdown').innerText = `${fastFireRemaining}s`;
+        if (fastFireRemaining <= 0) {
+          clearInterval(fastFireInterval);
+          soundEffect('reveal');
+          document.getElementById('promptSubtext').innerHTML = `<span class="text-amber-400 font-num text-xl">Time Up! Final Score: ${score}</span>`;
+        }
+      }, 1000);
+    }
+
+    // --- KEYBOARD LISTENER ---
+    window.addEventListener('keydown', (e) => {
+      if (e.key >= '0' && e.key <= '9') inputDigit(e.key);
+      else if (e.key === 'Backspace') inputBackspace();
+      else if (e.key === 'Enter') submitAnswer();
+      else if (e.key === 'Escape') clearCurrentInput();
+    });
+
+    // --- WHITEBOARD LOGIC & TOUCH ENGINE ---
+    function initWhiteboard() {
+      wbCanvas = document.getElementById('whiteboardCanvas');
+      wbCtx = wbCanvas.getContext('2d');
+      resizeWhiteboardCanvas();
+      window.addEventListener('resize', resizeWhiteboardCanvas);
+
+      // Pointer events for accurate drawing across Interactive Boards, Stylus & Touch
+      wbCanvas.addEventListener('pointerdown', handlePointerDown);
+      wbCanvas.addEventListener('pointermove', handlePointerMove);
+      wbCanvas.addEventListener('pointerup', handlePointerUp);
+      wbCanvas.addEventListener('pointercancel', handlePointerUp);
+
+      updatePaletteUI();
+    }
+
+    function resizeWhiteboardCanvas() {
+      if (!wbCanvas) return;
+      const dpr = window.devicePixelRatio || 1;
+      const rect = wbCanvas.getBoundingClientRect();
+      wbCanvas.width = rect.width * dpr;
+      wbCanvas.height = rect.height * dpr;
+      wbCtx.scale(dpr, dpr);
+      redrawAllStrokes();
+    }
+
+    function toggleWhiteboardToolbar() {
+      whiteboardActive = !whiteboardActive;
+      const bar = document.getElementById('whiteboardToolbar');
+      const overlay = document.getElementById('whiteboardOverlayWrapper');
+      const btn = document.getElementById('btnWhiteboardToggle');
+      const label = document.getElementById('whiteboardToggleLabel');
+
+      if (whiteboardActive) {
+        bar.classList.remove('hidden');
+        overlay.classList.remove('hidden');
+        btn.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border transition bg-amber-400 text-slate-950 border-amber-300 shadow hover:bg-amber-300";
+        label.innerText = "Whiteboard: ON";
+      } else {
+        bar.classList.add('hidden');
+        overlay.classList.add('hidden');
+        btn.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border transition bg-slate-800 text-slate-400 border-slate-700 hover:bg-slate-700";
+        label.innerText = "Whiteboard: OFF";
+      }
+    }
+
+    function setBoardMode(mode) {
+      soundEffect('tap');
+      boardMode = mode;
+      const overlay = document.getElementById('whiteboardOverlayWrapper');
+      const btnO = document.getElementById('btnBoardMode-overlay');
+      const btnS = document.getElementById('btnBoardMode-scratch');
+
+      if (mode === 'overlay') {
+        overlay.style.backgroundColor = 'transparent';
+        btnO.className = "px-2.5 py-1 rounded-lg text-xs font-bold transition bg-amber-400 text-slate-950";
+        btnS.className = "px-2.5 py-1 rounded-lg text-xs font-bold transition text-slate-300 hover:text-white";
+      } else {
+        overlay.style.backgroundColor = '#0b1324fa'; // solid chalkboard scratchpad backdrop
+        btnS.className = "px-2.5 py-1 rounded-lg text-xs font-bold transition bg-amber-400 text-slate-950";
+        btnO.className = "px-2.5 py-1 rounded-lg text-xs font-bold transition text-slate-300 hover:text-white";
+      }
+    }
+
+    function setDrawTool(tool) {
+      soundEffect('tap');
+      drawTool = tool;
+      ['pen', 'highlighter', 'eraser', 'pointer'].forEach(t => {
+        const btn = document.getElementById(`btnTool-${t}`);
+        if (t === tool) {
+          btn.className = "px-2.5 py-1 rounded-lg text-xs font-bold transition bg-slate-800 text-white shadow border border-slate-700 flex items-center gap-1";
+        } else {
+          btn.className = "px-2.5 py-1 rounded-lg text-xs font-bold transition text-slate-300 hover:text-white flex items-center gap-1";
+        }
+      });
+
+      // Pointer mode disables canvas interaction so user can click on math keys/buttons underneath
+      if (tool === 'pointer') {
+        wbCanvas.style.pointerEvents = 'none';
+      } else {
+        wbCanvas.style.pointerEvents = 'auto';
+      }
+    }
+
+    function setPenColor(col) {
+      soundEffect('tap');
+      penColor = col;
+      if (drawTool === 'eraser' || drawTool === 'pointer') {
+        setDrawTool('pen');
+      }
+      updatePaletteUI();
+    }
+
+    function updatePaletteUI() {
+      const map = {
+        '#fde047': 'colorBtn-yellow',
+        '#ffffff': 'colorBtn-white',
+        '#38bdf8': 'colorBtn-cyan',
+        '#fb7185': 'colorBtn-rose',
+        '#4ade80': 'colorBtn-green',
+        '#fb923c': 'colorBtn-orange'
+      };
+      Object.keys(map).forEach(key => {
+        const el = document.getElementById(map[key]);
+        if (el) {
+          if (key === penColor) {
+            el.classList.add('ring-4', 'ring-amber-400', 'scale-110');
+          } else {
+            el.classList.remove('ring-4', 'ring-amber-400', 'scale-110');
+          }
+        }
+      });
+    }
+
+    function setPenWidth(w) {
+      soundEffect('tap');
+      penWidth = w;
+      ['fine', 'med', 'thick'].forEach(size => {
+        const btn = document.getElementById(`btnWidth-${size}`);
+        const active = (size === 'fine' && w === 3) || (size === 'med' && w === 7) || (size === 'thick' && w === 14);
+        btn.className = active ? "px-2 py-1 text-xs font-bold bg-slate-800 text-white rounded-lg border border-slate-700" : "px-2 py-1 text-xs font-bold text-slate-300 hover:text-white rounded-lg";
+      });
+    }
+
+    function getCanvasCoords(e) {
+      const rect = wbCanvas.getBoundingClientRect();
+      return {
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top
+      };
+    }
+
+    function handlePointerDown(e) {
+      if (drawTool === 'pointer') return;
+      isDrawing = true;
+      redoHistory = []; // Reset redo once new stroke starts
+      const pt = getCanvasCoords(e);
+      currentStroke = {
+        tool: drawTool,
+        color: penColor,
+        width: penWidth,
+        points: [pt]
+      };
+      wbCtx.save();
+      applyStrokeSettings(currentStroke);
+      wbCtx.beginPath();
+      wbCtx.arc(pt.x, pt.y, (currentStroke.width / 2) * (currentStroke.tool === 'highlighter' ? 1.8 : 1), 0, Math.PI * 2);
+      wbCtx.fill();
+      wbCtx.restore();
+    }
+
+    function handlePointerMove(e) {
+      if (!isDrawing || drawTool === 'pointer') return;
+      const pt = getCanvasCoords(e);
+      currentStroke.points.push(pt);
+
+      const pts = currentStroke.points;
+      if (pts.length < 2) return;
+
+      wbCtx.save();
+      applyStrokeSettings(currentStroke);
+      wbCtx.beginPath();
+      wbCtx.moveTo(pts[pts.length - 2].x, pts[pts.length - 2].y);
+      wbCtx.lineTo(pt.x, pt.y);
+      wbCtx.stroke();
+      wbCtx.restore();
+    }
+
+    function handlePointerUp() {
+      if (!isDrawing) return;
+      isDrawing = false;
+      if (currentStroke && currentStroke.points.length > 0) {
+        strokeHistory.push(currentStroke);
+      }
+      currentStroke = null;
+    }
+
+    function applyStrokeSettings(stroke) {
+      wbCtx.lineCap = 'round';
+      wbCtx.lineJoin = 'round';
+      if (stroke.tool === 'eraser') {
+        wbCtx.globalCompositeOperation = 'destination-out';
+        wbCtx.lineWidth = stroke.width * 2.5;
+        wbCtx.fillStyle = 'rgba(0,0,0,1)';
+        wbCtx.strokeStyle = 'rgba(0,0,0,1)';
+      } else if (stroke.tool === 'highlighter') {
+        wbCtx.globalCompositeOperation = 'source-over';
+        wbCtx.lineWidth = stroke.width * 2.2;
+        wbCtx.strokeStyle = stroke.color + '66'; // semi-transparent hex alpha
+        wbCtx.fillStyle = stroke.color + '66';
+      } else {
+        wbCtx.globalCompositeOperation = 'source-over';
+        wbCtx.lineWidth = stroke.width;
+        wbCtx.strokeStyle = stroke.color;
+        wbCtx.fillStyle = stroke.color;
+      }
+    }
+
+    function redrawAllStrokes() {
+      if (!wbCtx || !wbCanvas) return;
+      const dpr = window.devicePixelRatio || 1;
+      wbCtx.save();
+      wbCtx.setTransform(1, 0, 0, 1, 0, 0);
+      wbCtx.clearRect(0, 0, wbCanvas.width, wbCanvas.height);
+      wbCtx.restore();
+
+      strokeHistory.forEach(stroke => {
+        if (!stroke.points || stroke.points.length === 0) return;
+        wbCtx.save();
+        applyStrokeSettings(stroke);
+        if (stroke.points.length === 1) {
+          wbCtx.beginPath();
+          wbCtx.arc(stroke.points[0].x, stroke.points[0].y, (stroke.width / 2) * (stroke.tool === 'highlighter' ? 1.8 : 1), 0, Math.PI * 2);
+          wbCtx.fill();
+        } else {
+          wbCtx.beginPath();
+          wbCtx.moveTo(stroke.points[0].x, stroke.points[0].y);
+          for (let i = 1; i < stroke.points.length; i++) {
+            wbCtx.lineTo(stroke.points[i].x, stroke.points[i].y);
+          }
+          wbCtx.stroke();
+        }
+        wbCtx.restore();
+      });
+    }
+
+    function undoWhiteboardStroke() {
+      if (strokeHistory.length === 0) return;
+      soundEffect('tap');
+      const removed = strokeHistory.pop();
+      redoHistory.push(removed);
+      redrawAllStrokes();
+    }
+
+    function redoWhiteboardStroke() {
+      if (redoHistory.length === 0) return;
+      soundEffect('tap');
+      const restored = redoHistory.pop();
+      strokeHistory.push(restored);
+      redrawAllStrokes();
+    }
+
+    function clearWhiteboardCanvas() {
+      if (strokeHistory.length === 0) return;
+      soundEffect('reveal');
+      redoHistory = [...strokeHistory];
+      strokeHistory = [];
+      redrawAllStrokes();
+    }
+
+    // --- INIT ON LOAD ---
+    window.onload = function () {
+      initHundredSquare();
+      initWhiteboard();
+      setProgramMode('guided');
+    };
+  </script>
+</body>
+</html>
