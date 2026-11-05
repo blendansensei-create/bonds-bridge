@@ -1,0 +1,1520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Anti-Finger Counting Fluency Lab: Visual Bridging, Partitioning & Number Sense</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=JetBrains+Mono:wght@600;800&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap');
+
+    :root {
+      --bg-dark: #070d18;
+      --card-dark: #0f172a;
+      --accent-blue: #38bdf8;
+      --accent-gold: #f59e0b;
+      --accent-emerald: #10b981;
+      --accent-rose: #f43f5e;
+    }
+
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--bg-dark);
+      color: #f1f5f9;
+      height: 100vh;
+      overflow: hidden;
+      margin: 0;
+      padding: 0;
+    }
+
+    .font-num {
+      font-family: 'Fredoka', cursive, sans-serif;
+    }
+    .font-mono-calc {
+      font-family: 'JetBrains Mono', monospace;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Tactile Number Keypad Buttons */
+    .key-btn {
+      transition: transform 0.08s ease, background-color 0.1s ease;
+    }
+    .key-btn:active {
+      transform: scale(0.93);
+    }
+
+    /* Jump line animated arc */
+    .jump-arc {
+      stroke-dasharray: 6 6;
+      animation: dashMove 1.4s linear infinite;
+    }
+    @keyframes dashMove {
+      to { stroke-dashoffset: -24; }
+    }
+
+    /* Place Value Tokens */
+    .pv-token {
+      width: 42px;
+      height: 42px;
+      border-radius: 9999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Fredoka', cursive, sans-serif;
+      font-weight: 700;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.25);
+      cursor: pointer;
+      transition: transform 0.1s ease;
+    }
+    .pv-token:active {
+      transform: scale(0.92);
+    }
+
+    .token-th { background: radial-gradient(circle at 35% 35%, #fb7185, #e11d48); color: #fff; font-size: 0.8rem; border: 2px solid #fda4af; }
+    .token-h  { background: radial-gradient(circle at 35% 35%, #fde047, #ca8a04); color: #422006; font-size: 0.85rem; border: 2px solid #fef08a; }
+    .token-t  { background: radial-gradient(circle at 35% 35%, #38bdf8, #0284c7); color: #082f49; font-size: 0.95rem; border: 2px solid #bae6fd; }
+    .token-u  { background: radial-gradient(circle at 35% 35%, #4ade80, #16a34a); color: #052e16; font-size: 1.05rem; border: 2px solid #bbf7d0; }
+
+    /* 100-Square Tiles */
+    .sq-tile {
+      aspect-ratio: 1 / 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 6px;
+      font-family: 'Fredoka', cursive, sans-serif;
+      font-weight: 700;
+      background: #152238;
+      color: #94a3b8;
+      border: 1px solid #233452;
+      cursor: pointer;
+      font-size: 0.95rem;
+      transition: all 0.12s ease;
+    }
+    .sq-tile:hover {
+      background: #24375a;
+      color: #f8fafc;
+      border-color: #38bdf8;
+    }
+
+    /* Custom Touch Scrollbars */
+    .custom-scroll::-webkit-scrollbar {
+      width: 10px;
+    }
+    .custom-scroll::-webkit-scrollbar-track {
+      background: #091122;
+      border-radius: 5px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 5px;
+      border: 2px solid #091122;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb:hover {
+      background: #38bdf8;
+    }
+  </style>
+</head>
+<body class="relative flex flex-col h-screen w-screen bg-[#070d18] text-slate-100 select-none overflow-hidden">
+
+  <!-- TOP APPLICATION HEADER -->
+  <header class="h-14 px-4 bg-[#0a1426] border-b border-slate-800 flex items-center justify-between shrink-0 z-30">
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-amber-400 to-rose-500 flex items-center justify-center font-black text-slate-950 text-xl shadow-md">
+        🚫✋
+      </div>
+      <div>
+        <h1 class="text-sm font-extrabold tracking-tight text-white flex items-center gap-2">
+          Anti-Finger Counting Lab
+          <span class="text-[10px] px-2 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-800 font-bold uppercase tracking-wider">Decade Bridging, Partitioning &amp; Number Sense • P6 Tier 3</span>
+        </h1>
+        <p class="text-[10px] text-slate-400">Moving Pupils from 1-by-1 Counting to Structural Bridging &amp; Partitioning</p>
+      </div>
+    </div>
+
+    <!-- Active Score & Streak Tracker + Global Whiteboard Button -->
+    <div class="flex items-center gap-3">
+      <div class="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-slate-900 border border-slate-800 text-xs">
+        <span class="text-amber-400 font-bold">🔥 Streak:</span>
+        <span id="streakDisplay" class="font-num font-bold text-amber-300 text-sm">0</span>
+      </div>
+      <div class="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-slate-900 border border-slate-800 text-xs">
+        <span class="text-emerald-400 font-bold">Solved:</span>
+        <span id="scoreDisplay" class="font-num font-bold text-emerald-300 text-sm">0</span>
+      </div>
+      <!-- Persistent Global Whiteboard Button -->
+      <button id="wbToggleBtn" onclick="toggleWhiteboard()" class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white font-extrabold text-xs shadow-md transition-all">
+        <span>✏️</span>
+        <span id="wbToggleLabel">Whiteboard</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- MODULE NAVIGATION BAR (RESTORED TO EXACT SCREENSHOT) -->
+  <nav class="h-11 px-3 bg-[#08101e] border-b border-slate-800 flex items-center gap-1.5 overflow-x-auto shrink-0 z-20">
+    <button onclick="setModule(1)" id="modBtn-1" class="px-3 py-1 rounded-lg text-xs font-bold whitespace-nowrap bg-amber-400 text-slate-950 shadow">1. Bridge Forward (+)</button>
+    <button onclick="setModule(2)" id="modBtn-2" class="px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap bg-slate-800 text-slate-300 hover:bg-slate-700">2. Bridge Backward (−)</button>
+    <button onclick="setModule(3)" id="modBtn-3" class="px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap bg-slate-800 text-slate-300 hover:bg-slate-700">3. Bust 110 Trap</button>
+    <button onclick="setModule(4)" id="modBtn-4" class="px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap bg-slate-800 text-slate-300 hover:bg-slate-700">4. Near Doubles</button>
+    <button onclick="setModule(5)" id="modBtn-5" class="px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap bg-slate-800 text-slate-300 hover:bg-slate-700">5. Array &amp; Derived Tables ✕</button>
+    <button onclick="setModule(6)" id="modBtn-6" class="px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap bg-slate-800 text-slate-300 hover:bg-slate-700">6. Fact Triangles (÷ / ✕)</button>
+    <button onclick="setModule(7)" id="modBtn-7" class="px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap bg-slate-800 text-slate-300 hover:bg-slate-700 text-amber-300">7. 60s No-Fingers Rush ⚡</button>
+  </nav>
+
+  <!-- MAIN INTERACTIVE WORKSPACE (SIDE-BY-SIDE ZERO SCROLL) -->
+  <main class="flex-1 flex overflow-hidden relative">
+
+    <!-- LEFT STAGE: PROBLEM, VISUALIZER, DRAWERS -->
+    <section class="flex-1 flex flex-col p-3 overflow-hidden border-r border-slate-800/80 relative">
+
+      <!-- SUB-MODULE CONTROLS BAR -->
+      <div id="subBar" class="h-9 mb-2 flex items-center justify-between px-2.5 bg-[#0f172a] rounded-lg border border-slate-800 text-xs shrink-0">
+        <div id="subOptions" class="flex items-center gap-1.5 overflow-x-auto">
+          <!-- Populated per module -->
+        </div>
+        <div class="flex items-center gap-2 shrink-0">
+          <button onclick="toggleVisualizer()" id="visToggleBtn" class="px-2 py-0.5 rounded bg-rose-950 text-rose-300 border border-rose-800 text-[11px] font-bold">
+            🙈 Hints: Off
+          </button>
+          <button onclick="revealStepOrAnswer()" id="revealBtn" class="px-2.5 py-0.5 rounded bg-amber-500/20 text-amber-300 hover:bg-amber-500/30 text-[11px] font-bold border border-amber-500/40">
+            🔍 Reveal / Model
+          </button>
+        </div>
+      </div>
+
+      <!-- MAIN PROBLEM & VISUAL DISPLAY AREA -->
+      <div id="stageCard" class="flex-1 bg-[#0d1627] rounded-xl border border-slate-800 p-4 flex flex-col justify-between overflow-hidden relative shadow-inner">
+        
+        <!-- Live Problem / Visualizer Content -->
+        <div id="problemContent" class="flex-1 flex flex-col items-center justify-center w-full overflow-y-auto">
+          <!-- Rendered dynamically -->
+        </div>
+
+        <!-- Feedback & Mathematical Stem Rule Banner -->
+        <div id="feedbackBanner" class="h-10 mt-2 px-3 rounded-lg bg-[#070d18] border border-slate-800 flex items-center justify-between text-xs shrink-0">
+          <div class="flex items-center gap-2 truncate">
+            <span id="feedbackIcon">💡</span>
+            <span id="feedbackText" class="text-slate-300 font-medium truncate">Look for friendly 5s, 10s, and doubles instead of counting in ones!</span>
+          </div>
+          <span id="stemRule" class="hidden text-amber-400 font-bold text-[11px] whitespace-nowrap"></span>
+        </div>
+      </div>
+
+      <!-- ON-DEMAND HELPER CONTROLS (100-SQUARE & PLACE VALUE WORKBENCH) -->
+      <div class="h-9 mt-2 flex items-center gap-2 shrink-0">
+        <button onclick="toggleHundredSquareDrawer()" id="btn100Drawer" class="flex-1 h-full rounded-lg bg-[#111c33] hover:bg-[#162442] border border-slate-800 text-xs font-bold text-sky-300 flex items-center justify-center gap-1.5 transition-all">
+          <span>📊</span>
+          <span>100-Square Grid Helper</span>
+          <span id="arrow100" class="text-[10px]">▲ Open</span>
+        </button>
+
+        <button onclick="togglePVDrawer()" id="btnPVDrawer" class="flex-1 h-full rounded-lg bg-[#111c33] hover:bg-[#162442] border border-slate-800 text-xs font-bold text-amber-300 flex items-center justify-center gap-1.5 transition-all">
+          <span>🟡</span>
+          <span>Place Value Counter Workbench</span>
+          <span id="arrowPV" class="text-[10px]">▼</span>
+        </button>
+      </div>
+
+      <!-- FULL-STAGE 100-SQUARE HELPER (SCROLLABLE & ACCESSIBLE) -->
+      <div id="drawer100" class="hidden absolute inset-0 z-30 bg-[#070e1c]/98 p-4 flex flex-col backdrop-blur-md">
+        <div class="flex items-center justify-between pb-2 mb-2 border-b border-slate-800 shrink-0">
+          <div class="flex items-center gap-2">
+            <span class="text-sm font-extrabold text-sky-400 uppercase tracking-wide">100-Square Grid (1 to 100)</span>
+            <span class="text-xs text-slate-400 hidden sm:inline">(Scroll or tap tiles to highlight friendly decades)</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <button onclick="highlight100('evens')" class="px-2.5 py-1 rounded-lg bg-slate-800 text-slate-200 hover:bg-slate-700 text-xs font-bold">Evens</button>
+            <button onclick="highlight100('odds')" class="px-2.5 py-1 rounded-lg bg-slate-800 text-slate-200 hover:bg-slate-700 text-xs font-bold">Odds</button>
+            <button onclick="highlight100('tens')" class="px-2.5 py-1 rounded-lg bg-slate-800 text-slate-200 hover:bg-slate-700 text-xs font-bold">10s</button>
+            <button onclick="highlight100('fives')" class="px-2.5 py-1 rounded-lg bg-slate-800 text-slate-200 hover:bg-slate-700 text-xs font-bold">5s</button>
+            <button onclick="highlight100('primes')" class="px-2.5 py-1 rounded-lg bg-slate-800 text-slate-200 hover:bg-slate-700 text-xs font-bold">Primes</button>
+            <button onclick="clear100Highlights()" class="px-2.5 py-1 rounded-lg bg-rose-950/60 text-rose-300 hover:bg-rose-900 border border-rose-800 text-xs font-bold">Clear</button>
+            <button onclick="toggleHundredSquareDrawer()" class="ml-2 px-3 py-1 rounded-lg bg-sky-600 hover:bg-sky-500 text-white text-xs font-black shadow flex items-center gap-1">
+              <span>✕ Close Grid</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 100 Tiles Container with Smooth Touch Scrolling -->
+        <div class="flex-1 overflow-y-auto custom-scroll pr-1 flex items-start justify-center">
+          <div id="grid100" class="grid grid-cols-10 gap-1.5 w-full max-w-2xl py-2">
+            <!-- 100 tiles dynamically generated in JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- COLLAPSIBLE: PLACE VALUE COUNTER WORKBENCH -->
+      <div id="drawerPV" class="hidden mt-2 p-3 bg-[#0d1629] rounded-xl border border-slate-800 shrink-0 max-h-[48vh] flex flex-col">
+        <!-- Workbench Controls Bar -->
+        <div class="flex items-center justify-between mb-2 pb-1.5 border-b border-slate-800 shrink-0">
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-bold text-amber-400 uppercase tracking-wide">Place Value Manipulatives</span>
+            <!-- Value Visibility Toggle for Pupils Counting -->
+            <button onclick="togglePVValueDisplay()" id="pvVisibilityBtn" class="px-2.5 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-semibold flex items-center gap-1">
+              <span id="pvVisIcon">👁️</span>
+              <span id="pvVisLabel">Values: Shown</span>
+            </button>
+          </div>
+          <div class="flex items-center gap-2">
+            <div id="pvTotalBadge" class="px-3 py-0.5 rounded-lg bg-slate-900 border border-amber-500/40 text-xs font-bold text-amber-300 font-num">
+              Total on Mat: <span id="pvMatTotal">0</span>
+            </div>
+            <button onclick="exchangePV10to1()" class="px-2 py-0.5 rounded bg-indigo-600/40 hover:bg-indigo-600/60 border border-indigo-500/50 text-indigo-200 text-xs font-bold">
+              🔄 Regroup 10➔1
+            </button>
+            <button onclick="clearPVMat()" class="px-2 py-0.5 rounded bg-rose-600/30 hover:bg-rose-600/50 border border-rose-500/40 text-rose-300 text-xs font-bold">
+              🧹 Clear Mat
+            </button>
+            <button onclick="togglePVFullscreen()" id="pvFullBtn" class="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold">
+              ⛶ Expand
+            </button>
+          </div>
+        </div>
+
+        <!-- 4-Column Manipulative Mat -->
+        <div class="flex-1 grid grid-cols-4 gap-2 min-h-[140px] overflow-hidden">
+          <!-- Thousands (Red) -->
+          <div class="flex flex-col bg-[#070b14] rounded-lg border border-rose-950/60 p-2 overflow-hidden">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs font-extrabold text-rose-400">Thousands</span>
+              <span id="badge-th" class="text-[10px] font-bold text-rose-300 font-num">0 (0)</span>
+            </div>
+            <button onclick="addPVToken('th')" class="w-full py-1 mb-1 rounded bg-rose-600/30 hover:bg-rose-600/50 border border-rose-500/50 text-rose-200 text-xs font-bold flex items-center justify-center gap-1 shadow">
+              <span>＋ 1,000</span>
+            </button>
+            <div id="col-th" class="flex-1 p-1 flex flex-wrap gap-1.5 content-start overflow-y-auto custom-scroll"></div>
+          </div>
+
+          <!-- Hundreds (Yellow) -->
+          <div class="flex flex-col bg-[#070b14] rounded-lg border border-yellow-950/60 p-2 overflow-hidden">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs font-extrabold text-yellow-400">Hundreds</span>
+              <span id="badge-h" class="text-[10px] font-bold text-yellow-300 font-num">0 (0)</span>
+            </div>
+            <button onclick="addPVToken('h')" class="w-full py-1 mb-1 rounded bg-yellow-600/30 hover:bg-yellow-600/50 border border-yellow-500/50 text-yellow-200 text-xs font-bold flex items-center justify-center gap-1 shadow">
+              <span>＋ 100</span>
+            </button>
+            <div id="col-h" class="flex-1 p-1 flex flex-wrap gap-1.5 content-start overflow-y-auto custom-scroll"></div>
+          </div>
+
+          <!-- Tens (Blue) -->
+          <div class="flex flex-col bg-[#070b14] rounded-lg border border-sky-950/60 p-2 overflow-hidden">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs font-extrabold text-sky-400">Tens</span>
+              <span id="badge-t" class="text-[10px] font-bold text-sky-300 font-num">0 (0)</span>
+            </div>
+            <button onclick="addPVToken('t')" class="w-full py-1 mb-1 rounded bg-sky-600/30 hover:bg-sky-600/50 border border-sky-500/50 text-sky-200 text-xs font-bold flex items-center justify-center gap-1 shadow">
+              <span>＋ 10</span>
+            </button>
+            <div id="col-t" class="flex-1 p-1 flex flex-wrap gap-1.5 content-start overflow-y-auto custom-scroll"></div>
+          </div>
+
+          <!-- Ones / Units (Green) -->
+          <div class="flex flex-col bg-[#070b14] rounded-lg border border-emerald-950/60 p-2 overflow-hidden">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs font-extrabold text-emerald-400">Ones</span>
+              <span id="badge-u" class="text-[10px] font-bold text-emerald-300 font-num">0 (0)</span>
+            </div>
+            <button onclick="addPVToken('u')" class="w-full py-1 mb-1 rounded bg-emerald-600/30 hover:bg-emerald-600/50 border border-emerald-500/50 text-emerald-200 text-xs font-bold flex items-center justify-center gap-1 shadow">
+              <span>＋ 1</span>
+            </button>
+            <div id="col-u" class="flex-1 p-1 flex flex-wrap gap-1.5 content-start overflow-y-auto custom-scroll"></div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- RIGHT STAGE: TACTILE ARM-HEIGHT NUMBER KEYPAD (NO ROW GAPS) -->
+    <aside class="w-64 bg-[#0a1222] flex flex-col p-3 justify-between shrink-0 select-none border-l border-slate-800">
+      
+      <!-- Pupil Answer Display & Clear -->
+      <div class="mb-2 shrink-0">
+        <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1 flex items-center justify-between">
+          <span>Active Answer</span>
+          <span id="keypadTargetIndicator" class="text-sky-400 font-num">Target: ?</span>
+        </div>
+        <div class="relative flex items-center">
+          <input type="text" id="answerInput" readonly placeholder="?" 
+            class="w-full h-12 bg-[#060c18] border-2 border-amber-400 rounded-xl text-center text-2xl font-num font-bold text-amber-300 tracking-wider shadow-inner outline-none">
+          <button onclick="clearCurrentInput()" class="absolute right-1.5 px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold">
+            CLR
+          </button>
+        </div>
+      </div>
+
+      <!-- 3x4 Tactile Keypad: Compact Row Heights with 6px Gaps -->
+      <div class="grid grid-cols-3 gap-1.5 my-auto w-full">
+        <button onclick="pressDigit(1)" class="key-btn h-12 rounded-xl bg-[#15233e] hover:bg-[#1e3156] active:bg-sky-600 text-white font-num font-bold text-xl shadow border border-slate-700/60 flex items-center justify-center">1</button>
+        <button onclick="pressDigit(2)" class="key-btn h-12 rounded-xl bg-[#15233e] hover:bg-[#1e3156] active:bg-sky-600 text-white font-num font-bold text-xl shadow border border-slate-700/60 flex items-center justify-center">2</button>
+        <button onclick="pressDigit(3)" class="key-btn h-12 rounded-xl bg-[#15233e] hover:bg-[#1e3156] active:bg-sky-600 text-white font-num font-bold text-xl shadow border border-slate-700/60 flex items-center justify-center">3</button>
+
+        <button onclick="pressDigit(4)" class="key-btn h-12 rounded-xl bg-[#15233e] hover:bg-[#1e3156] active:bg-sky-600 text-white font-num font-bold text-xl shadow border border-slate-700/60 flex items-center justify-center">4</button>
+        <button onclick="pressDigit(5)" class="key-btn h-12 rounded-xl bg-[#15233e] hover:bg-[#1e3156] active:bg-sky-600 text-white font-num font-bold text-xl shadow border border-slate-700/60 flex items-center justify-center">5</button>
+        <button onclick="pressDigit(6)" class="key-btn h-12 rounded-xl bg-[#15233e] hover:bg-[#1e3156] active:bg-sky-600 text-white font-num font-bold text-xl shadow border border-slate-700/60 flex items-center justify-center">6</button>
+
+        <button onclick="pressDigit(7)" class="key-btn h-12 rounded-xl bg-[#15233e] hover:bg-[#1e3156] active:bg-sky-600 text-white font-num font-bold text-xl shadow border border-slate-700/60 flex items-center justify-center">7</button>
+        <button onclick="pressDigit(8)" class="key-btn h-12 rounded-xl bg-[#15233e] hover:bg-[#1e3156] active:bg-sky-600 text-white font-num font-bold text-xl shadow border border-slate-700/60 flex items-center justify-center">8</button>
+        <button onclick="pressDigit(9)" class="key-btn h-12 rounded-xl bg-[#15233e] hover:bg-[#1e3156] active:bg-sky-600 text-white font-num font-bold text-xl shadow border border-slate-700/60 flex items-center justify-center">9</button>
+
+        <button onclick="deleteDigit()" class="key-btn h-12 rounded-xl bg-slate-800/80 hover:bg-slate-700 active:bg-rose-600 text-rose-300 font-num font-bold text-lg shadow border border-slate-700/50 flex items-center justify-center">⌫</button>
+        <button onclick="pressDigit(0)" class="key-btn h-12 rounded-xl bg-[#15233e] hover:bg-[#1e3156] active:bg-sky-600 text-white font-num font-bold text-xl shadow border border-slate-700/60 flex items-center justify-center">0</button>
+        <button onclick="submitAnswer()" class="key-btn h-12 rounded-xl bg-amber-400 hover:bg-amber-300 active:bg-amber-500 text-slate-950 font-num font-black text-xl shadow border border-amber-300 flex items-center justify-center">↵</button>
+      </div>
+
+      <!-- Action Buttons (Skip & Next) -->
+      <div class="flex gap-2 pt-2 border-t border-slate-800 shrink-0">
+        <button onclick="skipQuestion()" class="flex-1 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs border border-slate-700 shadow">
+          ⏭ Skip
+        </button>
+        <button onclick="nextQuestion()" class="flex-1 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs border border-sky-400 shadow">
+          Next ➔
+        </button>
+      </div>
+    </aside>
+
+  </main>
+
+  <!-- UNIVERSAL ROOT-LEVEL WHITEBOARD CANVAS & TOOLBAR OVERLAY -->
+  <div id="wbOverlay" class="absolute inset-0 pointer-events-none z-50">
+    <canvas id="whiteboardCanvas" class="w-full h-full pointer-events-none"></canvas>
+
+    <!-- Whiteboard Floating Toolbar -->
+    <div id="wbToolbar" class="hidden absolute top-16 right-6 pointer-events-auto bg-[#070e1c]/95 border-2 border-sky-500/50 rounded-2xl p-2.5 shadow-2xl flex flex-col gap-2 backdrop-blur-md">
+      <div class="flex items-center justify-between pb-1 border-b border-slate-700 px-1">
+        <span class="text-[11px] font-bold text-sky-400 uppercase tracking-wider">Whiteboard</span>
+        <button onclick="toggleWhiteboard()" class="text-slate-400 hover:text-white text-xs font-bold">✕</button>
+      </div>
+
+      <!-- Tool Selector -->
+      <div class="grid grid-cols-2 gap-1.5">
+        <button onclick="setWbTool('touch')" id="wbTool-touch" class="px-2.5 py-1.5 rounded-lg bg-sky-600 text-white text-xs font-bold flex items-center justify-center gap-1">
+          <span>👆</span><span>Touch</span>
+        </button>
+        <button onclick="setWbTool('pen')" id="wbTool-pen" class="px-2.5 py-1.5 rounded-lg bg-slate-800 text-slate-300 text-xs font-bold flex items-center justify-center gap-1">
+          <span>✏️</span><span>Pen</span>
+        </button>
+        <button onclick="setWbTool('highlighter')" id="wbTool-highlighter" class="px-2.5 py-1.5 rounded-lg bg-slate-800 text-slate-300 text-xs font-bold flex items-center justify-center gap-1">
+          <span>🖍️</span><span>Highlighter</span>
+        </button>
+        <button onclick="setWbTool('eraser')" id="wbTool-eraser" class="px-2.5 py-1.5 rounded-lg bg-slate-800 text-slate-300 text-xs font-bold flex items-center justify-center gap-1">
+          <span>🧹</span><span>Eraser</span>
+        </button>
+      </div>
+
+      <!-- Color Palette -->
+      <div class="flex items-center justify-between gap-1 px-1 py-1 bg-slate-900/80 rounded-lg">
+        <button onclick="setWbColor('#ffffff')" class="w-6 h-6 rounded-full bg-white border border-slate-400"></button>
+        <button onclick="setWbColor('#38bdf8')" class="w-6 h-6 rounded-full bg-sky-400 border border-sky-200"></button>
+        <button onclick="setWbColor('#facc15')" class="w-6 h-6 rounded-full bg-yellow-400 border border-yellow-200"></button>
+        <button onclick="setWbColor('#4ade80')" class="w-6 h-6 rounded-full bg-emerald-400 border border-emerald-200"></button>
+        <button onclick="setWbColor('#f43f5e')" class="w-6 h-6 rounded-full bg-rose-500 border border-rose-300"></button>
+      </div>
+
+      <!-- Thickness Selector -->
+      <div class="flex items-center gap-1">
+        <button onclick="setWbSize(3)" class="flex-1 py-1 rounded bg-slate-800 text-slate-300 text-xs font-bold">Thin</button>
+        <button onclick="setWbSize(7)" class="flex-1 py-1 rounded bg-slate-800 text-slate-300 text-xs font-bold">Med</button>
+        <button onclick="setWbSize(14)" class="flex-1 py-1 rounded bg-slate-800 text-slate-300 text-xs font-bold">Thick</button>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex items-center gap-1 pt-1 border-t border-slate-700">
+        <button onclick="undoWhiteboard()" class="flex-1 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold">↶ Undo</button>
+        <button onclick="clearWhiteboard()" class="flex-1 py-1 rounded bg-rose-600/40 hover:bg-rose-600/60 text-rose-300 text-xs font-bold">Clear All</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMPLETE LOGIC & DATA SCRIPTS -->
+  <script>
+    // Audio synthesizer for offline Promethean / touchboard use
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playChime(type) {
+      try {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        if (type === 'correct') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+          osc.frequency.exponentialRampToValueAtTime(659.25, audioCtx.currentTime + 0.08); // E5
+          osc.frequency.exponentialRampToValueAtTime(783.99, audioCtx.currentTime + 0.16); // G5
+          gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+          gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.3);
+        } else if (type === 'step') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(440, audioCtx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(554.37, audioCtx.currentTime + 0.08);
+          gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+          gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.15);
+        } else {
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(220, audioCtx.currentTime);
+          osc.frequency.linearRampToValueAtTime(140, audioCtx.currentTime + 0.2);
+          gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+          gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.25);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.25);
+        }
+      } catch (e) {}
+    }
+
+    // --- APPLICATION STATE ---
+    let currentModule = 1;
+    let subOptionSelection = {
+      1: 'l1',
+      2: 'l1',
+      3: 'to100',
+      4: 'nearPlus',
+      5: 'by5',
+      6: 'mult',
+      7: 'rush'
+    };
+
+    let score = 0;
+    let streak = 0;
+    let currentInput = "";
+    let isAnswered = false;
+    let visualizerActive = false; // Default hints to OFF so pupils do the work
+    let currentQuestion = null;
+
+    // Place Value Counters State
+    let pvCounters = { th: 0, h: 0, t: 0, u: 0 };
+    let pvValuesVisible = true;
+    let isPVFullscreen = false;
+
+    // Fast Fire Timer
+    let fastFireTimer = null;
+    let fastFireSeconds = 60;
+
+    // --- MODULE NAVIGATION & SUB-OPTIONS ---
+    function setModule(modNum) {
+      currentModule = modNum;
+      for (let i = 1; i <= 7; i++) {
+        const btn = document.getElementById(`modBtn-${i}`);
+        if (btn) {
+          if (i === modNum) {
+            btn.className = "px-3 py-1 rounded-lg text-xs font-bold whitespace-nowrap bg-amber-400 text-slate-950 shadow";
+          } else {
+            btn.className = "px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap bg-slate-800 text-slate-300 hover:bg-slate-700";
+          }
+        }
+      }
+      setupSubBar(modNum);
+      generateQuestion();
+    }
+
+    function setSubOption(mod, key) {
+      subOptionSelection[mod] = key;
+      setupSubBar(mod);
+      generateQuestion();
+    }
+
+    function setupSubBar(modNum) {
+      const sub = document.getElementById("subOptions");
+      if (!sub) return;
+      const current = subOptionSelection[modNum];
+
+      const btnClass = (active) => active 
+        ? "px-2.5 py-0.5 rounded-lg bg-amber-400 text-slate-950 font-bold text-xs shadow" 
+        : "px-2.5 py-0.5 rounded-lg bg-[#182747] text-slate-300 hover:text-white text-xs border border-slate-700";
+
+      if (modNum === 1 || modNum === 2) {
+        sub.innerHTML = `
+          <span class="text-slate-400 font-bold mr-1">Progression:</span>
+          <button onclick="setSubOption(${modNum}, 'l1')" class="${btnClass(current === 'l1')}">L1: Cross 10 (8+5)</button>
+          <button onclick="setSubOption(${modNum}, 'l2')" class="${btnClass(current === 'l2')}">L2: 2-Digit + 1-Digit (38+7)</button>
+          <button onclick="setSubOption(${modNum}, 'l3')" class="${btnClass(current === 'l3')}">L3: 2-Digit + 2-Digit (47+26)</button>
+        `;
+      } else if (modNum === 3) {
+        sub.innerHTML = `
+          <span class="text-slate-400 font-bold mr-1">Trap Target:</span>
+          <button onclick="setSubOption(3, 'to100')" class="${btnClass(current === 'to100')}">110 Trap (Bonds to 100)</button>
+          <button onclick="setSubOption(3, 'to1000')" class="${btnClass(current === 'to1000')}">1,100 Trap (Bonds to 1,000)</button>
+        `;
+      } else if (modNum === 4) {
+        sub.innerHTML = `
+          <span class="text-slate-400 font-bold mr-1">Type:</span>
+          <button onclick="setSubOption(4, 'nearPlus')" class="${btnClass(current === 'nearPlus')}">Double + 1</button>
+          <button onclick="setSubOption(4, 'nearMinus')" class="${btnClass(current === 'nearMinus')}">Double − 1</button>
+          <button onclick="setSubOption(4, 'nearTwo')" class="${btnClass(current === 'nearTwo')}">Double ± 2</button>
+        `;
+      } else if (modNum === 5) {
+        sub.innerHTML = `
+          <span class="text-slate-400 font-bold mr-1">Arrays:</span>
+          <button onclick="setSubOption(5, 'by5')" class="${btnClass(current === 'by5')}">5s &amp; 10s Anchors</button>
+          <button onclick="setSubOption(5, 'derived')" class="${btnClass(current === 'derived')}">Derived Facts (×6, ×7, ×8)</button>
+        `;
+      } else if (modNum === 6) {
+        sub.innerHTML = `
+          <span class="text-slate-400 font-bold mr-1">Fact Families:</span>
+          <button onclick="setSubOption(6, 'mult')" class="${btnClass(current === 'mult')}">Missing Product</button>
+          <button onclick="setSubOption(6, 'div')" class="${btnClass(current === 'div')}">Missing Factor (÷)</button>
+        `;
+      } else {
+        sub.innerHTML = `<span class="text-amber-400 text-xs font-bold">⚡ 60s Fast Fire No-Fingers Sprint</span>`;
+      }
+    }
+
+    // --- QUESTION GENERATION ENGINE ---
+    function generateQuestion() {
+      currentInput = "";
+      document.getElementById("answerInput").value = "";
+      isAnswered = false;
+      const feedback = document.getElementById("feedbackText");
+      feedback.textContent = "Chunk numbers using 10-landmarks, doubles, and derived facts!";
+      feedback.className = "text-slate-300 font-medium truncate";
+
+      const targetIndicator = document.getElementById("keypadTargetIndicator");
+      const stage = document.getElementById("problemContent");
+
+      if (currentModule === 1) {
+        // TOPIC 1: BRIDGE FORWARD (+)
+        const lvl = subOptionSelection[1] || 'l1';
+        let a, b, decade, j1, j2, sum;
+
+        if (lvl === 'l1') {
+          // L1: Cross 10 (8+5)
+          a = Math.floor(Math.random() * 4) + 6; // 6,7,8,9
+          b = Math.floor(Math.random() * 4) + (11 - a);
+          decade = 10;
+        } else if (lvl === 'l2') {
+          // L2: 2-Digit + 1-Digit (38+7)
+          const baseDecade = (Math.floor(Math.random() * 6) + 2) * 10; // 20..70
+          a = baseDecade - (Math.floor(Math.random() * 4) + 1); // e.g. 38
+          b = Math.floor(Math.random() * 4) + (baseDecade - a + 1); // e.g. 7
+          decade = baseDecade;
+        } else {
+          // L3: 2-Digit + 2-Digit (47+26)
+          const baseDecade = (Math.floor(Math.random() * 5) + 3) * 10; // 30..70
+          a = baseDecade - (Math.floor(Math.random() * 4) + 1); // e.g. 47
+          b = Math.floor(Math.random() * 20) + 16; // e.g. 26
+          decade = baseDecade;
+        }
+
+        sum = a + b;
+        j1 = decade - a;
+        j2 = b - j1;
+
+        currentQuestion = { ans: sum.toString(), a, b, decade, j1, j2, sum };
+        targetIndicator.textContent = "Target: Sum";
+
+        const showHints = visualizerActive || isAnswered;
+        stage.innerHTML = `
+          <div class="flex flex-col items-center justify-center max-w-xl w-full my-auto">
+            <div class="text-4xl sm:text-5xl font-extrabold text-white font-num mb-4">
+              ${a} + ${b} = <span class="text-amber-400">?</span>
+            </div>
+            
+            <!-- 3-Stage Visual Stepper -->
+            <div class="w-full flex items-center justify-between gap-2 p-3 rounded-xl bg-slate-900 border border-slate-800 text-xs font-num mb-2">
+              <div class="flex-1 p-2 rounded-lg bg-sky-950 border border-sky-400 text-center text-sky-300 font-bold shadow">
+                <div class="text-[10px] text-slate-400">1. Jump to Friendly Ten</div>
+                <div>${showHints ? `${a} + ${j1} = <strong class="text-emerald-400">${decade}</strong>` : `${a} + <span class="text-amber-400 font-bold">?</span> = <strong class="text-emerald-400">${decade}</strong>`}</div>
+              </div>
+              <span class="text-slate-600 font-black">➔</span>
+              <div class="flex-1 p-2 rounded-lg bg-slate-800 border border-slate-700 text-center text-yellow-300 font-bold">
+                <div class="text-[10px] text-slate-400">2. Leftover Addend</div>
+                <div>${showHints ? `${b} split (${j1} &amp; ${j2})` : `${b} split (<span class="text-amber-400 font-bold">? &amp; ?</span>)`}</div>
+              </div>
+              <span class="text-slate-600 font-black">➔</span>
+              <div class="flex-1 p-2 rounded-lg bg-slate-800 border border-slate-700 text-center text-amber-300 font-bold">
+                <div class="text-[10px] text-slate-400">3. Final Destination</div>
+                <div>${showHints ? `${decade} + ${j2} = ?` : `<strong class="text-emerald-400">${decade}</strong> + <span class="text-amber-400 font-bold">?</span> = ?`}</div>
+              </div>
+            </div>
+
+            <div class="text-xs text-sky-400 font-semibold ${showHints ? '' : 'invisible'}">
+              Don't count in ones! Jump ${j1} to reach ${decade}, then add ${j2}.
+            </div>
+          </div>
+        `;
+      } else if (currentModule === 2) {
+        // TOPIC 2: BRIDGE BACKWARD (−)
+        const lvl = subOptionSelection[2] || 'l1';
+        let a, b, decade, j1, j2, diff;
+
+        if (lvl === 'l1') {
+          // Cross 10 e.g. 14 - 6
+          a = Math.floor(Math.random() * 6) + 12; // 12..17
+          b = Math.floor(Math.random() * 4) + (a - 9);
+          decade = 10;
+        } else if (lvl === 'l2') {
+          // 2-Digit - 1-Digit e.g. 52 - 7
+          const baseDecade = (Math.floor(Math.random() * 6) + 3) * 10;
+          a = baseDecade + (Math.floor(Math.random() * 4) + 1); // 52
+          b = (a - baseDecade) + Math.floor(Math.random() * 4) + 2; // 7
+          decade = baseDecade;
+        } else {
+          // 2-Digit - 2-Digit e.g. 73 - 28
+          const baseDecade = (Math.floor(Math.random() * 4) + 4) * 10;
+          a = baseDecade + (Math.floor(Math.random() * 4) + 1);
+          b = Math.floor(Math.random() * 15) + 16;
+          decade = baseDecade;
+        }
+
+        diff = a - b;
+        j1 = a - decade;
+        j2 = b - j1;
+
+        currentQuestion = { ans: diff.toString(), a, b, decade, j1, j2, diff };
+        targetIndicator.textContent = "Target: Difference";
+
+        const showHints = visualizerActive || isAnswered;
+        stage.innerHTML = `
+          <div class="flex flex-col items-center justify-center max-w-xl w-full my-auto">
+            <div class="text-4xl sm:text-5xl font-extrabold text-white font-num mb-4">
+              ${a} − ${b} = <span class="text-rose-400">?</span>
+            </div>
+            
+            <div class="w-full flex items-center justify-between gap-2 p-3 rounded-xl bg-slate-900 border border-slate-800 text-xs font-num mb-2">
+              <div class="flex-1 p-2 rounded-lg bg-rose-950 border border-rose-500 text-center text-rose-300 font-bold shadow">
+                <div class="text-[10px] text-slate-400">1. Clear to Friendly Ten</div>
+                <div>${showHints ? `${a} − ${j1} = <strong class="text-emerald-400">${decade}</strong>` : `${a} − <span class="text-amber-400 font-bold">?</span> = <strong class="text-emerald-400">${decade}</strong>`}</div>
+              </div>
+              <span class="text-slate-600 font-black">➔</span>
+              <div class="flex-1 p-2 rounded-lg bg-slate-800 border border-slate-700 text-center text-yellow-300 font-bold">
+                <div class="text-[10px] text-slate-400">2. Leftover Subtrahend</div>
+                <div>${showHints ? `${b} split (${j1} &amp; ${j2})` : `${b} split (<span class="text-amber-400 font-bold">? &amp; ?</span>)`}</div>
+              </div>
+              <span class="text-slate-600 font-black">➔</span>
+              <div class="flex-1 p-2 rounded-lg bg-slate-800 border border-slate-700 text-center text-amber-300 font-bold">
+                <div class="text-[10px] text-slate-400">3. Drop from Ten</div>
+                <div>${showHints ? `${decade} − ${j2} = ?` : `<strong class="text-emerald-400">${decade}</strong> − <span class="text-amber-400 font-bold">?</span> = ?`}</div>
+              </div>
+            </div>
+
+            <div class="text-xs text-rose-400 font-semibold ${showHints ? '' : 'invisible'}">
+              Drop ${j1} back to ${decade}, then subtract the remaining ${j2}.
+            </div>
+          </div>
+        `;
+      } else if (currentModule === 3) {
+        // TOPIC 3: BUST 110 TRAP
+        const isThousand = subOptionSelection[3] === 'to1000';
+        if (isThousand) {
+          const val = (Math.floor(Math.random() * 80) + 12) * 10;
+          const comp = 1000 - val;
+          currentQuestion = { ans: comp.toString(), val, comp, target: 1000 };
+          targetIndicator.textContent = "Target: Complement";
+
+          stage.innerHTML = `
+            <div class="flex flex-col items-center justify-center my-auto">
+              <span class="px-3 py-1 rounded-full bg-rose-950 border border-rose-800 text-rose-300 text-xs font-bold uppercase tracking-wider mb-3">
+                🚨 Bust the 1,100 Trap!
+              </span>
+              <div class="text-4xl sm:text-5xl font-extrabold text-white font-num mb-4">
+                ${val} + <span class="text-amber-400 border-b-2 border-dashed border-amber-400">?</span> = 1,000
+              </div>
+              <div class="p-3 bg-slate-900 rounded-xl border border-slate-800 text-xs text-amber-300 text-center max-w-md">
+                <strong>Rule:</strong> The hundreds must add to 900 because the tens column makes the final 100!
+              </div>
+            </div>
+          `;
+        } else {
+          const val = Math.floor(Math.random() * 80) + 12;
+          const comp = 100 - val;
+          currentQuestion = { ans: comp.toString(), val, comp, target: 100 };
+          targetIndicator.textContent = "Target: Complement";
+
+          stage.innerHTML = `
+            <div class="flex flex-col items-center justify-center my-auto">
+              <span class="px-3 py-1 rounded-full bg-rose-950 border border-rose-800 text-rose-300 text-xs font-bold uppercase tracking-wider mb-3">
+                🚨 Bust the 110 Trap!
+              </span>
+              <div class="text-4xl sm:text-5xl font-extrabold text-white font-num mb-4">
+                ${val} + <span class="text-amber-400 border-b-2 border-dashed border-amber-400">?</span> = 100
+              </div>
+              <div class="p-3 bg-slate-900 rounded-xl border border-slate-800 text-xs text-amber-300 text-center max-w-md">
+                <strong>Rule:</strong> The tens digits must sum to 90 because the units make 10!
+              </div>
+            </div>
+          `;
+        }
+      } else if (currentModule === 4) {
+        // TOPIC 4: NEAR DOUBLES
+        const type = subOptionSelection[4] || 'nearPlus';
+        const base = Math.floor(Math.random() * 15) + 6; // 6..20
+        let a = base, b = base, offset = 1;
+
+        if (type === 'nearMinus') {
+          b = base - 1;
+          offset = -1;
+        } else if (type === 'nearTwo') {
+          b = base + 2;
+          offset = 2;
+        } else {
+          b = base + 1;
+          offset = 1;
+        }
+
+        const sum = a + b;
+        currentQuestion = { ans: sum.toString(), a, b, base, offset, sum };
+        targetIndicator.textContent = "Target: Sum";
+
+        const showHints = visualizerActive || isAnswered;
+        stage.innerHTML = `
+          <div class="flex flex-col items-center justify-center my-auto">
+            <span class="text-xs uppercase text-slate-400 font-bold mb-3 tracking-wider">Visual Near Double Chunking</span>
+            <div class="text-5xl font-extrabold text-white font-num mb-4">
+              ${a} + ${b} = <span class="text-amber-400">?</span>
+            </div>
+            <div class="p-3 bg-slate-900 rounded-xl border border-slate-800 text-center text-xs ${showHints ? '' : 'hidden'}">
+              <span class="text-slate-400">Mental Strategy: </span>
+              <span class="text-sky-300 font-bold">Double ${base} is ${base * 2}</span>
+              <span class="text-amber-300 font-bold"> ${offset > 0 ? '+ ' + offset : '− ' + Math.abs(offset)} = ${sum}</span>
+            </div>
+          </div>
+        `;
+      } else if (currentModule === 5) {
+        // TOPIC 5: ARRAY & DERIVED TABLES (✕)
+        const type = subOptionSelection[5] || 'by5';
+        let r, c;
+        if (type === 'by5') {
+          r = Math.random() > 0.5 ? 5 : 10;
+          c = Math.floor(Math.random() * 8) + 2;
+        } else {
+          // Derived from known facts e.g. 7 x 6 = (5 x 6) + (2 x 6)
+          r = Math.floor(Math.random() * 3) + 6; // 6,7,8
+          c = Math.floor(Math.random() * 6) + 4;
+        }
+
+        const product = r * c;
+        currentQuestion = { ans: product.toString(), r, c, product };
+        targetIndicator.textContent = "Target: Product";
+
+        let arrayDots = '';
+        for (let i = 0; i < Math.min(r, 6); i++) {
+          arrayDots += `<div class="flex gap-1.5 justify-center">`;
+          for (let j = 0; j < Math.min(c, 8); j++) {
+            arrayDots += `<div class="w-4 h-4 rounded-full ${i < 5 ? 'bg-amber-400' : 'bg-sky-400'} shadow-sm"></div>`;
+          }
+          arrayDots += `</div>`;
+        }
+
+        stage.innerHTML = `
+          <div class="flex flex-col items-center justify-center my-auto">
+            <span class="text-xs uppercase text-slate-400 font-bold mb-2">Visual Array Structure</span>
+            <div class="p-3 bg-[#070e1c] rounded-xl border border-slate-700 flex flex-col gap-1.5 shadow mb-4">
+              ${arrayDots}
+            </div>
+            <div class="text-4xl font-extrabold text-white font-num mb-2">
+              ${r} × ${c} = <span class="text-amber-400">?</span>
+            </div>
+            <div class="text-xs text-sky-400 font-semibold">
+              Chunk as (5 × ${c} = ${5 * c}) ${r > 5 ? `+ (${r - 5} × ${c} = ${(r - 5) * c})` : ''}
+            </div>
+          </div>
+        `;
+      } else if (currentModule === 6) {
+        // TOPIC 6: FACT TRIANGLES (÷ / ✕)
+        const fA = Math.floor(Math.random() * 7) + 3;
+        const fB = Math.floor(Math.random() * 7) + 3;
+        const prod = fA * fB;
+        const isDiv = subOptionSelection[6] === 'div';
+
+        if (isDiv) {
+          currentQuestion = { ans: fB.toString(), fA, fB, prod };
+          targetIndicator.textContent = "Target: Missing Factor";
+          stage.innerHTML = `
+            <div class="flex flex-col items-center justify-center my-auto">
+              <span class="text-xs uppercase text-slate-400 font-bold mb-3 tracking-wider">Multiplicative Fact Family</span>
+              <svg class="w-48 h-36 mb-2" viewBox="0 0 200 130">
+                <polygon points="100,20 30,115 170,115" fill="#111c34" stroke="#f59e0b" stroke-width="3.5" stroke-linejoin="round"/>
+                <text x="100" y="48" text-anchor="middle" fill="#f59e0b" font-size="18" font-weight="bold" font-family="Fredoka">${prod}</text>
+                <text x="50" y="105" text-anchor="middle" fill="#38bdf8" font-size="18" font-weight="bold" font-family="Fredoka">${fA}</text>
+                <text x="150" y="105" text-anchor="middle" fill="#f43f5e" font-size="20" font-weight="bold" font-family="Fredoka">?</text>
+              </svg>
+              <div class="text-3xl font-extrabold text-white font-num">
+                ${prod} ÷ ${fA} = <span class="text-rose-400">?</span>
+              </div>
+            </div>
+          `;
+        } else {
+          currentQuestion = { ans: prod.toString(), fA, fB, prod };
+          targetIndicator.textContent = "Target: Product";
+          stage.innerHTML = `
+            <div class="flex flex-col items-center justify-center my-auto">
+              <span class="text-xs uppercase text-slate-400 font-bold mb-3 tracking-wider">Multiplicative Fact Family</span>
+              <svg class="w-48 h-36 mb-2" viewBox="0 0 200 130">
+                <polygon points="100,20 30,115 170,115" fill="#111c34" stroke="#f59e0b" stroke-width="3.5" stroke-linejoin="round"/>
+                <text x="100" y="48" text-anchor="middle" fill="#f59e0b" font-size="20" font-weight="bold" font-family="Fredoka">?</text>
+                <text x="50" y="105" text-anchor="middle" fill="#38bdf8" font-size="18" font-weight="bold" font-family="Fredoka">${fA}</text>
+                <text x="150" y="105" text-anchor="middle" fill="#4ade80" font-size="18" font-weight="bold" font-family="Fredoka">${fB}</text>
+              </svg>
+              <div class="text-3xl font-extrabold text-white font-num">
+                ${fA} × ${fB} = <span class="text-amber-400">?</span>
+              </div>
+            </div>
+          `;
+        }
+      } else if (currentModule === 7) {
+        // TOPIC 7: 60s NO-FINGERS RUSH
+        const a = Math.floor(Math.random() * 8) + 6;
+        const b = Math.floor(Math.random() * 8) + 5;
+        currentQuestion = { ans: (a + b).toString(), a, b };
+        targetIndicator.textContent = "Target: Rapid Sum";
+
+        stage.innerHTML = `
+          <div class="flex flex-col items-center justify-center my-auto">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="text-xs font-bold text-amber-400 uppercase tracking-wider">⏱ 60s No-Fingers Sprint</span>
+              <button onclick="startFastFire()" id="btnFastFireStart" class="px-3 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs shadow">START</button>
+            </div>
+            <div id="fastFireCountdown" class="text-5xl font-extrabold text-amber-400 font-num mb-4">60s</div>
+            <div class="text-4xl font-extrabold font-num text-white">
+              ${a} + ${b} = <span class="text-sky-400">?</span>
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    // --- KEYPAD & SUBMISSION LOGIC ---
+    function pressDigit(num) {
+      if (isAnswered) return;
+      currentInput += num.toString();
+      document.getElementById("answerInput").value = currentInput;
+    }
+
+    function deleteDigit() {
+      if (isAnswered) return;
+      currentInput = currentInput.slice(0, -1);
+      document.getElementById("answerInput").value = currentInput;
+    }
+
+    function clearCurrentInput() {
+      if (isAnswered) return;
+      currentInput = "";
+      document.getElementById("answerInput").value = "";
+    }
+
+    function submitAnswer() {
+      if (!currentQuestion || !currentInput) return;
+      const feedback = document.getElementById("feedbackText");
+
+      // Handle 3-Stage Stepper in Module 3
+      if (currentModule === 3 && currentQuestion.steps && subOptionSelection[3] === 'step3') {
+        const curStep = currentQuestion.steps[currentQuestion.stage - 1];
+        if (currentInput === curStep.target) {
+          playChime('step');
+          currentQuestion.stage++;
+          clearCurrentInput();
+
+          if (currentQuestion.stage <= 3) {
+            const nextStep = currentQuestion.steps[currentQuestion.stage - 1];
+            document.getElementById("keypadTargetIndicator").textContent = `Step ${currentQuestion.stage}`;
+            document.getElementById("stepperPromptText").textContent = nextStep.prompt;
+            
+            // Highlight step pills
+            for (let s = 1; s <= 3; s++) {
+              const el = document.getElementById(`step-${s}`);
+              if (s === currentQuestion.stage) {
+                el.className = "flex-1 p-2 rounded-lg bg-sky-950 border border-sky-400 text-center text-sky-300 font-bold shadow";
+              } else if (s < currentQuestion.stage) {
+                el.className = "flex-1 p-2 rounded-lg bg-emerald-950 border border-emerald-500 text-center text-emerald-300 font-bold";
+              } else {
+                el.className = "flex-1 p-2 rounded-lg bg-slate-800 border border-slate-700 text-center text-slate-400 font-bold";
+              }
+            }
+            return;
+          } else {
+            // Completed all 3 stages
+            playChime('correct');
+            score += 10;
+            streak++;
+            document.getElementById("scoreDisplay").textContent = score;
+            document.getElementById("streakDisplay").textContent = streak;
+            feedback.textContent = `✓ Full bridge mastered: ${currentQuestion.a} + ${currentQuestion.b} = ${currentQuestion.sum}!`;
+            feedback.className = "text-emerald-400 font-extrabold truncate";
+            isAnswered = true;
+            setTimeout(nextQuestion, 1400);
+            return;
+          }
+        } else {
+          playChime('error');
+          feedback.textContent = `✕ Not quite (${currentInput}). Check your bridging step!`;
+          feedback.className = "text-rose-400 font-bold truncate";
+          clearCurrentInput();
+          return;
+        }
+      }
+
+      // Standard submission
+      if (currentInput === currentQuestion.ans) {
+        playChime('correct');
+        score += 10;
+        streak++;
+        document.getElementById("scoreDisplay").textContent = score;
+        document.getElementById("streakDisplay").textContent = streak;
+        feedback.textContent = `✓ Outstanding! Visual chunking reasoning verified.`;
+        feedback.className = "text-emerald-400 font-extrabold truncate";
+        isAnswered = true;
+        setTimeout(nextQuestion, 1200);
+      } else {
+        playChime('error');
+        streak = 0;
+        document.getElementById("streakDisplay").textContent = streak;
+        feedback.textContent = `✕ Not quite (${currentInput}). Look for the 5/10 landmark and try again.`;
+        feedback.className = "text-rose-400 font-bold truncate";
+        clearCurrentInput();
+      }
+    }
+
+    function skipQuestion() {
+      generateQuestion();
+    }
+
+    function nextQuestion() {
+      generateQuestion();
+    }
+
+    function revealStepOrAnswer() {
+      if (!currentQuestion) return;
+      currentInput = currentQuestion.ans;
+      document.getElementById("answerInput").value = currentInput;
+      const feedback = document.getElementById("feedbackText");
+      feedback.textContent = `Model Answer Revealed: ${currentQuestion.ans}`;
+      feedback.className = "text-amber-400 font-extrabold truncate";
+      // Auto-enable hints upon revealing so the teacher can model the breakdown
+      visualizerActive = true;
+      const btn = document.getElementById("visToggleBtn");
+      if (btn) {
+        btn.textContent = "💡 Hints: On";
+        btn.className = "px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-700 text-[11px] font-bold";
+      }
+      // Re-render current question with revealed steps
+      if (currentModule === 1 || currentModule === 2 || currentModule === 4) {
+        const stage = document.getElementById("problemContent");
+        if (currentModule === 1) {
+          const { a, b, decade, j1, j2 } = currentQuestion;
+          stage.innerHTML = `
+            <div class="flex flex-col items-center justify-center max-w-xl w-full my-auto">
+              <div class="text-4xl sm:text-5xl font-extrabold text-white font-num mb-4">
+                ${a} + ${b} = <span class="text-amber-400">${currentQuestion.ans}</span>
+              </div>
+              <div class="w-full flex items-center justify-between gap-2 p-3 rounded-xl bg-slate-900 border border-slate-800 text-xs font-num mb-2">
+                <div class="flex-1 p-2 rounded-lg bg-sky-950 border border-sky-400 text-center text-sky-300 font-bold shadow">
+                  <div class="text-[10px] text-slate-400">1. Jump to Friendly Ten</div>
+                  <div>${a} + ${j1} = <strong class="text-emerald-400">${decade}</strong></div>
+                </div>
+                <span class="text-slate-600 font-black">➔</span>
+                <div class="flex-1 p-2 rounded-lg bg-slate-800 border border-slate-700 text-center text-yellow-300 font-bold">
+                  <div class="text-[10px] text-slate-400">2. Leftover Addend</div>
+                  <div>${b} split (${j1} &amp; ${j2})</div>
+                </div>
+                <span class="text-slate-600 font-black">➔</span>
+                <div class="flex-1 p-2 rounded-lg bg-slate-800 border border-slate-700 text-center text-amber-300 font-bold">
+                  <div class="text-[10px] text-slate-400">3. Final Destination</div>
+                  <div>${decade} + ${j2} = <strong class="text-emerald-400">${currentQuestion.ans}</strong></div>
+                </div>
+              </div>
+              <div class="text-xs text-sky-400 font-semibold">
+                Don't count in ones! Jump ${j1} to reach ${decade}, then add ${j2}.
+              </div>
+            </div>
+          `;
+        } else if (currentModule === 2) {
+          const { a, b, decade, j1, j2 } = currentQuestion;
+          stage.innerHTML = `
+            <div class="flex flex-col items-center justify-center max-w-xl w-full my-auto">
+              <div class="text-4xl sm:text-5xl font-extrabold text-white font-num mb-4">
+                ${a} − ${b} = <span class="text-rose-400">${currentQuestion.ans}</span>
+              </div>
+              <div class="w-full flex items-center justify-between gap-2 p-3 rounded-xl bg-slate-900 border border-slate-800 text-xs font-num mb-2">
+                <div class="flex-1 p-2 rounded-lg bg-rose-950 border border-rose-500 text-center text-rose-300 font-bold shadow">
+                  <div class="text-[10px] text-slate-400">1. Clear to Friendly Ten</div>
+                  <div>${a} − ${j1} = <strong class="text-emerald-400">${decade}</strong></div>
+                </div>
+                <span class="text-slate-600 font-black">➔</span>
+                <div class="flex-1 p-2 rounded-lg bg-slate-800 border border-slate-700 text-center text-yellow-300 font-bold">
+                  <div class="text-[10px] text-slate-400">2. Leftover Subtrahend</div>
+                  <div>${b} split (${j1} &amp; ${j2})</div>
+                </div>
+                <span class="text-slate-600 font-black">➔</span>
+                <div class="flex-1 p-2 rounded-lg bg-slate-800 border border-slate-700 text-center text-amber-300 font-bold">
+                  <div class="text-[10px] text-slate-400">3. Drop from Ten</div>
+                  <div>${decade} − ${j2} = <strong class="text-emerald-400">${currentQuestion.ans}</strong></div>
+                </div>
+              </div>
+              <div class="text-xs text-rose-400 font-semibold">
+                Drop ${j1} back to ${decade}, then subtract the remaining ${j2}.
+              </div>
+            </div>
+          `;
+        }
+      }
+    }
+
+    function toggleVisualizer() {
+      visualizerActive = !visualizerActive;
+      const btn = document.getElementById("visToggleBtn");
+      if (visualizerActive) {
+        btn.textContent = "💡 Hints: On";
+        btn.className = "px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-700 text-[11px] font-bold";
+      } else {
+        btn.textContent = "🙈 Hints: Off";
+        btn.className = "px-2 py-0.5 rounded bg-rose-950 text-rose-300 border border-rose-800 text-[11px] font-bold";
+      }
+      // Re-render current stage with updated hints visibility
+      if (currentQuestion && (currentModule === 1 || currentModule === 2 || currentModule === 4)) {
+        const stage = document.getElementById("problemContent");
+        const showHints = visualizerActive || isAnswered;
+        if (currentModule === 1) {
+          const { a, b, decade, j1, j2 } = currentQuestion;
+          stage.innerHTML = `
+            <div class="flex flex-col items-center justify-center max-w-xl w-full my-auto">
+              <div class="text-4xl sm:text-5xl font-extrabold text-white font-num mb-4">
+                ${a} + ${b} = <span class="text-amber-400">?</span>
+              </div>
+              <div class="w-full flex items-center justify-between gap-2 p-3 rounded-xl bg-slate-900 border border-slate-800 text-xs font-num mb-2">
+                <div class="flex-1 p-2 rounded-lg bg-sky-950 border border-sky-400 text-center text-sky-300 font-bold shadow">
+                  <div class="text-[10px] text-slate-400">1. Jump to Friendly Ten</div>
+                  <div>${showHints ? `${a} + ${j1} = <strong class="text-emerald-400">${decade}</strong>` : `${a} + <span class="text-amber-400 font-bold">?</span> = <strong class="text-emerald-400">${decade}</strong>`}</div>
+                </div>
+                <span class="text-slate-600 font-black">➔</span>
+                <div class="flex-1 p-2 rounded-lg bg-slate-800 border border-slate-700 text-center text-yellow-300 font-bold">
+                  <div class="text-[10px] text-slate-400">2. Leftover Addend</div>
+                  <div>${showHints ? `${b} split (${j1} &amp; ${j2})` : `${b} split (<span class="text-amber-400 font-bold">? &amp; ?</span>)`}</div>
+                </div>
+                <span class="text-slate-600 font-black">➔</span>
+                <div class="flex-1 p-2 rounded-lg bg-slate-800 border border-slate-700 text-center text-amber-300 font-bold">
+                  <div class="text-[10px] text-slate-400">3. Final Destination</div>
+                  <div>${showHints ? `${decade} + ${j2} = ?` : `<strong class="text-emerald-400">${decade}</strong> + <span class="text-amber-400 font-bold">?</span> = ?`}</div>
+                </div>
+              </div>
+              <div class="text-xs text-sky-400 font-semibold ${showHints ? '' : 'invisible'}">
+                Don't count in ones! Jump ${j1} to reach ${decade}, then add ${j2}.
+              </div>
+            </div>
+          `;
+        } else if (currentModule === 2) {
+          const { a, b, decade, j1, j2 } = currentQuestion;
+          stage.innerHTML = `
+            <div class="flex flex-col items-center justify-center max-w-xl w-full my-auto">
+              <div class="text-4xl sm:text-5xl font-extrabold text-white font-num mb-4">
+                ${a} − ${b} = <span class="text-rose-400">?</span>
+              </div>
+              <div class="w-full flex items-center justify-between gap-2 p-3 rounded-xl bg-slate-900 border border-slate-800 text-xs font-num mb-2">
+                <div class="flex-1 p-2 rounded-lg bg-rose-950 border border-rose-500 text-center text-rose-300 font-bold shadow">
+                  <div class="text-[10px] text-slate-400">1. Clear to Friendly Ten</div>
+                  <div>${showHints ? `${a} − ${j1} = <strong class="text-emerald-400">${decade}</strong>` : `${a} − <span class="text-amber-400 font-bold">?</span> = <strong class="text-emerald-400">${decade}</strong>`}</div>
+                </div>
+                <span class="text-slate-600 font-black">➔</span>
+                <div class="flex-1 p-2 rounded-lg bg-slate-800 border border-slate-700 text-center text-yellow-300 font-bold">
+                  <div class="text-[10px] text-slate-400">2. Leftover Subtrahend</div>
+                  <div>${showHints ? `${b} split (${j1} &amp; ${j2})` : `${b} split (<span class="text-amber-400 font-bold">? &amp; ?</span>)`}</div>
+                </div>
+                <span class="text-slate-600 font-black">➔</span>
+                <div class="flex-1 p-2 rounded-lg bg-slate-800 border border-slate-700 text-center text-amber-300 font-bold">
+                  <div class="text-[10px] text-slate-400">3. Drop from Ten</div>
+                  <div>${showHints ? `${decade} − ${j2} = ?` : `<strong class="text-emerald-400">${decade}</strong> − <span class="text-amber-400 font-bold">?</span> = ?`}</div>
+                </div>
+              </div>
+              <div class="text-xs text-rose-400 font-semibold ${showHints ? '' : 'invisible'}">
+                Drop ${j1} back to ${decade}, then subtract the remaining ${j2}.
+              </div>
+            </div>
+          `;
+        }
+      }
+    }
+
+    // --- FULL-STAGE 100-SQUARE HELPER (SCROLLABLE & ACCESSIBLE) ---
+    function init100Square() {
+      const grid = document.getElementById("grid100");
+      if (!grid) return;
+      grid.innerHTML = "";
+      for (let i = 1; i <= 100; i++) {
+        const tile = document.createElement("button");
+        tile.id = `sq-${i}`;
+        tile.className = "sq-tile";
+        tile.textContent = i;
+        tile.onclick = () => toggle100Tile(i);
+        grid.appendChild(tile);
+      }
+    }
+
+    function toggleHundredSquareDrawer() {
+      const drawer = document.getElementById("drawer100");
+      const arrow = document.getElementById("arrow100");
+      const isHidden = drawer.classList.contains("hidden");
+      if (isHidden) {
+        drawer.classList.remove("hidden");
+        arrow.textContent = "▼ Close";
+      } else {
+        drawer.classList.add("hidden");
+        arrow.textContent = "▲ Open";
+      }
+    }
+
+    function toggle100Tile(i) {
+      const tile = document.getElementById(`sq-${i}`);
+      if (!tile) return;
+      if (tile.classList.contains("bg-sky-500")) {
+        tile.className = "sq-tile";
+      } else {
+        tile.className = "sq-tile bg-sky-500 text-slate-950 font-black border-sky-300 shadow-md";
+      }
+    }
+
+    function clear100Highlights() {
+      for (let i = 1; i <= 100; i++) {
+        const tile = document.getElementById(`sq-${i}`);
+        if (tile) tile.className = "sq-tile";
+      }
+    }
+
+    function highlight100(mode) {
+      clear100Highlights();
+      for (let i = 1; i <= 100; i++) {
+        const tile = document.getElementById(`sq-${i}`);
+        if (!tile) continue;
+        let match = false;
+        if (mode === 'evens' && i % 2 === 0) match = true;
+        if (mode === 'odds' && i % 2 !== 0) match = true;
+        if (mode === 'tens' && i % 10 === 0) match = true;
+        if (mode === 'fives' && i % 5 === 0) match = true;
+        if (mode === 'primes') {
+          if (i > 1) {
+            let isPrime = true;
+            for (let j = 2; j * j <= i; j++) {
+              if (i % j === 0) { isPrime = false; break; }
+            }
+            if (isPrime) match = true;
+          }
+        }
+        if (match) {
+          tile.className = "sq-tile bg-amber-400 text-slate-950 font-black border-amber-300 shadow-md";
+        }
+      }
+    }
+
+    // --- PLACE VALUE COUNTER WORKBENCH LOGIC ---
+    function togglePVDrawer() {
+      const drawer = document.getElementById("drawerPV");
+      const arrow = document.getElementById("arrowPV");
+      const isHidden = drawer.classList.contains("hidden");
+      if (isHidden) {
+        drawer.classList.remove("hidden");
+        arrow.textContent = "▲";
+      } else {
+        drawer.classList.add("hidden");
+        arrow.textContent = "▼";
+      }
+    }
+
+    function togglePVFullscreen() {
+      const drawer = document.getElementById("drawerPV");
+      const fullBtn = document.getElementById("pvFullBtn");
+      isPVFullscreen = !isPVFullscreen;
+      if (isPVFullscreen) {
+        drawer.className = "fixed inset-4 z-40 bg-[#0d1629] rounded-2xl border-2 border-amber-500/50 p-4 shadow-2xl flex flex-col";
+        fullBtn.textContent = "🗗 Contract";
+      } else {
+        drawer.className = "mt-2 p-3 bg-[#0d1629] rounded-xl border border-slate-800 shrink-0 max-h-[48vh] flex flex-col";
+        fullBtn.textContent = "⛶ Expand";
+      }
+    }
+
+    function togglePVValueDisplay() {
+      pvValuesVisible = !pvValuesVisible;
+      const btn = document.getElementById("pvVisibilityBtn");
+      const icon = document.getElementById("pvVisIcon");
+      const label = document.getElementById("pvVisLabel");
+      if (pvValuesVisible) {
+        icon.textContent = "👁️";
+        label.textContent = "Values: Shown";
+        btn.className = "px-2.5 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-semibold flex items-center gap-1";
+      } else {
+        icon.textContent = "🙈";
+        label.textContent = "Values: Hidden";
+        btn.className = "px-2.5 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-700 text-xs font-semibold flex items-center gap-1";
+      }
+      updatePVDisplay();
+    }
+
+    function addPVToken(col) {
+      pvCounters[col]++;
+      renderPVTokens(col);
+      updatePVDisplay();
+    }
+
+    function removePVToken(col) {
+      if (pvCounters[col] > 0) {
+        pvCounters[col]--;
+        renderPVTokens(col);
+        updatePVDisplay();
+      }
+    }
+
+    function clearPVMat() {
+      pvCounters = { th: 0, h: 0, t: 0, u: 0 };
+      ['th', 'h', 't', 'u'].forEach(col => renderPVTokens(col));
+      updatePVDisplay();
+    }
+
+    function exchangePV10to1() {
+      if (pvCounters.u >= 10) {
+        pvCounters.u -= 10;
+        pvCounters.t += 1;
+      }
+      if (pvCounters.t >= 10) {
+        pvCounters.t -= 10;
+        pvCounters.h += 1;
+      }
+      if (pvCounters.h >= 10) {
+        pvCounters.h -= 10;
+        pvCounters.th += 1;
+      }
+      ['th', 'h', 't', 'u'].forEach(col => renderPVTokens(col));
+      updatePVDisplay();
+    }
+
+    function renderPVTokens(col) {
+      const container = document.getElementById(`col-${col}`);
+      if (!container) return;
+      container.innerHTML = "";
+      const count = pvCounters[col];
+      const tokenClass = col === 'th' ? 'token-th' : col === 'h' ? 'token-h' : col === 't' ? 'token-t' : 'token-u';
+      const label = col === 'th' ? '1k' : col === 'h' ? '100' : col === 't' ? '10' : '1';
+
+      for (let i = 0; i < count; i++) {
+        const tok = document.createElement("div");
+        tok.className = `pv-token ${tokenClass}`;
+        tok.textContent = label;
+        tok.onclick = () => removePVToken(col);
+        container.appendChild(tok);
+      }
+    }
+
+    function updatePVDisplay() {
+      const total = (pvCounters.th * 1000) + (pvCounters.h * 100) + (pvCounters.t * 10) + pvCounters.u;
+      const totalEl = document.getElementById("pvMatTotal");
+      if (totalEl) {
+        totalEl.textContent = pvValuesVisible ? total.toLocaleString() : "???";
+      }
+
+      const mults = { th: 1000, h: 100, t: 10, u: 1 };
+      ['th', 'h', 't', 'u'].forEach(col => {
+        const badge = document.getElementById(`badge-${col}`);
+        if (badge) {
+          const count = pvCounters[col];
+          const val = count * mults[col];
+          badge.textContent = pvValuesVisible ? `${count} (${val.toLocaleString()})` : `${count} (???)`;
+        }
+      });
+    }
+
+    // --- GLOBAL PERSISTENT WHITEBOARD ---
+    let wbActive = false;
+    let wbTool = 'touch';
+    let wbColor = '#ffffff';
+    let wbSize = 3;
+    let isDrawing = false;
+    let wbHistory = [];
+    let canvas, ctx;
+
+    function initWhiteboard() {
+      canvas = document.getElementById("whiteboardCanvas");
+      ctx = canvas.getContext("2d");
+      resizeWhiteboard();
+      window.addEventListener("resize", resizeWhiteboard);
+
+      canvas.addEventListener("mousedown", startDrawing);
+      canvas.addEventListener("mousemove", draw);
+      canvas.addEventListener("mouseup", stopDrawing);
+      canvas.addEventListener("mouseleave", stopDrawing);
+
+      canvas.addEventListener("touchstart", (e) => {
+        e.preventDefault();
+        const touch = e.touches[0];
+        startDrawing({ clientX: touch.clientX, clientY: touch.clientY });
+      }, { passive: false });
+
+      canvas.addEventListener("touchmove", (e) => {
+        e.preventDefault();
+        const touch = e.touches[0];
+        draw({ clientX: touch.clientX, clientY: touch.clientY });
+      }, { passive: false });
+
+      canvas.addEventListener("touchend", stopDrawing);
+    }
+
+    function resizeWhiteboard() {
+      if (!canvas) return;
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      redrawHistory();
+    }
+
+    function toggleWhiteboard() {
+      wbActive = !wbActive;
+      const toolbar = document.getElementById("wbToolbar");
+      const btn = document.getElementById("wbToggleBtn");
+      if (wbActive) {
+        toolbar.classList.remove("hidden");
+        btn.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs shadow-md transition-all";
+        setWbTool('pen');
+      } else {
+        toolbar.classList.add("hidden");
+        btn.className = "flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs shadow-md transition-all";
+        setWbTool('touch');
+      }
+    }
+
+    function setWbTool(tool) {
+      wbTool = tool;
+      ['touch', 'pen', 'highlighter', 'eraser'].forEach(t => {
+        const b = document.getElementById(`wbTool-${t}`);
+        if (b) {
+          b.className = t === tool 
+            ? "px-2.5 py-1.5 rounded-lg bg-sky-600 text-white text-xs font-bold flex items-center justify-center gap-1"
+            : "px-2.5 py-1.5 rounded-lg bg-slate-800 text-slate-300 text-xs font-bold flex items-center justify-center gap-1";
+        }
+      });
+
+      if (!canvas) return;
+      if (tool === 'touch') {
+        canvas.style.pointerEvents = 'none';
+        canvas.style.cursor = 'default';
+      } else {
+        canvas.style.pointerEvents = 'auto';
+        canvas.style.cursor = 'crosshair';
+      }
+    }
+
+    function setWbColor(c) { wbColor = c; }
+    function setWbSize(s) { wbSize = s; }
+
+    function startDrawing(e) {
+      if (wbTool === 'touch') return;
+      isDrawing = true;
+      ctx.beginPath();
+      ctx.moveTo(e.clientX, e.clientY);
+      wbHistory.push({ type: 'start', x: e.clientX, y: e.clientY, tool: wbTool, color: wbColor, size: wbSize });
+    }
+
+    function draw(e) {
+      if (!isDrawing || wbTool === 'touch') return;
+      ctx.lineTo(e.clientX, e.clientY);
+      if (wbTool === 'eraser') {
+        ctx.globalCompositeOperation = 'destination-out';
+        ctx.lineWidth = wbSize * 3;
+      } else if (wbTool === 'highlighter') {
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.strokeStyle = wbColor + '55';
+        ctx.lineWidth = wbSize * 2.5;
+      } else {
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.strokeStyle = wbColor;
+        ctx.lineWidth = wbSize;
+      }
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.stroke();
+      wbHistory.push({ type: 'draw', x: e.clientX, y: e.clientY });
+    }
+
+    function stopDrawing() {
+      if (!isDrawing) return;
+      isDrawing = false;
+      ctx.closePath();
+    }
+
+    function clearWhiteboard() {
+      if (!ctx || !canvas) return;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      wbHistory = [];
+    }
+
+    function undoWhiteboard() {
+      let lastStart = -1;
+      for (let i = wbHistory.length - 1; i >= 0; i--) {
+        if (wbHistory[i].type === 'start') {
+          lastStart = i;
+          break;
+        }
+      }
+      if (lastStart >= 0) {
+        wbHistory = wbHistory.slice(0, lastStart);
+        redrawHistory();
+      }
+    }
+
+    function redrawHistory() {
+      if (!ctx || !canvas) return;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      let currentStrokeTool = 'pen';
+      for (let item of wbHistory) {
+        if (item.type === 'start') {
+          ctx.beginPath();
+          ctx.moveTo(item.x, item.y);
+          currentStrokeTool = item.tool;
+          if (item.tool === 'eraser') {
+            ctx.globalCompositeOperation = 'destination-out';
+            ctx.lineWidth = item.size * 3;
+          } else if (item.tool === 'highlighter') {
+            ctx.globalCompositeOperation = 'source-over';
+            ctx.strokeStyle = item.color + '55';
+            ctx.lineWidth = item.size * 2.5;
+          } else {
+            ctx.globalCompositeOperation = 'source-over';
+            ctx.strokeStyle = item.color;
+            ctx.lineWidth = item.size;
+          }
+          ctx.lineCap = 'round';
+          ctx.lineJoin = 'round';
+        } else if (item.type === 'draw') {
+          ctx.lineTo(item.x, item.y);
+          ctx.stroke();
+        }
+      }
+    }
+
+    // --- 60-SECOND FAST FIRE LOGIC ---
+    function startFastFire() {
+      clearInterval(fastFireTimer);
+      fastFireSeconds = 60;
+      const el = document.getElementById("fastFireCountdown");
+      const btn = document.getElementById("btnFastFireStart");
+      if (btn) btn.classList.add("hidden");
+
+      fastFireTimer = setInterval(() => {
+        fastFireSeconds--;
+        if (el) el.textContent = `${fastFireSeconds}s`;
+        if (fastFireSeconds <= 0) {
+          clearInterval(fastFireTimer);
+          playChime('correct');
+          if (btn) btn.classList.remove("hidden");
+          const feedback = document.getElementById("feedbackText");
+          feedback.textContent = `⏱ Time's Up! Total Score: ${score}`;
+          feedback.className = "text-amber-400 font-extrabold text-sm truncate";
+        }
+      }, 1000);
+      generateQuestion();
+    }
+
+    // --- INITIALIZATION ---
+    window.onload = () => {
+      initWhiteboard();
+      init100Square();
+      setModule(1);
+    };
+  </script>
+</body>
+</html>
