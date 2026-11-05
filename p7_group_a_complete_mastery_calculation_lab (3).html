@@ -1,0 +1,1843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>P7 Group A: Complete Mastery &amp; Calculation Lab</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts: Fredoka & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@600;800&display=swap" rel="stylesheet">
+
+  <style>
+    html, body {
+      height: 100%;
+      overflow: hidden; /* Strict zero vertical scrolling */
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #070d19;
+      color: #f1f5f9;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    .font-num {
+      font-family: 'Fredoka', cursive, sans-serif;
+    }
+    .font-mono-calc {
+      font-family: 'JetBrains Mono', 'Courier New', monospace;
+      font-variant-numeric: tabular-nums;
+    }
+    .key-btn:active {
+      transform: scale(0.93);
+    }
+    .jump-line-arc {
+      stroke-dasharray: 6 6;
+      animation: dashMove 1.4s linear infinite;
+    }
+    @keyframes dashMove {
+      to { stroke-dashoffset: -24; }
+    }
+    @keyframes pulseSoft {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.04); opacity: 0.9; }
+    }
+    .pulse-glow {
+      animation: pulseSoft 2s ease-in-out infinite;
+    }
+    .grid-cell {
+      transition: all 0.1s ease-in-out;
+    }
+    .grid-cell:hover {
+      transform: scale(1.12);
+      z-index: 10;
+    }
+    /* Specific 5-Column Grid for Column Addition / Subtraction */
+    .column-method-grid {
+      display: grid;
+      grid-template-columns: 44px repeat(4, 56px);
+      justify-content: center;
+      align-items: center;
+      row-gap: 4px;
+    }
+    /* Custom scrollbars for drawers */
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #091122;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 9999px;
+    }
+  </style>
+</head>
+<body class="h-screen flex flex-col justify-between selection:bg-amber-400 selection:text-slate-950">
+
+  <!-- ========================================================
+       TOP PRIMARY HEADER & MODULE SELECTOR
+       ======================================================== -->
+  <header class="bg-[#0b132b] border-b border-slate-800 px-3 py-1.5 z-30 shrink-0 shadow-lg">
+    <div class="w-full flex items-center justify-between gap-2">
+      
+      <!-- Logo & Title -->
+      <div class="flex items-center gap-2 shrink-0">
+        <div class="h-8 w-8 rounded-xl bg-amber-400 flex items-center justify-center font-num text-lg font-black text-slate-950 shadow-md shadow-amber-400/20">
+          P7
+        </div>
+        <div>
+          <h1 class="text-sm sm:text-base font-extrabold text-amber-400 leading-none">P7 Group A: Calculation Mastery Lab</h1>
+          <p class="text-[10px] text-slate-400 font-medium">Intervention &amp; Conceptual Fluency Suite</p>
+        </div>
+      </div>
+
+      <!-- 9 Primary Mastery Modules Switcher -->
+      <nav class="flex items-center gap-1 bg-[#101b38] p-1 rounded-xl border border-slate-800 overflow-x-auto max-w-[62vw]">
+        <button onclick="setModule(1)" id="modBtn-1" class="px-2 py-1 rounded-lg text-xs font-bold transition bg-amber-400 text-slate-950 shadow whitespace-nowrap">
+          1. Column ＋
+        </button>
+        <button onclick="setModule(2)" id="modBtn-2" class="px-2 py-1 rounded-lg text-xs font-semibold transition text-slate-300 hover:text-white whitespace-nowrap">
+          2. Column −
+        </button>
+        <button onclick="setModule(3)" id="modBtn-3" class="px-2 py-1 rounded-lg text-xs font-semibold transition text-slate-300 hover:text-white whitespace-nowrap">
+          3. Flex Partition
+        </button>
+        <button onclick="setModule(4)" id="modBtn-4" class="px-2 py-1 rounded-lg text-xs font-semibold transition text-slate-300 hover:text-white whitespace-nowrap">
+          4. Bridging
+        </button>
+        <button onclick="setModule(5)" id="modBtn-5" class="px-2 py-1 rounded-lg text-xs font-semibold transition text-slate-300 hover:text-white whitespace-nowrap">
+          5. Bonds 100/1k
+        </button>
+        <button onclick="setModule(6)" id="modBtn-6" class="px-2 py-1 rounded-lg text-xs font-semibold transition text-slate-300 hover:text-white whitespace-nowrap">
+          6. Derived Facts
+        </button>
+        <button onclick="setModule(7)" id="modBtn-7" class="px-2 py-1 rounded-lg text-xs font-semibold transition text-slate-300 hover:text-white whitespace-nowrap">
+          7. Division ÷
+        </button>
+        <button onclick="setModule(8)" id="modBtn-8" class="px-2 py-1 rounded-lg text-xs font-semibold transition text-slate-300 hover:text-white whitespace-nowrap">
+          8. Spot Mistake
+        </button>
+        <button onclick="setModule(9)" id="modBtn-9" class="px-2 py-1 rounded-lg text-xs font-semibold transition text-slate-300 hover:text-white whitespace-nowrap">
+          9. Fast Fire
+        </button>
+      </nav>
+
+      <!-- Global Actions: Streak, Score, Whiteboard Trigger -->
+      <div class="flex items-center gap-2 shrink-0">
+        <div class="hidden md:flex items-center gap-1.5 bg-[#162544] px-2.5 py-1 rounded-lg border border-slate-700/80 text-xs">
+          <span>🔥</span>
+          <span class="text-amber-400 font-num font-bold text-xs" id="globalStreak">0</span>
+          <span class="text-slate-600">|</span>
+          <span class="text-slate-300">Score:</span>
+          <span class="text-emerald-400 font-num font-bold text-xs" id="globalScore">0</span>
+        </div>
+
+        <button onclick="toggleWhiteboardToolbar()" id="btnWhiteboardToggle" class="flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold border transition bg-amber-400 text-slate-950 border-amber-300 shadow hover:bg-amber-300">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+          <span class="hidden sm:inline">Whiteboard</span>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- SECONDARY CONTEXTUAL FILTER BAR -->
+    <div class="w-full flex items-center justify-between gap-2 mt-1 pt-1 border-t border-slate-800/80 text-xs overflow-x-auto">
+      
+      <!-- Filter Row (Populated dynamically) -->
+      <div id="moduleFiltersContainer" class="flex items-center gap-1 shrink-0">
+        <!-- Rendered by JS -->
+      </div>
+
+      <!-- Quick Helper Toggles -->
+      <div class="flex items-center gap-1 shrink-0">
+        <button onclick="toggleHundredSquareDrawer()" id="btnToggle100Square" class="px-2 py-0.5 rounded text-[11px] font-bold bg-[#1a2942] text-amber-300 border border-slate-700 hover:text-white">
+          🔢 100-Square
+        </button>
+        <button onclick="togglePlaceValueDrawer()" id="btnTogglePVDrawer" class="px-2 py-0.5 rounded text-[11px] font-bold bg-[#1a2942] text-sky-300 border border-slate-700 hover:text-white">
+          🏷️ Place Value
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ========================================================
+       MAIN SIDE-BY-SIDE INTERVENTION WORKSPACE (NO VERTICAL SCROLL)
+       ======================================================== -->
+  <main class="w-full flex-1 p-2 sm:p-3 overflow-hidden flex flex-row items-stretch justify-center gap-3">
+    
+    <!-- LEFT COLUMN: Main Visualizer Stage, Models & Questions (~73% width) -->
+    <section class="flex-[3] flex flex-col justify-between bg-[#0e172e] border border-slate-800/90 rounded-2xl p-3 shadow-2xl overflow-hidden relative">
+      
+      <!-- TOP: Task Prompt & Stepper Stage Indicator -->
+      <div class="w-full flex flex-col items-center shrink-0">
+        
+        <!-- Multi-Stage Stepper Header (Active during Bridging / Multi-step) -->
+        <div id="multiStageBar" class="hidden w-full max-w-xl mb-1.5 flex items-center justify-between gap-1.5">
+          <div id="stepPill-1" class="flex-1 py-1 px-2 rounded-lg text-center text-[11px] font-bold bg-amber-400 text-slate-950 shadow flex items-center justify-center gap-1">
+            <span>①</span><span id="stepLabel-1">Landmark Ten</span>
+          </div>
+          <span class="text-slate-600 text-xs">➔</span>
+          <div id="stepPill-2" class="flex-1 py-1 px-2 rounded-lg text-center text-[11px] font-semibold bg-[#182747] text-slate-400 border border-slate-700 flex items-center justify-center gap-1">
+            <span>②</span><span id="stepLabel-2">Remaining Split</span>
+          </div>
+          <span class="text-slate-600 text-xs">➔</span>
+          <div id="stepPill-3" class="flex-1 py-1 px-2 rounded-lg text-center text-[11px] font-semibold bg-[#182747] text-slate-400 border border-slate-700 flex items-center justify-center gap-1">
+            <span>③</span><span id="stepLabel-3">Total Destination</span>
+          </div>
+        </div>
+
+        <!-- Big Question Card -->
+        <div class="bg-[#142344] border border-slate-700/80 px-6 py-2 rounded-2xl shadow-inner w-full max-w-xl flex items-center justify-center">
+          <div id="equationDisplay" class="font-num text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-white flex items-center justify-center gap-2 sm:gap-3 flex-wrap text-center leading-none">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+        <!-- Pedagogical Guidance Prompt -->
+        <p id="promptSubtext" class="text-xs sm:text-sm font-bold text-slate-300 mt-1 text-center truncate w-full">
+          Select or enter the missing calculation value.
+        </p>
+
+      </div>
+
+      <!-- CENTER: Interactive Dynamic Visualizer Stage (Strictly Aligned) -->
+      <div id="visualizerStage" class="w-full flex-1 my-2 bg-[#081021] border border-slate-800/90 rounded-xl p-2.5 flex flex-col items-center justify-center overflow-hidden relative">
+        <!-- Dynamically rendered based on active module -->
+      </div>
+
+      <!-- COLLAPSIBLE ON-DEMAND HELPER DRAWERS -->
+      <!-- 100-Square Drawer -->
+      <div id="drawer100Square" class="hidden w-full bg-[#0c162d] border border-slate-800 rounded-xl p-2 mb-1.5 shrink-0 shadow-lg">
+        <div class="flex items-center justify-between mb-1 px-1">
+          <span class="text-[11px] font-bold text-amber-400 font-num">Interactive 100-Square Helper</span>
+          <div class="flex items-center gap-1">
+            <button onclick="highlightPattern100('evens')" class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-[#1e293b] text-emerald-300">Evens</button>
+            <button onclick="highlightPattern100('odds')" class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-[#1e293b] text-amber-300">Odds</button>
+            <button onclick="highlightPattern100('tens')" class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-[#1e293b] text-sky-300">10s</button>
+            <button onclick="clearPattern100()" class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-rose-900/40 text-rose-300">Clear</button>
+            <button onclick="toggleHundredSquareDrawer()" class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-slate-800 text-slate-400">✕</button>
+          </div>
+        </div>
+        <div id="grid100DrawerContainer" class="grid grid-cols-10 gap-0.5 max-w-md mx-auto">
+          <!-- 100 cells generated in JS -->
+        </div>
+      </div>
+
+      <!-- Place Value Helper Drawer -->
+      <div id="drawerPlaceValue" class="hidden w-full bg-[#0c162d] border border-slate-800 rounded-xl p-2 mb-1.5 shrink-0 shadow-lg">
+        <div class="flex items-center justify-between mb-1 px-1">
+          <span class="text-[11px] font-bold text-sky-400 font-num">Place Value Counters (Thousands, Hundreds, Tens, Ones)</span>
+          <button onclick="togglePlaceValueDrawer()" class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-slate-800 text-slate-400">✕</button>
+        </div>
+        <div id="pvCountersStage" class="flex items-center justify-around gap-2 max-w-xl mx-auto py-1">
+          <!-- Rendered in JS -->
+        </div>
+      </div>
+
+      <!-- BOTTOM: Mathematical Stem Sentence Box -->
+      <div id="stemSentenceBox" class="hidden w-full p-2 bg-emerald-950/80 border border-emerald-500/40 rounded-xl text-center shrink-0">
+        <p id="stemSentenceText" class="text-xs sm:text-sm font-bold text-emerald-300 font-num">
+          <!-- Spoken / written mathematical reasoning statement -->
+        </p>
+      </div>
+
+    </section>
+
+    <!-- RIGHT COLUMN: Number Keypad, Stepper Input & Teacher Controls (~27% width) -->
+    <aside class="flex-[1.1] max-w-[320px] min-w-[260px] bg-[#0e172e] border border-slate-800/90 rounded-2xl p-2.5 sm:p-3 shadow-2xl flex flex-col justify-start gap-2 shrink-0">
+      
+      <!-- Stepped Sub-Prompt Box (When in multi-step mode) -->
+      <div id="stepPromptCard" class="hidden w-full bg-[#162544] border border-amber-400/80 rounded-xl p-2 shadow-sm flex items-center justify-between gap-1.5 shrink-0">
+        <div class="flex items-center gap-1.5">
+          <span id="stepNumberBadge" class="w-6 h-6 rounded-full bg-amber-400 text-slate-950 font-black font-num text-xs flex items-center justify-center shrink-0">1</span>
+          <div>
+            <div id="stepSubTitle" class="text-[10px] uppercase tracking-wider font-extrabold text-amber-300 leading-none">Step 1</div>
+            <div id="stepSubQuestion" class="text-xs font-bold text-slate-100 leading-tight">Enter value</div>
+          </div>
+        </div>
+        <div class="text-right shrink-0 bg-[#0a1224] px-2 py-0.5 rounded-lg border border-slate-700">
+          <span id="stepTargetVal" class="text-xs font-black font-num text-amber-400">?</span>
+        </div>
+      </div>
+
+      <!-- Active Pupil Input Display Slot -->
+      <div id="activeInputSlotRow" class="w-full flex items-center gap-1.5 shrink-0">
+        <div class="flex-1 h-12 bg-[#121f3b] border-2 border-amber-400 rounded-xl flex items-center justify-center shadow-md">
+          <span id="activeInputText" class="font-num text-3xl font-extrabold text-amber-400">?</span>
+        </div>
+        <button onclick="clearCurrentInput()" class="h-12 px-3 bg-[#1e293b] hover:bg-slate-700 text-slate-300 font-bold text-xs uppercase tracking-wider rounded-xl border border-slate-700 transition key-btn">
+          CLEAR
+        </button>
+      </div>
+
+      <!-- Misconception True/False Mode Buttons (Active during Module 8) -->
+      <div id="misconceptionChoiceRow" class="hidden w-full grid grid-cols-2 gap-2 shrink-0">
+        <button onclick="submitMisconceptionEvaluation(true)" class="key-btn h-14 bg-gradient-to-r from-emerald-500 to-emerald-600 text-slate-950 font-num text-base font-black rounded-xl shadow border border-emerald-300 flex items-center justify-center">
+          ✓ CORRECT
+        </button>
+        <button onclick="submitMisconceptionEvaluation(false)" class="key-btn h-14 bg-gradient-to-r from-rose-500 to-rose-600 text-white font-num text-base font-black rounded-xl shadow border border-rose-400 flex items-center justify-center">
+          ✕ MISTAKE!
+        </button>
+      </div>
+
+      <!-- TACTILE 3x4 KEYPAD (Tightened Spacing, Arm-Height, Promethean-Ready) -->
+      <div id="tactileKeypadContainer" class="w-full bg-[#121f3b] border border-slate-800 rounded-xl p-2 shadow-lg flex flex-col gap-1.5 shrink-0">
+        
+        <div class="grid grid-cols-3 gap-1.5">
+          <button onclick="inputDigit('1')" class="key-btn h-10 sm:h-11 rounded-lg bg-[#1e293b] hover:bg-slate-700 text-white font-num text-xl font-bold shadow flex items-center justify-center">1</button>
+          <button onclick="inputDigit('2')" class="key-btn h-10 sm:h-11 rounded-lg bg-[#1e293b] hover:bg-slate-700 text-white font-num text-xl font-bold shadow flex items-center justify-center">2</button>
+          <button onclick="inputDigit('3')" class="key-btn h-10 sm:h-11 rounded-lg bg-[#1e293b] hover:bg-slate-700 text-white font-num text-xl font-bold shadow flex items-center justify-center">3</button>
+        </div>
+
+        <div class="grid grid-cols-3 gap-1.5">
+          <button onclick="inputDigit('4')" class="key-btn h-10 sm:h-11 rounded-lg bg-[#1e293b] hover:bg-slate-700 text-white font-num text-xl font-bold shadow flex items-center justify-center">4</button>
+          <button onclick="inputDigit('5')" class="key-btn h-10 sm:h-11 rounded-lg bg-[#1e293b] hover:bg-slate-700 text-white font-num text-xl font-bold shadow flex items-center justify-center">5</button>
+          <button onclick="inputDigit('6')" class="key-btn h-10 sm:h-11 rounded-lg bg-[#1e293b] hover:bg-slate-700 text-white font-num text-xl font-bold shadow flex items-center justify-center">6</button>
+        </div>
+
+        <div class="grid grid-cols-3 gap-1.5">
+          <button onclick="inputDigit('7')" class="key-btn h-10 sm:h-11 rounded-lg bg-[#1e293b] hover:bg-slate-700 text-white font-num text-xl font-bold shadow flex items-center justify-center">7</button>
+          <button onclick="inputDigit('8')" class="key-btn h-10 sm:h-11 rounded-lg bg-[#1e293b] hover:bg-slate-700 text-white font-num text-xl font-bold shadow flex items-center justify-center">8</button>
+          <button onclick="inputDigit('9')" class="key-btn h-10 sm:h-11 rounded-lg bg-[#1e293b] hover:bg-slate-700 text-white font-num text-xl font-bold shadow flex items-center justify-center">9</button>
+        </div>
+
+        <div class="grid grid-cols-3 gap-1.5">
+          <button onclick="inputBackspace()" class="key-btn h-10 sm:h-11 rounded-lg bg-[#1a253d] hover:bg-slate-700 text-slate-300 font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-1 border border-slate-700">
+            DEL
+          </button>
+          <button onclick="inputDigit('0')" class="key-btn h-10 sm:h-11 rounded-lg bg-[#1e293b] hover:bg-slate-700 text-white font-num text-xl font-bold shadow flex items-center justify-center">0</button>
+          <button onclick="submitAnswer()" id="submitActionBtn" class="key-btn h-10 sm:h-11 rounded-lg bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-sm uppercase tracking-wider shadow flex items-center justify-center transition">
+            ↵
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Teacher Controls (Anti-Cheat Model / Skip) -->
+      <div class="flex items-center justify-between gap-1 pt-1 shrink-0 text-xs text-slate-400">
+        <button onclick="forceTeacherModel()" class="px-2.5 py-1 rounded-lg bg-[#1e293b] text-slate-300 hover:text-amber-400 font-semibold text-[11px] border border-slate-700/60 transition">
+          Model / Reveal
+        </button>
+        <button onclick="generateNextQuestion()" class="px-2.5 py-1 rounded-lg bg-[#1e293b] text-slate-300 hover:text-white font-semibold text-[11px] border border-slate-700/60 transition">
+          Next Question ➔
+        </button>
+      </div>
+
+    </aside>
+
+  </main>
+
+  <!-- ========================================================
+       ROOT-LEVEL UNIVERSAL INTERACTIVE WHITEBOARD OVERLAY
+       ======================================================== -->
+  <div id="whiteboardOverlayWrapper" class="fixed inset-0 z-40 pointer-events-none transition-colors duration-200">
+    <canvas id="whiteboardCanvas" class="w-full h-full block pointer-events-none touch-none"></canvas>
+  </div>
+
+  <!-- FLOATING PERSISTENT WHITEBOARD TOOLBAR -->
+  <div id="whiteboardToolbar" class="fixed bottom-2 left-1/2 -translate-x-1/2 z-50 bg-[#0b132b]/95 backdrop-blur-md border-2 border-amber-400/80 rounded-xl p-1.5 shadow-2xl flex flex-wrap items-center justify-center gap-1.5 max-w-[96vw]">
+    
+    <div class="flex items-center gap-1 px-1.5 text-xs font-extrabold text-amber-400 border-r border-slate-700/80">
+      <span class="font-num text-xs">Pen Tool</span>
+    </div>
+
+    <!-- Mode Selector: Transparent Overlay vs Scratchpad -->
+    <div class="flex items-center bg-[#070e1e] p-0.5 rounded-lg border border-slate-800">
+      <button onclick="setBoardMode('overlay')" id="btnBoardMode-overlay" class="px-2 py-0.5 rounded text-[11px] font-bold transition bg-amber-400 text-slate-950">Overlay</button>
+      <button onclick="setBoardMode('scratch')" id="btnBoardMode-scratch" class="px-2 py-0.5 rounded text-[11px] font-bold transition text-slate-300 hover:text-white">Scratchpad</button>
+    </div>
+
+    <!-- Draw Tools -->
+    <div class="flex items-center bg-[#070e1e] p-0.5 rounded-lg border border-slate-800">
+      <button onclick="setDrawTool('pen')" id="btnTool-pen" class="px-2 py-0.5 rounded text-[11px] font-bold transition bg-slate-800 text-white shadow border border-slate-700">✏️</button>
+      <button onclick="setDrawTool('highlighter')" id="btnTool-highlighter" class="px-2 py-0.5 rounded text-[11px] font-bold transition text-slate-300 hover:text-white">🖍️</button>
+      <button onclick="setDrawTool('eraser')" id="btnTool-eraser" class="px-2 py-0.5 rounded text-[11px] font-bold transition text-slate-300 hover:text-white">🧹</button>
+      <button onclick="setDrawTool('pointer')" id="btnTool-pointer" class="px-2 py-0.5 rounded text-[11px] font-bold transition text-slate-300 hover:text-white">👆 Touch</button>
+    </div>
+
+    <!-- Palette Colors -->
+    <div class="flex items-center gap-1 px-1 bg-[#070e1e] p-0.5 rounded-lg border border-slate-800">
+      <button onclick="setPenColor('#fde047')" class="w-5 h-5 rounded-full bg-yellow-300 border border-yellow-200" title="Yellow"></button>
+      <button onclick="setPenColor('#38bdf8')" class="w-5 h-5 rounded-full bg-sky-400 border border-sky-300" title="Cyan"></button>
+      <button onclick="setPenColor('#ffffff')" class="w-5 h-5 rounded-full bg-white border border-slate-200" title="White"></button>
+      <button onclick="setPenColor('#fb7185')" class="w-5 h-5 rounded-full bg-rose-400 border border-rose-300" title="Rose"></button>
+      <button onclick="setPenColor('#fb923c')" class="w-5 h-5 rounded-full bg-orange-400 border border-orange-300" title="Orange"></button>
+      <button onclick="setPenColor('#4ade80')" class="w-5 h-5 rounded-full bg-emerald-400 border border-emerald-300" title="Green"></button>
+    </div>
+
+    <!-- Line Weights -->
+    <div class="flex items-center gap-1 bg-[#070e1e] p-0.5 rounded-lg border border-slate-800">
+      <button onclick="setPenWeight(4)" class="px-1.5 py-0.5 text-[10px] font-bold text-slate-300 hover:text-white">Fine</button>
+      <button onclick="setPenWeight(8)" class="px-1.5 py-0.5 text-[10px] font-bold text-amber-300 hover:text-white">Med</button>
+      <button onclick="setPenWeight(15)" class="px-1.5 py-0.5 text-[10px] font-bold text-slate-300 hover:text-white">Thick</button>
+    </div>
+
+    <!-- Undo / Clear -->
+    <div class="flex items-center gap-1">
+      <button onclick="undoWhiteboardStroke()" title="Undo" class="p-1 rounded bg-[#1e293b] text-slate-300 hover:text-white border border-slate-700">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a5 5 0 015 5v2M3 10l6-6m-6 6l6 6"/></svg>
+      </button>
+      <button onclick="clearWhiteboardCanvas()" class="px-2 py-0.5 rounded bg-rose-600/30 text-rose-300 font-bold text-[11px] border border-rose-500/40">
+        Clear
+      </button>
+    </div>
+
+  </div>
+
+  <!-- ========================================================
+       APPLICATION ENGINE JAVASCRIPT
+       ======================================================== -->
+  <script>
+    // --- GLOBAL STATE ---
+    let currentModule = 1;
+    let globalStreak = 0;
+    let globalScore = 0;
+    let currentInput = "";
+    let isAnswered = false;
+    let currentQ = {};
+    let manual100Highlights = new Set();
+    let fastFireTimer = null;
+    let fastFireSecs = 60;
+
+    // Sub-filters per module
+    let mod1Digits = 3; // 2, 3, 4
+    let mod2Crossing = 'acrossZeros'; // 'decade', 'hundred', 'acrossZeros'
+    let mod3Style = 'flexible'; // 'standard', 'flexible', 'missing'
+    let mod4Range = 'decades'; // 'decades', 'hundreds', 'thousands'
+    let mod4Op = 'add'; // 'add', 'sub'
+    let mod5Target = 100; // 100, 1000
+    let mod6Type = 'scaling'; // 'scaling', 'doubleHalf'
+    let mod7Type = 'withRemainders'; // 'exact', 'withRemainders'
+    let mod8Category = 'reversal'; // 'reversal', 'missingZero', 'alignment'
+
+    // Multi-stage bridging state
+    let bridgeStage = 1;
+    let stage1Submitted = false;
+    let stage2Submitted = false;
+
+    // Whiteboard engine state
+    let whiteboardOpen = false;
+    let boardMode = 'overlay';
+    let drawTool = 'pen';
+    let penColor = '#fde047';
+    let penWidth = 8;
+    let isDrawing = false;
+    let wbCanvas = null;
+    let wbCtx = null;
+    let strokeHistory = [];
+    let redoHistory = [];
+    let currentStroke = null;
+
+    // --- AUDIO SYNTH (WEB AUDIO API) ---
+    function playChime(type) {
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        const now = audioCtx.currentTime;
+
+        if (type === 'correct') {
+          osc.frequency.setValueAtTime(523.25, now);
+          osc.frequency.exponentialRampToValueAtTime(659.25, now + 0.1);
+          osc.frequency.exponentialRampToValueAtTime(783.99, now + 0.2);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+          osc.start(now);
+          osc.stop(now + 0.35);
+        } else if (type === 'step') {
+          osc.frequency.setValueAtTime(440, now);
+          osc.frequency.exponentialRampToValueAtTime(554.37, now + 0.08);
+          gain.gain.setValueAtTime(0.15, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+          osc.start(now);
+          osc.stop(now + 0.2);
+        } else if (type === 'wrong') {
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(220, now);
+          osc.frequency.linearRampToValueAtTime(140, now + 0.25);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+          osc.start(now);
+          osc.stop(now + 0.25);
+        } else {
+          osc.frequency.setValueAtTime(360, now);
+          gain.gain.setValueAtTime(0.08, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+          osc.start(now);
+          osc.stop(now + 0.05);
+        }
+      } catch (err) {
+        // AudioContext silent fail
+      }
+    }
+
+    // --- MODULE NAVIGATION & SUB-FILTERS ---
+    function setModule(modIndex) {
+      currentModule = modIndex;
+      for (let i = 1; i <= 9; i++) {
+        const btn = document.getElementById(`modBtn-${i}`);
+        if (btn) {
+          btn.className = (i === modIndex)
+            ? "px-2 py-1 rounded-lg text-xs font-bold transition bg-amber-400 text-slate-950 shadow whitespace-nowrap"
+            : "px-2 py-1 rounded-lg text-xs font-semibold transition text-slate-300 hover:text-white whitespace-nowrap";
+        }
+      }
+
+      renderModuleSubFilters();
+
+      // UI switches for Misconception true/false vs standard keypad
+      if (modIndex === 8) {
+        document.getElementById('misconceptionChoiceRow').classList.remove('hidden');
+        document.getElementById('misconceptionChoiceRow').classList.add('grid');
+        document.getElementById('tactileKeypadContainer').classList.add('hidden');
+        document.getElementById('activeInputSlotRow').classList.add('hidden');
+      } else {
+        document.getElementById('misconceptionChoiceRow').classList.add('hidden');
+        document.getElementById('misconceptionChoiceRow').classList.remove('grid');
+        document.getElementById('tactileKeypadContainer').classList.remove('hidden');
+        document.getElementById('activeInputSlotRow').classList.remove('hidden');
+      }
+
+      generateNextQuestion();
+    }
+
+    function renderModuleSubFilters() {
+      const container = document.getElementById('moduleFiltersContainer');
+      container.innerHTML = '';
+
+      if (currentModule === 1) {
+        container.innerHTML = `
+          <span class="text-slate-400 font-bold uppercase tracking-wider text-[10px]">Digits:</span>
+          <button onclick="setMod1Digits(2)" class="px-2 py-0.5 rounded text-xs font-bold ${mod1Digits===2?'bg-amber-400 text-slate-950':'bg-[#162544] text-slate-300'}">2-Digit</button>
+          <button onclick="setMod1Digits(3)" class="px-2 py-0.5 rounded text-xs font-bold ${mod1Digits===3?'bg-amber-400 text-slate-950':'bg-[#162544] text-slate-300'}">3-Digit</button>
+          <button onclick="setMod1Digits(4)" class="px-2 py-0.5 rounded text-xs font-bold ${mod1Digits===4?'bg-amber-400 text-slate-950':'bg-[#162544] text-slate-300'}">4-Digit</button>
+        `;
+      } else if (currentModule === 2) {
+        container.innerHTML = `
+          <span class="text-slate-400 font-bold uppercase tracking-wider text-[10px]">Decomposition:</span>
+          <button onclick="setMod2Crossing('decade')" class="px-2 py-0.5 rounded text-xs font-bold ${mod2Crossing==='decade'?'bg-amber-400 text-slate-950':'bg-[#162544] text-slate-300'}">Crossing 10</button>
+          <button onclick="setMod2Crossing('hundred')" class="px-2 py-0.5 rounded text-xs font-bold ${mod2Crossing==='hundred'?'bg-amber-400 text-slate-950':'bg-[#162544] text-slate-300'}">Crossing 100</button>
+          <button onclick="setMod2Crossing('acrossZeros')" class="px-2 py-0.5 rounded text-xs font-bold ${mod2Crossing==='acrossZeros'?'bg-amber-400 text-slate-950':'bg-[#162544] text-slate-300'}">Across Zeros (504−267)</button>
+        `;
+      } else if (currentModule === 3) {
+        container.innerHTML = `
+          <span class="text-slate-400 font-bold uppercase tracking-wider text-[10px]">Partition Type:</span>
+          <button onclick="setMod3Style('flexible')" class="px-2 py-0.5 rounded text-xs font-bold ${mod3Style==='flexible'?'bg-amber-400 text-slate-950':'bg-[#162544] text-slate-300'}">Non-Standard (5420 = 4000+1400+20)</button>
+          <button onclick="setMod3Style('standard')" class="px-2 py-0.5 rounded text-xs font-bold ${mod3Style==='standard'?'bg-amber-400 text-slate-950':'bg-[#162544] text-slate-300'}">Standard Place Value</button>
+        `;
+      } else if (currentModule === 4) {
+        container.innerHTML = `
+          <span class="text-slate-400 font-bold uppercase tracking-wider text-[10px]">Landmark:</span>
+          <button onclick="setMod4Range('decades')" class="px-2 py-0.5 rounded text-xs font-bold ${mod4Range==='decades'?'bg-amber-400 text-slate-950':'bg-[#162544] text-slate-300'}">Decades (52−7 / 48+7)</button>
+          <button onclick="setMod4Range('hundreds')" class="px-2 py-0.5 rounded text-xs font-bold ${mod4Range==='hundreds'?'bg-amber-400 text-slate-950':'bg-[#162544] text-slate-300'}">Hundreds (492+35)</button>
+          <button onclick="setMod4Range('thousands')" class="px-2 py-0.5 rounded text-xs font-bold ${mod4Range==='thousands'?'bg-amber-400 text-slate-950':'bg-[#162544] text-slate-300'}">Thousands</button>
+          <span class="text-slate-600 mx-0.5">|</span>
+          <button onclick="setMod4Op('add')" class="px-1.5 py-0.5 rounded text-xs font-black ${mod4Op==='add'?'bg-amber-400 text-slate-950':'bg-[#162544] text-slate-300'}">＋</button>
+          <button onclick="setMod4Op('sub')" class="px-1.5 py-0.5 rounded text-xs font-black ${mod4Op==='sub'?'bg-amber-400 text-slate-950':'bg-[#162544] text-slate-300'}">−</button>
+        `;
+      } else if (currentModule === 5) {
+        container.innerHTML = `
+          <span class="text-slate-400 font-bold uppercase tracking-wider text-[10px]">Target Whole:</span>
+          <button onclick="setMod5Target(100)" class="px-2 py-0.5 rounded text-xs font-bold ${mod5Target===100?'bg-amber-400 text-slate-950':'bg-[#162544] text-slate-300'}">Complements to 100</button>
+          <button onclick="setMod5Target(1000)" class="px-2 py-0.5 rounded text-xs font-bold ${mod5Target===1000?'bg-amber-400 text-slate-950':'bg-[#162544] text-slate-300'}">Complements to 1,000</button>
+        `;
+      } else if (currentModule === 6) {
+        container.innerHTML = `
+          <span class="text-slate-400 font-bold uppercase tracking-wider text-[10px]">Reasoning:</span>
+          <button onclick="setMod6Type('scaling')" class="px-2 py-0.5 rounded text-xs font-bold ${mod6Type==='scaling'?'bg-amber-400 text-slate-950':'bg-[#162544] text-slate-300'}">Scaling ×10 / ×100</button>
+          <button onclick="setMod6Type('doubleHalf')" class="px-2 py-0.5 rounded text-xs font-bold ${mod6Type==='doubleHalf'?'bg-amber-400 text-slate-950':'bg-[#162544] text-slate-300'}">Doubling &amp; Halving</button>
+        `;
+      } else if (currentModule === 7) {
+        container.innerHTML = `
+          <span class="text-slate-400 font-bold uppercase tracking-wider text-[10px]">Bus Stop:</span>
+          <button onclick="setMod7Type('exact')" class="px-2 py-0.5 rounded text-xs font-bold ${mod7Type==='exact'?'bg-amber-400 text-slate-950':'bg-[#162544] text-slate-300'}">Exact Quotient</button>
+          <button onclick="setMod7Type('withRemainders')" class="px-2 py-0.5 rounded text-xs font-bold ${mod7Type==='withRemainders'?'bg-amber-400 text-slate-950':'bg-[#162544] text-slate-300'}">With Remainders (r)</button>
+        `;
+      } else if (currentModule === 8) {
+        container.innerHTML = `
+          <span class="text-slate-400 font-bold uppercase tracking-wider text-[10px]">Clinic:</span>
+          <button onclick="setMod8Cat('reversal')" class="px-2 py-0.5 rounded text-xs font-bold ${mod8Category==='reversal'?'bg-amber-400 text-slate-950':'bg-[#162544] text-slate-300'}">Subtraction Reversal</button>
+          <button onclick="setMod8Cat('missingZero')" class="px-2 py-0.5 rounded text-xs font-bold ${mod8Category==='missingZero'?'bg-amber-400 text-slate-950':'bg-[#162544] text-slate-300'}">Missing Regroup Zero</button>
+          <button onclick="setMod8Cat('alignment')" class="px-2 py-0.5 rounded text-xs font-bold ${mod8Category==='alignment'?'bg-amber-400 text-slate-950':'bg-[#162544] text-slate-300'}">Column Alignment</button>
+        `;
+      } else if (currentModule === 9) {
+        container.innerHTML = `
+          <span class="text-amber-400 font-num font-bold text-xs">⏱ 60s Fast Fire Rush</span>
+          <button onclick="startFastFireTimer()" class="px-2.5 py-0.5 rounded-lg font-bold bg-rose-500 text-white text-xs">Start 60s</button>
+          <span id="fastFireCountdown" class="font-num text-sm font-bold text-white">60s</span>
+        `;
+      }
+    }
+
+    function setMod1Digits(d) { mod1Digits = d; renderModuleSubFilters(); generateNextQuestion(); }
+    function setMod2Crossing(c) { mod2Crossing = c; renderModuleSubFilters(); generateNextQuestion(); }
+    function setMod3Style(s) { mod3Style = s; renderModuleSubFilters(); generateNextQuestion(); }
+    function setMod4Range(r) { mod4Range = r; renderModuleSubFilters(); generateNextQuestion(); }
+    function setMod4Op(op) { mod4Op = op; renderModuleSubFilters(); generateNextQuestion(); }
+    function setMod5Target(t) { mod5Target = t; renderModuleSubFilters(); generateNextQuestion(); }
+    function setMod6Type(t) { mod6Type = t; renderModuleSubFilters(); generateNextQuestion(); }
+    function setMod7Type(t) { mod7Type = t; renderModuleSubFilters(); generateNextQuestion(); }
+    function setMod8Cat(c) { mod8Category = c; renderModuleSubFilters(); generateNextQuestion(); }
+
+    // --- QUESTION GENERATION ENGINE ---
+    function generateNextQuestion() {
+      currentInput = "";
+      isAnswered = false;
+      bridgeStage = 1;
+      stage1Submitted = false;
+      stage2Submitted = false;
+      document.getElementById('activeInputText').innerText = "?";
+      document.getElementById('stemSentenceBox').classList.add('hidden');
+      document.getElementById('multiStageBar').classList.add('hidden');
+      document.getElementById('stepPromptCard').classList.add('hidden');
+
+      switch (currentModule) {
+        case 1: buildColumnAddition(); break;
+        case 2: buildColumnSubtraction(); break;
+        case 3: buildFlexiblePartitioning(); break;
+        case 4: buildMultiStepBridging(); break;
+        case 5: buildComplements100or1000(); break;
+        case 6: buildDerivedFacts(); break;
+        case 7: buildShortDivision(); break;
+        case 8: buildMisconceptionClinic(); break;
+        case 9: buildFastFireQuestion(); break;
+      }
+
+      renderEquationPrompt();
+      renderVisualizer();
+      refresh100SquareDrawer();
+    }
+
+    // 1. Column Addition Generator (with explicit carry digit tracking)
+    function buildColumnAddition() {
+      let a, b;
+      if (mod1Digits === 2) {
+        a = Math.floor(Math.random() * 50) + 38;
+        b = Math.floor(Math.random() * 40) + (10 - (a % 10)) + 1;
+      } else if (mod1Digits === 3) {
+        a = Math.floor(Math.random() * 400) + 358;
+        b = Math.floor(Math.random() * 400) + 267;
+      } else {
+        a = Math.floor(Math.random() * 4000) + 3485;
+        b = Math.floor(Math.random() * 4000) + 2768;
+      }
+      let ans = a + b;
+
+      // Calculate place value digits: Th, H, T, U
+      const splitDigits = (num) => [
+        Math.floor((num % 10000) / 1000) || '',
+        Math.floor((num % 1000) / 100) || (num >= 1000 ? 0 : ''),
+        Math.floor((num % 100) / 10) || (num >= 100 ? 0 : ''),
+        num % 10
+      ];
+
+      // Calculate carries: from U to T, from T to H, from H to Th
+      let uSum = (a % 10) + (b % 10);
+      let carryT = uSum >= 10 ? 1 : 0;
+      let tSum = Math.floor((a % 100) / 10) + Math.floor((b % 100) / 10) + carryT;
+      let carryH = tSum >= 10 ? 1 : 0;
+      let hSum = Math.floor((a % 1000) / 100) + Math.floor((b % 1000) / 100) + carryH;
+      let carryTh = hSum >= 10 ? 1 : 0;
+
+      currentQ = {
+        module: 1,
+        numA: a,
+        numB: b,
+        digitsA: splitDigits(a),
+        digitsB: splitDigits(b),
+        digitsAns: splitDigits(ans),
+        carries: [carryTh || '', carryH || '', carryT || '', ''],
+        answer: ans,
+        digits: mod1Digits,
+        prompt: `Calculate the sum using the strictly aligned column addition method:`,
+        stem: `${a} + ${b} = ${ans}. Notice how units carry into tens, tens carry into hundreds, and hundreds into thousands!`
+      };
+    }
+
+    // 2. Column Subtraction Generator (with decomposition exchange tracking)
+    function buildColumnSubtraction() {
+      let a, b;
+      if (mod2Crossing === 'acrossZeros') {
+        let hundreds = Math.floor(Math.random() * 5) + 4;
+        let unitsA = Math.floor(Math.random() * 4) + 1;
+        a = hundreds * 100 + unitsA; // e.g. 504
+        let subHundreds = Math.floor(Math.random() * (hundreds - 1)) + 1;
+        let subTens = Math.floor(Math.random() * 5) + 4;
+        let subUnits = Math.floor(Math.random() * 4) + unitsA + 1;
+        b = subHundreds * 100 + subTens * 10 + subUnits;
+      } else if (mod2Crossing === 'hundred') {
+        a = Math.floor(Math.random() * 400) + 524;
+        b = Math.floor(Math.random() * 300) + 185;
+      } else {
+        a = Math.floor(Math.random() * 50) + 42;
+        b = Math.floor(Math.random() * 20) + (a % 10 + 2);
+      }
+      let ans = a - b;
+
+      const splitDigits = (num) => [
+        Math.floor((num % 10000) / 1000) || '',
+        Math.floor((num % 1000) / 100) || (num >= 1000 ? 0 : ''),
+        Math.floor((num % 100) / 10) || (num >= 100 ? 0 : ''),
+        num % 10
+      ];
+
+      // Exchanged state indicators
+      let topDigits = splitDigits(a);
+      let bottomDigits = splitDigits(b);
+      let exTh = '', exH = '', exT = '', exU = '';
+
+      if (mod2Crossing === 'acrossZeros') {
+        // e.g. 504 -> 5 becomes 4; 0 becomes 9; 4 becomes 14
+        exH = (topDigits[1] - 1);
+        exT = '9';
+        exU = (topDigits[3] + 10);
+      } else {
+        if (topDigits[3] < bottomDigits[3]) {
+          exU = (topDigits[3] + 10);
+          exT = (topDigits[2] - 1);
+        }
+        if (topDigits[2] < bottomDigits[2]) {
+          exH = (topDigits[1] - 1);
+          exT = (typeof exT === 'number' ? exT + 10 : topDigits[2] + 9);
+        }
+      }
+
+      currentQ = {
+        module: 2,
+        numA: a,
+        numB: b,
+        digitsA: topDigits,
+        digitsB: bottomDigits,
+        digitsAns: splitDigits(ans),
+        exchanges: [exTh, exH, exT, exU],
+        answer: ans,
+        crossing: mod2Crossing,
+        prompt: `Subtract using formal column decomposition with exchange:`,
+        stem: `${a} − ${b} = ${ans}. Remember: you cannot subtract smaller from larger without exchanging from the column to the left!`
+      };
+    }
+
+    // 3. Flexible Partitioning
+    function buildFlexiblePartitioning() {
+      let thousands = Math.floor(Math.random() * 4) + 3;
+      let hundreds = Math.floor(Math.random() * 4) + 2;
+      let tens = Math.floor(Math.random() * 5) + 2;
+      let total = thousands * 1000 + hundreds * 100 + tens * 10;
+
+      let part1 = (thousands - 1) * 1000;
+      let part2 = (hundreds + 10) * 100;
+      let part3 = tens * 10;
+
+      currentQ = {
+        module: 3,
+        total: total,
+        part1: part1,
+        part2: part2,
+        part3: part3,
+        answer: part2,
+        prompt: `Fill in the missing flexible partition for ${total.toLocaleString()}:`,
+        stem: `${total.toLocaleString()} = ${part1.toLocaleString()} + ${part2.toLocaleString()} + ${part3}! Flexible partitioning is the conceptual core of column borrowing!`
+      };
+    }
+
+    // 4. Multi-Step Bridging
+    function buildMultiStepBridging() {
+      document.getElementById('multiStageBar').classList.remove('hidden');
+      document.getElementById('stepPromptCard').classList.remove('hidden');
+
+      let a, b, landmark, j1, j2, ans;
+      let isAdd = (mod4Op === 'add');
+
+      if (mod4Range === 'decades') {
+        let dec = (Math.floor(Math.random() * 6) + 3) * 10;
+        if (isAdd) {
+          a = dec - (Math.floor(Math.random() * 4) + 1);
+          b = Math.floor(Math.random() * 4) + (dec - a + 1);
+          landmark = dec;
+          j1 = dec - a;
+          j2 = b - j1;
+          ans = dec + j2;
+        } else {
+          a = dec + (Math.floor(Math.random() * 4) + 1);
+          b = (a - dec) + (Math.floor(Math.random() * 5) + 2);
+          landmark = dec;
+          j1 = a - dec;
+          j2 = b - j1;
+          ans = dec - j2;
+        }
+      } else if (mod4Range === 'hundreds') {
+        let h = (Math.floor(Math.random() * 5) + 3) * 100;
+        if (isAdd) {
+          a = h - (Math.floor(Math.random() * 20) + 5);
+          b = Math.floor(Math.random() * 25) + 25;
+          landmark = h;
+          j1 = h - a;
+          j2 = b - j1;
+          ans = h + j2;
+        } else {
+          a = h + (Math.floor(Math.random() * 20) + 5);
+          b = (a - h) + (Math.floor(Math.random() * 25) + 20);
+          landmark = h;
+          j1 = a - h;
+          j2 = b - j1;
+          ans = h - j2;
+        }
+      } else {
+        let th = 1000;
+        if (isAdd) {
+          a = 960; b = 85; landmark = 1000; j1 = 40; j2 = 45; ans = 1045;
+        } else {
+          a = 1035; b = 75; landmark = 1000; j1 = 35; j2 = 40; ans = 960;
+        }
+      }
+
+      currentQ = {
+        module: 4,
+        isAdd: isAdd,
+        partA: a,
+        partB: b,
+        landmark: landmark,
+        jump1: j1,
+        jump2: j2,
+        answer: ans,
+        prompt: `Bridge through friendly landmark ${landmark}: ${a} ${isAdd ? '＋' : '−'} ${b} = ?`,
+        stem: `First jump ${j1} to reach ${landmark}, then jump remaining ${j2} to finish at ${ans}!`
+      };
+      updateBridgeStepUI();
+    }
+
+    // 5. Complements to 100 or 1000
+    function buildComplements100or1000() {
+      let target = mod5Target;
+      let given = (target === 100) ? Math.floor(Math.random() * 70) + 15 : Math.floor(Math.random() * 700) + 150;
+      let complement = target - given;
+
+      currentQ = {
+        module: 5,
+        target: target,
+        given: given,
+        answer: complement,
+        prompt: `Find the complement to make exactly ${target.toLocaleString()}:`,
+        stem: `${given} + ${complement} = ${target.toLocaleString()}. Notice: ones make 10, tens make 90 (or hundreds make 900) to avoid the 110/1,100 trap!`
+      };
+    }
+
+    // 6. Derived Facts
+    function buildDerivedFacts() {
+      let baseA = Math.floor(Math.random() * 6) + 3;
+      let baseB = Math.floor(Math.random() * 6) + 4;
+      let baseProduct = baseA * baseB;
+
+      if (mod6Type === 'scaling') {
+        let factor = 10;
+        let scaledA = baseA * factor;
+        let ans = scaledA * baseB;
+
+        currentQ = {
+          module: 6,
+          baseA: baseA,
+          baseB: baseB,
+          baseProduct: baseProduct,
+          scaledA: scaledA,
+          factor: factor,
+          answer: ans,
+          prompt: `Known fact: ${baseA} × ${baseB} = ${baseProduct}. What is ${scaledA} × ${baseB}?`,
+          stem: `Because ${baseA} was scaled by 10, the answer ${baseProduct} is also scaled by 10 to make ${ans}!`
+        };
+      } else {
+        let a = 14; let b = 5; let ans = 70;
+        currentQ = {
+          module: 6,
+          a: a,
+          b: b,
+          halfA: a / 2,
+          doubleB: b * 2,
+          answer: ans,
+          prompt: `Calculate ${a} × ${b} using the double & halve strategy:`,
+          stem: `${a} × ${b} = (${a}/2) × (${b}×2) = 7 × 10 = ${ans}!`
+        };
+      }
+    }
+
+    // 7. Short Division (Bus Stop)
+    function buildShortDivision() {
+      let divisor = Math.floor(Math.random() * 5) + 3;
+      let quotient = Math.floor(Math.random() * 80) + 25;
+      let rem = (mod7Type === 'withRemainders') ? (Math.floor(Math.random() * (divisor - 1)) + 1) : 0;
+      let dividend = divisor * quotient + rem;
+
+      currentQ = {
+        module: 7,
+        divisor: divisor,
+        dividend: dividend,
+        quotient: quotient,
+        remainder: rem,
+        answer: quotient,
+        prompt: `Divide ${dividend} by ${divisor} using the bus stop method:`,
+        stem: `${dividend} ÷ ${divisor} = ${quotient}${rem > 0 ? ' remainder ' + rem : ''}!`
+      };
+    }
+
+    // 8. Misconception Clinic
+    function buildMisconceptionClinic() {
+      let isActuallyCorrect = Math.random() > 0.6;
+      let scenario = {};
+
+      if (mod8Category === 'reversal') {
+        scenario = {
+          display: `52 − 27 = 35`,
+          isCorrect: false,
+          issue: "Subtraction Reversal: The pupil calculated 7 − 2 = 5 in the units instead of decomposing a ten!",
+          corrected: "52 − 27 = 25"
+        };
+      } else if (mod8Category === 'missingZero') {
+        scenario = {
+          display: `504 − 267 = 347`,
+          isCorrect: false,
+          issue: "Missing Regroup Across Zero: Failed to exchange from 500 to 10 tens before borrowing into units!",
+          corrected: "504 − 267 = 237"
+        };
+      } else {
+        scenario = {
+          display: `450 ＋ 25 = 700`,
+          isCorrect: false,
+          issue: "Column Misalignment: 25 was mistakenly aligned under Hundreds and Tens!",
+          corrected: "450 ＋ 25 = 475"
+        };
+      }
+
+      currentQ = {
+        module: 8,
+        displayEquation: scenario.display,
+        isCorrect: scenario.isCorrect,
+        issue: scenario.issue,
+        corrected: scenario.corrected,
+        prompt: `Evaluate the working below. Is this solution CORRECT or does it contain a MISTAKE?`,
+        stem: scenario.issue
+      };
+    }
+
+    // 9. Fast Fire Mental Rush
+    function buildFastFireQuestion() {
+      let a = Math.floor(Math.random() * 50) + 20;
+      let b = Math.floor(Math.random() * 9) + 4;
+      let op = Math.random() > 0.5 ? 'add' : 'sub';
+      let ans = op === 'add' ? a + b : a - b;
+
+      currentQ = {
+        module: 9,
+        numA: a,
+        numB: b,
+        op: op,
+        answer: ans,
+        prompt: `Rapid mental calculation:`,
+        stem: `${a} ${op==='add'?'＋':'−'} ${b} = ${ans}!`
+      };
+    }
+
+    function startFastFireTimer() {
+      clearInterval(fastFireTimer);
+      fastFireSecs = 60;
+      document.getElementById('fastFireCountdown').innerText = '60s';
+      generateNextQuestion();
+
+      fastFireTimer = setInterval(() => {
+        fastFireSecs--;
+        document.getElementById('fastFireCountdown').innerText = `${fastFireSecs}s`;
+        if (fastFireSecs <= 0) {
+          clearInterval(fastFireTimer);
+          playChime('correct');
+        }
+      }, 1000);
+    }
+
+    // --- EQUATION & PROMPT DISPLAY ---
+    function renderEquationPrompt() {
+      const eqDisplay = document.getElementById('equationDisplay');
+      const prompt = document.getElementById('promptSubtext');
+      prompt.innerText = currentQ.prompt || "";
+
+      if (currentModule === 1) {
+        eqDisplay.innerHTML = `
+          <span class="text-rose-400">${currentQ.numA.toLocaleString()}</span>
+          <span class="text-slate-400">＋</span>
+          <span class="text-emerald-400">${currentQ.numB.toLocaleString()}</span>
+          <span class="text-slate-400">=</span>
+          <span class="text-amber-400 underline decoration-dashed decoration-4 underline-offset-4 pulse-glow">${isAnswered ? currentQ.answer.toLocaleString() : '?'}</span>
+        `;
+      } else if (currentModule === 2) {
+        eqDisplay.innerHTML = `
+          <span class="text-rose-400">${currentQ.numA.toLocaleString()}</span>
+          <span class="text-slate-400">−</span>
+          <span class="text-emerald-400">${currentQ.numB.toLocaleString()}</span>
+          <span class="text-slate-400">=</span>
+          <span class="text-amber-400 underline decoration-dashed decoration-4 underline-offset-4 pulse-glow">${isAnswered ? currentQ.answer.toLocaleString() : '?'}</span>
+        `;
+      } else if (currentModule === 3) {
+        eqDisplay.innerHTML = `
+          <span class="text-amber-400">${currentQ.total.toLocaleString()}</span>
+          <span class="text-slate-400">=</span>
+          <span class="text-rose-400">${currentQ.part1.toLocaleString()}</span>
+          <span class="text-slate-400">＋</span>
+          <span class="text-sky-400 underline decoration-dashed decoration-4 underline-offset-4 pulse-glow">${isAnswered ? currentQ.part2.toLocaleString() : '?'}</span>
+          <span class="text-slate-400">＋</span>
+          <span class="text-emerald-400">${currentQ.part3.toLocaleString()}</span>
+        `;
+      } else if (currentModule === 4) {
+        eqDisplay.innerHTML = `
+          <span class="text-rose-400">${currentQ.partA.toLocaleString()}</span>
+          <span class="text-slate-400">${currentQ.isAdd ? '＋' : '−'}</span>
+          <span class="text-emerald-400">${currentQ.partB.toLocaleString()}</span>
+          <span class="text-slate-400">=</span>
+          <span class="text-amber-400 underline decoration-dashed decoration-4 underline-offset-4 pulse-glow">${isAnswered ? currentQ.answer.toLocaleString() : '?'}</span>
+        `;
+      } else if (currentModule === 5) {
+        eqDisplay.innerHTML = `
+          <span class="text-rose-400">${currentQ.given.toLocaleString()}</span>
+          <span class="text-slate-400">＋</span>
+          <span class="text-sky-400 underline decoration-dashed decoration-4 underline-offset-4 pulse-glow">${isAnswered ? currentQ.answer.toLocaleString() : '?'}</span>
+          <span class="text-slate-400">=</span>
+          <span class="text-amber-400">${currentQ.target.toLocaleString()}</span>
+        `;
+      } else if (currentModule === 6) {
+        eqDisplay.innerHTML = `
+          <span class="text-rose-400">${currentQ.scaledA || currentQ.a}</span>
+          <span class="text-slate-400">×</span>
+          <span class="text-emerald-400">${currentQ.baseB || currentQ.b}</span>
+          <span class="text-slate-400">=</span>
+          <span class="text-amber-400 underline decoration-dashed decoration-4 underline-offset-4 pulse-glow">${isAnswered ? currentQ.answer.toLocaleString() : '?'}</span>
+        `;
+      } else if (currentModule === 7) {
+        eqDisplay.innerHTML = `
+          <span class="text-rose-400">${currentQ.dividend}</span>
+          <span class="text-slate-400">÷</span>
+          <span class="text-emerald-400">${currentQ.divisor}</span>
+          <span class="text-slate-400">=</span>
+          <span class="text-amber-400 underline decoration-dashed decoration-2">${isAnswered ? currentQ.answer + (currentQ.remainder ? ' r' + currentQ.remainder : '') : '?'}</span>
+        `;
+      } else if (currentModule === 8) {
+        eqDisplay.innerHTML = `
+          <span class="text-amber-300 font-num text-3xl sm:text-4xl">${currentQ.displayEquation}</span>
+        `;
+      } else if (currentModule === 9) {
+        eqDisplay.innerHTML = `
+          <span class="text-rose-400">${currentQ.numA}</span>
+          <span class="text-slate-400">${currentQ.op==='add'?'＋':'−'}</span>
+          <span class="text-emerald-400">${currentQ.numB}</span>
+          <span class="text-slate-400">=</span>
+          <span class="text-amber-400 underline decoration-dashed decoration-4 underline-offset-4 pulse-glow">${isAnswered ? currentQ.answer : '?'}</span>
+        `;
+      }
+    }
+
+    function updateBridgeStepUI() {
+      const b1 = document.getElementById('stepPill-1');
+      const b2 = document.getElementById('stepPill-2');
+      const b3 = document.getElementById('stepPill-3');
+      const sBadge = document.getElementById('stepNumberBadge');
+      const sTitle = document.getElementById('stepSubTitle');
+      const sQ = document.getElementById('stepSubQuestion');
+      const sTarget = document.getElementById('stepTargetVal');
+
+      [b1, b2, b3].forEach((pill, idx) => {
+        if (idx + 1 === bridgeStage) {
+          pill.className = "flex-1 py-1 px-2 rounded-lg text-center text-[11px] font-bold bg-amber-400 text-slate-950 shadow flex items-center justify-center gap-1";
+        } else if (idx + 1 < bridgeStage) {
+          pill.className = "flex-1 py-1 px-2 rounded-lg text-center text-[11px] font-bold bg-emerald-500 text-white flex items-center justify-center gap-1";
+        } else {
+          pill.className = "flex-1 py-1 px-2 rounded-lg text-center text-[11px] font-semibold bg-[#182747] text-slate-400 border border-slate-700 flex items-center justify-center gap-1";
+        }
+      });
+
+      sBadge.innerText = bridgeStage;
+      sTitle.innerText = `Stage ${bridgeStage} of 3`;
+
+      if (bridgeStage === 1) {
+        sQ.innerText = currentQ.isAdd
+          ? `Jump from ${currentQ.partA} to friendly landmark ${currentQ.landmark}`
+          : `Jump backward to hit landmark ${currentQ.landmark}`;
+        sTarget.innerText = currentQ.landmark;
+      } else if (bridgeStage === 2) {
+        sQ.innerText = `${currentQ.partB} was partitioned into ${currentQ.jump1} and ...?`;
+        sTarget.innerText = currentQ.jump2;
+      } else {
+        sQ.innerText = currentQ.isAdd
+          ? `Add ${currentQ.jump2} to ${currentQ.landmark} to reach final sum`
+          : `Subtract ${currentQ.jump2} from ${currentQ.landmark} to reach total`;
+        sTarget.innerText = currentQ.answer;
+      }
+    }
+
+    // --- VISUALIZER COMPONENT RENDERER (STRICT ALIGNMENT APPLIED) ---
+    function renderVisualizer() {
+      const stage = document.getElementById('visualizerStage');
+      stage.innerHTML = '';
+
+      if (currentModule === 1) {
+        renderAlignedColumnAddition(stage);
+      } else if (currentModule === 2) {
+        renderAlignedColumnSubtraction(stage);
+      } else if (currentModule === 3) {
+        renderFlexiblePartitionBar(stage);
+      } else if (currentModule === 4) {
+        renderBridgingNumberLine(stage);
+      } else if (currentModule === 5) {
+        renderComplementsBar(stage);
+      } else if (currentModule === 6) {
+        renderMultiplicativeArray(stage);
+      } else if (currentModule === 7) {
+        renderBusStopDivision(stage);
+      } else if (currentModule === 8) {
+        renderMisconceptionDisplay(stage);
+      } else if (currentModule === 9) {
+        renderFastFireVisual(stage);
+      }
+    }
+
+    // STRICT CSS-GRID COLUMN ADDITION (Fixed 56px Columns for Th, H, T, U)
+    function renderAlignedColumnAddition(container) {
+      const dA = currentQ.digitsA;
+      const dB = currentQ.digitsB;
+      const dAns = currentQ.digitsAns;
+      const carries = currentQ.carries;
+
+      let html = `
+        <div class="flex flex-col items-center justify-center font-mono-calc p-3 bg-[#0d172e] rounded-2xl border border-slate-800 shadow-xl">
+          
+          <div class="column-method-grid text-slate-400 font-extrabold text-xs pb-1 mb-1 border-b border-slate-800/80">
+            <span class="text-center font-sans text-[10px] text-slate-500">OP</span>
+            <span class="text-center">Th</span>
+            <span class="text-center">H</span>
+            <span class="text-center">T</span>
+            <span class="text-center">U</span>
+          </div>
+
+          <!-- Top Number Row -->
+          <div class="column-method-grid text-3xl font-extrabold text-slate-100">
+            <span></span>
+            <span class="text-center">${dA[0]}</span>
+            <span class="text-center">${dA[1]}</span>
+            <span class="text-center">${dA[2]}</span>
+            <span class="text-center">${dA[3]}</span>
+          </div>
+
+          <!-- Bottom Number Row with '+' in dedicated Column 0 -->
+          <div class="column-method-grid text-3xl font-extrabold text-slate-100">
+            <span class="text-center text-amber-400 font-sans text-2xl">＋</span>
+            <span class="text-center">${dB[0]}</span>
+            <span class="text-center">${dB[1]}</span>
+            <span class="text-center">${dB[2]}</span>
+            <span class="text-center">${dB[3]}</span>
+          </div>
+
+          <!-- Calculation Separator Bar (Exact Column Grid Width: 268px) -->
+          <div class="w-[268px] h-1 bg-amber-400 my-1 rounded-full shadow-sm"></div>
+
+          <!-- Answer Row (Strictly Aligned) -->
+          <div class="column-method-grid text-3xl font-black text-amber-400">
+            <span></span>
+            <span class="text-center">${isAnswered ? (dAns[0] !== undefined ? dAns[0] : '') : '?'}</span>
+            <span class="text-center">${isAnswered ? (dAns[1] !== undefined ? dAns[1] : '') : '?'}</span>
+            <span class="text-center">${isAnswered ? (dAns[2] !== undefined ? dAns[2] : '') : '?'}</span>
+            <span class="text-center">${isAnswered ? (dAns[3] !== undefined ? dAns[3] : '') : '?'}</span>
+          </div>
+
+          <!-- Bottom Calculation Line -->
+          <div class="w-[268px] h-1 bg-amber-400 my-1 rounded-full shadow-sm"></div>
+
+          <!-- Carry / Regroup Indicators Row Beneath Answer Line -->
+          <div class="column-method-grid text-xs font-bold text-amber-300 pt-1">
+            <span class="text-[9px] text-slate-500 font-sans text-center">CARRY</span>
+            <span class="text-center flex items-center justify-center"><span class="${carries[0] && isAnswered ? 'px-1.5 py-0.5 rounded bg-amber-500/20 border border-amber-400' : ''}">${isAnswered ? carries[0] : ''}</span></span>
+            <span class="text-center flex items-center justify-center"><span class="${carries[1] && isAnswered ? 'px-1.5 py-0.5 rounded bg-amber-500/20 border border-amber-400' : ''}">${isAnswered ? carries[1] : ''}</span></span>
+            <span class="text-center flex items-center justify-center"><span class="${carries[2] && isAnswered ? 'px-1.5 py-0.5 rounded bg-amber-500/20 border border-amber-400' : ''}">${isAnswered ? carries[2] : ''}</span></span>
+            <span class="text-center"></span>
+          </div>
+
+        </div>
+      `;
+      container.innerHTML = html;
+    }
+
+    // STRICT CSS-GRID COLUMN SUBTRACTION (Fixed 56px Columns for Th, H, T, U)
+    function renderAlignedColumnSubtraction(container) {
+      const dA = currentQ.digitsA;
+      const dB = currentQ.digitsB;
+      const dAns = currentQ.digitsAns;
+      const ex = currentQ.exchanges;
+
+      let html = `
+        <div class="flex flex-col items-center justify-center font-mono-calc p-3 bg-[#0d172e] rounded-2xl border border-slate-800 shadow-xl">
+          
+          <div class="column-method-grid text-slate-400 font-extrabold text-xs pb-1 mb-1 border-b border-slate-800/80">
+            <span class="text-center font-sans text-[10px] text-slate-500">OP</span>
+            <span class="text-center">Th</span>
+            <span class="text-center">H</span>
+            <span class="text-center">T</span>
+            <span class="text-center">U</span>
+          </div>
+
+          <!-- Decomposition / Borrowing Row (Sitting Above the Minuend) -->
+          <div class="column-method-grid text-xs font-bold text-sky-400 h-6">
+            <span class="text-[9px] text-slate-500 font-sans text-center">EXCH</span>
+            <span class="text-center flex items-center justify-center"><span class="${ex[0] && isAnswered ? 'px-1.5 py-0.2 rounded bg-sky-500/20 border border-sky-400' : ''}">${isAnswered ? ex[0] : ''}</span></span>
+            <span class="text-center flex items-center justify-center"><span class="${ex[1] && isAnswered ? 'px-1.5 py-0.2 rounded bg-sky-500/20 border border-sky-400' : ''}">${isAnswered ? ex[1] : ''}</span></span>
+            <span class="text-center flex items-center justify-center"><span class="${ex[2] && isAnswered ? 'px-1.5 py-0.2 rounded bg-sky-500/20 border border-sky-400' : ''}">${isAnswered ? ex[2] : ''}</span></span>
+            <span class="text-center flex items-center justify-center"><span class="${ex[3] && isAnswered ? 'px-1.5 py-0.2 rounded bg-sky-500/20 border border-sky-400' : ''}">${isAnswered ? ex[3] : ''}</span></span>
+          </div>
+
+          <!-- Top Number Row (Minuend) with strike-through on exchanged digits -->
+          <div class="column-method-grid text-3xl font-extrabold text-slate-100">
+            <span></span>
+            <span class="text-center ${ex[0] && isAnswered ? 'line-through text-slate-500 decoration-rose-500 decoration-2' : ''}">${dA[0]}</span>
+            <span class="text-center ${ex[1] && isAnswered ? 'line-through text-slate-500 decoration-rose-500 decoration-2' : ''}">${dA[1]}</span>
+            <span class="text-center ${ex[2] && isAnswered ? 'line-through text-slate-500 decoration-rose-500 decoration-2' : ''}">${dA[2]}</span>
+            <span class="text-center ${ex[3] && isAnswered ? 'line-through text-slate-500 decoration-rose-500 decoration-2' : ''}">${dA[3]}</span>
+          </div>
+
+          <!-- Bottom Number Row (Subtrahend) with '−' in dedicated Column 0 -->
+          <div class="column-method-grid text-3xl font-extrabold text-slate-100">
+            <span class="text-center text-amber-400 font-sans text-2xl">−</span>
+            <span class="text-center">${dB[0]}</span>
+            <span class="text-center">${dB[1]}</span>
+            <span class="text-center">${dB[2]}</span>
+            <span class="text-center">${dB[3]}</span>
+          </div>
+
+          <!-- Calculation Separator Bar -->
+          <div class="w-[268px] h-1 bg-amber-400 my-1 rounded-full shadow-sm"></div>
+
+          <!-- Answer Row (Strictly Aligned) -->
+          <div class="column-method-grid text-3xl font-black text-amber-400">
+            <span></span>
+            <span class="text-center">${isAnswered ? (dAns[0] !== undefined ? dAns[0] : '') : '?'}</span>
+            <span class="text-center">${isAnswered ? (dAns[1] !== undefined ? dAns[1] : '') : '?'}</span>
+            <span class="text-center">${isAnswered ? (dAns[2] !== undefined ? dAns[2] : '') : '?'}</span>
+            <span class="text-center">${isAnswered ? (dAns[3] !== undefined ? dAns[3] : '') : '?'}</span>
+          </div>
+
+          <!-- Bottom Calculation Line -->
+          <div class="w-[268px] h-1 bg-amber-400 my-1 rounded-full shadow-sm"></div>
+
+        </div>
+      `;
+      container.innerHTML = html;
+    }
+
+    // Module 3: Flexible Partitioning Bar Model
+    function renderFlexiblePartitionBar(container) {
+      container.innerHTML = `
+        <div class="w-full max-w-lg flex flex-col items-center font-num">
+          <div class="w-full h-12 rounded-xl bg-amber-400 text-slate-950 font-extrabold text-lg flex items-center justify-center shadow-md mb-2">
+            ${currentQ.total.toLocaleString()} (Whole)
+          </div>
+          <div class="w-full flex gap-2">
+            <div class="flex-[3] h-14 rounded-xl bg-rose-500/80 border border-rose-400 flex flex-col items-center justify-center text-xs font-bold shadow">
+              <span class="text-white text-base">${currentQ.part1.toLocaleString()}</span>
+              <span class="text-rose-200 text-[10px]">Thousands</span>
+            </div>
+            <div class="flex-[4] h-14 rounded-xl ${isAnswered ? 'bg-sky-500' : 'bg-[#142344] border-2 border-dashed border-sky-400'} flex flex-col items-center justify-center text-xs font-bold shadow">
+              <span class="text-sky-300 text-base font-black">${isAnswered ? currentQ.part2.toLocaleString() : '?'}</span>
+              <span class="text-sky-200 text-[10px]">Regrouped Hundreds</span>
+            </div>
+            <div class="flex-[2] h-14 rounded-xl bg-emerald-600/80 border border-emerald-400 flex flex-col items-center justify-center text-xs font-bold shadow">
+              <span class="text-white text-base">${currentQ.part3.toLocaleString()}</span>
+              <span class="text-emerald-200 text-[10px]">Tens</span>
+            </div>
+          </div>
+          <p class="text-xs text-slate-400 mt-3 text-center">Flexible partitioning allows seamless mental and column regrouping!</p>
+        </div>
+      `;
+    }
+
+    // Module 4: Bridging Number Line with Arcs
+    function renderBridgingNumberLine(container) {
+      let isAdd = currentQ.isAdd;
+      let xStart = isAdd ? 70 : 390;
+      let xMid = 230;
+      let xEnd = isAdd ? 390 : 70;
+
+      let arc1 = stage1Submitted || isAnswered;
+      let arc2 = stage2Submitted || isAnswered;
+
+      container.innerHTML = `
+        <div class="w-full max-w-xl h-full flex flex-col items-center justify-center">
+          <svg class="w-full h-36" viewBox="0 0 460 110">
+            <!-- Main Axis -->
+            <line x1="50" y1="85" x2="410" y2="85" stroke="#475569" stroke-width="4" stroke-linecap="round" />
+            
+            <!-- Start Point -->
+            <line x1="${xStart}" y1="75" x2="${xStart}" y2="95" stroke="#f43f5e" stroke-width="4" stroke-linecap="round" />
+            <text x="${xStart}" y="105" text-anchor="middle" fill="#f43f5e" font-size="13" font-weight="bold" font-family="Fredoka">${currentQ.partA}</text>
+
+            <!-- Landmark Ten/Hundred/Thousand Tick -->
+            <line x1="${xMid}" y1="72" x2="${xMid}" y2="98" stroke="#10b981" stroke-width="5" stroke-linecap="round" />
+            <text x="${xMid}" y="105" text-anchor="middle" fill="#10b981" font-size="14" font-weight="black" font-family="Fredoka">${currentQ.landmark}</text>
+
+            <!-- Destination Point -->
+            <line x1="${xEnd}" y1="75" x2="${xEnd}" y2="95" stroke="#f59e0b" stroke-width="4" stroke-linecap="round" />
+            <text x="${xEnd}" y="105" text-anchor="middle" fill="#f59e0b" font-size="14" font-weight="bold" font-family="Fredoka">${isAnswered ? currentQ.answer : '?'}</text>
+
+            <!-- Jump 1 Arc -->
+            <path d="M ${xStart} 75 Q ${(xStart + xMid)/2} 22 ${xMid} 75" fill="none" stroke="${arc1 ? '#10b981' : '#38bdf8'}" stroke-width="3.5" class="jump-line-arc" />
+            <rect x="${(xStart + xMid)/2 - 24}" y="18" width="48" height="24" rx="7" fill="#182747" stroke="${arc1 ? '#10b981' : '#38bdf8'}" stroke-width="2" />
+            <text x="${(xStart + xMid)/2}" y="34" text-anchor="middle" fill="${arc1 ? '#10b981' : '#38bdf8'}" font-size="12" font-weight="bold" font-family="Fredoka">${arc1 ? (isAdd ? '+' : '−') + currentQ.jump1 : '?'}</text>
+
+            <!-- Jump 2 Arc -->
+            <path d="M ${xMid} 75 Q ${(xMid + xEnd)/2} 22 ${xEnd} 75" fill="none" stroke="${arc2 ? '#f59e0b' : '#64748b'}" stroke-width="3.5" class="jump-line-arc" />
+            <rect x="${(xMid + xEnd)/2 - 24}" y="18" width="48" height="24" rx="7" fill="#182747" stroke="${arc2 ? '#f59e0b' : '#64748b'}" stroke-width="2" />
+            <text x="${(xMid + xEnd)/2}" y="34" text-anchor="middle" fill="${arc2 ? '#f59e0b' : '#94a3b8'}" font-size="12" font-weight="bold" font-family="Fredoka">${arc2 ? (isAdd ? '+' : '−') + currentQ.jump2 : '?'}</text>
+          </svg>
+        </div>
+      `;
+    }
+
+    // Module 5: Complements Bar
+    function renderComplementsBar(container) {
+      container.innerHTML = `
+        <div class="w-full max-w-lg flex flex-col items-center font-num">
+          <div class="w-full h-11 rounded-xl bg-amber-400 text-slate-950 font-black text-lg flex items-center justify-center shadow mb-2">
+            Total Target: ${currentQ.target.toLocaleString()}
+          </div>
+          <div class="w-full flex h-14 rounded-xl overflow-hidden border-2 border-slate-700 shadow-lg">
+            <div class="h-full bg-rose-500 flex items-center justify-center text-white font-bold text-lg" style="width: ${(currentQ.given/currentQ.target)*100}%;">
+              ${currentQ.given}
+            </div>
+            <div class="h-full bg-[#18284d] flex items-center justify-center text-sky-400 font-black text-xl border-l-2 border-dashed border-sky-400" style="width: ${100 - (currentQ.given/currentQ.target)*100}%;">
+              ${isAnswered ? currentQ.answer : '?'}
+            </div>
+          </div>
+          <span class="text-xs text-slate-400 mt-2">Beware of the 110/1,100 trap! Ensure ones bond to 10 and tens bond to 90!</span>
+        </div>
+      `;
+    }
+
+    // Module 6: Multiplicative Reasoning
+    function renderMultiplicativeArray(container) {
+      container.innerHTML = `
+        <div class="flex flex-col items-center justify-center font-num text-center">
+          <div class="p-3 bg-[#111e3b] rounded-xl border border-slate-700 shadow mb-2 max-w-md">
+            <span class="text-xs font-bold text-amber-300 block mb-1">FOUNDATION FACT</span>
+            <span class="text-2xl font-black text-white">${currentQ.baseA || currentQ.a} × ${currentQ.baseB || currentQ.b} = ${currentQ.baseProduct || 70}</span>
+          </div>
+          <div class="flex items-center gap-3 text-slate-300 text-sm">
+            <span>Scale factor:</span>
+            <span class="px-2 py-0.5 rounded bg-emerald-500 text-slate-950 font-black">× 10</span>
+            <span>➔</span>
+            <span class="text-xl font-black text-amber-400">${isAnswered ? currentQ.answer : '?'}</span>
+          </div>
+        </div>
+      `;
+    }
+
+    // Module 7: Short Division (Bus Stop)
+    function renderBusStopDivision(container) {
+      container.innerHTML = `
+        <div class="flex items-center justify-center font-num text-3xl font-extrabold text-white">
+          <span class="text-rose-400 mr-2">${currentQ.divisor}</span>
+          <div class="border-l-4 border-t-4 border-amber-400 pl-4 pt-2 rounded-tl-lg flex gap-3 items-center">
+            <span>${currentQ.dividend}</span>
+            <span class="text-slate-500 text-xl font-normal">=</span>
+            <span class="text-amber-400 underline decoration-dashed decoration-2">${isAnswered ? currentQ.quotient + (currentQ.remainder ? ' r' + currentQ.remainder : '') : '?'}</span>
+          </div>
+        </div>
+      `;
+    }
+
+    // Module 8: Misconception Clinic Display
+    function renderMisconceptionDisplay(container) {
+      container.innerHTML = `
+        <div class="flex flex-col items-center justify-center text-center max-w-md font-num p-3 bg-[#142345] rounded-2xl border-2 border-amber-400/60 shadow-xl">
+          <span class="text-xs uppercase tracking-widest text-amber-400 font-extrabold mb-1">MISCONCEPTION DETECTIVE</span>
+          <div class="text-3xl font-black text-white my-1">
+            ${currentQ.displayEquation}
+          </div>
+          <p class="text-xs text-slate-300 mt-2">
+            ${isAnswered ? currentQ.issue : 'Did the pupil perform the operation correctly or make a common regrouping/reversal error?'}
+          </p>
+          ${isAnswered ? `<div class="mt-2 px-3 py-1 rounded bg-emerald-500 text-slate-950 font-black text-xs">Correct Working: ${currentQ.corrected}</div>` : ''}
+        </div>
+      `;
+    }
+
+    // Module 9: Fast Fire Visual
+    function renderFastFireVisual(container) {
+      container.innerHTML = `
+        <div class="flex flex-col items-center justify-center font-num">
+          <span class="text-5xl font-black text-amber-400">${currentQ.numA} ${currentQ.op==='add'?'＋':'−'} ${currentQ.numB}</span>
+          <span class="text-xs font-bold text-slate-400 mt-2">Instant Recall • Zero Finger Counting</span>
+        </div>
+      `;
+    }
+
+    // --- INTERACTIVE 100-SQUARE HELPER DRAWER ---
+    function init100SquareDrawer() {
+      const container = document.getElementById('grid100DrawerContainer');
+      if (!container) return;
+      container.innerHTML = '';
+      for (let i = 1; i <= 100; i++) {
+        const btn = document.createElement('button');
+        btn.id = `drawerCell-${i}`;
+        btn.className = 'grid-cell h-5 text-[10px] font-num font-bold rounded flex items-center justify-center bg-[#15233e] text-slate-300 border border-slate-800 hover:border-amber-400';
+        btn.innerText = i;
+        btn.onclick = () => toggle100Cell(i);
+        container.appendChild(btn);
+      }
+    }
+
+    function toggleHundredSquareDrawer() {
+      const drawer = document.getElementById('drawer100Square');
+      const isHidden = drawer.classList.contains('hidden');
+      if (isHidden) {
+        drawer.classList.remove('hidden');
+        refresh100SquareDrawer();
+      } else {
+        drawer.classList.add('hidden');
+      }
+    }
+
+    function toggle100Cell(num) {
+      if (manual100Highlights.has(num)) manual100Highlights.delete(num);
+      else manual100Highlights.add(num);
+      refresh100SquareDrawer();
+    }
+
+    function highlightPattern100(type) {
+      manual100Highlights.clear();
+      for (let i = 1; i <= 100; i++) {
+        if (type === 'evens' && i % 2 === 0) manual100Highlights.add(i);
+        if (type === 'odds' && i % 2 !== 0) manual100Highlights.add(i);
+        if (type === 'tens' && i % 10 === 0) manual100Highlights.add(i);
+      }
+      refresh100SquareDrawer();
+    }
+
+    function clearPattern100() {
+      manual100Highlights.clear();
+      refresh100SquareDrawer();
+    }
+
+    function refresh100SquareDrawer() {
+      for (let i = 1; i <= 100; i++) {
+        const cell = document.getElementById(`drawerCell-${i}`);
+        if (!cell) continue;
+
+        let isStart = (currentQ.partA === i || currentQ.numA === i);
+        let isLandmark = (currentQ.landmark === i);
+        let isAns = isAnswered && (currentQ.answer === i);
+        let isManual = manual100Highlights.has(i);
+
+        if (isStart) {
+          cell.className = 'grid-cell h-5 text-[10px] font-num font-black rounded flex items-center justify-center bg-rose-500 text-white shadow ring-2 ring-rose-300';
+        } else if (isLandmark) {
+          cell.className = 'grid-cell h-5 text-[10px] font-num font-black rounded flex items-center justify-center bg-emerald-500 text-slate-950 shadow ring-2 ring-emerald-300';
+        } else if (isAns) {
+          cell.className = 'grid-cell h-5 text-[10px] font-num font-black rounded flex items-center justify-center bg-amber-400 text-slate-950 shadow ring-2 ring-amber-300';
+        } else if (isManual) {
+          cell.className = 'grid-cell h-5 text-[10px] font-num font-bold rounded flex items-center justify-center bg-sky-500 text-white border border-sky-300';
+        } else {
+          cell.className = 'grid-cell h-5 text-[10px] font-num font-bold rounded flex items-center justify-center bg-[#15233e] text-slate-300 border border-slate-800 hover:border-amber-400';
+        }
+      }
+    }
+
+    // --- PLACE VALUE DRAWER ---
+    function togglePlaceValueDrawer() {
+      const drawer = document.getElementById('drawerPlaceValue');
+      const isHidden = drawer.classList.contains('hidden');
+      if (isHidden) {
+        drawer.classList.remove('hidden');
+        renderPlaceValueCounters();
+      } else {
+        drawer.classList.add('hidden');
+      }
+    }
+
+    function renderPlaceValueCounters() {
+      const stage = document.getElementById('pvCountersStage');
+      if (!stage) return;
+      stage.innerHTML = `
+        <div class="flex flex-col items-center">
+          <div class="w-10 h-10 rounded-full bg-rose-500 text-white font-num font-black text-xs flex items-center justify-center shadow">1,000</div>
+          <span class="text-[10px] font-bold text-rose-300 mt-1">Thousands</span>
+        </div>
+        <div class="flex flex-col items-center">
+          <div class="w-10 h-10 rounded-full bg-amber-400 text-slate-950 font-num font-black text-xs flex items-center justify-center shadow">100</div>
+          <span class="text-[10px] font-bold text-amber-300 mt-1">Hundreds</span>
+        </div>
+        <div class="flex flex-col items-center">
+          <div class="w-10 h-10 rounded-full bg-sky-400 text-slate-950 font-num font-black text-xs flex items-center justify-center shadow">10</div>
+          <span class="text-[10px] font-bold text-sky-300 mt-1">Tens</span>
+        </div>
+        <div class="flex flex-col items-center">
+          <div class="w-10 h-10 rounded-full bg-emerald-400 text-slate-950 font-num font-black text-xs flex items-center justify-center shadow">1</div>
+          <span class="text-[10px] font-bold text-emerald-300 mt-1">Ones</span>
+        </div>
+      `;
+    }
+
+    // --- TACTILE KEYPAD & ANSWER SUBMISSION ---
+    function inputDigit(d) {
+      if (isAnswered) return;
+      if (currentInput.length < 6) {
+        currentInput += d;
+        document.getElementById('activeInputText').innerText = currentInput;
+        playChime('click');
+      }
+    }
+
+    function inputBackspace() {
+      if (isAnswered) return;
+      currentInput = currentInput.slice(0, -1);
+      document.getElementById('activeInputText').innerText = currentInput || "?";
+      playChime('click');
+    }
+
+    function clearCurrentInput() {
+      if (isAnswered) return;
+      currentInput = "";
+      document.getElementById('activeInputText').innerText = "?";
+      playChime('click');
+    }
+
+    function submitAnswer() {
+      if (!currentInput || isAnswered) return;
+      let entered = parseInt(currentInput, 10);
+
+      if (currentModule === 4) {
+        evaluateBridgingStep(entered);
+      } else {
+        evaluateDirectAnswer(entered);
+      }
+    }
+
+    function evaluateBridgingStep(entered) {
+      if (bridgeStage === 1) {
+        if (entered === currentQ.jump1) {
+          playChime('step');
+          stage1Submitted = true;
+          bridgeStage = 2;
+          currentInput = "";
+          document.getElementById('activeInputText').innerText = "?";
+          updateBridgeStepUI();
+          renderVisualizer();
+        } else {
+          handleWrongAttempt();
+        }
+      } else if (bridgeStage === 2) {
+        if (entered === currentQ.jump2) {
+          playChime('step');
+          stage2Submitted = true;
+          bridgeStage = 3;
+          currentInput = "";
+          document.getElementById('activeInputText').innerText = "?";
+          updateBridgeStepUI();
+          renderVisualizer();
+        } else {
+          handleWrongAttempt();
+        }
+      } else {
+        if (entered === currentQ.answer) {
+          handleCorrectAnswer();
+        } else {
+          handleWrongAttempt();
+        }
+      }
+    }
+
+    function evaluateDirectAnswer(entered) {
+      if (entered === currentQ.answer) {
+        handleCorrectAnswer();
+      } else {
+        handleWrongAttempt();
+      }
+    }
+
+    function submitMisconceptionEvaluation(isCorrectChoice) {
+      if (isAnswered) return;
+      if (isCorrectChoice === currentQ.isCorrect) {
+        handleCorrectAnswer();
+      } else {
+        handleWrongAttempt();
+      }
+    }
+
+    function handleCorrectAnswer() {
+      isAnswered = true;
+      globalStreak++;
+      globalScore += 10;
+      document.getElementById('globalStreak').innerText = globalStreak;
+      document.getElementById('globalScore').innerText = globalScore;
+      playChime('correct');
+
+      document.getElementById('stemSentenceBox').classList.remove('hidden');
+      document.getElementById('stemSentenceText').innerText = currentQ.stem || "";
+
+      renderEquationPrompt();
+      renderVisualizer();
+      refresh100SquareDrawer();
+
+      setTimeout(() => {
+        if (isAnswered && currentModule !== 8) generateNextQuestion();
+      }, 2600);
+    }
+
+    function handleWrongAttempt() {
+      globalStreak = 0;
+      document.getElementById('globalStreak').innerText = globalStreak;
+      playChime('wrong');
+      const slot = document.getElementById('activeInputText');
+      slot.classList.add('text-rose-500');
+      setTimeout(() => {
+        slot.classList.remove('text-rose-500');
+        clearCurrentInput();
+      }, 500);
+    }
+
+    function forceTeacherModel() {
+      isAnswered = true;
+      stage1Submitted = true;
+      stage2Submitted = true;
+      document.getElementById('stemSentenceBox').classList.remove('hidden');
+      document.getElementById('stemSentenceText').innerText = currentQ.stem || "";
+      renderEquationPrompt();
+      renderVisualizer();
+      refresh100SquareDrawer();
+    }
+
+    // --- UNIVERSAL ROOT-MOUNTED WHITEBOARD ENGINE ---
+    function initWhiteboard() {
+      wbCanvas = document.getElementById('whiteboardCanvas');
+      if (!wbCanvas) return;
+      wbCtx = wbCanvas.getContext('2d');
+      resizeWhiteboard();
+      window.addEventListener('resize', resizeWhiteboard);
+
+      wbCanvas.addEventListener('pointerdown', startDrawing);
+      wbCanvas.addEventListener('pointermove', drawStroke);
+      window.addEventListener('pointerup', stopDrawing);
+      window.addEventListener('pointercancel', stopDrawing);
+    }
+
+    function resizeWhiteboard() {
+      if (!wbCanvas) return;
+      const rect = wbCanvas.getBoundingClientRect();
+      wbCanvas.width = rect.width || window.innerWidth;
+      wbCanvas.height = rect.height || window.innerHeight;
+      redrawWhiteboard();
+    }
+
+    function startDrawing(e) {
+      if (drawTool === 'pointer') return;
+      isDrawing = true;
+      const pt = getCanvasCoords(e);
+      currentStroke = {
+        tool: drawTool,
+        color: penColor,
+        size: penWidth,
+        points: [pt]
+      };
+    }
+
+    function drawStroke(e) {
+      if (!isDrawing || drawTool === 'pointer') return;
+      const pt = getCanvasCoords(e);
+      currentStroke.points.push(pt);
+
+      wbCtx.save();
+      wbCtx.lineCap = 'round';
+      wbCtx.lineJoin = 'round';
+
+      if (currentStroke.tool === 'eraser') {
+        wbCtx.globalCompositeOperation = 'destination-out';
+        wbCtx.lineWidth = 30;
+      } else if (currentStroke.tool === 'highlighter') {
+        wbCtx.globalAlpha = 0.35;
+        wbCtx.strokeStyle = currentStroke.color;
+        wbCtx.lineWidth = 24;
+      } else {
+        wbCtx.strokeStyle = currentStroke.color;
+        wbCtx.lineWidth = currentStroke.size;
+      }
+
+      const pts = currentStroke.points;
+      if (pts.length > 1) {
+        wbCtx.beginPath();
+        wbCtx.moveTo(pts[pts.length - 2].x, pts[pts.length - 2].y);
+        wbCtx.lineTo(pt.x, pt.y);
+        wbCtx.stroke();
+      }
+      wbCtx.restore();
+    }
+
+    function stopDrawing() {
+      if (!isDrawing) return;
+      isDrawing = false;
+      if (currentStroke && currentStroke.points.length > 0) {
+        strokeHistory.push(currentStroke);
+        redoHistory = [];
+      }
+      currentStroke = null;
+    }
+
+    function getCanvasCoords(e) {
+      const rect = wbCanvas.getBoundingClientRect();
+      return {
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top
+      };
+    }
+
+    function redrawWhiteboard() {
+      if (!wbCtx || !wbCanvas) return;
+      wbCtx.clearRect(0, 0, wbCanvas.width, wbCanvas.height);
+
+      strokeHistory.forEach(stroke => {
+        if (!stroke.points || stroke.points.length < 2) return;
+        wbCtx.save();
+        wbCtx.lineCap = 'round';
+        wbCtx.lineJoin = 'round';
+
+        if (stroke.tool === 'eraser') {
+          wbCtx.globalCompositeOperation = 'destination-out';
+          wbCtx.lineWidth = 30;
+        } else if (stroke.tool === 'highlighter') {
+          wbCtx.globalAlpha = 0.35;
+          wbCtx.strokeStyle = stroke.color;
+          wbCtx.lineWidth = 24;
+        } else {
+          wbCtx.strokeStyle = stroke.color;
+          wbCtx.lineWidth = stroke.size;
+        }
+
+        wbCtx.beginPath();
+        wbCtx.moveTo(stroke.points[0].x, stroke.points[0].y);
+        for (let i = 1; i < stroke.points.length; i++) {
+          wbCtx.lineTo(stroke.points[i].x, stroke.points[i].y);
+        }
+        wbCtx.stroke();
+        wbCtx.restore();
+      });
+    }
+
+    function undoWhiteboardStroke() {
+      if (strokeHistory.length > 0) {
+        redoHistory.push(strokeHistory.pop());
+        redrawWhiteboard();
+      }
+    }
+
+    function clearWhiteboardCanvas() {
+      strokeHistory = [];
+      redoHistory = [];
+      redrawWhiteboard();
+    }
+
+    function toggleWhiteboardToolbar() {
+      whiteboardOpen = !whiteboardOpen;
+      const bar = document.getElementById('whiteboardToolbar');
+      const overlay = document.getElementById('whiteboardOverlayWrapper');
+      const canvas = document.getElementById('whiteboardCanvas');
+      const btn = document.getElementById('btnWhiteboardToggle');
+
+      if (whiteboardOpen) {
+        bar.classList.remove('hidden');
+        overlay.classList.remove('hidden');
+        btn.className = "flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold border transition bg-emerald-400 text-slate-950 border-emerald-300 shadow";
+        setDrawTool('pen');
+      } else {
+        bar.classList.add('hidden');
+        overlay.classList.add('hidden');
+        overlay.classList.remove('pointer-events-auto');
+        overlay.classList.add('pointer-events-none');
+        if (canvas) {
+          canvas.classList.remove('pointer-events-auto', 'cursor-crosshair');
+          canvas.classList.add('pointer-events-none');
+        }
+        btn.className = "flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold border transition bg-amber-400 text-slate-950 border-amber-300 shadow hover:bg-amber-300";
+        setDrawTool('pointer');
+      }
+    }
+
+    function setBoardMode(mode) {
+      boardMode = mode;
+      const overlay = document.getElementById('whiteboardOverlayWrapper');
+      const bOverlay = document.getElementById('btnBoardMode-overlay');
+      const bScratch = document.getElementById('btnBoardMode-scratch');
+
+      if (mode === 'scratch') {
+        overlay.style.backgroundColor = '#070e1ee8';
+        bScratch.className = "px-2 py-0.5 rounded text-[11px] font-bold transition bg-amber-400 text-slate-950";
+        bOverlay.className = "px-2 py-0.5 rounded text-[11px] font-bold transition text-slate-300 hover:text-white";
+      } else {
+        overlay.style.backgroundColor = 'transparent';
+        bOverlay.className = "px-2 py-0.5 rounded text-[11px] font-bold transition bg-amber-400 text-slate-950";
+        bScratch.className = "px-2 py-0.5 rounded text-[11px] font-bold transition text-slate-300 hover:text-white";
+      }
+    }
+
+    function setDrawTool(tool) {
+      drawTool = tool;
+      const overlay = document.getElementById('whiteboardOverlayWrapper');
+      const canvas = document.getElementById('whiteboardCanvas');
+
+      ['pen', 'highlighter', 'eraser', 'pointer'].forEach(t => {
+        const btn = document.getElementById(`btnTool-${t}`);
+        if (!btn) return;
+        if (t === tool) {
+          btn.className = "px-2 py-0.5 rounded text-[11px] font-bold transition bg-slate-800 text-white shadow border border-slate-700";
+        } else {
+          btn.className = "px-2 py-0.5 rounded text-[11px] font-bold transition text-slate-300 hover:text-white";
+        }
+      });
+
+      if (tool === 'pointer') {
+        overlay.classList.remove('pointer-events-auto');
+        overlay.classList.add('pointer-events-none');
+        if (canvas) {
+          canvas.classList.remove('pointer-events-auto', 'cursor-crosshair');
+          canvas.classList.add('pointer-events-none');
+        }
+      } else {
+        overlay.classList.remove('pointer-events-none');
+        overlay.classList.add('pointer-events-auto');
+        if (canvas) {
+          canvas.classList.remove('pointer-events-none');
+          canvas.classList.add('pointer-events-auto', 'cursor-crosshair');
+        }
+      }
+    }
+
+    function setPenColor(color) {
+      penColor = color;
+      if (drawTool !== 'pen' && drawTool !== 'highlighter') setDrawTool('pen');
+    }
+
+    function setPenWeight(w) {
+      penWidth = w;
+    }
+
+    // --- INITIALIZE APPLICATION ON LOAD ---
+    window.onload = function () {
+      init100SquareDrawer();
+      initWhiteboard();
+      
+      const bar = document.getElementById('whiteboardToolbar');
+      const overlay = document.getElementById('whiteboardOverlayWrapper');
+      if (bar) bar.classList.add('hidden');
+      if (overlay) overlay.classList.add('hidden');
+
+      setModule(1); // Default Module 1: Column Addition
+    };
+  </script>
+</body>
+</html>
