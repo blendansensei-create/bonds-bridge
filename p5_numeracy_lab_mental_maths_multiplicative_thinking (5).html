@@ -1,0 +1,1673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>P5 Numeracy Lab: Mental Maths & Multiplicative Thinking</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=JetBrains+Mono:wght@600;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
+
+    :root {
+      --bg-dark: #080d1a;
+      --card-dark: #0f172a;
+      --accent-blue: #38bdf8;
+      --accent-gold: #f59e0b;
+      --accent-emerald: #10b981;
+      --accent-rose: #f43f5e;
+      --accent-purple: #a855f7;
+    }
+
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--bg-dark);
+      color: #f1f5f9;
+      height: 100vh;
+      overflow: hidden;
+      margin: 0;
+      padding: 0;
+    }
+
+    .font-num {
+      font-family: 'Fredoka', cursive, sans-serif;
+    }
+    .font-mono-calc {
+      font-family: 'JetBrains Mono', monospace;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Tactile Keypad Buttons */
+    .keypad-btn {
+      transition: transform 0.08s ease, background-color 0.1s ease;
+      box-shadow: 0 4px 0 #070c18;
+    }
+    .keypad-btn:active {
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 #070c18;
+    }
+    .keypad-btn-enter {
+      box-shadow: 0 4px 0 #b45309;
+    }
+    .keypad-btn-enter:active {
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 #b45309;
+    }
+
+    /* Place Value Tokens */
+    .pv-token {
+      width: 42px;
+      height: 42px;
+      border-radius: 9999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Fredoka', cursive, sans-serif;
+      font-weight: 700;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.25);
+      cursor: pointer;
+      transition: transform 0.1s ease;
+    }
+    .pv-token:active {
+      transform: scale(0.92);
+    }
+
+    .token-th { background: radial-gradient(circle at 35% 35%, #fb7185, #e11d48); color: #fff; font-size: 0.8rem; border: 2px solid #fda4af; }
+    .token-h  { background: radial-gradient(circle at 35% 35%, #fde047, #ca8a04); color: #422006; font-size: 0.85rem; border: 2px solid #fef08a; }
+    .token-t  { background: radial-gradient(circle at 35% 35%, #38bdf8, #0284c7); color: #082f49; font-size: 0.95rem; border: 2px solid #bae6fd; }
+    .token-u  { background: radial-gradient(circle at 35% 35%, #4ade80, #16a34a); color: #052e16; font-size: 1.05rem; border: 2px solid #bbf7d0; }
+
+    /* P7-Style 100-Square Large Tiles */
+    .sq-tile {
+      aspect-ratio: 1 / 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      font-family: 'Fredoka', cursive, sans-serif;
+      font-weight: 700;
+      background: #152238;
+      color: #94a3b8;
+      border: 1px solid #233452;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: all 0.12s ease;
+    }
+    .sq-tile:hover {
+      background: #24375a;
+      color: #f8fafc;
+      border-color: #38bdf8;
+    }
+
+    /* Custom Touch Scrollbars */
+    .custom-scroll::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    .custom-scroll::-webkit-scrollbar-track {
+      background: #091122;
+      border-radius: 4px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 4px;
+      border: 2px solid #091122;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb:hover {
+      background: #38bdf8;
+    }
+  </style>
+</head>
+<body class="relative flex flex-col h-screen w-screen bg-[#080d1a] text-slate-100 select-none overflow-hidden">
+
+  <!-- TOP APPLICATION HEADER -->
+  <header class="h-14 px-4 bg-[#0a1426] border-b border-slate-800 flex items-center justify-between shrink-0 z-30 shadow-md">
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-amber-400 to-indigo-600 flex items-center justify-center font-black text-slate-950 text-base shadow-md font-num">
+        P5
+      </div>
+      <div>
+        <h1 class="text-sm font-extrabold tracking-tight text-white flex items-center gap-2">
+          P5 Numeracy Lab
+          <span class="text-[10px] px-2 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-800 font-bold uppercase tracking-wider">Multiplicative Thinking &amp; Mental Fluency</span>
+        </h1>
+        <p class="text-[10px] text-slate-400">Targeted Multiplicative Reasoning, Visual Models &amp; Core Fluency</p>
+      </div>
+    </div>
+
+    <!-- Active Streak, Score & Global Whiteboard -->
+    <div class="flex items-center gap-3">
+      <div class="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-slate-900 border border-slate-800 text-xs shadow-inner">
+        <span class="text-amber-400 font-bold">★ Streak:</span>
+        <span id="streakDisplay" class="font-num font-bold text-amber-300 text-sm">0</span>
+      </div>
+      <div class="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-slate-900 border border-slate-800 text-xs shadow-inner">
+        <span class="text-emerald-400 font-bold">Score:</span>
+        <span id="scoreDisplay" class="font-num font-bold text-emerald-300 text-sm">0</span>
+      </div>
+
+      <!-- Persistent Global Whiteboard Button -->
+      <button id="wbToggleBtn" onclick="toggleWhiteboard()" class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white font-extrabold text-xs shadow-md transition-all active:scale-95">
+        <span>✏️</span>
+        <span id="wbToggleLabel">Whiteboard</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- 8 COMPREHENSIVE CURRICULUM STRANDS -->
+  <nav class="h-11 px-3 bg-[#08101e] border-b border-slate-800 flex items-center gap-1.5 overflow-x-auto shrink-0 z-20">
+    <button onclick="setStrand(1)" id="strandBtn-1" class="px-3 py-1 rounded-lg text-xs font-bold whitespace-nowrap bg-amber-400 text-slate-950 shadow">
+      1. Array Slice &amp; Split
+    </button>
+    <button onclick="setStrand(2)" id="strandBtn-2" class="px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap bg-slate-800 text-slate-300 hover:bg-slate-700">
+      2. Place Value Shift
+    </button>
+    <button onclick="setStrand(3)" id="strandBtn-3" class="px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap bg-slate-800 text-slate-300 hover:bg-slate-700">
+      3. Smart Strategies
+    </button>
+    <button onclick="setStrand(4)" id="strandBtn-4" class="px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap bg-slate-800 text-slate-300 hover:bg-slate-700 text-amber-300">
+      4. 60s Fluency Rush ⏱
+    </button>
+    <button onclick="setStrand(5)" id="strandBtn-5" class="px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap bg-slate-800 text-slate-300 hover:bg-slate-700">
+      5. Fact Triangles (× / ÷ to 12)
+    </button>
+    <button onclick="setStrand(6)" id="strandBtn-6" class="px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap bg-slate-800 text-slate-300 hover:bg-slate-700">
+      6. Bar Model Word Problems
+    </button>
+    <button onclick="setStrand(7)" id="strandBtn-7" class="px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap bg-slate-800 text-slate-300 hover:bg-slate-700 text-rose-300">
+      7. Error Analysis ("Spot the Mistake")
+    </button>
+    <button onclick="setStrand(8)" id="strandBtn-8" class="px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap bg-slate-800 text-slate-300 hover:bg-slate-700 text-emerald-300">
+      8. Vocabulary Clinic
+    </button>
+  </nav>
+
+  <!-- MAIN INTERACTIVE WORKSPACE (SIDE-BY-SIDE ZERO-SCROLL LANDSCAPE) -->
+  <main class="flex-1 flex overflow-hidden relative">
+
+    <!-- LEFT STAGE: STAGE, VISUALIZERS, DRAWERS -->
+    <section class="flex-1 flex flex-col p-3 overflow-hidden border-r border-slate-800/80 relative">
+
+      <!-- SUB-STRAND FILTER OPTIONS & SCAFFOLD TOGGLES -->
+      <div id="subBar" class="h-9 mb-2 flex items-center justify-between px-2.5 bg-[#0f172a] rounded-lg border border-slate-800 text-xs shrink-0">
+        <div id="subOptions" class="flex items-center gap-1.5 overflow-x-auto">
+          <!-- Dynamically populated per strand -->
+        </div>
+        <div class="flex items-center gap-2 shrink-0">
+          <button onclick="revealStepOrAnswer()" id="revealBtn" class="px-2.5 py-0.5 rounded bg-amber-500/20 text-amber-300 hover:bg-amber-500/30 text-[11px] font-bold border border-amber-500/40">
+            🔍 Reveal / Model
+          </button>
+        </div>
+      </div>
+
+      <!-- MAIN PROBLEM DISPLAY AREA -->
+      <div id="stageCard" class="flex-1 bg-[#0d1627] rounded-xl border border-slate-800 p-4 flex flex-col justify-between overflow-hidden relative shadow-inner">
+        <!-- Live Exercise Card Content -->
+        <div id="problemContent" class="flex-1 flex flex-col items-center justify-center w-full overflow-y-auto">
+          <!-- Rendered dynamically -->
+        </div>
+
+        <!-- Feedback & Mathematical Sentence Stem Banner -->
+        <div id="feedbackBanner" class="h-10 mt-2 px-3 rounded-lg bg-[#070d18] border border-slate-800 flex items-center justify-between text-xs shrink-0">
+          <div class="flex items-center gap-2 truncate">
+            <span id="feedbackIcon">💡</span>
+            <span id="feedbackText" class="text-slate-300 font-medium truncate">Work out the mathematical relationships and type your answer on the keypad.</span>
+          </div>
+          <span id="stemSentence" class="hidden text-amber-400 font-bold text-[11px] whitespace-nowrap font-num"></span>
+        </div>
+      </div>
+
+      <!-- ON-DEMAND HELPER DRAWER CONTROLS -->
+      <div class="h-9 mt-2 flex items-center gap-2 shrink-0">
+        <button onclick="toggleHundredSquareDrawer()" id="btn100Drawer" class="flex-1 h-full rounded-lg bg-[#111c33] hover:bg-[#162442] border border-slate-800 text-xs font-bold text-sky-300 flex items-center justify-center gap-1.5 transition-all">
+          <span>📊</span>
+          <span>100-Square Grid Helper</span>
+          <span id="arrow100" class="text-[10px]">▲ Open</span>
+        </button>
+
+        <button onclick="togglePVDrawer()" id="btnPVDrawer" class="flex-1 h-full rounded-lg bg-[#111c33] hover:bg-[#162442] border border-slate-800 text-xs font-bold text-amber-300 flex items-center justify-center gap-1.5 transition-all">
+          <span>🟡</span>
+          <span>Place Value Counter Workbench</span>
+          <span id="arrowPV" class="text-[10px]">▼</span>
+        </button>
+      </div>
+
+      <!-- FULL-STAGE 100-SQUARE HELPER (SCROLLABLE & ACCESSIBLE OVERLAY) -->
+      <div id="drawer100" class="hidden absolute inset-0 z-30 bg-[#070e1c]/98 p-4 flex flex-col backdrop-blur-md">
+        <div class="flex items-center justify-between pb-2 mb-2 border-b border-slate-800 shrink-0">
+          <div class="flex items-center gap-2">
+            <span class="text-sm font-extrabold text-sky-400 uppercase tracking-wide">100-Square Grid (Multiples &amp; Factors)</span>
+            <span class="text-xs text-slate-400 hidden sm:inline">(Scroll or tap tiles to highlight patterns)</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <button onclick="highlight100('evens')" class="px-2.5 py-1 rounded-lg bg-slate-800 text-slate-200 hover:bg-slate-700 text-xs font-bold">Evens (2s)</button>
+            <button onclick="highlight100('fives')" class="px-2.5 py-1 rounded-lg bg-slate-800 text-slate-200 hover:bg-slate-700 text-xs font-bold">5s</button>
+            <button onclick="highlight100('tens')" class="px-2.5 py-1 rounded-lg bg-slate-800 text-slate-200 hover:bg-slate-700 text-xs font-bold">10s</button>
+            <button onclick="highlight100('threes')" class="px-2.5 py-1 rounded-lg bg-slate-800 text-slate-200 hover:bg-slate-700 text-xs font-bold">3s</button>
+            <button onclick="highlight100('fours')" class="px-2.5 py-1 rounded-lg bg-slate-800 text-slate-200 hover:bg-slate-700 text-xs font-bold">4s</button>
+            <button onclick="highlight100('primes')" class="px-2.5 py-1 rounded-lg bg-slate-800 text-slate-200 hover:bg-slate-700 text-xs font-bold">Primes</button>
+            <button onclick="clear100Highlights()" class="px-2.5 py-1 rounded-lg bg-rose-950/60 text-rose-300 hover:bg-rose-900 border border-rose-800 text-xs font-bold">Clear</button>
+            <button onclick="toggleHundredSquareDrawer()" class="ml-2 px-3 py-1 rounded-lg bg-sky-600 hover:bg-sky-500 text-white text-xs font-black shadow flex items-center gap-1">
+              <span>✕ Close Grid</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="flex-1 overflow-y-auto custom-scroll pr-1 flex items-start justify-center">
+          <div id="grid100" class="grid grid-cols-10 gap-1.5 w-full max-w-2xl py-2">
+            <!-- 100 tiles dynamically generated -->
+          </div>
+        </div>
+      </div>
+
+      <!-- COLLAPSIBLE: PLACE VALUE COUNTER WORKBENCH -->
+      <div id="drawerPV" class="hidden mt-2 p-3 bg-[#0d1629] rounded-xl border border-slate-800 shrink-0 max-h-[48vh] flex flex-col">
+        <div class="flex items-center justify-between mb-2 pb-1.5 border-b border-slate-800 shrink-0">
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-bold text-amber-400 uppercase tracking-wide">Place Value Manipulatives</span>
+            <button onclick="togglePVValueDisplay()" id="pvVisibilityBtn" class="px-2.5 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-semibold flex items-center gap-1">
+              <span id="pvVisIcon">👁️</span>
+              <span id="pvVisLabel">Values: Shown</span>
+            </button>
+          </div>
+          <div class="flex items-center gap-2">
+            <div id="pvTotalBadge" class="px-3 py-0.5 rounded-lg bg-slate-900 border border-amber-500/40 text-xs font-bold text-amber-300 font-num">
+              Total on Mat: <span id="pvMatTotal">0</span>
+            </div>
+            <button onclick="exchangePV10to1()" class="px-2 py-0.5 rounded bg-indigo-600/40 hover:bg-indigo-600/60 border border-indigo-500/50 text-indigo-200 text-xs font-bold">
+              🔄 Regroup 10➔1
+            </button>
+            <button onclick="clearPVMat()" class="px-2 py-0.5 rounded bg-rose-600/30 hover:bg-rose-600/50 border border-rose-500/40 text-rose-300 text-xs font-bold">
+              🧹 Clear Mat
+            </button>
+            <button onclick="togglePVFullscreen()" id="pvFullBtn" class="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold">
+              ⛶ Expand
+            </button>
+          </div>
+        </div>
+
+        <!-- 4-Column Manipulative Mat -->
+        <div class="flex-1 grid grid-cols-4 gap-2 min-h-[140px] overflow-hidden">
+          <!-- Thousands (Red) -->
+          <div class="flex flex-col bg-[#070b14] rounded-lg border border-rose-950/60 p-2 overflow-hidden">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs font-extrabold text-rose-400">Thousands</span>
+              <span id="badge-th" class="text-[10px] font-bold text-rose-300 font-num">0 (0)</span>
+            </div>
+            <button onclick="addPVToken('th')" class="w-full py-1 mb-1 rounded bg-rose-600/30 hover:bg-rose-600/50 border border-rose-500/50 text-rose-200 text-xs font-bold flex items-center justify-center gap-1 shadow">
+              <span>＋ 1,000</span>
+            </button>
+            <div id="col-th" class="flex-1 p-1 flex flex-wrap gap-1.5 content-start overflow-y-auto custom-scroll"></div>
+          </div>
+
+          <!-- Hundreds (Yellow) -->
+          <div class="flex flex-col bg-[#070b14] rounded-lg border border-yellow-950/60 p-2 overflow-hidden">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs font-extrabold text-yellow-400">Hundreds</span>
+              <span id="badge-h" class="text-[10px] font-bold text-yellow-300 font-num">0 (0)</span>
+            </div>
+            <button onclick="addPVToken('h')" class="w-full py-1 mb-1 rounded bg-yellow-600/30 hover:bg-yellow-600/50 border border-yellow-500/50 text-yellow-200 text-xs font-bold flex items-center justify-center gap-1 shadow">
+              <span>＋ 100</span>
+            </button>
+            <div id="col-h" class="flex-1 p-1 flex flex-wrap gap-1.5 content-start overflow-y-auto custom-scroll"></div>
+          </div>
+
+          <!-- Tens (Blue) -->
+          <div class="flex flex-col bg-[#070b14] rounded-lg border border-sky-950/60 p-2 overflow-hidden">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs font-extrabold text-sky-400">Tens</span>
+              <span id="badge-t" class="text-[10px] font-bold text-sky-300 font-num">0 (0)</span>
+            </div>
+            <button onclick="addPVToken('t')" class="w-full py-1 mb-1 rounded bg-sky-600/30 hover:bg-sky-600/50 border border-sky-500/50 text-sky-200 text-xs font-bold flex items-center justify-center gap-1 shadow">
+              <span>＋ 10</span>
+            </button>
+            <div id="col-t" class="flex-1 p-1 flex flex-wrap gap-1.5 content-start overflow-y-auto custom-scroll"></div>
+          </div>
+
+          <!-- Ones / Units (Green) -->
+          <div class="flex flex-col bg-[#070b14] rounded-lg border border-emerald-950/60 p-2 overflow-hidden">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs font-extrabold text-emerald-400">Ones</span>
+              <span id="badge-u" class="text-[10px] font-bold text-emerald-300 font-num">0 (0)</span>
+            </div>
+            <button onclick="addPVToken('u')" class="w-full py-1 mb-1 rounded bg-emerald-600/30 hover:bg-emerald-600/50 border border-emerald-500/50 text-emerald-200 text-xs font-bold flex items-center justify-center gap-1 shadow">
+              <span>＋ 1</span>
+            </button>
+            <div id="col-u" class="flex-1 p-1 flex flex-wrap gap-1.5 content-start overflow-y-auto custom-scroll"></div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- RIGHT STAGE: TACTILE ARM-HEIGHT NUMBER KEYPAD (NO PREMATURE EVALUATION) -->
+    <aside class="w-64 bg-[#0a1222] flex flex-col p-3 justify-between shrink-0 select-none border-l border-slate-800">
+      
+      <!-- Pupil Answer Display & Clear -->
+      <div class="mb-2 shrink-0">
+        <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1 flex items-center justify-between">
+          <span id="activePupilNameBadge" class="text-amber-400">Your Answer</span>
+          <span id="keypadTargetIndicator" class="text-sky-400 font-mono-calc">Target: ?</span>
+        </div>
+        <div class="relative flex items-center">
+          <input type="text" id="answerInput" readonly placeholder="?" 
+            class="w-full h-12 bg-[#060c18] border-2 border-amber-400 rounded-xl text-center text-2xl font-num font-bold text-amber-300 tracking-wider shadow-inner outline-none">
+          <button onclick="clearCurrentInput()" class="absolute right-1.5 px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold active:scale-95">
+            CLR
+          </button>
+        </div>
+      </div>
+
+      <!-- 3x4 Tactile Keypad: Compact Row Heights with 6px Gaps -->
+      <div class="grid grid-cols-3 gap-1.5 my-auto w-full">
+        <button onclick="pressDigit(1)" class="keypad-btn h-12 rounded-xl bg-[#15233e] hover:bg-[#1e3156] active:bg-sky-600 text-white font-num font-bold text-xl flex items-center justify-center border border-slate-700/60">1</button>
+        <button onclick="pressDigit(2)" class="keypad-btn h-12 rounded-xl bg-[#15233e] hover:bg-[#1e3156] active:bg-sky-600 text-white font-num font-bold text-xl flex items-center justify-center border border-slate-700/60">2</button>
+        <button onclick="pressDigit(3)" class="keypad-btn h-12 rounded-xl bg-[#15233e] hover:bg-[#1e3156] active:bg-sky-600 text-white font-num font-bold text-xl flex items-center justify-center border border-slate-700/60">3</button>
+
+        <button onclick="pressDigit(4)" class="keypad-btn h-12 rounded-xl bg-[#15233e] hover:bg-[#1e3156] active:bg-sky-600 text-white font-num font-bold text-xl flex items-center justify-center border border-slate-700/60">4</button>
+        <button onclick="pressDigit(5)" class="keypad-btn h-12 rounded-xl bg-[#15233e] hover:bg-[#1e3156] active:bg-sky-600 text-white font-num font-bold text-xl flex items-center justify-center border border-slate-700/60">5</button>
+        <button onclick="pressDigit(6)" class="keypad-btn h-12 rounded-xl bg-[#15233e] hover:bg-[#1e3156] active:bg-sky-600 text-white font-num font-bold text-xl flex items-center justify-center border border-slate-700/60">6</button>
+
+        <button onclick="pressDigit(7)" class="keypad-btn h-12 rounded-xl bg-[#15233e] hover:bg-[#1e3156] active:bg-sky-600 text-white font-num font-bold text-xl flex items-center justify-center border border-slate-700/60">7</button>
+        <button onclick="pressDigit(8)" class="keypad-btn h-12 rounded-xl bg-[#15233e] hover:bg-[#1e3156] active:bg-sky-600 text-white font-num font-bold text-xl flex items-center justify-center border border-slate-700/60">8</button>
+        <button onclick="pressDigit(9)" class="keypad-btn h-12 rounded-xl bg-[#15233e] hover:bg-[#1e3156] active:bg-sky-600 text-white font-num font-bold text-xl flex items-center justify-center border border-slate-700/60">9</button>
+
+        <button onclick="deleteDigit()" class="keypad-btn h-12 rounded-xl bg-slate-800/80 hover:bg-slate-700 active:bg-rose-600 text-rose-300 font-num font-bold text-lg flex items-center justify-center border border-slate-700/50">⌫</button>
+        <button onclick="pressDigit(0)" class="keypad-btn h-12 rounded-xl bg-[#15233e] hover:bg-[#1e3156] active:bg-sky-600 text-white font-num font-bold text-xl flex items-center justify-center border border-slate-700/60">0</button>
+        <button onclick="submitAnswer()" class="keypad-btn keypad-btn-enter h-12 rounded-xl bg-amber-400 hover:bg-amber-300 active:bg-amber-500 text-slate-950 font-num font-black text-xl flex items-center justify-center border border-amber-300">↵</button>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex gap-2 pt-2 border-t border-slate-800 shrink-0">
+        <button onclick="skipQuestion()" class="flex-1 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs border border-slate-700 shadow active:scale-95">
+          ⏭ Skip
+        </button>
+        <button onclick="nextQuestion()" class="flex-1 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs border border-sky-400 shadow active:scale-95">
+          Next ➔
+        </button>
+      </div>
+    </aside>
+
+  </main>
+
+  <!-- UNIVERSAL ROOT-LEVEL WHITEBOARD CANVAS & TOOLBAR OVERLAY -->
+  <div id="wbOverlay" class="absolute inset-0 pointer-events-none z-50">
+    <canvas id="whiteboardCanvas" class="w-full h-full pointer-events-none"></canvas>
+
+    <!-- Whiteboard Floating Toolbar -->
+    <div id="wbToolbar" class="hidden absolute top-16 right-6 pointer-events-auto bg-[#070e1c]/95 border-2 border-sky-500/50 rounded-2xl p-2.5 shadow-2xl flex flex-col gap-2 backdrop-blur-md">
+      <div class="flex items-center justify-between pb-1 border-b border-slate-700 px-1">
+        <span class="text-[11px] font-bold text-sky-400 uppercase tracking-wider">Whiteboard</span>
+        <button onclick="toggleWhiteboard()" class="text-slate-400 hover:text-white text-xs font-bold">✕</button>
+      </div>
+
+      <!-- Tool Selector -->
+      <div class="grid grid-cols-2 gap-1.5">
+        <button onclick="setWbTool('touch')" id="wbTool-touch" class="px-2.5 py-1.5 rounded-lg bg-sky-600 text-white text-xs font-bold flex items-center justify-center gap-1">
+          <span>👆</span><span>Touch</span>
+        </button>
+        <button onclick="setWbTool('pen')" id="wbTool-pen" class="px-2.5 py-1.5 rounded-lg bg-slate-800 text-slate-300 text-xs font-bold flex items-center justify-center gap-1">
+          <span>✏️</span><span>Pen</span>
+        </button>
+        <button onclick="setWbTool('highlighter')" id="wbTool-highlighter" class="px-2.5 py-1.5 rounded-lg bg-slate-800 text-slate-300 text-xs font-bold flex items-center justify-center gap-1">
+          <span>🖍️</span><span>Highlighter</span>
+        </button>
+        <button onclick="setWbTool('eraser')" id="wbTool-eraser" class="px-2.5 py-1.5 rounded-lg bg-slate-800 text-slate-300 text-xs font-bold flex items-center justify-center gap-1">
+          <span>🧹</span><span>Eraser</span>
+        </button>
+      </div>
+
+      <!-- Color Palette -->
+      <div class="flex items-center justify-between gap-1 px-1 py-1 bg-slate-900/80 rounded-lg">
+        <button onclick="setWbColor('#ffffff')" class="w-6 h-6 rounded-full bg-white border border-slate-400"></button>
+        <button onclick="setWbColor('#38bdf8')" class="w-6 h-6 rounded-full bg-sky-400 border border-sky-200"></button>
+        <button onclick="setWbColor('#facc15')" class="w-6 h-6 rounded-full bg-yellow-400 border border-yellow-200"></button>
+        <button onclick="setWbColor('#4ade80')" class="w-6 h-6 rounded-full bg-emerald-400 border border-emerald-200"></button>
+        <button onclick="setWbColor('#f43f5e')" class="w-6 h-6 rounded-full bg-rose-500 border border-rose-300"></button>
+      </div>
+
+      <!-- Thickness Selector -->
+      <div class="flex items-center gap-1">
+        <button onclick="setWbSize(3)" class="flex-1 py-1 rounded bg-slate-800 text-slate-300 text-xs font-bold">Thin</button>
+        <button onclick="setWbSize(7)" class="flex-1 py-1 rounded bg-slate-800 text-slate-300 text-xs font-bold">Med</button>
+        <button onclick="setWbSize(14)" class="flex-1 py-1 rounded bg-slate-800 text-slate-300 text-xs font-bold">Thick</button>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex items-center gap-1 pt-1 border-t border-slate-700">
+        <button onclick="undoWhiteboard()" class="flex-1 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold">↶ Undo</button>
+        <button onclick="clearWhiteboard()" class="flex-1 py-1 rounded bg-rose-600/40 hover:bg-rose-600/60 text-rose-300 text-xs font-bold">Clear All</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- APPLICATION LOGIC & COMPLETE DATA SET -->
+  <script>
+    // Audio synthesizer for offline Promethean / interactive display use
+    let audioCtx = null;
+    function getAudioContext() {
+      if (!audioCtx) {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (AudioContextClass) audioCtx = new AudioContextClass();
+      }
+      return audioCtx;
+    }
+
+    // Soft click tone for pressing digits (Never buzzes while typing!)
+    function playKeypadTap() {
+      try {
+        const ctx = getAudioContext();
+        if (ctx.state === 'suspended') ctx.resume().catch(() => {});
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(480, ctx.currentTime);
+        gain.gain.setValueAtTime(0.04, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.04);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.04);
+      } catch (e) {}
+    }
+
+    function playTone(type) {
+      try {
+        const ctx = getAudioContext();
+        if (!ctx) return;
+        if (ctx.state === 'suspended') ctx.resume().catch(() => {});
+
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        const now = ctx.currentTime;
+        if (type === 'correct') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(523.25, now);
+          osc.frequency.exponentialRampToValueAtTime(659.25, now + 0.08);
+          osc.frequency.exponentialRampToValueAtTime(783.99, now + 0.16);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
+          osc.start(now);
+          osc.stop(now + 0.3);
+        } else if (type === 'step') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(440, now);
+          osc.frequency.exponentialRampToValueAtTime(554.37, now + 0.08);
+          gain.gain.setValueAtTime(0.15, now);
+          gain.gain.linearRampToValueAtTime(0.01, now + 0.15);
+          osc.start(now);
+          osc.stop(now + 0.15);
+        } else {
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(220, now);
+          osc.frequency.linearRampToValueAtTime(140, now + 0.25);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.linearRampToValueAtTime(0.01, now + 0.25);
+          osc.start(now);
+          osc.stop(now + 0.25);
+        }
+      } catch (e) {}
+    }
+
+    // --- APPLICATION STATE ---
+    let currentStrand = 1;
+    let subOptionSelection = {
+      1: 'split5',     // Strand 1: Array Slice & Split (split5, split10, grid2d)
+      2: 'times10',    // Strand 2: Place Value Shift (times10, times100, div10, div100)
+      3: 'nearDouble', // Strand 3: Smart Strategies (nearDouble, doubleHalf, times9)
+      4: 'rush',       // Strand 4: 60s Fluency Rush
+      5: 'all',        // Strand 5: Fact Triangles (all, missingDiv, missingMult)
+      6: 'scaling',    // Strand 6: Bar Models (scaling, equalParts, comparison)
+      7: 'allMistakes',// Strand 7: Error Analysis
+      8: 'decode'      // Strand 8: Vocabulary Clinic
+    };
+
+    let score = 0;
+    let streak = 0;
+    let currentInput = "";
+    let isAnswered = false;
+    let currentQuestion = null;
+
+    // Fast Fire Timer
+    let fastFireTimer = null;
+    let fastFireSeconds = 60;
+
+    // Place Value Counters State
+    let pvCounters = { th: 0, h: 0, t: 0, u: 0 };
+    let pvValuesVisible = true;
+    let isPVFullscreen = false;
+
+    // --- STRAND NAVIGATION & SUB-OPTIONS ---
+    function setStrand(strandNum) {
+      currentStrand = strandNum;
+      for (let i = 1; i <= 8; i++) {
+        const btn = document.getElementById(`strandBtn-${i}`);
+        if (btn) {
+          if (i === strandNum) {
+            btn.className = "px-3 py-1 rounded-lg text-xs font-bold whitespace-nowrap bg-amber-400 text-slate-950 shadow";
+          } else {
+            btn.className = "px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap bg-slate-800 text-slate-300 hover:bg-slate-700";
+          }
+        }
+      }
+      setupSubBar(strandNum);
+      generateQuestion();
+    }
+
+    function setSubOption(strand, key) {
+      subOptionSelection[strand] = key;
+      setupSubBar(strand);
+      generateQuestion();
+    }
+
+    function setupSubBar(strandNum) {
+      const sub = document.getElementById("subOptions");
+      if (!sub) return;
+      const current = subOptionSelection[strandNum];
+
+      const btnClass = (active) => active 
+        ? "px-2.5 py-0.5 rounded-lg bg-amber-400 text-slate-950 font-bold text-xs shadow" 
+        : "px-2.5 py-0.5 rounded-lg bg-[#182747] text-slate-300 hover:text-white text-xs border border-slate-700";
+
+      if (strandNum === 1) {
+        sub.innerHTML = `
+          <span class="text-slate-400 font-bold mr-1">Slice Anchor:</span>
+          <button onclick="setSubOption(1, 'split5')" class="${btnClass(current === 'split5')}">Slice into 5s (e.g. 7×8 = 5×8 + 2×8)</button>
+          <button onclick="setSubOption(1, 'split10')" class="${btnClass(current === 'split10')}">Slice Near 10 (e.g. 9×6 = 10×6 − 6)</button>
+          <button onclick="setSubOption(1, 'grid2d')" class="${btnClass(current === 'grid2d')}">2-Digit Grid Arrays (e.g. 14×4)</button>
+        `;
+      } else if (strandNum === 2) {
+        sub.innerHTML = `
+          <span class="text-slate-400 font-bold mr-1">Shift Operation:</span>
+          <button onclick="setSubOption(2, 'times10')" class="${btnClass(current === 'times10')}">× 10 (1 Place Left)</button>
+          <button onclick="setSubOption(2, 'times100')" class="${btnClass(current === 'times100')}">× 100 (2 Places Left)</button>
+          <button onclick="setSubOption(2, 'div10')" class="${btnClass(current === 'div10')}">÷ 10 (1 Place Right)</button>
+          <button onclick="setSubOption(2, 'div100')" class="${btnClass(current === 'div100')}">÷ 100 (2 Places Right)</button>
+        `;
+      } else if (strandNum === 3) {
+        sub.innerHTML = `
+          <span class="text-slate-400 font-bold mr-1">Strategy:</span>
+          <button onclick="setSubOption(3, 'nearDouble')" class="${btnClass(current === 'nearDouble')}">Near Doubles (±1, ±2)</button>
+          <button onclick="setSubOption(3, 'doubleHalf')" class="${btnClass(current === 'doubleHalf')}">Double &amp; Halve (e.g. 4×15 = 2×30)</button>
+          <button onclick="setSubOption(3, 'times9')" class="${btnClass(current === 'times9')}">×9 / ×11 Compensation</button>
+        `;
+      } else if (strandNum === 4) {
+        sub.innerHTML = `<span class="text-amber-400 text-xs font-bold font-num">⏱ 60s Fluency Rush Sprint Active</span>`;
+      } else if (strandNum === 5) {
+        sub.innerHTML = `
+          <span class="text-slate-400 font-bold mr-1">Mode:</span>
+          <button onclick="setSubOption(5, 'all')" class="${btnClass(current === 'all')}">All Triangles (to 12×12)</button>
+          <button onclick="setSubOption(5, 'missingDiv')" class="${btnClass(current === 'missingDiv')}">Missing Factor (÷ Focus)</button>
+          <button onclick="setSubOption(5, 'missingMult')" class="${btnClass(current === 'missingMult')}">Missing Product (× Focus)</button>
+        `;
+      } else if (strandNum === 6) {
+        sub.innerHTML = `
+          <span class="text-slate-400 font-bold mr-1">Structure:</span>
+          <button onclick="setSubOption(6, 'scaling')" class="${btnClass(current === 'scaling')}">Scaling ("3 times as many")</button>
+          <button onclick="setSubOption(6, 'equalParts')" class="${btnClass(current === 'equalParts')}">Equal Parts / Sharing</button>
+          <button onclick="setSubOption(6, 'comparison')" class="${btnClass(current === 'comparison')}">Multiplicative Comparison</button>
+        `;
+      } else if (strandNum === 7) {
+        sub.innerHTML = `
+          <span class="text-slate-400 font-bold mr-1">Misconception:</span>
+          <button onclick="setSubOption(7, 'allMistakes')" class="${btnClass(current === 'allMistakes')}">All Fallacies</button>
+          <button onclick="setSubOption(7, 'opError')" class="${btnClass(current === 'opError')}">Operation Mix-Ups</button>
+          <button onclick="setSubOption(7, 'remainderSkip')" class="${btnClass(current === 'remainderSkip')}">Equal Group Traps</button>
+        `;
+      } else if (strandNum === 8) {
+        sub.innerHTML = `
+          <span class="text-slate-400 font-bold mr-1">Vocabulary Focus:</span>
+          <button onclick="setSubOption(8, 'decode')" class="${btnClass(current === 'decode')}">Keyword Clues (Product, Factor, Quotient)</button>
+          <button onclick="setSubOption(8, 'multiStep')" class="${btnClass(current === 'multiStep')}">2-Step Real Life Word Problems</button>
+        `;
+      }
+    }
+
+    // --- KEYPAD INPUT & SAFE SUBMISSION (NO BUZZER WHILE TYPING) ---
+    function pressDigit(num) {
+      if (isAnswered) return;
+      playKeypadTap(); // Play soft click, NEVER the buzzer!
+      if (currentInput.length >= 6) return;
+      currentInput += num.toString();
+      const inputEl = document.getElementById("answerInput");
+      if (inputEl) inputEl.value = currentInput;
+    }
+
+    function deleteDigit() {
+      if (isAnswered) return;
+      playKeypadTap();
+      currentInput = currentInput.slice(0, -1);
+      const inputEl = document.getElementById("answerInput");
+      if (inputEl) inputEl.value = currentInput;
+    }
+
+    function clearCurrentInput() {
+      if (isAnswered) return;
+      playKeypadTap();
+      currentInput = "";
+      const inputEl = document.getElementById("answerInput");
+      if (inputEl) inputEl.value = "";
+    }
+
+    // EVALUATES STRICTLY ON ENTER
+    function submitAnswer() {
+      if (!currentQuestion || !currentInput || currentInput.trim() === "") return;
+      const feedback = document.getElementById("feedbackText");
+
+      if (currentInput.trim() === currentQuestion.ans.trim()) {
+        playTone('correct');
+        score += 10;
+        streak++;
+        const scoreEl = document.getElementById("scoreDisplay");
+        const streakEl = document.getElementById("streakDisplay");
+        if (scoreEl) scoreEl.textContent = score;
+        if (streakEl) streakEl.textContent = streak;
+        if (feedback) {
+          feedback.textContent = `✓ Correct! Brilliant multiplicative reasoning.`;
+          feedback.className = "text-emerald-400 font-extrabold truncate";
+        }
+        isAnswered = true;
+
+        // Unmask the strategy breakdown only after answering
+        if (currentQuestion.stem) {
+          const stemEl = document.getElementById("stemSentence");
+          if (stemEl) {
+            stemEl.textContent = currentQuestion.stem;
+            stemEl.classList.remove("hidden");
+          }
+        }
+        const hintCard = document.getElementById("strategyHintCard");
+        if (hintCard) {
+          hintCard.classList.remove("invisible", "hidden");
+          if (currentQuestion.stem) {
+            hintCard.innerHTML = `<span class="text-emerald-400 font-bold">${currentQuestion.stem}</span>`;
+          }
+        }
+
+        setTimeout(nextQuestion, 2400);
+      } else {
+        playTone('wrong');
+        streak = 0;
+        const streakEl = document.getElementById("streakDisplay");
+        if (streakEl) streakEl.textContent = streak;
+        if (feedback) {
+          feedback.textContent = `✕ Not quite (${currentInput}). Try again or press Reveal.`;
+          feedback.className = "text-rose-400 font-bold truncate";
+        }
+        clearCurrentInput();
+      }
+    }
+
+    function skipQuestion() {
+      generateQuestion();
+    }
+
+    // --- 60-SECOND FAST FIRE TIMER LOGIC ---
+    function startFastFire() {
+      clearInterval(fastFireTimer);
+      fastFireSeconds = 60;
+      const el = document.getElementById("fastFireCountdown");
+      const btn = document.getElementById("btnFastFireStart");
+      if (btn) btn.classList.add("hidden");
+
+      fastFireTimer = setInterval(() => {
+        fastFireSeconds--;
+        if (el) el.textContent = `${fastFireSeconds}s`;
+        if (fastFireSeconds <= 0) {
+          clearInterval(fastFireTimer);
+          playTone('correct');
+          if (btn) btn.classList.remove("hidden");
+          const feedback = document.getElementById("feedbackText");
+          if (feedback) {
+            feedback.textContent = `⏱ Time's Up! Total Score: ${score}`;
+            feedback.className = "text-amber-400 font-extrabold text-sm truncate";
+          }
+        }
+      }, 1000);
+      generateQuestion();
+    }
+
+    function nextQuestion() {
+      generateQuestion();
+    }
+
+    function revealStepOrAnswer() {
+      if (!currentQuestion) return;
+      currentInput = currentQuestion.ans;
+      const inputEl = document.getElementById("answerInput");
+      if (inputEl) inputEl.value = currentInput;
+      const feedback = document.getElementById("feedbackText");
+      if (feedback) {
+        feedback.textContent = `Model Answer Revealed: ${currentQuestion.ans}`;
+        feedback.className = "text-amber-400 font-extrabold truncate";
+      }
+
+      const hintCard = document.getElementById("strategyHintCard");
+      if (hintCard) {
+        hintCard.classList.remove("invisible", "hidden");
+        if (currentQuestion.stem) {
+          hintCard.innerHTML = `<span class="text-amber-400 font-bold">${currentQuestion.stem}</span>`;
+        }
+      }
+      const stemEl = document.getElementById("stemSentence");
+      if (stemEl && currentQuestion.stem) {
+        stemEl.textContent = currentQuestion.stem;
+        stemEl.classList.remove("hidden");
+      }
+    }
+
+    // --- INFINITE QUESTION GENERATION ENGINE (ALL 8 TOPICS) ---
+    function generateQuestion() {
+      currentInput = "";
+      const inputEl = document.getElementById("answerInput");
+      if (inputEl) inputEl.value = "";
+      isAnswered = false;
+
+      const feedback = document.getElementById("feedbackText");
+      const stemEl = document.getElementById("stemSentence");
+      if (stemEl) stemEl.classList.add("hidden");
+      if (feedback) {
+        feedback.textContent = "Work through each stage step-by-step. Enter your answer on the keypad.";
+        feedback.className = "text-slate-300 font-medium truncate";
+      }
+
+      const targetIndicator = document.getElementById("keypadTargetIndicator");
+      const stage = document.getElementById("problemContent");
+
+      if (currentStrand === 1) {
+        // TOPIC 1: ARRAY SLICE & SPLIT
+        const sub = subOptionSelection[1] || 'split5';
+        let a, b, sliceA, sliceB, ans;
+
+        if (sub === 'split5') {
+          a = Math.floor(Math.random() * 4) + 6; // 6..9
+          b = Math.floor(Math.random() * 6) + 4; // 4..9
+          sliceA = 5;
+          sliceB = a - 5;
+          ans = a * b;
+          currentQuestion = {
+            ans: ans.toString(),
+            a, b, sliceA, sliceB,
+            stem: `Slice into friendly 5s: (${sliceA} × ${b} = ${sliceA * b}) + (${sliceB} × ${b} = ${sliceB * b}) = ${ans}!`
+          };
+        } else if (sub === 'split10') {
+          a = Math.random() > 0.5 ? 9 : 8;
+          b = Math.floor(Math.random() * 7) + 3; // 3..9
+          ans = a * b;
+          const diff = 10 - a;
+          currentQuestion = {
+            ans: ans.toString(),
+            a, b,
+            stem: `Slice near 10: (10 × ${b} = ${10 * b}) − (${diff} × ${b} = ${diff * b}) = ${ans}!`
+          };
+        } else {
+          a = Math.floor(Math.random() * 8) + 12; // 12..19
+          b = Math.floor(Math.random() * 4) + 3;  // 3..6
+          ans = a * b;
+          currentQuestion = {
+            ans: ans.toString(),
+            a, b,
+            stem: `Grid Partition: (10 × ${b} = ${10 * b}) + (${a - 10} × ${b} = ${(a - 10) * b}) = ${ans}!`
+          };
+        }
+
+        targetIndicator.textContent = "Target: Product";
+        stage.innerHTML = `
+          <div class="flex flex-col items-center justify-center max-w-lg w-full my-auto text-center">
+            <span class="px-3 py-1 rounded-full bg-indigo-950/80 border border-indigo-700 text-indigo-300 text-xs font-bold uppercase tracking-wider mb-3">
+              1. Array Slice &amp; Split
+            </span>
+            <div class="text-5xl font-extrabold text-white font-num mb-4">
+              ${currentQuestion.a} × ${currentQuestion.b} = <span class="text-amber-400">?</span>
+            </div>
+            
+            <div id="strategyHintCard" class="px-4 py-2 rounded-xl bg-slate-900 border border-slate-800 text-xs text-sky-400 font-semibold mb-2 invisible">
+              ${currentQuestion.stem}
+            </div>
+            <div class="text-[11px] text-slate-400">Partition into friendly 5s or 10s to calculate without counting!</div>
+          </div>
+        `;
+
+      } else if (currentStrand === 2) {
+        // TOPIC 2: PLACE VALUE SHIFT
+        const sub = subOptionSelection[2] || 'times10';
+        let base, opText, ans, ruleText;
+
+        if (sub === 'times10') {
+          base = Math.floor(Math.random() * 80) + 12;
+          ans = base * 10;
+          opText = `${base} × 10`;
+          ruleText = "Digits shift ONE place left on the PV mat.";
+        } else if (sub === 'times100') {
+          base = Math.floor(Math.random() * 60) + 11;
+          ans = base * 100;
+          opText = `${base} × 100`;
+          ruleText = "Digits shift TWO places left on the PV mat.";
+        } else if (sub === 'div10') {
+          ans = Math.floor(Math.random() * 75) + 12;
+          base = ans * 10;
+          opText = `${base} ÷ 10`;
+          ruleText = "Digits shift ONE place right on the PV mat.";
+        } else {
+          ans = Math.floor(Math.random() * 45) + 5;
+          base = ans * 100;
+          opText = `${base} ÷ 100`;
+          ruleText = "Digits shift TWO places right on the PV mat.";
+        }
+
+        currentQuestion = {
+          ans: ans.toString(),
+          base, ans,
+          stem: `${opText} = ${ans}. ${ruleText}`
+        };
+
+        targetIndicator.textContent = "Target: Shifted Value";
+        stage.innerHTML = `
+          <div class="flex flex-col items-center justify-center max-w-lg w-full my-auto text-center">
+            <span class="px-3 py-1 rounded-full bg-sky-950/80 border border-sky-700 text-sky-300 text-xs font-bold uppercase tracking-wider mb-3">
+              2. Place Value Shift (Powers of 10)
+            </span>
+            <div class="text-5xl font-extrabold text-white font-num mb-4">
+              ${opText} = <span class="text-amber-400">?</span>
+            </div>
+            <div id="strategyHintCard" class="px-4 py-2 rounded-xl bg-slate-900 border border-slate-800 text-xs text-sky-400 font-semibold mb-2 invisible">
+              ${currentQuestion.stem}
+            </div>
+            <div class="text-[11px] text-slate-400">Use the Place Value Counter workbench below to prove column movement!</div>
+          </div>
+        `;
+
+      } else if (currentStrand === 3) {
+        // TOPIC 3: SMART STRATEGIES (NEAR DOUBLES, DOUBLE & HALVE, COMPENSATION)
+        const sub = subOptionSelection[3] || 'nearDouble';
+
+        if (sub === 'nearDouble') {
+          const base = Math.floor(Math.random() * 15) + 12; // 12..26
+          const offset = Math.random() > 0.5 ? 1 : -1;
+          const a = base;
+          const b = base + offset;
+          const ans = a + b;
+
+          currentQuestion = {
+            ans: ans.toString(),
+            a, b, base, offset, ans,
+            stem: `Double ${base} is ${base * 2}, then ${offset > 0 ? 'add 1' : 'subtract 1'} = ${ans}!`
+          };
+
+          targetIndicator.textContent = "Target: Sum";
+          stage.innerHTML = `
+            <div class="flex flex-col items-center justify-center max-w-lg w-full my-auto text-center">
+              <span class="px-3 py-1 rounded-full bg-amber-950/80 border border-amber-700 text-amber-300 text-xs font-bold uppercase tracking-wider mb-3">
+                3. Smart Strategies (Near Doubles)
+              </span>
+              <div class="text-5xl sm:text-6xl font-extrabold text-white font-num mb-4">
+                ${a} + ${b} = <span class="text-amber-400">?</span>
+              </div>
+              
+              <!-- Anti-giveaway: Masked until solved or Reveal clicked -->
+              <div id="strategyHintCard" class="px-4 py-2 rounded-xl bg-slate-900 border border-slate-800 text-sm text-sky-300 font-num font-bold mb-2 invisible">
+                ${currentQuestion.stem}
+              </div>
+              <div class="text-xs text-slate-400 font-medium">Spot the anchor double and adjust without counting in ones!</div>
+            </div>
+          `;
+        } else if (sub === 'doubleHalf') {
+          const multPool = [
+            { a: 4, b: 15, hA: 2, dB: 30 },
+            { a: 6, b: 15, hA: 3, dB: 30 },
+            { a: 8, b: 15, hA: 4, dB: 30 },
+            { a: 4, b: 25, hA: 2, dB: 50 },
+            { a: 6, b: 25, hA: 3, dB: 50 },
+            { a: 4, b: 35, hA: 2, dB: 70 },
+            { a: 4, b: 45, hA: 2, dB: 90 }
+          ];
+          const choice = multPool[Math.floor(Math.random() * multPool.length)];
+          const ans = choice.a * choice.b;
+
+          currentQuestion = {
+            ans: ans.toString(),
+            choice, ans,
+            stem: `Halve ${choice.a} to ${choice.hA}, double ${choice.b} to ${choice.dB}: ${choice.hA} × ${choice.dB} = ${ans}!`
+          };
+
+          targetIndicator.textContent = "Target: Product";
+          stage.innerHTML = `
+            <div class="flex flex-col items-center justify-center max-w-lg w-full my-auto text-center">
+              <span class="px-3 py-1 rounded-full bg-amber-950/80 border border-amber-700 text-amber-300 text-xs font-bold uppercase tracking-wider mb-3">
+                3. Smart Strategies (Double &amp; Halve)
+              </span>
+              <div class="text-5xl font-extrabold text-white font-num mb-4">
+                ${choice.a} × ${choice.b} = <span class="text-amber-400">?</span>
+              </div>
+              <div id="strategyHintCard" class="px-4 py-2 rounded-xl bg-slate-900 border border-slate-800 text-sm text-sky-300 font-num font-bold mb-2 invisible">
+                ${currentQuestion.stem}
+              </div>
+              <div class="text-xs text-slate-400">Halve the even factor and double the 5-ending factor for a friendly calculation!</div>
+            </div>
+          `;
+        } else {
+          const factor = Math.floor(Math.random() * 7) + 3; // 3..9
+          const is11 = Math.random() > 0.5;
+          const mult = is11 ? 11 : 9;
+          const ans = factor * mult;
+
+          currentQuestion = {
+            ans: ans.toString(),
+            factor, mult, ans,
+            stem: is11 
+              ? `${factor} × 11 = (${factor} × 10 = ${factor * 10}) + ${factor} = ${ans}!`
+              : `${factor} × 9 = (${factor} × 10 = ${factor * 10}) − ${factor} = ${ans}!`
+          };
+
+          targetIndicator.textContent = "Target: Product";
+          stage.innerHTML = `
+            <div class="flex flex-col items-center justify-center max-w-lg w-full my-auto text-center">
+              <span class="px-3 py-1 rounded-full bg-amber-950/80 border border-amber-700 text-amber-300 text-xs font-bold uppercase tracking-wider mb-3">
+                3. Smart Strategies (×${mult} Compensation)
+              </span>
+              <div class="text-5xl font-extrabold text-white font-num mb-4">
+                ${factor} × ${mult} = <span class="text-amber-400">?</span>
+              </div>
+              <div id="strategyHintCard" class="px-4 py-2 rounded-xl bg-slate-900 border border-slate-800 text-sm text-sky-300 font-num font-bold mb-2 invisible">
+                ${currentQuestion.stem}
+              </div>
+              <div class="text-xs text-slate-400">Calculate × 10 first, then ${is11 ? 'add' : 'subtract'} one group of ${factor}!</div>
+            </div>
+          `;
+        }
+
+      } else if (currentStrand === 4) {
+        // TOPIC 4: 60s FLUENCY RUSH
+        const a = Math.floor(Math.random() * 8) + 3;
+        const b = Math.floor(Math.random() * 8) + 3;
+        const ans = a * b;
+        currentQuestion = {
+          ans: ans.toString(), a, b,
+          stem: `${a} × ${b} = ${ans}`
+        };
+        targetIndicator.textContent = "Target: Rapid Product";
+
+        stage.innerHTML = `
+          <div class="flex flex-col items-center justify-center my-auto text-center">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="text-xs font-bold text-amber-400 uppercase tracking-wider">⏱ 60s Fluency Rush</span>
+              <button onclick="startFastFire()" id="btnFastFireStart" class="px-3 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs shadow">START</button>
+            </div>
+            <div id="fastFireCountdown" class="text-5xl font-extrabold text-amber-400 font-num mb-4">${fastFireSeconds}s</div>
+            <div class="text-5xl font-extrabold font-num text-white">
+              ${a} × ${b} = <span class="text-sky-400">?</span>
+            </div>
+          </div>
+        `;
+
+      } else if (currentStrand === 5) {
+        // TOPIC 5: FACT TRIANGLES (× / ÷ TO 12)
+        const sub = subOptionSelection[5] || 'all';
+        const factorA = Math.floor(Math.random() * 11) + 2; // 2..12
+        const factorB = Math.floor(Math.random() * 11) + 2;
+        const product = factorA * factorB;
+        const isDiv = sub === 'missingDiv' || (sub === 'all' && Math.random() > 0.5);
+
+        if (isDiv) {
+          currentQuestion = {
+            ans: factorB.toString(), factorA, factorB, product,
+            stem: `${product} ÷ ${factorA} = ${factorB} (because ${factorA} × ${factorB} = ${product})!`
+          };
+          targetIndicator.textContent = "Target: Missing Factor (÷)";
+
+          stage.innerHTML = `
+            <div class="flex flex-col items-center justify-center my-auto text-center">
+              <span class="text-xs uppercase text-amber-400 font-bold mb-2 tracking-wider">Multiplicative Fact Triangle (to 12×12)</span>
+              
+              <svg class="w-52 h-40 mb-3" viewBox="0 0 200 135">
+                <polygon points="100,20 30,120 170,120" fill="#10192e" stroke="#f59e0b" stroke-width="4" stroke-linejoin="round"/>
+                <circle cx="100" cy="38" r="18" fill="#0b1220" stroke="#f59e0b" stroke-width="2"/>
+                <text x="100" y="44" text-anchor="middle" fill="#f59e0b" font-size="16" font-weight="800" font-family="JetBrains Mono">${product}</text>
+                
+                <circle cx="48" cy="106" r="16" fill="#0b1220" stroke="#38bdf8" stroke-width="2"/>
+                <text x="48" y="112" text-anchor="middle" fill="#38bdf8" font-size="16" font-weight="800" font-family="JetBrains Mono">${factorA}</text>
+
+                <circle cx="152" cy="106" r="16" fill="#0b1220" stroke="#f43f5e" stroke-width="2"/>
+                <text x="152" y="112" text-anchor="middle" fill="#f43f5e" font-size="18" font-weight="900" font-family="JetBrains Mono">?</text>
+              </svg>
+
+              <div class="text-4xl font-extrabold font-mono-calc text-white flex items-center justify-center gap-3">
+                <span>${product} ÷ ${factorA} =</span>
+                <span class="text-rose-400 border-b-2 border-dashed border-rose-400 px-2">?</span>
+              </div>
+              <div id="strategyHintCard" class="mt-2 text-xs text-sky-400 font-semibold invisible">
+                ${currentQuestion.stem}
+              </div>
+            </div>
+          `;
+        } else {
+          currentQuestion = {
+            ans: product.toString(), factorA, factorB, product,
+            stem: `${factorA} × ${factorB} = ${product}`
+          };
+          targetIndicator.textContent = "Target: Product (×)";
+
+          stage.innerHTML = `
+            <div class="flex flex-col items-center justify-center my-auto text-center">
+              <span class="text-xs uppercase text-amber-400 font-bold mb-2 tracking-wider">Multiplicative Fact Triangle (to 12×12)</span>
+              
+              <svg class="w-52 h-40 mb-3" viewBox="0 0 200 135">
+                <polygon points="100,20 30,120 170,120" fill="#10192e" stroke="#f59e0b" stroke-width="4" stroke-linejoin="round"/>
+                <circle cx="100" cy="38" r="18" fill="#0b1220" stroke="#f59e0b" stroke-width="2"/>
+                <text x="100" y="45" text-anchor="middle" fill="#f59e0b" font-size="18" font-weight="900" font-family="JetBrains Mono">?</text>
+                
+                <circle cx="48" cy="106" r="16" fill="#0b1220" stroke="#38bdf8" stroke-width="2"/>
+                <text x="48" y="112" text-anchor="middle" fill="#38bdf8" font-size="16" font-weight="800" font-family="JetBrains Mono">${factorA}</text>
+
+                <circle cx="152" cy="106" r="16" fill="#0b1220" stroke="#4ade80" stroke-width="2"/>
+                <text x="152" y="112" text-anchor="middle" fill="#4ade80" font-size="16" font-weight="800" font-family="JetBrains Mono">${factorB}</text>
+              </svg>
+
+              <div class="text-4xl font-extrabold font-mono-calc text-white flex items-center justify-center gap-3">
+                <span>${factorA} × ${factorB} =</span>
+                <span class="text-amber-400 border-b-2 border-dashed border-amber-400 px-2">?</span>
+              </div>
+              <div id="strategyHintCard" class="mt-2 text-xs text-sky-400 font-semibold invisible">
+                ${currentQuestion.stem}
+              </div>
+            </div>
+          `;
+        }
+
+      } else if (currentStrand === 6) {
+        // TOPIC 6: BAR MODEL WORD PROBLEMS
+        const sub = subOptionSelection[6] || 'scaling';
+
+        if (sub === 'scaling') {
+          const baseNum = Math.floor(Math.random() * 8) + 4; // 4..11
+          const scale = Math.floor(Math.random() * 3) + 3;   // 3..5 times as many
+          const total = baseNum * scale;
+
+          currentQuestion = {
+            ans: total.toString(),
+            baseNum, scale, total,
+            stem: `Scaling Model: ${scale} bars of ${baseNum} = ${scale} × ${baseNum} = ${total}!`
+          };
+
+          targetIndicator.textContent = "Target: Scaled Amount";
+          stage.innerHTML = `
+            <div class="flex flex-col items-center justify-center max-w-lg w-full my-auto text-center">
+              <span class="px-3 py-1 rounded-full bg-emerald-950/80 border border-emerald-600 text-emerald-300 text-xs font-bold uppercase tracking-wider mb-3">
+                6. Bar Model Multiplicative Scaling
+              </span>
+              <div class="p-4 bg-slate-900 border-2 border-slate-700 rounded-2xl text-slate-100 text-base font-medium leading-relaxed mb-4 shadow">
+                "A pupil has ${baseNum} marbles. A classmate has <strong>${scale} times as many</strong>. How many marbles does the classmate have?"
+              </div>
+
+              <!-- Bar Model Visual -->
+              <div class="w-full max-w-md bg-slate-900 border border-slate-700 rounded-xl p-3 flex flex-col gap-2 mb-2">
+                <div class="flex items-center gap-2 text-xs font-bold text-slate-300">
+                  <span class="w-24 text-right">Pupil:</span>
+                  <div class="h-7 w-16 bg-sky-500 rounded flex items-center justify-center text-slate-950 font-black">${baseNum}</div>
+                </div>
+                <div class="flex items-center gap-2 text-xs font-bold text-slate-300">
+                  <span class="w-24 text-right">Classmate:</span>
+                  <div class="flex gap-1">
+                    ${Array.from({ length: scale }).map(() => `
+                      <div class="h-7 w-16 bg-amber-400 rounded flex items-center justify-center text-slate-950 font-black">${baseNum}</div>
+                    `).join('')}
+                  </div>
+                </div>
+              </div>
+
+              <div id="strategyHintCard" class="text-xs text-sky-400 font-semibold invisible">
+                ${currentQuestion.stem}
+              </div>
+            </div>
+          `;
+        } else {
+          const parts = Math.floor(Math.random() * 4) + 3; // 3..6
+          const each = Math.floor(Math.random() * 8) + 4;  // 4..11
+          const total = parts * each;
+
+          currentQuestion = {
+            ans: each.toString(),
+            parts, each, total,
+            stem: `Equal Sharing: ${total} split into ${parts} equal parts gives ${each} in each part (${total} ÷ ${parts} = ${each})!`
+          };
+
+          targetIndicator.textContent = "Target: Amount in Each Part";
+          stage.innerHTML = `
+            <div class="flex flex-col items-center justify-center max-w-lg w-full my-auto text-center">
+              <span class="px-3 py-1 rounded-full bg-emerald-950/80 border border-emerald-600 text-emerald-300 text-xs font-bold uppercase tracking-wider mb-3">
+                6. Bar Model Equal Sharing
+              </span>
+              <div class="p-4 bg-slate-900 border-2 border-slate-700 rounded-2xl text-slate-100 text-base font-medium leading-relaxed mb-4 shadow">
+                "A total of ${total} tokens are shared equally across ${parts} boxes. How many tokens are in each box?"
+              </div>
+
+              <div class="w-full max-w-md bg-slate-900 border border-slate-700 rounded-xl p-3 mb-2">
+                <div class="text-[10px] text-slate-400 font-bold uppercase mb-1">Total: ${total}</div>
+                <div class="grid gap-1.5 h-10 w-full" style="grid-template-columns: repeat(${parts}, minmax(0, 1fr));">
+                  ${Array.from({ length: parts }).map(() => `
+                    <div class="h-full bg-amber-400 text-slate-950 rounded flex items-center justify-center font-num font-black text-sm">
+                      ?
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+
+              <div id="strategyHintCard" class="text-xs text-sky-400 font-semibold invisible">
+                ${currentQuestion.stem}
+              </div>
+            </div>
+          `;
+        }
+
+      } else if (currentStrand === 7) {
+        // TOPIC 7: ERROR ANALYSIS CLINIC ("SPOT THE MISTAKE")
+        const FALLACIES = [
+          {
+            title: "Equal Groups vs Additive Confusion",
+            equation: "4 groups of 7",
+            pupilAns: "11",
+            correctAns: "28",
+            error: "Pupil added 4 + 7 = 11 instead of multiplying 4 × 7 = 28.",
+            rule: "'4 groups of 7' means 4 × 7 = 28 (repeated addition: 7 + 7 + 7 + 7), NOT 4 + 7!"
+          },
+          {
+            title: "Scaling Multiplication Zero Drop",
+            equation: "60 × 40",
+            pupilAns: "240",
+            correctAns: "2400",
+            error: "Pupil only added one zero instead of two powers of 10.",
+            rule: "6 tens × 4 tens = 24 hundreds = 2,400 (two zeros)!"
+          },
+          {
+            title: "Array Slice Misalignment",
+            equation: "7 × 8 sliced as (5 × 8) + (3 × 8)",
+            pupilAns: "64",
+            correctAns: "56",
+            error: "5 + 3 = 8, so the pupil calculated 8 × 8 instead of 7 × 8.",
+            rule: "To slice 7 rows, use 5 rows and 2 rows (5 + 2 = 7), so (5 × 8 = 40) + (2 × 8 = 16) = 56!"
+          }
+        ];
+
+        const item = FALLACIES[Math.floor(Math.random() * FALLACIES.length)];
+        const trueAns = item.correctAns.replace(/[^0-9]/g, '') || "56";
+        currentQuestion = {
+          ans: trueAns,
+          item,
+          stem: `Diagnosis: ${item.error} | True Rule: ${item.rule}`
+        };
+
+        targetIndicator.textContent = "Target: Correct Answer";
+        stage.innerHTML = `
+          <div class="flex flex-col items-center justify-center max-w-xl w-full my-auto text-center">
+            <span class="px-3.5 py-1.5 rounded-full bg-rose-950/80 border border-rose-500/60 text-rose-300 text-xs font-bold uppercase tracking-wider mb-4 shadow">
+              ⚠️ Misconception Clinic: ${item.title}
+            </span>
+
+            <div class="w-full max-w-md p-5 rounded-2xl bg-[#140e1c] border-2 border-rose-500/70 shadow-2xl flex flex-col items-center mb-3">
+              <span class="text-xs font-bold uppercase tracking-wider text-rose-400 mb-2">Flawed Worked Example</span>
+              <div class="text-3xl sm:text-4xl font-extrabold font-num text-rose-100 tracking-wider bg-rose-950/60 px-6 py-3 rounded-xl border border-rose-500/50 text-center">
+                ${item.equation} = ${item.pupilAns}
+              </div>
+              <div class="text-xs text-amber-300 font-semibold mt-3">
+                Spot the reasoning error! Calculate the true mathematical answer.
+              </div>
+            </div>
+
+            <div id="strategyHintCard" class="w-full p-3 rounded-xl bg-[#09101f] border border-amber-500/40 text-xs text-left shadow-lg hidden">
+              <div class="text-amber-400 font-bold mb-1">⚠️ Error: ${item.error}</div>
+              <div class="text-emerald-300 font-bold">✓ Rule: ${item.rule}</div>
+            </div>
+          </div>
+        `;
+
+      } else if (currentStrand === 8) {
+        // TOPIC 8: VOCABULARY CLINIC & KEYWORD DECODE
+        const VOCAB_PROBLEMS = [
+          {
+            term: "PRODUCT",
+            qText: "Find the PRODUCT of 7 and 8.",
+            ans: 56,
+            explain: "Product means multiply the factors together: 7 × 8 = 56."
+          },
+          {
+            term: "QUOTIENT",
+            qText: "What is the QUOTIENT of 54 divided by 6?",
+            ans: 9,
+            explain: "Quotient is the result of division: 54 ÷ 6 = 9."
+          },
+          {
+            term: "FACTOR",
+            qText: "One factor of 42 is 6. What is the other FACTOR?",
+            ans: 7,
+            explain: "Factors multiply to make the product: 6 × 7 = 42."
+          },
+          {
+            term: "MULTIPLE",
+            qText: "What is the 8th MULTIPLE of 6?",
+            ans: 48,
+            explain: "Multiples are numbers in the times table: 8 × 6 = 48."
+          },
+          {
+            term: "DIFFERENCE",
+            qText: "What is the DIFFERENCE between 73 and 38?",
+            ans: 35,
+            explain: "Difference means subtract smaller from larger: 73 − 38 = 35."
+          }
+        ];
+
+        const item = VOCAB_PROBLEMS[Math.floor(Math.random() * VOCAB_PROBLEMS.length)];
+        currentQuestion = {
+          ans: item.ans.toString(),
+          item,
+          stem: item.explain
+        };
+
+        targetIndicator.textContent = "Target: Decoded Answer";
+        stage.innerHTML = `
+          <div class="flex flex-col items-center justify-center max-w-lg w-full my-auto text-center">
+            <span class="px-3 py-1 rounded-full bg-emerald-950/80 border border-emerald-600 text-emerald-300 text-xs font-bold uppercase tracking-wider mb-3">
+              8. Mathematical Vocabulary Decode
+            </span>
+            <div class="p-5 bg-slate-900 border-2 border-slate-700 rounded-2xl text-slate-100 text-lg font-medium leading-relaxed mb-4 shadow">
+              "${item.qText}"
+            </div>
+
+            <div class="w-full p-3 rounded-xl bg-[#091122] border border-amber-500/40 text-xs font-num mb-2">
+              <div class="text-amber-400 font-bold mb-1">Key Term: <span class="uppercase text-white underline">${item.term}</span></div>
+              <div id="strategyHintCard" class="text-sky-300 font-bold invisible">
+                ${item.explain}
+              </div>
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    // --- P7 100-SQUARE IMPLEMENTATION ---
+    function init100Square() {
+      const grid = document.getElementById("grid100");
+      if (!grid) return;
+      grid.innerHTML = "";
+      for (let i = 1; i <= 100; i++) {
+        const tile = document.createElement("button");
+        tile.id = `sq-${i}`;
+        tile.className = "sq-tile";
+        tile.textContent = i;
+        tile.onclick = () => toggle100Tile(i);
+        grid.appendChild(tile);
+      }
+    }
+
+    function toggleHundredSquareDrawer() {
+      const drawer = document.getElementById("drawer100");
+      const arrow = document.getElementById("arrow100");
+      const isHidden = drawer.classList.contains("hidden");
+      if (isHidden) {
+        drawer.classList.remove("hidden");
+        if (arrow) arrow.textContent = "▼ Close";
+      } else {
+        drawer.classList.add("hidden");
+        if (arrow) arrow.textContent = "▲ Open";
+      }
+    }
+
+    function toggle100Tile(i) {
+      const tile = document.getElementById(`sq-${i}`);
+      if (!tile) return;
+      if (tile.classList.contains("bg-sky-500")) {
+        tile.className = "sq-tile";
+      } else {
+        tile.className = "sq-tile bg-sky-500 text-slate-950 font-black border-sky-300 shadow-md";
+      }
+    }
+
+    function clear100Highlights() {
+      for (let i = 1; i <= 100; i++) {
+        const tile = document.getElementById(`sq-${i}`);
+        if (tile) tile.className = "sq-tile";
+      }
+    }
+
+    function highlight100(mode) {
+      clear100Highlights();
+      for (let i = 1; i <= 100; i++) {
+        const tile = document.getElementById(`sq-${i}`);
+        if (!tile) continue;
+        let match = false;
+        if (mode === 'evens' && i % 2 === 0) match = true;
+        if (mode === 'fives' && i % 5 === 0) match = true;
+        if (mode === 'tens' && i % 10 === 0) match = true;
+        if (mode === 'threes' && i % 3 === 0) match = true;
+        if (mode === 'fours' && i % 4 === 0) match = true;
+        if (mode === 'primes') {
+          if (i > 1) {
+            let isPrime = true;
+            for (let j = 2; j * j <= i; j++) {
+              if (i % j === 0) { isPrime = false; break; }
+            }
+            if (isPrime) match = true;
+          }
+        }
+        if (match) {
+          tile.className = "sq-tile bg-amber-400 text-slate-950 font-black border-amber-300 shadow-md";
+        }
+      }
+    }
+
+    // --- PLACE VALUE COUNTER WORKBENCH LOGIC ---
+    function togglePVDrawer() {
+      const drawer = document.getElementById("drawerPV");
+      const arrow = document.getElementById("arrowPV");
+      const isHidden = drawer.classList.contains("hidden");
+      if (isHidden) {
+        drawer.classList.remove("hidden");
+        if (arrow) arrow.textContent = "▲";
+      } else {
+        drawer.classList.add("hidden");
+        if (arrow) arrow.textContent = "▼";
+      }
+    }
+
+    function togglePVFullscreen() {
+      const drawer = document.getElementById("drawerPV");
+      const fullBtn = document.getElementById("pvFullBtn");
+      isPVFullscreen = !isPVFullscreen;
+      if (isPVFullscreen) {
+        drawer.className = "fixed inset-4 z-40 bg-[#0d1629] rounded-2xl border-2 border-amber-500/50 p-4 shadow-2xl flex flex-col";
+        if (fullBtn) fullBtn.textContent = "🗗 Contract";
+      } else {
+        drawer.className = "mt-2 p-3 bg-[#0d1629] rounded-xl border border-slate-800 shrink-0 max-h-[48vh] flex flex-col";
+        if (fullBtn) fullBtn.textContent = "⛶ Expand";
+      }
+    }
+
+    function togglePVValueDisplay() {
+      pvValuesVisible = !pvValuesVisible;
+      const btn = document.getElementById("pvVisibilityBtn");
+      const icon = document.getElementById("pvVisIcon");
+      const label = document.getElementById("pvVisLabel");
+      if (pvValuesVisible) {
+        if (icon) icon.textContent = "👁️";
+        if (label) label.textContent = "Values: Shown";
+        if (btn) btn.className = "px-2.5 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-semibold flex items-center gap-1";
+      } else {
+        if (icon) icon.textContent = "🙈";
+        if (label) label.textContent = "Values: Hidden";
+        if (btn) btn.className = "px-2.5 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-700 text-xs font-semibold flex items-center gap-1";
+      }
+      updatePVDisplay();
+    }
+
+    function addPVToken(col) {
+      pvCounters[col]++;
+      renderPVTokens(col);
+      updatePVDisplay();
+    }
+
+    function removePVToken(col) {
+      if (pvCounters[col] > 0) {
+        pvCounters[col]--;
+        renderPVTokens(col);
+        updatePVDisplay();
+      }
+    }
+
+    function clearPVMat() {
+      pvCounters = { th: 0, h: 0, t: 0, u: 0 };
+      ['th', 'h', 't', 'u'].forEach(col => renderPVTokens(col));
+      updatePVDisplay();
+    }
+
+    function exchangePV10to1() {
+      if (pvCounters.u >= 10) {
+        pvCounters.u -= 10;
+        pvCounters.t += 1;
+      }
+      if (pvCounters.t >= 10) {
+        pvCounters.t -= 10;
+        pvCounters.h += 1;
+      }
+      if (pvCounters.h >= 10) {
+        pvCounters.h -= 10;
+        pvCounters.th += 1;
+      }
+      ['th', 'h', 't', 'u'].forEach(col => renderPVTokens(col));
+      updatePVDisplay();
+    }
+
+    function renderPVTokens(col) {
+      const container = document.getElementById(`col-${col}`);
+      if (!container) return;
+      container.innerHTML = "";
+      const count = pvCounters[col];
+      const tokenClass = col === 'th' ? 'token-th' : col === 'h' ? 'token-h' : col === 't' ? 'token-t' : 'token-u';
+      const label = col === 'th' ? '1k' : col === 'h' ? '100' : col === 't' ? '10' : '1';
+
+      for (let i = 0; i < count; i++) {
+        const tok = document.createElement("div");
+        tok.className = `pv-token ${tokenClass}`;
+        tok.textContent = label;
+        tok.onclick = () => removePVToken(col);
+        container.appendChild(tok);
+      }
+    }
+
+    function updatePVDisplay() {
+      const total = (pvCounters.th * 1000) + (pvCounters.h * 100) + (pvCounters.t * 10) + pvCounters.u;
+      const totalEl = document.getElementById("pvMatTotal");
+      if (totalEl) {
+        totalEl.textContent = pvValuesVisible ? total.toLocaleString() : "???";
+      }
+
+      const mults = { th: 1000, h: 100, t: 10, u: 1 };
+      ['th', 'h', 't', 'u'].forEach(col => {
+        const badge = document.getElementById(`badge-${col}`);
+        if (badge) {
+          const count = pvCounters[col];
+          const val = count * mults[col];
+          badge.textContent = pvValuesVisible ? `${count} (${val.toLocaleString()})` : `${count} (???)`;
+        }
+      });
+    }
+
+    // --- GLOBAL PERSISTENT WHITEBOARD ---
+    let wbActive = false;
+    let wbTool = 'touch';
+    let wbColor = '#ffffff';
+    let wbSize = 3;
+    let isDrawing = false;
+    let wbHistory = [];
+    let canvas, ctx;
+
+    function initWhiteboard() {
+      canvas = document.getElementById("whiteboardCanvas");
+      if (!canvas) return;
+      ctx = canvas.getContext("2d");
+      resizeWhiteboard();
+      window.addEventListener("resize", resizeWhiteboard);
+
+      canvas.addEventListener("mousedown", startDrawing);
+      canvas.addEventListener("mousemove", draw);
+      canvas.addEventListener("mouseup", stopDrawing);
+      canvas.addEventListener("mouseleave", stopDrawing);
+
+      canvas.addEventListener("touchstart", (e) => {
+        e.preventDefault();
+        const touch = e.touches[0];
+        startDrawing({ clientX: touch.clientX, clientY: touch.clientY });
+      }, { passive: false });
+
+      canvas.addEventListener("touchmove", (e) => {
+        e.preventDefault();
+        const touch = e.touches[0];
+        draw({ clientX: touch.clientX, clientY: touch.clientY });
+      }, { passive: false });
+
+      canvas.addEventListener("touchend", stopDrawing);
+    }
+
+    function resizeWhiteboard() {
+      if (!canvas) return;
+      canvas.width = window.innerWidth || 800;
+      canvas.height = window.innerHeight || 600;
+      redrawHistory();
+    }
+
+    function toggleWhiteboard() {
+      wbActive = !wbActive;
+      const toolbar = document.getElementById("wbToolbar");
+      const btn = document.getElementById("wbToggleBtn");
+      if (wbActive) {
+        if (toolbar) toolbar.classList.remove("hidden");
+        if (btn) btn.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs shadow-md transition-all";
+        setWbTool('pen');
+      } else {
+        if (toolbar) toolbar.classList.add("hidden");
+        if (btn) btn.className = "flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs shadow-md transition-all";
+        setWbTool('touch');
+      }
+    }
+
+    function setWbTool(tool) {
+      wbTool = tool;
+      ['touch', 'pen', 'highlighter', 'eraser'].forEach(t => {
+        const b = document.getElementById(`wbTool-${t}`);
+        if (b) {
+          b.className = t === tool 
+            ? "px-2.5 py-1.5 rounded-lg bg-sky-600 text-white text-xs font-bold flex items-center justify-center gap-1"
+            : "px-2.5 py-1.5 rounded-lg bg-slate-800 text-slate-300 text-xs font-bold flex items-center justify-center gap-1";
+        }
+      });
+
+      if (!canvas) return;
+      if (tool === 'touch') {
+        canvas.style.pointerEvents = 'none';
+        canvas.style.cursor = 'default';
+      } else {
+        canvas.style.pointerEvents = 'auto';
+        canvas.style.cursor = 'crosshair';
+      }
+    }
+
+    function setWbColor(c) { wbColor = c; }
+    function setWbSize(s) { wbSize = s; }
+
+    function startDrawing(e) {
+      if (wbTool === 'touch' || !ctx) return;
+      isDrawing = true;
+      ctx.beginPath();
+      ctx.moveTo(e.clientX, e.clientY);
+      wbHistory.push({ type: 'start', x: e.clientX, y: e.clientY, tool: wbTool, color: wbColor, size: wbSize });
+    }
+
+    function draw(e) {
+      if (!isDrawing || wbTool === 'touch' || !ctx) return;
+      ctx.lineTo(e.clientX, e.clientY);
+      if (wbTool === 'eraser') {
+        ctx.globalCompositeOperation = 'destination-out';
+        ctx.lineWidth = wbSize * 3;
+      } else if (wbTool === 'highlighter') {
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.strokeStyle = wbColor + '55';
+        ctx.lineWidth = wbSize * 2.5;
+      } else {
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.strokeStyle = wbColor;
+        ctx.lineWidth = wbSize;
+      }
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.stroke();
+      wbHistory.push({ type: 'draw', x: e.clientX, y: e.clientY });
+    }
+
+    function stopDrawing() {
+      if (!isDrawing || !ctx) return;
+      isDrawing = false;
+      ctx.closePath();
+    }
+
+    function clearWhiteboard() {
+      if (!ctx || !canvas) return;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      wbHistory = [];
+    }
+
+    function undoWhiteboard() {
+      let lastStart = -1;
+      for (let i = wbHistory.length - 1; i >= 0; i--) {
+        if (wbHistory[i].type === 'start') {
+          lastStart = i;
+          break;
+        }
+      }
+      if (lastStart >= 0) {
+        wbHistory = wbHistory.slice(0, lastStart);
+        redrawHistory();
+      }
+    }
+
+    function redrawHistory() {
+      if (!ctx || !canvas) return;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let item of wbHistory) {
+        if (item.type === 'start') {
+          ctx.beginPath();
+          ctx.moveTo(item.x, item.y);
+          if (item.tool === 'eraser') {
+            ctx.globalCompositeOperation = 'destination-out';
+            ctx.lineWidth = item.size * 3;
+          } else if (item.tool === 'highlighter') {
+            ctx.globalCompositeOperation = 'source-over';
+            ctx.strokeStyle = item.color + '55';
+            ctx.lineWidth = item.size * 2.5;
+          } else {
+            ctx.globalCompositeOperation = 'source-over';
+            ctx.strokeStyle = item.color;
+            ctx.lineWidth = item.size;
+          }
+          ctx.lineCap = 'round';
+          ctx.lineJoin = 'round';
+        } else if (item.type === 'draw') {
+          ctx.lineTo(item.x, item.y);
+          ctx.stroke();
+        }
+      }
+    }
+
+    // --- INITIALIZATION ---
+    window.onload = () => {
+      try {
+        initWhiteboard();
+        init100Square();
+        setStrand(1);
+
+        // Allow physical keyboard typing on laptops/desktops
+        window.addEventListener('keydown', (e) => {
+          if (wbActive && wbTool !== 'touch') return;
+          if (e.key >= '0' && e.key <= '9') {
+            pressDigit(e.key);
+          } else if (e.key === 'Backspace') {
+            deleteDigit();
+          } else if (e.key === 'Enter') {
+            submitAnswer();
+          } else if (e.key === 'Escape') {
+            clearCurrentInput();
+          }
+        });
+      } catch (err) {
+        console.error("Initialization error:", err);
+      }
+    };
+  </script>
+</body>
+</html>
