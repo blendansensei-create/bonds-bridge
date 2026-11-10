@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Classroom Whiteboard Pro</title>
+  <style>
+    :root {
+      --fluent-bg: rgba(255, 255, 255, 0.92);
+      --fluent-border: rgba(0, 0, 0, 0.12);
+      --fluent-accent: #0078d4;
+      --fluent-accent-hover: #106ebe;
+      --text-main: #202020;
+      --text-muted: #5c5c66;
+      --active-bg: #e5f1fb;
+      --shadow-elevation: 0 12px 32px rgba(0,0,0,0.14), 0 2px 6px rgba(0,0,0,0.06);
+    }
+
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-user-select: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    body, html {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Segoe UI Variable Display', 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: #ffffff;
+      color: var(--text-main);
+      touch-action: none;
+    }
+
+    #canvas-container {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      cursor: crosshair;
+    }
+
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* Interactive overlay elements (Sticky notes & pasted images) */
+    #interactive-container {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 10;
+    }
+
+    /* Fluent UI Acrylic Toolbars */
+    .toolbar {
+      position: absolute;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--fluent-bg);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border: 1px solid var(--fluent-border);
+      border-radius: 12px;
+      padding: 6px 10px;
+      box-shadow: var(--shadow-elevation);
+      z-index: 50;
+    }
+
+    #top-bar {
+      top: 12px;
+      left: 14px;
+      right: 14px;
+      justify-content: space-between;
+      pointer-events: auto;
+    }
+
+    #main-tools {
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      pointer-events: auto;
+    }
+
+    .tool-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      min-width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      cursor: pointer;
+      color: var(--text-main);
+      transition: all 0.14s ease;
+      padding: 0 8px;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    .tool-btn:hover {
+      background: rgba(0, 0, 0, 0.06);
+    }
+
+    .tool-btn.active {
+      background: var(--active-bg);
+      border-color: var(--fluent-accent);
+      color: var(--fluent-accent);
+      font-weight: 600;
+    }
+
+    .separator {
+      width: 1px;
+      height: 22px;
+      background: rgba(0,0,0,0.12);
+      margin: 0 3px;
+    }
+
+    /* Popover Menu for Lesson Backgrounds */
+    .popover {
+      position: absolute;
+      background: var(--fluent-bg);
+      backdrop-filter: blur(24px) saturate(180%);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
+      border: 1px solid var(--fluent-border);
+      border-radius: 14px;
+      padding: 14px;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.18);
+      z-index: 100;
+      display: none;
+      min-width: 290px;
+      pointer-events: auto;
+    }
+
+    .popover.open { display: block; }
+
+    .popover-header {
+      font-weight: 700;
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+    }
+
+    .grid-options {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+
+    .grid-opt-btn {
+      padding: 8px 4px;
+      border: 1px solid rgba(0,0,0,0.12);
+      border-radius: 8px;
+      font-size: 11px;
+      cursor: pointer;
+      background: #ffffff;
+      text-align: center;
+      font-weight: 500;
+      transition: all 0.12s ease;
+    }
+
+    .grid-opt-btn:hover {
+      background: var(--active-bg);
+      border-color: var(--fluent-accent);
+    }
+
+    .grid-opt-btn.active {
+      border-color: var(--fluent-accent);
+      background: var(--active-bg);
+      font-weight: 700;
+      color: var(--fluent-accent);
+    }
+
+    /* Color Swatches */
+    .swatch {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      border: 2px solid #ffffff;
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.2);
+      cursor: pointer;
+      transition: transform 0.12s ease;
+    }
+
+    .swatch:hover { transform: scale(1.15); }
+    .swatch.selected { box-shadow: 0 0 0 2px var(--fluent-accent); transform: scale(1.15); }
+
+    /* Sticky Note */
+    .sticky-note {
+      position: absolute;
+      width: 210px;
+      min-height: 140px;
+      background: #fff59d;
+      border-radius: 10px;
+      padding: 10px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+      pointer-events: auto;
+      display: flex;
+      flex-direction: column;
+      cursor: move;
+      border: 1px solid rgba(0,0,0,0.08);
+      font-size: 15px;
+      transform-origin: top left;
+    }
+
+    .sticky-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+      cursor: move;
+      font-size: 11px;
+      font-weight: 700;
+      color: #795548;
+      letter-spacing: 0.5px;
+    }
+
+    .sticky-delete {
+      background: rgba(0,0,0,0.08);
+      border: none;
+      font-size: 12px;
+      cursor: pointer;
+      color: #333;
+      border-radius: 4px;
+      padding: 2px 6px;
+    }
+
+    .sticky-delete:hover {
+      background: #d13438;
+      color: #fff;
+    }
+
+    .sticky-content {
+      flex: 1;
+      border: none;
+      background: transparent;
+      resize: none;
+      outline: none;
+      font-family: inherit;
+      font-size: 14px;
+      color: #212121;
+      line-height: 1.4;
+      user-select: text;
+      -webkit-user-select: text;
+    }
+
+    /* Pasted Image Card */
+    .image-card {
+      position: absolute;
+      pointer-events: auto;
+      border: 2px dashed rgba(0, 120, 212, 0.45);
+      border-radius: 8px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+      background: #ffffff;
+      cursor: move;
+      transform-origin: top left;
+    }
+
+    .image-card.selected {
+      border: 2px solid var(--fluent-accent);
+    }
+
+    .image-card img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      pointer-events: none;
+      border-radius: 6px;
+    }
+
+    .image-actions {
+      position: absolute;
+      top: -30px;
+      right: 0;
+      display: flex;
+      gap: 4px;
+      background: rgba(255,255,255,0.95);
+      padding: 2px 6px;
+      border-radius: 6px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+
+    .image-resize-handle {
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      bottom: -8px;
+      right: -8px;
+      background: var(--fluent-accent);
+      border: 2px solid #ffffff;
+      border-radius: 50%;
+      cursor: nwse-resize;
+    }
+
+    /* Notification Toast */
+    #toast {
+      position: absolute;
+      top: 68px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(30, 30, 30, 0.9);
+      color: #ffffff;
+      padding: 8px 18px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+      z-index: 200;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    #toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(4px);
+    }
+  </style>
+</head>
+<body>
+
+<div id="toast">Ready</div>
+
+<!-- Top Navigation Bar -->
+<header class="toolbar" id="top-bar">
+  <div style="display:flex; align-items:center; gap:5px;">
+    <button class="tool-btn" id="btn-save" title="Save Board (.board JSON / Ctrl+S)">💾 <span>Save</span></button>
+    <button class="tool-btn" id="btn-open" title="Open Saved Board (Ctrl+O)">📁 <span>Open</span></button>
+    <button class="tool-btn" id="btn-export" title="Export as High-Res PNG">🖼️ <span>Export PNG</span></button>
+    <input type="file" id="file-input" accept=".board,application/json" style="display:none;">
+
+    <div class="separator"></div>
+    <button class="tool-btn" id="btn-sample-img" title="Insert a sample image directly">➕ <span>Sample Image</span></button>
+    <button class="tool-btn" id="btn-bg-picker" title="Lesson Grids & Canvas Style">📐 <span>Background: <strong id="bg-label">Plain</strong> ▾</span></button>
+  </div>
+
+  <div style="display:flex; align-items:center; gap:5px;">
+    <button class="tool-btn" id="btn-undo" title="Undo (Ctrl+Z)">↩️</button>
+    <button class="tool-btn" id="btn-redo" title="Redo (Ctrl+Y)">↪️</button>
+    <div class="separator"></div>
+    <button class="tool-btn" id="btn-zoom-out" title="Zoom Out">−</button>
+    <span id="zoom-level" style="font-size:12px; font-weight:700; min-width:44px; text-align:center;">100%</span>
+    <button class="tool-btn" id="btn-zoom-in" title="Zoom In">+</button>
+    <button class="tool-btn" id="btn-zoom-reset" title="Reset View (100%)">1:1</button>
+    <div class="separator"></div>
+    <button class="tool-btn" id="btn-clear" style="color:#d13438;" title="Clear Entire Board">🗑️ Clear</button>
+  </div>
+</header>
+
+<!-- Background Templates Popover Menu -->
+<div class="popover" id="bg-popover" style="top:58px; left:260px;">
+  <div class="popover-header">Ruled Lines (Literacy & Writing)</div>
+  <div class="grid-options">
+    <div class="grid-opt-btn" data-bg="ruled-wide">Wide Lines</div>
+    <div class="grid-opt-btn" data-bg="ruled-med">Medium Lines</div>
+    <div class="grid-opt-btn" data-bg="ruled-narrow">Narrow Lines</div>
+  </div>
+
+  <div class="popover-header">Math & Squares (Numeracy)</div>
+  <div class="grid-options">
+    <div class="grid-opt-btn" data-bg="grid-large">10mm Squares</div>
+    <div class="grid-opt-btn" data-bg="grid-small">5mm Squares</div>
+    <div class="grid-opt-btn" data-bg="coordinate">Coordinate X/Y</div>
+  </div>
+
+  <div class="popover-header">Drawing & Surface Themes</div>
+  <div class="grid-options">
+    <div class="grid-opt-btn active" data-bg="plain">Plain White</div>
+    <div class="grid-opt-btn" data-bg="chalkboard">Chalkboard</div>
+    <div class="grid-opt-btn" data-bg="dots">Dot Grid</div>
+    <div class="grid-opt-btn" data-bg="isometric">Isometric 3D</div>
+  </div>
+</div>
+
+<!-- Main Inking & Drawing Toolbar -->
+<nav class="toolbar" id="main-tools">
+  <button class="tool-btn active" data-tool="pen" title="Inking Pen">🖊️ Pen</button>
+  <button class="tool-btn" data-tool="highlighter" title="Translucent Highlighter">🖍️ Highlighter</button>
+  <button class="tool-btn" data-tool="eraser" title="Stroke Eraser">🧹 Eraser</button>
+  <div class="separator"></div>
+  <button class="tool-btn" data-tool="line" title="Straight Line">📏 Line</button>
+  <button class="tool-btn" data-tool="rect" title="Rectangle Box">◻️ Box</button>
+  <button class="tool-btn" data-tool="circle" title="Circle">⚪ Circle</button>
+  <button class="tool-btn" data-tool="arrow" title="Directional Arrow">➡️ Arrow</button>
+  <div class="separator"></div>
+  <button class="tool-btn" id="btn-sticky" title="Add Sticky Note">📝 Note</button>
+  <button class="tool-btn" id="btn-pan" data-tool="pan" title="Pan Canvas (or Middle Mouse Drag)">✋ Pan</button>
+  <div class="separator"></div>
+  <!-- Color Palette -->
+  <div id="palette" style="display:flex; gap:6px; align-items:center;">
+    <div class="swatch selected" data-color="#1e1e1e" style="background:#1e1e1e;" title="Black"></div>
+    <div class="swatch" data-color="#0078d4" style="background:#0078d4;" title="Blue"></div>
+    <div class="swatch" data-color="#d13438" style="background:#d13438;" title="Red"></div>
+    <div class="swatch" data-color="#107c41" style="background:#107c41;" title="Green"></div>
+    <div class="swatch" data-color="#d88400" style="background:#d88400;" title="Amber"></div>
+    <div class="swatch" data-color="#881798" style="background:#881798;" title="Purple"></div>
+  </div>
+</nav>
+
+<!-- Canvas Layers -->
+<div id="canvas-container">
+  <canvas id="bg-canvas"></canvas>
+  <canvas id="paint-canvas"></canvas>
+  <div id="interactive-container"></div>
+</div>
+
+<script>
+(() => {
+  // Application State
+  const state = {
+    tool: 'pen',
+    color: '#1e1e1e',
+    lineWidth: 3,
+    background: 'plain',
+    zoom: 1.0,
+    panX: 0,
+    panY: 0,
+    isDrawing: false,
+    isPanning: false,
+    strokes: [],
+    redoStack: [],
+    stickyNotes: [],
+    images: [],
+    activeStroke: null
+  };
+
+  const bgCanvas = document.getElementById('bg-canvas');
+  const bgCtx = bgCanvas.getContext('2d');
+  const paintCanvas = document.getElementById('paint-canvas');
+  const ctx = paintCanvas.getContext('2d');
+  const interactiveContainer = document.getElementById('interactive-container');
+  const zoomDisplay = document.getElementById('zoom-level');
+  const bgPopover = document.getElementById('bg-popover');
+  const bgLabel = document.getElementById('bg-label');
+  const toast = document.getElementById('toast');
+
+  function showToast(msg) {
+    toast.innerText = msg;
+    toast.classList.add('show');
+    clearTimeout(toast._timer);
+    toast._timer = setTimeout(() => toast.classList.remove('show'), 2200);
+  }
+
+  function resizeCanvases() {
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    [bgCanvas, paintCanvas].forEach(c => {
+      c.width = w * window.devicePixelRatio;
+      c.height = h * window.devicePixelRatio;
+      c.style.width = w + 'px';
+      c.style.height = h + 'px';
+    });
+    renderAll();
+  }
+  window.addEventListener('resize', resizeCanvases);
+
+  // Screen to World Coordinates Transformation
+  function toWorld(screenX, screenY) {
+    return {
+      x: (screenX - state.panX) / state.zoom,
+      y: (screenY - state.panY) / state.zoom
+    };
+  }
+
+  /* ---------------- Anchor-Centered Mouse Wheel Zoom ---------------- */
+  window.addEventListener('wheel', e => {
+    if (e.target.closest('.sticky-content')) return;
+
+    e.preventDefault();
+    const cursorX = e.clientX;
+    const cursorY = e.clientY;
+
+    const zoomFactor = e.deltaY < 0 ? 1.12 : 0.89;
+    const newZoom = Math.min(Math.max(state.zoom * zoomFactor, 0.15), 5.0);
+
+    // Pivot zoom around exact cursor position
+    state.panX = cursorX - (cursorX - state.panX) * (newZoom / state.zoom);
+    state.panY = cursorY - (cursorY - state.panY) * (newZoom / state.zoom);
+    state.zoom = newZoom;
+
+    zoomDisplay.innerText = Math.round(state.zoom * 100) + '%';
+    renderAll();
+  }, { passive: false });
+
+  /* ---------------- Clipboard Pasting (Ctrl+V) ---------------- */
+  window.addEventListener('paste', e => {
+    const items = (e.clipboardData || e.originalEvent?.clipboardData)?.items;
+    if (!items) return;
+
+    for (let item of items) {
+      if (item.type.indexOf('image') !== -1) {
+        const blob = item.getAsFile();
+        const reader = new FileReader();
+        reader.onload = ev => {
+          loadAndPlaceImage(ev.target.result, 'Pasted Clipboard Image');
+        };
+        reader.readAsDataURL(blob);
+        break;
+      }
+    }
+  });
+
+  function loadAndPlaceImage(src, label = 'Image') {
+    const img = new Image();
+    img.onload = () => {
+      const maxDim = 460;
+      const aspect = img.height / img.width;
+      const w = Math.min(img.width, maxDim);
+      const h = w * aspect;
+      const center = toWorld(window.innerWidth / 2, window.innerHeight / 2);
+
+      createBoardImage({
+        id: 'img_' + Date.now(),
+        dataUrl: src,
+        x: center.x - w / 2,
+        y: center.y - h / 2,
+        width: w,
+        height: h
+      });
+      showToast(`${label} added to board`);
+    };
+    img.src = src;
+  }
+
+  // '+ Sample Image' button for immediate preview testing
+  document.getElementById('btn-sample-img').addEventListener('click', () => {
+    const svgSample = `
+      <svg xmlns="http://www.w3.org/2000/svg" width="380" height="240" viewBox="0 0 380 240">
+        <rect width="100%" height="100%" rx="12" fill="#0078d4"/>
+        <circle cx="190" cy="100" r="50" fill="#ffffff" opacity="0.9"/>
+        <path d="M 120 180 L 190 120 L 260 180 Z" fill="#2b88d8"/>
+        <text x="190" y="215" font-family="Segoe UI, sans-serif" font-size="16" font-weight="bold" fill="#ffffff" text-anchor="middle">Classroom Lesson Resource</text>
+      </svg>
+    `;
+    loadAndPlaceImage('data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgSample), 'Sample Graphic');
+  });
+
+  /* ---------------- Pasted Image Cards (Move & Resize) ---------------- */
+  function createBoardImage(imgData) {
+    state.images.push(imgData);
+    renderImageDOM(imgData);
+  }
+
+  function renderImageDOM(imgData) {
+    const el = document.createElement('div');
+    el.className = 'image-card';
+    el.id = 'img-' + imgData.id;
+    el.innerHTML = `
+      <div class="image-actions">
+        <button class="sticky-delete" title="Remove Image">&times;</button>
+      </div>
+      <img src="${imgData.dataUrl}" alt="Lesson Resource" />
+      <div class="image-resize-handle" title="Drag to Resize"></div>
+    `;
+
+    el.querySelector('.sticky-delete').addEventListener('click', () => {
+      interactiveContainer.removeChild(el);
+      state.images = state.images.filter(i => i.id !== imgData.id);
+    });
+
+    // Dragging
+    let isDragging = false;
+    let startMouse = { x: 0, y: 0 };
+    el.addEventListener('pointerdown', e => {
+      if (e.target.classList.contains('image-resize-handle') || e.target.closest('.image-actions')) return;
+      isDragging = true;
+      startMouse = { x: e.clientX, y: e.clientY };
+      el.classList.add('selected');
+      el.setPointerCapture(e.pointerId);
+      e.stopPropagation();
+    });
+
+    el.addEventListener('pointermove', e => {
+      if (!isDragging) return;
+      const dx = (e.clientX - startMouse.x) / state.zoom;
+      const dy = (e.clientY - startMouse.y) / state.zoom;
+      imgData.x += dx;
+      imgData.y += dy;
+      startMouse = { x: e.clientX, y: e.clientY };
+      updateInteractivePositions();
+    });
+
+    el.addEventListener('pointerup', () => {
+      isDragging = false;
+      el.classList.remove('selected');
+    });
+
+    // Resizing
+    const handle = el.querySelector('.image-resize-handle');
+    let isResizing = false;
+    let initialW = 0, initialH = 0, startX = 0;
+    handle.addEventListener('pointerdown', e => {
+      isResizing = true;
+      startX = e.clientX;
+      initialW = imgData.width;
+      initialH = imgData.height;
+      handle.setPointerCapture(e.pointerId);
+      e.stopPropagation();
+    });
+
+    handle.addEventListener('pointermove', e => {
+      if (!isResizing) return;
+      const delta = (e.clientX - startX) / state.zoom;
+      const aspect = initialH / initialW;
+      imgData.width = Math.max(initialW + delta, 90);
+      imgData.height = imgData.width * aspect;
+      updateInteractivePositions();
+    });
+
+    handle.addEventListener('pointerup', () => { isResizing = false; });
+
+    interactiveContainer.appendChild(el);
+    updateInteractivePositions();
+  }
+
+  /* ---------------- Lesson Background Grid Rendering ---------------- */
+  function renderBackground() {
+    const dpr = window.devicePixelRatio;
+    bgCtx.save();
+    bgCtx.scale(dpr, dpr);
+    bgCtx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+
+    if (state.background === 'chalkboard') {
+      bgCtx.fillStyle = '#1e352f';
+      bgCtx.fillRect(0, 0, w, h);
+    } else {
+      bgCtx.fillStyle = state.background === 'plain' ? '#ffffff' : '#fafafa';
+      bgCtx.fillRect(0, 0, w, h);
+    }
+
+    if (state.background === 'plain') {
+      bgCtx.restore();
+      return;
+    }
+
+    bgCtx.save();
+    bgCtx.translate(state.panX, state.panY);
+    bgCtx.scale(state.zoom, state.zoom);
+
+    const left = -state.panX / state.zoom;
+    const top = -state.panY / state.zoom;
+    const right = left + w / state.zoom;
+    const bottom = top + h / state.zoom;
+
+    bgCtx.lineWidth = 1 / state.zoom;
+
+    if (state.background.startsWith('ruled-')) {
+      const spacing = state.background === 'ruled-wide' ? 52 : state.background === 'ruled-med' ? 34 : 22;
+      const startY = Math.floor(top / spacing) * spacing;
+      bgCtx.strokeStyle = '#c4daf5';
+      bgCtx.beginPath();
+      for (let y = startY; y < bottom; y += spacing) {
+        bgCtx.moveTo(left, y);
+        bgCtx.lineTo(right, y);
+      }
+      bgCtx.stroke();
+
+      // Pink literacy margin line
+      bgCtx.strokeStyle = '#fca5a5';
+      bgCtx.lineWidth = 1.5 / state.zoom;
+      bgCtx.beginPath();
+      bgCtx.moveTo(80, top);
+      bgCtx.lineTo(80, bottom);
+      bgCtx.stroke();
+    }
+    else if (state.background.startsWith('grid-')) {
+      const step = state.background === 'grid-large' ? 40 : 20; // 10mm or 5mm grid equivalent
+      const startX = Math.floor(left / step) * step;
+      const startY = Math.floor(top / step) * step;
+
+      bgCtx.strokeStyle = '#e2e8f0';
+      bgCtx.beginPath();
+      for (let x = startX; x < right; x += step) {
+        bgCtx.moveTo(x, top);
+        bgCtx.lineTo(x, bottom);
+      }
+      for (let y = startY; y < bottom; y += step) {
+        bgCtx.moveTo(left, y);
+        bgCtx.lineTo(right, y);
+      }
+      bgCtx.stroke();
+    }
+    else if (state.background === 'coordinate') {
+      const step = 32;
+      const startX = Math.floor(left / step) * step;
+      const startY = Math.floor(top / step) * step;
+
+      bgCtx.strokeStyle = '#f1f5f9';
+      bgCtx.beginPath();
+      for (let x = startX; x < right; x += step) { bgCtx.moveTo(x, top); bgCtx.lineTo(x, bottom); }
+      for (let y = startY; y < bottom; y += step) { bgCtx.moveTo(left, y); bgCtx.lineTo(right, y); }
+      bgCtx.stroke();
+
+      // Bold X & Y axes in Accent Blue
+      bgCtx.lineWidth = 2 / state.zoom;
+      bgCtx.strokeStyle = '#0078d4';
+      bgCtx.beginPath();
+      bgCtx.moveTo(0, top); bgCtx.lineTo(0, bottom);
+      bgCtx.moveTo(left, 0); bgCtx.lineTo(right, 0);
+      bgCtx.stroke();
+    }
+    else if (state.background === 'dots') {
+      const step = 28;
+      bgCtx.fillStyle = '#94a3b8';
+      for (let y = Math.floor(top / step) * step; y < bottom; y += step) {
+        for (let x = Math.floor(left / step) * step; x < right; x += step) {
+          bgCtx.beginPath();
+          bgCtx.arc(x, y, 1.2 / state.zoom, 0, Math.PI * 2);
+          bgCtx.fill();
+        }
+      }
+    }
+    else if (state.background === 'isometric') {
+      const step = 32;
+      const hStep = step * Math.sin(Math.PI / 3);
+      bgCtx.fillStyle = '#64748b';
+      for (let y = Math.floor(top / hStep) * hStep; y < bottom; y += hStep) {
+        for (let x = Math.floor(left / step) * step; x < right; x += step) {
+          bgCtx.beginPath();
+          bgCtx.arc(x, y, 1.2 / state.zoom, 0, Math.PI * 2);
+          bgCtx.fill();
+        }
+      }
+    }
+
+    bgCtx.restore();
+    bgCtx.restore();
+  }
+
+  /* ---------------- Vector Drawing & Inking Engine ---------------- */
+  function renderStrokes() {
+    const dpr = window.devicePixelRatio;
+    ctx.save();
+    ctx.scale(dpr, dpr);
+    ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+    ctx.save();
+    ctx.translate(state.panX, state.panY);
+    ctx.scale(state.zoom, state.zoom);
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+
+    const allStrokes = [...state.strokes];
+    if (state.activeStroke) allStrokes.push(state.activeStroke);
+
+    allStrokes.forEach(s => {
+      ctx.beginPath();
+      ctx.strokeStyle = s.color;
+      ctx.lineWidth = s.width;
+      ctx.globalAlpha = s.type === 'highlighter' ? 0.35 : 1.0;
+
+      if (s.type === 'pen' || s.type === 'highlighter') {
+        if (s.points.length < 2) return;
+        ctx.moveTo(s.points[0].x, s.points[0].y);
+        for (let i = 1; i < s.points.length - 1; i++) {
+          const xc = (s.points[i].x + s.points[i + 1].x) / 2;
+          const yc = (s.points[i].y + s.points[i + 1].y) / 2;
+          ctx.quadraticCurveTo(s.points[i].x, s.points[i].y, xc, yc);
+        }
+        ctx.lineTo(s.points[s.points.length - 1].x, s.points[s.points.length - 1].y);
+        ctx.stroke();
+      } else if (s.type === 'line' || s.type === 'arrow') {
+        ctx.moveTo(s.start.x, s.start.y);
+        ctx.lineTo(s.end.x, s.end.y);
+        ctx.stroke();
+        if (s.type === 'arrow') {
+          const angle = Math.atan2(s.end.y - s.start.y, s.end.x - s.start.x);
+          const head = 14;
+          ctx.beginPath();
+          ctx.moveTo(s.end.x, s.end.y);
+          ctx.lineTo(s.end.x - head * Math.cos(angle - Math.PI / 6), s.end.y - head * Math.sin(angle - Math.PI / 6));
+          ctx.moveTo(s.end.x, s.end.y);
+          ctx.lineTo(s.end.x - head * Math.cos(angle + Math.PI / 6), s.end.y - head * Math.sin(angle + Math.PI / 6));
+          ctx.stroke();
+        }
+      } else if (s.type === 'rect') {
+        ctx.strokeRect(s.start.x, s.start.y, s.end.x - s.start.x, s.end.y - s.start.y);
+      } else if (s.type === 'circle') {
+        const rx = (s.end.x - s.start.x) / 2;
+        const ry = (s.end.y - s.start.y) / 2;
+        ctx.beginPath();
+        ctx.ellipse(s.start.x + rx, s.start.y + ry, Math.abs(rx), Math.abs(ry), 0, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+    });
+
+    ctx.restore();
+    ctx.restore();
+  }
+
+  function renderAll() {
+    renderBackground();
+    renderStrokes();
+    updateInteractivePositions();
+  }
+
+  /* ---------------- Pointer & Touch Drawing ---------------- */
+  let lastPanPos = { x: 0, y: 0 };
+
+  window.addEventListener('pointerdown', e => {
+    if (e.target.closest('.toolbar') || e.target.closest('.popover') || e.target.closest('#interactive-container > *')) return;
+
+    if (e.button === 1 || state.tool === 'pan') {
+      state.isPanning = true;
+      lastPanPos = { x: e.clientX, y: e.clientY };
+      return;
+    }
+
+    const world = toWorld(e.clientX, e.clientY);
+    state.isDrawing = true;
+
+    if (state.tool === 'eraser') {
+      eraseNear(world);
+      return;
+    }
+
+    if (state.tool === 'pen' || state.tool === 'highlighter') {
+      const strokeWidth = state.tool === 'highlighter' ? 24 : (e.pressure && e.pressure > 0 ? state.lineWidth * (0.6 + e.pressure * 0.8) : state.lineWidth);
+      state.activeStroke = {
+        type: state.tool,
+        color: state.color,
+        width: strokeWidth,
+        points: [world]
+      };
+    } else {
+      state.activeStroke = {
+        type: state.tool,
+        color: state.color,
+        width: state.lineWidth,
+        start: world,
+        end: world
+      };
+    }
+  });
+
+  window.addEventListener('pointermove', e => {
+    if (state.isPanning) {
+      state.panX += e.clientX - lastPanPos.x;
+      state.panY += e.clientY - lastPanPos.y;
+      lastPanPos = { x: e.clientX, y: e.clientY };
+      renderAll();
+      return;
+    }
+
+    if (!state.isDrawing) return;
+    const world = toWorld(e.clientX, e.clientY);
+
+    if (state.tool === 'eraser') {
+      eraseNear(world);
+      return;
+    }
+
+    if (state.activeStroke) {
+      if (state.activeStroke.points) {
+        state.activeStroke.points.push(world);
+      } else {
+        state.activeStroke.end = world;
+      }
+      renderStrokes();
+    }
+  });
+
+  window.addEventListener('pointerup', () => {
+    if (state.isPanning) { state.isPanning = false; return; }
+    if (state.isDrawing && state.activeStroke) {
+      state.strokes.push(state.activeStroke);
+      state.activeStroke = null;
+      state.redoStack = [];
+      renderStrokes();
+    }
+    state.isDrawing = false;
+  });
+
+  function eraseNear(pt) {
+    const threshold = 18 / state.zoom;
+    const initialCount = state.strokes.length;
+    state.strokes = state.strokes.filter(s => {
+      if (s.points) {
+        return !s.points.some(p => Math.hypot(p.x - pt.x, p.y - pt.y) < threshold);
+      }
+      return true;
+    });
+    if (state.strokes.length !== initialCount) renderStrokes();
+  }
+
+  /* ---------------- Sticky Notes ---------------- */
+  function createStickyNote(x = 120, y = 140, text = '') {
+    const id = Date.now().toString();
+    const note = { id, x, y, text };
+    state.stickyNotes.push(note);
+    renderStickyDOM(note);
+  }
+
+  function renderStickyDOM(note) {
+    const el = document.createElement('div');
+    el.className = 'sticky-note';
+    el.id = 'note-' + note.id;
+    el.innerHTML = `
+      <div class="sticky-header">
+        <span>NOTE</span>
+        <button class="sticky-delete">&times;</button>
+      </div>
+      <textarea class="sticky-content" placeholder="Type lesson notes or reminder...">${note.text}</textarea>
+    `;
+
+    const txt = el.querySelector('.sticky-content');
+    txt.addEventListener('input', () => { note.text = txt.value; });
+
+    el.querySelector('.sticky-delete').addEventListener('click', () => {
+      interactiveContainer.removeChild(el);
+      state.stickyNotes = state.stickyNotes.filter(n => n.id !== note.id);
+    });
+
+    let isDragging = false;
+    let offset = { x: 0, y: 0 };
+    el.querySelector('.sticky-header').addEventListener('pointerdown', e => {
+      isDragging = true;
+      offset = { x: e.clientX - el.offsetLeft, y: e.clientY - el.offsetTop };
+      el.setPointerCapture(e.pointerId);
+    });
+
+    el.querySelector('.sticky-header').addEventListener('pointermove', e => {
+      if (!isDragging) return;
+      note.x = (e.clientX - offset.x - state.panX) / state.zoom;
+      note.y = (e.clientY - offset.y - state.panY) / state.zoom;
+      updateInteractivePositions();
+    });
+
+    el.querySelector('.sticky-header').addEventListener('pointerup', () => { isDragging = false; });
+
+    interactiveContainer.appendChild(el);
+    updateInteractivePositions();
+  }
+
+  function updateInteractivePositions() {
+    state.stickyNotes.forEach(note => {
+      const el = document.getElementById('note-' + note.id);
+      if (el) {
+        el.style.left = (note.x * state.zoom + state.panX) + 'px';
+        el.style.top = (note.y * state.zoom + state.panY) + 'px';
+        el.style.transform = `scale(${state.zoom})`;
+      }
+    });
+
+    state.images.forEach(img => {
+      const el = document.getElementById('img-' + img.id);
+      if (el) {
+        el.style.left = (img.x * state.zoom + state.panX) + 'px';
+        el.style.top = (img.y * state.zoom + state.panY) + 'px';
+        el.style.width = (img.width * state.zoom) + 'px';
+        el.style.height = (img.height * state.zoom) + 'px';
+      }
+    });
+  }
+
+  /* ---------------- UI Tool Bindings ---------------- */
+  document.querySelectorAll('#main-tools .tool-btn[data-tool]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#main-tools .tool-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      state.tool = btn.dataset.tool;
+    });
+  });
+
+  document.querySelectorAll('.swatch').forEach(sw => {
+    sw.addEventListener('click', () => {
+      document.querySelectorAll('.swatch').forEach(s => s.classList.remove('selected'));
+      sw.classList.add('selected');
+      state.color = sw.dataset.color;
+    });
+  });
+
+  const btnBgPicker = document.getElementById('btn-bg-picker');
+  btnBgPicker.addEventListener('click', e => {
+    e.stopPropagation();
+    bgPopover.classList.toggle('open');
+  });
+  window.addEventListener('click', () => bgPopover.classList.remove('open'));
+
+  document.querySelectorAll('.grid-opt-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.grid-opt-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      state.background = btn.dataset.bg;
+      bgLabel.innerText = btn.innerText;
+      bgPopover.classList.remove('open');
+      renderAll();
+    });
+  });
+
+  document.getElementById('btn-sticky').addEventListener('click', () => {
+    const center = toWorld(window.innerWidth / 2, window.innerHeight / 2);
+    createStickyNote(center.x - 105, center.y - 70);
+  });
+
+  document.getElementById('btn-undo').addEventListener('click', () => {
+    if (state.strokes.length > 0) {
+      state.redoStack.push(state.strokes.pop());
+      renderStrokes();
+    }
+  });
+
+  document.getElementById('btn-redo').addEventListener('click', () => {
+    if (state.redoStack.length > 0) {
+      state.strokes.push(state.redoStack.pop());
+      renderStrokes();
+    }
+  });
+
+  document.getElementById('btn-clear').addEventListener('click', () => {
+    state.strokes = [];
+    state.redoStack = [];
+    state.stickyNotes = [];
+    state.images = [];
+    interactiveContainer.innerHTML = '';
+    renderAll();
+    showToast('Canvas cleared');
+  });
+
+  document.getElementById('btn-zoom-in').addEventListener('click', () => {
+    state.zoom = Math.min(state.zoom * 1.2, 5.0);
+    zoomDisplay.innerText = Math.round(state.zoom * 100) + '%';
+    renderAll();
+  });
+
+  document.getElementById('btn-zoom-out').addEventListener('click', () => {
+    state.zoom = Math.max(state.zoom / 1.2, 0.15);
+    zoomDisplay.innerText = Math.round(state.zoom * 100) + '%';
+    renderAll();
+  });
+
+  document.getElementById('btn-zoom-reset').addEventListener('click', () => {
+    state.zoom = 1.0;
+    state.panX = 0;
+    state.panY = 0;
+    zoomDisplay.innerText = '100%';
+    renderAll();
+  });
+
+  /* ---------------- Save (.board) & Load System ---------------- */
+  function saveBoardToFile() {
+    const payload = JSON.stringify({
+      version: 2,
+      background: state.background,
+      strokes: state.strokes,
+      notes: state.stickyNotes,
+      images: state.images
+    }, null, 2);
+
+    const blob = new Blob([payload], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `LessonBoard_${new Date().toISOString().slice(0, 10)}.board`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('Board saved to your PC (.board)');
+  }
+  document.getElementById('btn-save').addEventListener('click', saveBoardToFile);
+
+  const fileInput = document.getElementById('file-input');
+  document.getElementById('btn-open').addEventListener('click', () => fileInput.click());
+  fileInput.addEventListener('change', e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      try {
+        const data = JSON.parse(ev.target.result);
+        state.strokes = data.strokes || [];
+        state.background = data.background || 'plain';
+        state.redoStack = [];
+        interactiveContainer.innerHTML = '';
+        state.stickyNotes = [];
+        state.images = [];
+        (data.notes || []).forEach(n => createStickyNote(n.x, n.y, n.text));
+        (data.images || []).forEach(i => createBoardImage(i));
+
+        const matched = document.querySelector(`.grid-opt-btn[data-bg="${state.background}"]`);
+        if (matched) bgLabel.innerText = matched.innerText;
+
+        renderAll();
+        showToast('Board loaded successfully');
+      } catch (err) {
+        showToast('Could not read .board file');
+      }
+    };
+    reader.readAsText(file);
+    fileInput.value = '';
+  });
+
+  // Export Combined Canvas
+  document.getElementById('btn-export').addEventListener('click', () => {
+    const offscreen = document.createElement('canvas');
+    offscreen.width = paintCanvas.width;
+    offscreen.height = paintCanvas.height;
+    const oCtx = offscreen.getContext('2d');
+
+    oCtx.drawImage(bgCanvas, 0, 0);
+
+    // Draw images onto exported canvas
+    state.images.forEach(imgData => {
+      const img = new Image();
+      img.src = imgData.dataUrl;
+      const x = (imgData.x * state.zoom + state.panX) * window.devicePixelRatio;
+      const y = (imgData.y * state.zoom + state.panY) * window.devicePixelRatio;
+      const w = imgData.width * state.zoom * window.devicePixelRatio;
+      const h = imgData.height * state.zoom * window.devicePixelRatio;
+      oCtx.drawImage(img, x, y, w, h);
+    });
+
+    oCtx.drawImage(paintCanvas, 0, 0);
+
+    const a = document.createElement('a');
+    a.href = offscreen.toDataURL('image/png');
+    a.download = `Classroom_Snapshot_${Date.now()}.png`;
+    a.click();
+    showToast('Exported board as PNG');
+  });
+
+  // Keyboard Shortcuts
+  window.addEventListener('keydown', e => {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
+      e.preventDefault();
+      saveBoardToFile();
+    } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
+      e.preventDefault();
+      document.getElementById('btn-undo').click();
+    } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'y') {
+      e.preventDefault();
+      document.getElementById('btn-redo').click();
+    } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'o') {
+      e.preventDefault();
+      fileInput.click();
+    }
+  });
+
+  // Startup Initialization
+  resizeCanvases();
+})();
+</script>
+</body>
+</html>
