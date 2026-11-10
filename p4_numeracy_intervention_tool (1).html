@@ -1,0 +1,1772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>P4 Numeracy Intervention: Brooke & Amelia</title>
+  <!-- Tailwind CSS CDN for styling -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Inter:wght@400;600;700&display=swap');
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    
+    .font-kids {
+      font-family: 'Fredoka', cursive, sans-serif;
+    }
+
+    /* Bouncy animations */
+    @keyframes hopAnimation {
+      0% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-38px) scale(1.15); }
+      100% { transform: translateY(0) scale(1); }
+    }
+    .animate-hop {
+      animation: hopAnimation 0.45s ease-in-out;
+    }
+
+    @keyframes pulseScale {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.08); }
+    }
+    .animate-pulse-scale {
+      animation: pulseScale 0.6s infinite ease-in-out;
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.6); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .animate-pop {
+      animation: popIn 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    /* Speech bubble helper */
+    .bubble::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-width: 10px 10px 0;
+      border-style: solid;
+      border-color: #1e293b transparent transparent transparent;
+      display: block;
+      width: 0;
+    }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col antialiased">
+
+  <!-- TOP HEADER & CONTROLS BAR -->
+  <header class="bg-white border-b border-slate-200 px-4 py-3 shadow-sm sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+      
+      <!-- Brand & Pupils Tag -->
+      <div class="flex items-center space-x-3">
+        <div class="bg-indigo-600 text-white p-2 rounded-xl shadow-sm">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-lg font-bold text-slate-900 leading-tight font-kids tracking-wide">P4 Numeracy Master</h1>
+          <p class="text-xs font-semibold text-indigo-600 uppercase tracking-wider">Brooke &amp; Amelia Support Hub</p>
+        </div>
+      </div>
+
+      <!-- 20-Minute Intervention Timer -->
+      <div class="flex items-center bg-slate-50 border border-slate-200 rounded-2xl px-4 py-1.5 shadow-inner space-x-3">
+        <div class="flex items-center text-slate-600 space-x-1.5 font-kids">
+          <svg class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <span id="timerDisplay" class="text-xl font-bold tracking-wider text-slate-800">20:00</span>
+        </div>
+        <div class="flex space-x-1">
+          <button id="timerToggleBtn" onclick="toggleTimer()" class="px-2.5 py-1 text-xs font-bold rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white transition">Start</button>
+          <button onclick="resetTimer()" class="px-2 py-1 text-xs font-medium rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-700 transition">Reset</button>
+        </div>
+      </div>
+
+      <!-- Pupil Effort & Star Tracker -->
+      <div class="flex items-center space-x-4">
+        <!-- Brooke -->
+        <div class="flex items-center bg-rose-50 border border-rose-200 rounded-2xl px-3 py-1.5 shadow-sm space-x-2">
+          <span class="text-xs font-bold text-rose-800">Brooke:</span>
+          <span id="brookeStars" class="text-base font-extrabold text-rose-600 font-kids">⭐ 0</span>
+          <button onclick="awardStar('brooke')" class="w-6 h-6 rounded-full bg-rose-500 hover:bg-rose-600 active:scale-95 text-white flex items-center justify-center font-bold text-sm shadow">+</button>
+        </div>
+        <!-- Amelia -->
+        <div class="flex items-center bg-sky-50 border border-sky-200 rounded-2xl px-3 py-1.5 shadow-sm space-x-2">
+          <span class="text-xs font-bold text-sky-800">Amelia:</span>
+          <span id="ameliaStars" class="text-base font-extrabold text-sky-600 font-kids">⭐ 0</span>
+          <button onclick="awardStar('amelia')" class="w-6 h-6 rounded-full bg-sky-500 hover:bg-sky-600 active:scale-95 text-white flex items-center justify-center font-bold text-sm shadow">+</button>
+        </div>
+        <!-- Sound Mute Toggle -->
+        <button id="soundBtn" onclick="toggleSound()" class="p-2 text-slate-400 hover:text-slate-600 rounded-xl hover:bg-slate-100" title="Toggle Sound">
+          <svg id="soundOnIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/>
+          </svg>
+          <svg id="soundOffIcon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15zM17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"/>
+          </svg>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- MODULE TABS -->
+    <nav class="max-w-7xl mx-auto mt-3 flex overflow-x-auto space-x-2 pb-1 scrollbar-none">
+      <button onclick="switchTab(0)" id="tab-0" class="tab-btn px-4 py-2 rounded-xl font-kids text-sm font-bold whitespace-nowrap transition bg-emerald-600 text-white shadow-sm ring-2 ring-emerald-400">
+        ⭐ Number Recognition &amp; Matching (1–20)
+      </button>
+      <button onclick="switchTab(1)" id="tab-1" class="tab-btn px-4 py-2 rounded-xl font-kids text-sm font-bold whitespace-nowrap transition bg-slate-100 text-slate-600 hover:bg-slate-200">
+        Wk 1: Flash Subitise (1–4)
+      </button>
+      <button onclick="switchTab(2)" id="tab-2" class="tab-btn px-4 py-2 rounded-xl font-kids text-sm font-bold whitespace-nowrap transition bg-slate-100 text-slate-600 hover:bg-slate-200">
+        Wk 2: Magic Box &amp; 5-Frame
+      </button>
+      <button onclick="switchTab(3)" id="tab-3" class="tab-btn px-4 py-2 rounded-xl font-kids text-sm font-bold whitespace-nowrap transition bg-slate-100 text-slate-600 hover:bg-slate-200">
+        Wk 3: Hungarian 10-Frame (5-and-a-bit)
+      </button>
+      <button onclick="switchTab(4)" id="tab-4" class="tab-btn px-4 py-2 rounded-xl font-kids text-sm font-bold whitespace-nowrap transition bg-slate-100 text-slate-600 hover:bg-slate-200">
+        Wk 4: Boxed Number Track
+      </button>
+      <button onclick="switchTab(5)" id="tab-5" class="tab-btn px-4 py-2 rounded-xl font-kids text-sm font-bold whitespace-nowrap transition bg-slate-100 text-slate-600 hover:bg-slate-200">
+        Wk 5: Head Tap &amp; Teen Bridging
+      </button>
+    </nav>
+  </header>
+
+  <!-- MAIN INTERACTIVE CONTENT AREA -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 flex flex-col justify-center">
+
+    <!-- ======================================================== -->
+    <!-- MODULE 0: DEDICATED NUMBER RECOGNITION & QUANTITY MATCH  -->
+    <!-- ======================================================== -->
+    <section id="module-0" class="module-view space-y-6">
+      <div class="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-200 max-w-5xl mx-auto">
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-4">
+          <div>
+            <div class="inline-flex items-center space-x-2 bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-1">
+              <span>Foundation Priority</span>
+            </div>
+            <h2 class="text-2xl md:text-3xl font-bold font-kids text-slate-800">Number Recognition &amp; Quantity Hub</h2>
+            <p class="text-xs text-slate-500">Bridging visual numerals (1–20) to genuine quantity perception for Brooke &amp; Amelia.</p>
+          </div>
+
+          <!-- Recognition Sub-Modes -->
+          <div class="flex flex-wrap gap-1.5 bg-slate-100 p-1.5 rounded-2xl">
+            <button onclick="switchRecogMode('flash')" id="recog-tab-flash" class="recog-subtab px-3 py-1.5 rounded-xl font-kids text-xs font-bold transition bg-emerald-600 text-white shadow-sm">
+              Flash &amp; Say
+            </button>
+            <button onclick="switchRecogMode('match')" id="recog-tab-match" class="recog-subtab px-3 py-1.5 rounded-xl font-kids text-xs font-bold transition text-slate-600 hover:bg-slate-200">
+              Match Quantity
+            </button>
+            <button onclick="switchRecogMode('build')" id="recog-tab-build" class="recog-subtab px-3 py-1.5 rounded-xl font-kids text-xs font-bold transition text-slate-600 hover:bg-slate-200">
+              Build Teens (10 + N)
+            </button>
+            <button onclick="switchRecogMode('splat')" id="recog-tab-splat" class="recog-subtab px-3 py-1.5 rounded-xl font-kids text-xs font-bold transition text-slate-600 hover:bg-slate-200">
+              🎯 Numeral Splat
+            </button>
+          </div>
+        </div>
+
+        <!-- SUB-MODE 1: FLASH & SAY NUMERAL -->
+        <div id="recog-view-flash" class="recog-subview mt-6 text-center">
+          <div class="flex justify-center items-center gap-3 mb-6">
+            <span class="text-xs font-bold text-slate-500">Number Range:</span>
+            <button onclick="setFlashRange('1-5')" id="range-btn-1-5" class="range-btn px-3 py-1 rounded-lg text-xs font-bold bg-slate-100 text-slate-700">1–5</button>
+            <button onclick="setFlashRange('1-10')" id="range-btn-1-10" class="range-btn px-3 py-1 rounded-lg text-xs font-bold bg-slate-100 text-slate-700">1–10</button>
+            <button onclick="setFlashRange('11-20')" id="range-btn-11-20" class="range-btn px-3 py-1 rounded-lg text-xs font-bold bg-emerald-600 text-white shadow">11–20 (Teens)</button>
+            <button onclick="setFlashRange('1-20')" id="range-btn-1-20" class="range-btn px-3 py-1 rounded-lg text-xs font-bold bg-slate-100 text-slate-700">All 1–20</button>
+          </div>
+
+          <div class="relative w-64 h-64 md:w-72 md:h-72 mx-auto bg-gradient-to-br from-slate-900 to-indigo-950 rounded-3xl border-4 border-slate-800 shadow-xl flex flex-col items-center justify-center p-6">
+            <div id="flashNumeralDisplay" class="text-8xl md:text-9xl font-black font-kids text-amber-400 drop-shadow-lg animate-pop">
+              14
+            </div>
+            <div id="flashNumeralWord" class="mt-2 text-sm uppercase tracking-widest text-indigo-300 font-bold opacity-0 transition-opacity duration-200">
+              fourteen
+            </div>
+          </div>
+
+          <div class="flex flex-wrap items-center justify-center gap-3 mt-6">
+            <button onclick="nextFlashNumeral()" class="px-6 py-3.5 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-kids font-bold text-base rounded-2xl shadow-lg shadow-emerald-200 transition">
+              ⚡ Next Numeral
+            </button>
+            <button onclick="speakCurrentNumeral()" class="px-5 py-3.5 bg-indigo-50 hover:bg-indigo-100 active:scale-95 text-indigo-700 font-kids font-bold text-base rounded-2xl border border-indigo-200 transition flex items-center gap-2">
+              <span>🔊</span> Hear It
+            </button>
+            <button onclick="toggleWordReveal()" class="px-5 py-3.5 bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-700 font-kids font-bold text-base rounded-2xl border border-slate-300 transition">
+              Show Word
+            </button>
+          </div>
+          <p class="text-xs text-slate-400 mt-4 italic">
+            Ask Brooke or Amelia: "Say it before the sound!" Award a star if they identify the symbol without singing up from 1.
+          </p>
+        </div>
+
+        <!-- SUB-MODE 2: MATCH NUMERAL TO CONCRETE QUANTITY -->
+        <div id="recog-view-match" class="recog-subview hidden mt-6 text-center">
+          <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Tap the quantity card that matches this number:</p>
+          <div class="inline-block bg-slate-900 text-amber-400 px-8 py-3 rounded-2xl text-6xl font-black font-kids shadow-lg mb-6 border-2 border-slate-700" id="matchTargetNumeral">
+            7
+          </div>
+
+          <!-- 3 Choice Cards (Visual Hungarian/Ten-Frame representation) -->
+          <div id="matchCardsContainer" class="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl mx-auto">
+            <!-- Dynamically populated via JS -->
+          </div>
+
+          <div id="matchFeedback" class="mt-6 text-lg font-bold font-kids min-h-[32px] text-emerald-600"></div>
+          <div class="mt-2">
+            <button onclick="generateMatchQuestion()" class="px-4 py-2 bg-slate-800 text-white rounded-xl text-xs font-bold hover:bg-slate-700 active:scale-95 font-kids">
+              Skip / Next Card
+            </button>
+          </div>
+        </div>
+
+        <!-- SUB-MODE 3: BUILD THE NUMERAL (TEEN PLACE VALUE 11-20) -->
+        <div id="recog-view-build" class="recog-subview hidden mt-6">
+          <div class="text-center max-w-2xl mx-auto">
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Place Value Builder</p>
+            <h3 class="text-xl font-bold font-kids text-slate-800">
+              Build target: <span id="buildTargetNumber" class="text-3xl text-indigo-600 font-black">16</span>
+            </h3>
+            <p class="text-xs text-slate-500 mt-1">Tap a "Full 10 Plate", then add loose ones into the drop tray!</p>
+
+            <!-- Working Tray -->
+            <div class="my-6 bg-slate-900 p-5 rounded-3xl border-4 border-slate-800 shadow-xl flex flex-col md:flex-row gap-4 items-center justify-center">
+              
+              <!-- Slot for 10-Plate -->
+              <div id="slotTenPlate" onclick="removeTenPlate()" class="w-full md:w-48 min-h-[110px] bg-slate-950 border-2 border-dashed border-teal-500/50 rounded-2xl p-2 flex flex-col items-center justify-center cursor-pointer hover:border-teal-400">
+                <span id="slotTenPlaceholder" class="text-xs font-bold text-teal-400/60 uppercase">+ Tap 10 Plate</span>
+              </div>
+
+              <div class="text-2xl font-bold text-slate-500 font-kids">+</div>
+
+              <!-- Slot for Ones -->
+              <div class="w-full md:w-56 min-h-[110px] bg-slate-950 border-2 border-dashed border-amber-500/50 rounded-2xl p-3 flex flex-wrap gap-2 items-center justify-center content-center" id="slotOnesTray">
+                <span id="slotOnesPlaceholder" class="text-xs font-bold text-amber-400/60 uppercase">Add Ones</span>
+              </div>
+
+            </div>
+
+            <!-- Pallet Controls -->
+            <div class="flex flex-wrap justify-center gap-3">
+              <button onclick="addTenPlateToTray()" id="btnPalletTen" class="px-4 py-2.5 bg-teal-600 hover:bg-teal-700 active:scale-95 text-white font-kids font-bold text-sm rounded-xl shadow flex items-center gap-2">
+                <span>➕</span> Add 1 Full Ten-Plate (10)
+              </button>
+              <button onclick="addSingleOneToTray()" class="px-4 py-2.5 bg-amber-500 hover:bg-amber-600 active:scale-95 text-white font-kids font-bold text-sm rounded-xl shadow flex items-center gap-2">
+                <span>➕</span> Add 1 One
+              </button>
+              <button onclick="removeLastOneFromTray()" class="px-3 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 font-kids font-bold text-sm rounded-xl">
+                ➖ Remove One
+              </button>
+              <button onclick="resetBuildTray()" class="px-3 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 font-kids font-bold text-sm rounded-xl border border-slate-300">
+                Clear
+              </button>
+            </div>
+
+            <!-- Current Count & Checker -->
+            <div class="mt-6 flex flex-col items-center">
+              <div class="text-base font-bold font-kids text-slate-700">
+                Current Built: <span id="buildCurrentSum" class="text-2xl font-black text-indigo-600">0</span>
+              </div>
+              <div id="buildFeedback" class="mt-2 text-base font-bold font-kids min-h-[28px] text-teal-600"></div>
+              <button onclick="newBuildTarget()" class="mt-3 text-xs font-bold text-indigo-600 hover:underline">
+                ⚡ New Random Target (11–19)
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- SUB-MODE 4: NUMERAL SPLAT GAME -->
+        <div id="recog-view-splat" class="recog-subview hidden mt-6 text-center">
+          <div class="max-w-2xl mx-auto">
+            <div class="bg-indigo-50 border border-indigo-200 rounded-2xl p-4 mb-4 flex items-center justify-between">
+              <div>
+                <span class="text-xs uppercase font-extrabold text-indigo-500 tracking-wider">Target to Splat:</span>
+                <div id="splatTargetNum" class="text-4xl md:text-5xl font-black font-kids text-indigo-900 mt-0.5 animate-pulse-scale">
+                  13
+                </div>
+              </div>
+              <button onclick="speakSplatTarget()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-kids font-bold text-xs shadow flex items-center gap-1.5">
+                <span>🔊</span> Call Out
+              </button>
+            </div>
+
+            <p class="text-xs text-slate-400 mb-3 font-semibold">Tap the bubble number as fast as you can:</p>
+            <div id="splatGrid" class="grid grid-cols-4 md:grid-cols-5 gap-3 p-2">
+              <!-- Dynamically populated 10 to 15 bubbles -->
+            </div>
+            <div id="splatFeedback" class="mt-4 text-base font-bold font-kids min-h-[28px]"></div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- MODULE 1: FLASH SUBITISING (1-4)                         -->
+    <!-- ======================================================== -->
+    <section id="module-1" class="module-view hidden space-y-6">
+      <div class="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-200 max-w-4xl mx-auto text-center">
+        <div class="inline-flex items-center space-x-2 bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-2">
+          <span>Week 1 Focus: Instant Whole-Set Recognition</span>
+        </div>
+        <h2 class="text-2xl md:text-3xl font-bold font-kids text-slate-800">Flash Subitising Arena (1 to 4)</h2>
+        <p class="text-sm text-slate-500 mt-1">Stop serial pointing! Pop all fingers at once.</p>
+
+        <!-- Configuration Bar -->
+        <div class="flex flex-wrap items-center justify-center gap-4 mt-6">
+          <div class="flex items-center space-x-2">
+            <label class="text-xs font-bold text-slate-600">Flash Time:</label>
+            <select id="subitiseSpeed" class="bg-slate-100 border border-slate-300 rounded-xl px-3 py-1.5 text-xs font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+              <option value="600">0.6s (Rapid Pro)</option>
+              <option value="1000" selected>1.0s (Mastery Standard)</option>
+              <option value="1500">1.5s (Gentle Start)</option>
+            </select>
+          </div>
+          <div class="flex items-center space-x-2">
+            <label class="text-xs font-bold text-slate-600">Pattern Style:</label>
+            <select id="subitisePatternStyle" class="bg-slate-100 border border-slate-300 rounded-xl px-3 py-1.5 text-xs font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+              <option value="dice">Standard Dice</option>
+              <option value="hungarian">Hungarian Row</option>
+              <option value="scatter">Scattered / Irregular</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Visual Flash Display Card -->
+        <div class="relative w-72 h-72 md:w-80 md:h-80 mx-auto my-6 bg-slate-900 border-4 border-slate-800 rounded-3xl shadow-2xl flex items-center justify-center overflow-hidden">
+          <!-- The container where dots are rendered dynamically -->
+          <div id="subitiseDotsContainer" class="w-full h-full relative flex items-center justify-center"></div>
+
+          <!-- Blind/Cover Overlay -->
+          <div id="subitiseCover" class="absolute inset-0 bg-slate-900 flex flex-col items-center justify-center text-slate-400 transition-opacity duration-150 z-10">
+            <span class="text-6xl mb-2 animate-bounce">🙈</span>
+            <span class="font-kids text-lg font-bold text-slate-200">Dots Covered!</span>
+            <span class="text-xs text-slate-400 mt-1">Click "Flash Pattern" to peek</span>
+          </div>
+        </div>
+
+        <!-- Controls & Student Response Buttons -->
+        <div class="space-y-4">
+          <div class="flex justify-center gap-3">
+            <button onclick="triggerFlash()" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-kids font-bold text-base rounded-2xl shadow-lg shadow-indigo-200 transition">
+              ⚡ Flash Pattern (1s)
+            </button>
+            <button onclick="revealDots()" class="px-4 py-3 bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-700 font-kids font-bold text-sm rounded-2xl border border-slate-300 transition">
+              Peek / Reveal
+            </button>
+          </div>
+
+          <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">How many dots did Brooke &amp; Amelia see?</p>
+          <div class="flex justify-center gap-3">
+            <button onclick="checkSubitiseAnswer(1)" class="w-14 h-14 rounded-2xl bg-amber-100 hover:bg-amber-200 active:scale-90 font-kids font-bold text-2xl text-amber-900 border-2 border-amber-300 shadow">1</button>
+            <button onclick="checkSubitiseAnswer(2)" class="w-14 h-14 rounded-2xl bg-amber-100 hover:bg-amber-200 active:scale-90 font-kids font-bold text-2xl text-amber-900 border-2 border-amber-300 shadow">2</button>
+            <button onclick="checkSubitiseAnswer(3)" class="w-14 h-14 rounded-2xl bg-amber-100 hover:bg-amber-200 active:scale-90 font-kids font-bold text-2xl text-amber-900 border-2 border-amber-300 shadow">3</button>
+            <button onclick="checkSubitiseAnswer(4)" class="w-14 h-14 rounded-2xl bg-amber-100 hover:bg-amber-200 active:scale-90 font-kids font-bold text-2xl text-amber-900 border-2 border-amber-300 shadow">4</button>
+          </div>
+
+          <!-- Dynamic Feedback Banner -->
+          <div id="subitiseFeedback" class="mt-4 min-h-[32px] text-lg font-bold font-kids text-indigo-600">
+            Ready to test!
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- MODULE 2: MAGIC BOX & 5-FRAME                            -->
+    <!-- ======================================================== -->
+    <section id="module-2" class="module-view hidden space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-6xl mx-auto">
+
+        <!-- PART A: THE MAGIC BOX (CARDINAL WORKING MEMORY ANCHOR) -->
+        <div class="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-200 flex flex-col justify-between">
+          <div>
+            <div class="inline-flex items-center space-x-2 bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-2">
+              <span>Week 2 Concept</span>
+            </div>
+            <h2 class="text-2xl font-bold font-kids text-slate-800">The "Magic Box" Anchor</h2>
+            <p class="text-xs text-slate-500 mt-1">Locks the cardinal amount inside so working memory doesn't drop it!</p>
+
+            <!-- Box Interactive Area -->
+            <div class="relative bg-emerald-50/50 rounded-3xl p-6 my-6 min-h-[260px] flex flex-col items-center justify-center border-2 border-emerald-100">
+              
+              <!-- Speech Bubble when Tapped -->
+              <div id="boxSpeech" class="bubble absolute top-4 bg-slate-800 text-white font-kids font-bold text-xl px-4 py-1.5 rounded-2xl shadow-lg opacity-0 transition-opacity">
+                4!
+              </div>
+
+              <!-- Graphic Magic Box -->
+              <div id="magicBoxGraphic" onclick="tapMagicBox()" class="relative w-40 h-36 bg-gradient-to-br from-amber-600 to-amber-700 rounded-3xl border-4 border-amber-800 shadow-2xl flex flex-col items-center justify-center cursor-pointer hover:scale-105 active:scale-95 transition transform">
+                <span class="text-4xl">🎁</span>
+                <span class="text-[11px] font-extrabold text-amber-200 uppercase tracking-widest mt-1">Tap Box</span>
+                <!-- Inside Value Badge -->
+                <div id="boxLabelBadge" class="absolute -top-3 -right-3 w-10 h-10 rounded-full bg-indigo-600 border-2 border-white shadow flex items-center justify-center text-white font-kids font-bold text-lg">
+                  <span id="boxLabelText">4</span>
+                </div>
+              </div>
+
+              <!-- Outside Counters Tray -->
+              <div class="mt-6 flex items-center gap-3">
+                <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Outside (+):</span>
+                <div id="outsideCountersContainer" class="flex gap-2 min-h-[48px]">
+                  <!-- Generated dynamically -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Box Controls -->
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div class="flex gap-1.5">
+                <button onclick="setupBox(2)" class="px-3 py-1 rounded-lg text-xs font-bold bg-slate-100 hover:bg-emerald-100 text-slate-700">Set 2</button>
+                <button onclick="setupBox(3)" class="px-3 py-1 rounded-lg text-xs font-bold bg-slate-100 hover:bg-emerald-100 text-slate-700">Set 3</button>
+                <button onclick="setupBox(4)" class="px-3 py-1 rounded-lg text-xs font-bold bg-emerald-600 text-white shadow">Set 4</button>
+              </div>
+              <div class="flex gap-1.5">
+                <button onclick="setOutsideCount(1)" class="px-3 py-1 rounded-lg text-xs font-bold bg-slate-100 hover:bg-emerald-100 text-slate-700">+1 Outside</button>
+                <button onclick="setOutsideCount(2)" class="px-3 py-1 rounded-lg text-xs font-bold bg-slate-100 hover:bg-emerald-100 text-slate-700">+2 Outside</button>
+                <button id="boxLabelBtn" onclick="toggleBoxLabel()" class="px-3 py-1 rounded-lg text-xs font-bold bg-slate-200 hover:bg-slate-300 text-slate-700">Hide Label</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Spoken Stem Sentence -->
+          <div class="mt-6 bg-emerald-100/70 border border-emerald-300 rounded-2xl p-3 text-center">
+            <p id="boxStemSentence" class="font-kids font-bold text-base text-emerald-950 transition-colors">
+              "There are 4 in the box. 1 more makes 5!"
+            </p>
+          </div>
+        </div>
+
+        <!-- PART B: 5-FRAME COMPLEMENT BUILDER -->
+        <div class="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-200 flex flex-col justify-between">
+          <div>
+            <div class="inline-flex items-center space-x-2 bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-2">
+              <span>Structured 5-Anchor</span>
+            </div>
+            <h2 class="text-2xl font-bold font-kids text-slate-800">Five-Frame Complements</h2>
+            <p class="text-xs text-slate-500 mt-1">Fill from left to right. When full, it is ALWAYS 5.</p>
+
+            <!-- 5-Frame Grid -->
+            <div class="my-6">
+              <div class="grid grid-cols-5 gap-2 max-w-md mx-auto bg-slate-800 p-3 rounded-2xl shadow-md border-4 border-slate-700">
+                <div onclick="toggle5Frame(0)" class="five-cell h-16 md:h-20 bg-slate-900 border-2 border-slate-600 rounded-xl flex items-center justify-center cursor-pointer hover:bg-slate-850"></div>
+                <div onclick="toggle5Frame(1)" class="five-cell h-16 md:h-20 bg-slate-900 border-2 border-slate-600 rounded-xl flex items-center justify-center cursor-pointer hover:bg-slate-850"></div>
+                <div onclick="toggle5Frame(2)" class="five-cell h-16 md:h-20 bg-slate-900 border-2 border-slate-600 rounded-xl flex items-center justify-center cursor-pointer hover:bg-slate-850"></div>
+                <div onclick="toggle5Frame(3)" class="five-cell h-16 md:h-20 bg-slate-900 border-2 border-slate-600 rounded-xl flex items-center justify-center cursor-pointer hover:bg-slate-850"></div>
+                <div onclick="toggle5Frame(4)" class="five-cell h-16 md:h-20 bg-slate-900 border-2 border-slate-600 rounded-xl flex items-center justify-center cursor-pointer hover:bg-slate-850"></div>
+              </div>
+
+              <!-- Quick Presets -->
+              <div class="flex flex-wrap justify-center gap-2 mt-4">
+                <button onclick="set5Frame(5)" class="px-3 py-1 rounded-lg text-xs font-bold bg-blue-600 text-white shadow">Full (5)</button>
+                <button onclick="set5Frame(4)" class="px-3 py-1 rounded-lg text-xs font-bold bg-slate-100 hover:bg-blue-100 text-slate-700">Show 4</button>
+                <button onclick="set5Frame(3)" class="px-3 py-1 rounded-lg text-xs font-bold bg-slate-100 hover:bg-blue-100 text-slate-700">Show 3</button>
+                <button onclick="set5Frame(2)" class="px-3 py-1 rounded-lg text-xs font-bold bg-slate-100 hover:bg-blue-100 text-slate-700">Show 2</button>
+                <button onclick="set5Frame(0)" class="px-3 py-1 rounded-lg text-xs font-bold bg-slate-200 hover:bg-slate-300 text-slate-600">Clear</button>
+              </div>
+            </div>
+
+            <!-- Complements to 5 Analysis -->
+            <div class="bg-blue-50 border border-blue-200 rounded-2xl p-4 text-center">
+              <div class="text-sm font-bold text-blue-900 font-kids">
+                <span id="fiveFrameFilled">3</span> Full &amp; <span id="fiveFrameEmpty">2</span> Empty Spaces
+              </div>
+              <p class="text-xs text-blue-700 mt-1 font-semibold" id="fiveFrameSentence">
+                "I see 3 red. I need 2 more to make 5."
+              </p>
+            </div>
+          </div>
+
+          <div class="mt-4 flex justify-center">
+            <button onclick="peekFiveFrameTest()" class="text-xs font-bold text-indigo-600 hover:underline">
+              ⚡ Challenge: Quick Peek Flash
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- MODULE 3: HUNGARIAN 10-FRAME (5-AND-A-BIT)               -->
+    <!-- ======================================================== -->
+    <section id="module-3" class="module-view hidden space-y-6">
+      <div class="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-200 max-w-4xl mx-auto text-center">
+        <div class="inline-flex items-center space-x-2 bg-amber-50 text-amber-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-2">
+          <span>Week 3 Concept: 5-and-a-bit</span>
+        </div>
+        <h2 class="text-2xl md:text-3xl font-bold font-kids text-slate-800">Hungarian Ten-Frame</h2>
+        <p class="text-sm text-slate-500 mt-1">The top row is a locked unit of 5 (Red). NEVER recount the red counters!</p>
+
+        <!-- Presets for 6, 7, 8 -->
+        <div class="flex justify-center gap-3 my-6">
+          <button onclick="setHungarianValue(5)" class="px-4 py-2 bg-slate-100 hover:bg-amber-100 text-slate-800 rounded-xl font-kids font-bold text-sm">5 (Full Top)</button>
+          <button onclick="setHungarianValue(6)" class="px-4 py-2 bg-amber-500 text-white rounded-xl font-kids font-bold text-sm shadow">6 (5 + 1)</button>
+          <button onclick="setHungarianValue(7)" class="px-4 py-2 bg-amber-500 text-white rounded-xl font-kids font-bold text-sm shadow">7 (5 + 2)</button>
+          <button onclick="setHungarianValue(8)" class="px-4 py-2 bg-amber-500 text-white rounded-xl font-kids font-bold text-sm shadow">8 (5 + 3)</button>
+          <button onclick="setHungarianValue(10)" class="px-4 py-2 bg-slate-100 hover:bg-amber-100 text-slate-800 rounded-xl font-kids font-bold text-sm">10 (Full Frame)</button>
+        </div>
+
+        <!-- Dynamic 10-Frame Board -->
+        <div class="relative bg-slate-900 border-4 border-slate-850 p-4 md:p-6 rounded-3xl max-w-xl mx-auto shadow-2xl">
+          
+          <!-- Top Row (5 Red - Locked Anchor) -->
+          <div class="relative">
+            <div class="grid grid-cols-5 gap-2.5 mb-3">
+              <div id="h-cell-0" class="h-16 md:h-20 bg-slate-800 border-2 border-red-900/60 rounded-2xl flex items-center justify-center"></div>
+              <div id="h-cell-1" class="h-16 md:h-20 bg-slate-800 border-2 border-red-900/60 rounded-2xl flex items-center justify-center"></div>
+              <div id="h-cell-2" class="h-16 md:h-20 bg-slate-800 border-2 border-red-900/60 rounded-2xl flex items-center justify-center"></div>
+              <div id="h-cell-3" class="h-16 md:h-20 bg-slate-800 border-2 border-red-900/60 rounded-2xl flex items-center justify-center"></div>
+              <div id="h-cell-4" class="h-16 md:h-20 bg-slate-800 border-2 border-red-900/60 rounded-2xl flex items-center justify-center"></div>
+            </div>
+            <!-- Locked 5 badge overlay -->
+            <div class="absolute -left-3 top-1/2 -translate-y-1/2 -rotate-90 bg-rose-600 text-white text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full shadow">
+              Locked 5
+            </div>
+          </div>
+
+          <div class="h-1 bg-slate-700/80 rounded my-2"></div>
+
+          <!-- Bottom Row (Yellow Bits 1 to 5) -->
+          <div class="grid grid-cols-5 gap-2.5">
+            <div id="h-cell-5" onclick="toggleHungarianBottom(5)" class="h-16 md:h-20 bg-slate-800 border-2 border-amber-900/60 rounded-2xl flex items-center justify-center cursor-pointer hover:bg-slate-750"></div>
+            <div id="h-cell-6" onclick="toggleHungarianBottom(6)" class="h-16 md:h-20 bg-slate-800 border-2 border-amber-900/60 rounded-2xl flex items-center justify-center cursor-pointer hover:bg-slate-750"></div>
+            <div id="h-cell-7" onclick="toggleHungarianBottom(7)" class="h-16 md:h-20 bg-slate-800 border-2 border-amber-900/60 rounded-2xl flex items-center justify-center cursor-pointer hover:bg-slate-750"></div>
+            <div id="h-cell-8" onclick="toggleHungarianBottom(8)" class="h-16 md:h-20 bg-slate-800 border-2 border-amber-900/60 rounded-2xl flex items-center justify-center cursor-pointer hover:bg-slate-750"></div>
+            <div id="h-cell-9" onclick="toggleHungarianBottom(9)" class="h-16 md:h-20 bg-slate-800 border-2 border-amber-900/60 rounded-2xl flex items-center justify-center cursor-pointer hover:bg-slate-750"></div>
+          </div>
+
+          <!-- Cover Peek Shield -->
+          <div id="hungarianCover" class="absolute inset-0 bg-slate-900 rounded-3xl flex flex-col items-center justify-center text-white hidden">
+            <span class="text-4xl mb-2">🙈</span>
+            <span class="font-kids text-xl font-bold">Covered!</span>
+            <span class="text-xs text-slate-400 mt-1">How many were on the bottom row?</span>
+            <button onclick="revealHungarian()" class="mt-4 px-4 py-2 bg-amber-500 rounded-xl font-kids font-bold text-white shadow active:scale-95">Peek Now</button>
+          </div>
+
+        </div>
+
+        <!-- Oral Stem Sentence -->
+        <div class="mt-6 max-w-xl mx-auto bg-amber-50 border-2 border-amber-300 rounded-2xl p-4 shadow-sm">
+          <p class="text-xs font-bold text-amber-700 uppercase tracking-wider mb-1">Say This Aloud Together:</p>
+          <p id="hungarianStemSentence" class="text-xl font-black font-kids text-amber-950">
+            "Top row is 5. 5 and 2 is 7!"
+          </p>
+        </div>
+
+        <!-- Action tools -->
+        <div class="mt-6 flex justify-center gap-3">
+          <button onclick="coverHungarianPeek()" class="px-4 py-2 bg-slate-800 text-white hover:bg-slate-700 rounded-xl font-kids font-bold text-sm shadow">
+            🙈 Cover Bottom Row Peek
+          </button>
+          <button onclick="speakHungarianStem()" class="px-4 py-2 bg-indigo-600 text-white hover:bg-indigo-700 rounded-xl font-kids font-bold text-sm shadow">
+            🔊 Speak Stem Sentence
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- MODULE 4: BOXED NUMBER TRACK (1 TO 10)                   -->
+    <!-- ======================================================== -->
+    <section id="module-4" class="module-view hidden space-y-6">
+      <div class="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-200 max-w-5xl mx-auto text-center">
+        <div class="inline-flex items-center space-x-2 bg-purple-50 text-purple-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-2">
+          <span>Week 4: Discrete Number Hop</span>
+        </div>
+        <h2 class="text-2xl md:text-3xl font-bold font-kids text-slate-800">Boxed Number Track (1 to 10)</h2>
+        <p class="text-sm text-slate-500 mt-1">Discrete boxes, not an empty line. Land directly on your starting number!</p>
+
+        <!-- Current Problem Header -->
+        <div class="my-4 flex items-center justify-center gap-4">
+          <div class="bg-purple-100 text-purple-900 px-6 py-2 rounded-2xl font-kids text-2xl font-black shadow-inner">
+            <span id="trackStartVal">6</span> + <span id="trackJumpVal">2</span> = <span id="trackResultVal" class="text-purple-600">?</span>
+          </div>
+        </div>
+
+        <!-- The 10-Cell Boxed Track -->
+        <div class="my-8 overflow-x-auto p-4">
+          <div class="inline-flex space-x-2 bg-slate-900 p-3 rounded-2xl shadow-xl min-w-[700px]">
+            <!-- 10 Cells -->
+            <div id="track-cell-1" onclick="selectTrackStart(1)" class="track-cell w-16 h-20 rounded-xl bg-slate-800 border-2 border-slate-700 flex flex-col items-center justify-between p-2 cursor-pointer hover:border-purple-400 relative">
+              <span class="text-slate-400 text-xs font-bold">1</span>
+            </div>
+            <div id="track-cell-2" onclick="selectTrackStart(2)" class="track-cell w-16 h-20 rounded-xl bg-slate-800 border-2 border-slate-700 flex flex-col items-center justify-between p-2 cursor-pointer hover:border-purple-400 relative">
+              <span class="text-slate-400 text-xs font-bold">2</span>
+            </div>
+            <div id="track-cell-3" onclick="selectTrackStart(3)" class="track-cell w-16 h-20 rounded-xl bg-slate-800 border-2 border-slate-700 flex flex-col items-center justify-between p-2 cursor-pointer hover:border-purple-400 relative">
+              <span class="text-slate-400 text-xs font-bold">3</span>
+            </div>
+            <div id="track-cell-4" onclick="selectTrackStart(4)" class="track-cell w-16 h-20 rounded-xl bg-slate-800 border-2 border-slate-700 flex flex-col items-center justify-between p-2 cursor-pointer hover:border-purple-400 relative">
+              <span class="text-slate-400 text-xs font-bold">4</span>
+            </div>
+            <div id="track-cell-5" onclick="selectTrackStart(5)" class="track-cell w-16 h-20 rounded-xl bg-slate-800 border-2 border-amber-500/80 flex flex-col items-center justify-between p-2 cursor-pointer hover:border-purple-400 relative">
+              <span class="text-amber-400 text-xs font-bold">5 ★</span>
+            </div>
+            <div id="track-cell-6" onclick="selectTrackStart(6)" class="track-cell w-16 h-20 rounded-xl bg-slate-800 border-2 border-slate-700 flex flex-col items-center justify-between p-2 cursor-pointer hover:border-purple-400 relative">
+              <span class="text-slate-400 text-xs font-bold">6</span>
+            </div>
+            <div id="track-cell-7" onclick="selectTrackStart(7)" class="track-cell w-16 h-20 rounded-xl bg-slate-800 border-2 border-slate-700 flex flex-col items-center justify-between p-2 cursor-pointer hover:border-purple-400 relative">
+              <span class="text-slate-400 text-xs font-bold">7</span>
+            </div>
+            <div id="track-cell-8" onclick="selectTrackStart(8)" class="track-cell w-16 h-20 rounded-xl bg-slate-800 border-2 border-slate-700 flex flex-col items-center justify-between p-2 cursor-pointer hover:border-purple-400 relative">
+              <span class="text-slate-400 text-xs font-bold">8</span>
+            </div>
+            <div id="track-cell-9" onclick="selectTrackStart(9)" class="track-cell w-16 h-20 rounded-xl bg-slate-800 border-2 border-slate-700 flex flex-col items-center justify-between p-2 cursor-pointer hover:border-purple-400 relative">
+              <span class="text-slate-400 text-xs font-bold">9</span>
+            </div>
+            <div id="track-cell-10" onclick="selectTrackStart(10)" class="track-cell w-16 h-20 rounded-xl bg-slate-800 border-2 border-indigo-500/80 flex flex-col items-center justify-between p-2 cursor-pointer hover:border-purple-400 relative">
+              <span class="text-indigo-400 text-xs font-bold">10 🎯</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Hops -->
+        <div class="flex flex-wrap justify-center gap-3 mb-6">
+          <button onclick="executeTrackHop(1)" class="px-5 py-3 bg-purple-600 hover:bg-purple-700 text-white font-kids font-bold text-lg rounded-2xl shadow active:scale-95">
+            +1 Hop Forward
+          </button>
+          <button onclick="executeTrackHop(2)" class="px-5 py-3 bg-purple-600 hover:bg-purple-700 text-white font-kids font-bold text-lg rounded-2xl shadow active:scale-95">
+            +2 Hops Forward
+          </button>
+          <button onclick="executeTrackHop(3)" class="px-5 py-3 bg-purple-600 hover:bg-purple-700 text-white font-kids font-bold text-lg rounded-2xl shadow active:scale-95">
+            +3 Hops Forward
+          </button>
+          <button onclick="resetTrack()" class="px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-kids font-bold text-sm rounded-2xl border border-slate-300">
+            Reset Token
+          </button>
+        </div>
+
+        <!-- SPOT THE MISTAKE GAME MODE -->
+        <div class="mt-8 border-t border-slate-200 pt-6">
+          <div class="bg-rose-50 border-2 border-rose-200 rounded-3xl p-6 text-left max-w-2xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+            <div>
+              <span class="bg-rose-600 text-white px-2 py-0.5 rounded-full text-[10px] font-black uppercase">Teacher Game</span>
+              <h3 class="text-lg font-bold font-kids text-rose-900 mt-1">"Spot the Mistake" Buzz-In</h3>
+              <p class="text-xs text-rose-800 mt-1">Computer will simulate an off-by-one counting error. Can Brooke &amp; Amelia catch the bot cheating?</p>
+            </div>
+            <button onclick="playMistakeDemo()" class="whitespace-nowrap px-4 py-2.5 bg-rose-600 hover:bg-rose-700 active:scale-95 text-white font-kids font-bold text-sm rounded-xl shadow">
+              🚨 Run Buggy Count
+            </button>
+          </div>
+          <div id="mistakeFeedback" class="mt-3 text-sm font-bold font-kids text-rose-700 min-h-[24px]"></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- MODULE 5: HEAD TAP & TEEN BRIDGING (10 + N)              -->
+    <!-- ======================================================== -->
+    <section id="module-5" class="module-view hidden space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-6xl mx-auto">
+        
+        <!-- Part A: Head Tap Visualizer -->
+        <div class="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-200 text-center flex flex-col justify-between">
+          <div>
+            <div class="inline-flex items-center space-x-2 bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-2">
+              <span>Internal Working Memory</span>
+            </div>
+            <h2 class="text-2xl font-bold font-kids text-slate-800">The "Head Tap" Anchor</h2>
+            <p class="text-xs text-slate-500 mt-1">Tap your head for the first number, then count on your fingers.</p>
+
+            <!-- Head Tap Interactive Canvas -->
+            <div class="relative bg-indigo-50/50 rounded-3xl p-6 my-6 min-h-[260px] flex flex-col items-center justify-center border-2 border-indigo-100">
+              
+              <!-- Character Avatar with Tapping Hand -->
+              <div class="relative w-36 h-36 flex items-center justify-center">
+                <!-- Head -->
+                <div id="avatarHead" class="w-28 h-28 bg-amber-200 rounded-full border-4 border-amber-400 flex flex-col items-center justify-center shadow-lg transition transform">
+                  <div class="flex space-x-4 mb-1">
+                    <div class="w-3 h-3 bg-slate-800 rounded-full"></div>
+                    <div class="w-3 h-3 bg-slate-800 rounded-full"></div>
+                  </div>
+                  <div class="w-6 h-3 border-b-4 border-slate-800 rounded-full"></div>
+                  <span id="headNumberBadge" class="mt-1 bg-indigo-600 text-white font-kids font-black text-xs px-2 py-0.5 rounded-full shadow">7 In Head</span>
+                </div>
+
+                <!-- Animated Hand Tapping Temple -->
+                <div id="avatarHand" class="absolute -right-2 top-2 text-4xl transform -rotate-12 transition-transform duration-200 cursor-pointer" onclick="performHeadTap()">
+                  👉
+                </div>
+              </div>
+
+              <!-- Spoken Step-by-Step Display -->
+              <div id="headTapSpeech" class="mt-4 font-kids text-xl font-black text-indigo-900 bg-white px-6 py-2 rounded-2xl border border-indigo-200 shadow-sm min-h-[46px] flex items-center">
+                "Tap head: 7!"
+              </div>
+            </div>
+
+            <!-- Problem Setup -->
+            <div class="flex justify-center gap-2">
+              <button onclick="setupHeadTap(5, 2)" class="px-3 py-1.5 rounded-xl font-kids text-xs font-bold bg-slate-100 hover:bg-indigo-100 text-slate-700">5 + 2</button>
+              <button onclick="setupHeadTap(6, 2)" class="px-3 py-1.5 rounded-xl font-kids text-xs font-bold bg-slate-100 hover:bg-indigo-100 text-slate-700">6 + 2</button>
+              <button onclick="setupHeadTap(7, 2)" class="px-3 py-1.5 rounded-xl font-kids text-xs font-bold bg-indigo-600 text-white shadow">7 + 2</button>
+              <button onclick="setupHeadTap(8, 2)" class="px-3 py-1.5 rounded-xl font-kids text-xs font-bold bg-slate-100 hover:bg-indigo-100 text-slate-700">8 + 2</button>
+              <button onclick="setupHeadTap(2, 8)" class="px-3 py-1.5 rounded-xl font-kids text-xs font-bold bg-rose-100 hover:bg-rose-200 text-rose-800">2 + 8 (Flip!)</button>
+            </div>
+          </div>
+
+          <!-- Step Progression Button -->
+          <div class="mt-6">
+            <button onclick="progressHeadTapSequence()" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-kids font-bold text-base rounded-2xl shadow">
+              👉 Tap Next Step (Count On)
+            </button>
+          </div>
+        </div>
+
+        <!-- Part B: Teen Number Bridging (10 + N) -->
+        <div class="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-200 flex flex-col justify-between text-center">
+          <div>
+            <div class="inline-flex items-center space-x-2 bg-teal-50 text-teal-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-2">
+              <span>Unitising 10</span>
+            </div>
+            <h2 class="text-2xl font-bold font-kids text-slate-800">Teen Numbers (10 + Ones)</h2>
+            <p class="text-xs text-slate-500 mt-1">14 is not just a label—it is 1 Ten and 4 Ones!</p>
+
+            <!-- Visual 10 Plate + Loose Ones -->
+            <div class="my-6 bg-slate-900 p-4 rounded-3xl border-4 border-slate-800 shadow-xl max-w-sm mx-auto">
+              <!-- Full 10 Frame (Solid Chunk) -->
+              <div class="mb-3">
+                <div class="flex items-center justify-between mb-1">
+                  <span class="text-[10px] font-bold text-teal-300 uppercase tracking-wider">Unbreakable Ten-Plate</span>
+                  <span class="text-xs font-bold text-white bg-teal-600 px-2 py-0.5 rounded">10</span>
+                </div>
+                <div class="grid grid-cols-5 gap-1.5 bg-teal-950/80 p-2 rounded-xl border-2 border-teal-500/50">
+                  <div class="w-6 h-6 md:w-8 md:h-8 rounded-full bg-teal-400"></div>
+                  <div class="w-6 h-6 md:w-8 md:h-8 rounded-full bg-teal-400"></div>
+                  <div class="w-6 h-6 md:w-8 md:h-8 rounded-full bg-teal-400"></div>
+                  <div class="w-6 h-6 md:w-8 md:h-8 rounded-full bg-teal-400"></div>
+                  <div class="w-6 h-6 md:w-8 md:h-8 rounded-full bg-teal-400"></div>
+                  <div class="w-6 h-6 md:w-8 md:h-8 rounded-full bg-teal-400"></div>
+                  <div class="w-6 h-6 md:w-8 md:h-8 rounded-full bg-teal-400"></div>
+                  <div class="w-6 h-6 md:w-8 md:h-8 rounded-full bg-teal-400"></div>
+                  <div class="w-6 h-6 md:w-8 md:h-8 rounded-full bg-teal-400"></div>
+                  <div class="w-6 h-6 md:w-8 md:h-8 rounded-full bg-teal-400"></div>
+                </div>
+              </div>
+
+              <!-- Plus Loose Ones -->
+              <div>
+                <div class="flex items-center justify-between mb-1">
+                  <span class="text-[10px] font-bold text-amber-300 uppercase tracking-wider">Extra Ones</span>
+                  <span id="teenLooseLabel" class="text-xs font-bold text-white bg-amber-600 px-2 py-0.5 rounded">4</span>
+                </div>
+                <div id="teenLooseContainer" class="flex gap-2 bg-slate-800 p-2 rounded-xl border border-slate-700 min-h-[44px] items-center justify-center">
+                  <!-- Generated loose ones -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Teen Quick Selection -->
+            <div class="flex justify-center gap-2 mb-4">
+              <button onclick="setTeenNumber(11)" class="w-10 h-10 rounded-xl font-kids font-bold text-sm bg-slate-100 hover:bg-teal-100 text-slate-800">11</button>
+              <button onclick="setTeenNumber(12)" class="w-10 h-10 rounded-xl font-kids font-bold text-sm bg-slate-100 hover:bg-teal-100 text-slate-800">12</button>
+              <button onclick="setTeenNumber(13)" class="w-10 h-10 rounded-xl font-kids font-bold text-sm bg-slate-100 hover:bg-teal-100 text-slate-800">13</button>
+              <button onclick="setTeenNumber(14)" class="w-10 h-10 rounded-xl font-kids font-bold text-sm bg-teal-600 text-white shadow">14</button>
+              <button onclick="setTeenNumber(15)" class="w-10 h-10 rounded-xl font-kids font-bold text-sm bg-slate-100 hover:bg-teal-100 text-slate-800">15</button>
+            </div>
+
+            <div class="bg-teal-50 border border-teal-200 rounded-2xl p-3">
+              <p id="teenFormulaSentence" class="font-kids font-bold text-base text-teal-950">
+                "10 and 4 makes 14!"
+              </p>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <button onclick="triggerTeenRapidFlash()" class="w-full py-3 bg-teal-600 hover:bg-teal-700 active:scale-95 text-white font-kids font-bold text-base rounded-2xl shadow">
+              ⚡ Rapid Fire: 10 + N Flash
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- BOTTOM FOOTER -->
+  <footer class="bg-white border-t border-slate-200 py-3 px-4 text-center text-xs text-slate-400 font-medium">
+    Designed for 5-Week Numeracy Catch-Up Intervention &bull; Primary 4 &bull; High Working-Memory Scaffolding
+  </footer>
+
+  <!-- ======================================================== -->
+  <!-- JAVASCRIPT LOGIC & AUDIO ENGINE                          -->
+  <!-- ======================================================== -->
+  <script>
+    /* ----------------------------------------------------
+       1. WEB AUDIO API SYNTHESIS (No external mp3 required)
+       ---------------------------------------------------- */
+    let audioCtx = null;
+    let soundEnabled = true;
+
+    function getAudioContext() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      return audioCtx;
+    }
+
+    function playTone(freq, type, duration, delay = 0) {
+      if (!soundEnabled) return;
+      try {
+        const ctx = getAudioContext();
+        setTimeout(() => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = type;
+          osc.frequency.setValueAtTime(freq, ctx.currentTime);
+          
+          gain.gain.setValueAtTime(0.18, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+          
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          
+          osc.start();
+          osc.stop(ctx.currentTime + duration);
+        }, delay * 1000);
+      } catch (e) {
+        console.error("Audio error", e);
+      }
+    }
+
+    function playChime() {
+      playTone(523.25, 'sine', 0.2, 0);       // C5
+      playTone(659.25, 'sine', 0.25, 0.12);   // E5
+      playTone(783.99, 'sine', 0.35, 0.24);   // G5
+    }
+
+    function playTap() {
+      playTone(180, 'triangle', 0.1, 0);
+    }
+
+    function playHopSound() {
+      playTone(350, 'sine', 0.15, 0);
+      playTone(500, 'sine', 0.15, 0.08);
+    }
+
+    function playErrorBuzz() {
+      playTone(140, 'sawtooth', 0.35, 0);
+    }
+
+    function toggleSound() {
+      soundEnabled = !soundEnabled;
+      document.getElementById('soundOnIcon').classList.toggle('hidden', !soundEnabled);
+      document.getElementById('soundOffIcon').classList.toggle('hidden', soundEnabled);
+    }
+
+    /* ----------------------------------------------------
+       2. TIMER & PUPIL STARS TRACKING
+       ---------------------------------------------------- */
+    let timerSeconds = 20 * 60;
+    let timerInterval = null;
+    let timerRunning = false;
+
+    function updateTimerDisplay() {
+      const mins = Math.floor(timerSeconds / 60);
+      const secs = timerSeconds % 60;
+      document.getElementById('timerDisplay').innerText = 
+        `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    }
+
+    function toggleTimer() {
+      const btn = document.getElementById('timerToggleBtn');
+      if (timerRunning) {
+        clearInterval(timerInterval);
+        timerRunning = false;
+        btn.innerText = 'Resume';
+        btn.classList.replace('bg-amber-600', 'bg-indigo-600');
+      } else {
+        getAudioContext();
+        timerRunning = true;
+        btn.innerText = 'Pause';
+        btn.classList.replace('bg-indigo-600', 'bg-amber-600');
+        timerInterval = setInterval(() => {
+          if (timerSeconds > 0) {
+            timerSeconds--;
+            updateTimerDisplay();
+          } else {
+            clearInterval(timerInterval);
+            timerRunning = false;
+            playChime();
+            btn.innerText = 'Done';
+          }
+        }, 1000);
+      }
+    }
+
+    function resetTimer() {
+      clearInterval(timerInterval);
+      timerRunning = false;
+      timerSeconds = 20 * 60;
+      updateTimerDisplay();
+      const btn = document.getElementById('timerToggleBtn');
+      btn.innerText = 'Start';
+      btn.className = 'px-2.5 py-1 text-xs font-bold rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white transition';
+    }
+
+    let stars = { brooke: 0, amelia: 0 };
+    function awardStar(pupil) {
+      stars[pupil]++;
+      document.getElementById(`${pupil}Stars`).innerText = `⭐ ${stars[pupil]}`;
+      playChime();
+    }
+
+    /* ----------------------------------------------------
+       3. NAVIGATION & TABS
+       ---------------------------------------------------- */
+    function switchTab(modNum) {
+      document.querySelectorAll('.module-view').forEach(m => m.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(b => {
+        b.classList.remove('bg-indigo-600', 'bg-emerald-600', 'text-white', 'shadow-sm', 'ring-2', 'ring-emerald-400');
+        b.classList.add('bg-slate-100', 'text-slate-600');
+      });
+
+      const targetMod = document.getElementById(`module-${modNum}`);
+      if (targetMod) targetMod.classList.remove('hidden');
+
+      const targetBtn = document.getElementById(`tab-${modNum}`);
+      if (targetBtn) {
+        targetBtn.classList.remove('bg-slate-100', 'text-slate-600');
+        if (modNum === 0) {
+          targetBtn.classList.add('bg-emerald-600', 'text-white', 'shadow-sm', 'ring-2', 'ring-emerald-400');
+        } else {
+          targetBtn.classList.add('bg-indigo-600', 'text-white', 'shadow-sm');
+        }
+      }
+      playTap();
+    }
+
+    /* ----------------------------------------------------
+       NEW: NUMBER RECOGNITION & QUANTITY MATCH LOGIC
+       ---------------------------------------------------- */
+    let currentFlashRange = '11-20';
+    let currentFlashNumber = 14;
+
+    const numberWords = {
+      1: "one", 2: "two", 3: "three", 4: "four", 5: "five",
+      6: "six", 7: "seven", 8: "eight", 9: "nine", 10: "ten",
+      11: "eleven", 12: "twelve", 13: "thirteen", 14: "fourteen", 15: "fifteen",
+      16: "sixteen", 17: "seventeen", 18: "eighteen", 19: "nineteen", 20: "twenty"
+    };
+
+    function switchRecogMode(subMode) {
+      document.querySelectorAll('.recog-subview').forEach(v => v.classList.add('hidden'));
+      document.querySelectorAll('.recog-subtab').forEach(t => {
+        t.classList.remove('bg-emerald-600', 'text-white', 'shadow-sm');
+        t.classList.add('text-slate-600');
+      });
+
+      document.getElementById(`recog-view-${subMode}`).classList.remove('hidden');
+      const activeTab = document.getElementById(`recog-tab-${subMode}`);
+      activeTab.classList.remove('text-slate-600');
+      activeTab.classList.add('bg-emerald-600', 'text-white', 'shadow-sm');
+      playTap();
+
+      if (subMode === 'match') generateMatchQuestion();
+      if (subMode === 'build') newBuildTarget();
+      if (subMode === 'splat') newSplatRound();
+    }
+
+    function setFlashRange(range) {
+      currentFlashRange = range;
+      document.querySelectorAll('.range-btn').forEach(b => {
+        b.classList.remove('bg-emerald-600', 'text-white', 'shadow');
+        b.classList.add('bg-slate-100', 'text-slate-700');
+      });
+      const activeBtn = document.getElementById(`range-btn-${range}`);
+      activeBtn.classList.remove('bg-slate-100', 'text-slate-700');
+      activeBtn.classList.add('bg-emerald-600', 'text-white', 'shadow');
+      nextFlashNumeral();
+    }
+
+    function nextFlashNumeral() {
+      let min = 11, max = 20;
+      if (currentFlashRange === '1-5') { min = 1; max = 5; }
+      else if (currentFlashRange === '1-10') { min = 1; max = 10; }
+      else if (currentFlashRange === '1-20') { min = 1; max = 20; }
+      
+      let nextNum = Math.floor(Math.random() * (max - min + 1)) + min;
+      if (nextNum === currentFlashNumber && max > min) {
+        nextNum = nextNum === max ? min : nextNum + 1;
+      }
+      currentFlashNumber = nextNum;
+
+      const disp = document.getElementById('flashNumeralDisplay');
+      disp.innerText = currentFlashNumber;
+      disp.classList.remove('animate-pop');
+      void disp.offsetWidth; // Trigger reflow
+      disp.classList.add('animate-pop');
+
+      const word = document.getElementById('flashNumeralWord');
+      word.innerText = numberWords[currentFlashNumber] || "";
+      word.classList.add('opacity-0');
+
+      playTone(320, 'sine', 0.15);
+    }
+
+    function toggleWordReveal() {
+      const word = document.getElementById('flashNumeralWord');
+      word.classList.toggle('opacity-0');
+      playTap();
+    }
+
+    function speakCurrentNumeral() {
+      const text = `${currentFlashNumber}. ${numberWords[currentFlashNumber]}`;
+      if ('speechSynthesis' in window) {
+        const utter = new SpeechSynthesisUtterance(text);
+        utter.rate = 0.8;
+        window.speechSynthesis.speak(utter);
+      } else {
+        playChime();
+      }
+    }
+
+    /* Mode B: Match Numeral to Concrete Quantity */
+    let matchCorrectVal = 7;
+
+    function renderMiniQuantityCard(num) {
+      // Builds a mini visual ten-frame or double ten-frame
+      const card = document.createElement('div');
+      card.className = "bg-slate-900 border-2 border-slate-700 rounded-2xl p-3 flex flex-col items-center justify-center cursor-pointer hover:border-emerald-400 hover:scale-102 transition shadow-md min-h-[140px]";
+      card.onclick = () => checkMatchAnswer(num);
+
+      if (num <= 10) {
+        // Single 10-frame style
+        const grid = document.createElement('div');
+        grid.className = "grid grid-cols-5 gap-1.5 bg-slate-950 p-2 rounded-xl";
+        for (let i = 0; i < 10; i++) {
+          const dot = document.createElement('div');
+          dot.className = "w-6 h-6 rounded-full " + (i < num ? (i < 5 ? "bg-rose-500" : "bg-amber-400") : "bg-slate-800");
+          grid.appendChild(dot);
+        }
+        card.appendChild(grid);
+      } else {
+        // Teen: 1 solid 10-block + loose ones
+        const wrapper = document.createElement('div');
+        wrapper.className = "flex flex-col items-center gap-1.5 w-full";
+        
+        const tenBar = document.createElement('div');
+        tenBar.className = "bg-teal-700 text-teal-100 font-kids text-[11px] font-bold py-1 px-3 rounded-lg w-full text-center";
+        tenBar.innerText = "1 Full Ten (10)";
+        wrapper.appendChild(tenBar);
+
+        const onesGrid = document.createElement('div');
+        onesGrid.className = "flex gap-1.5 flex-wrap justify-center p-1";
+        const loose = num - 10;
+        for (let i = 0; i < loose; i++) {
+          const dot = document.createElement('div');
+          dot.className = "w-5 h-5 rounded-full bg-amber-400 shadow";
+          onesGrid.appendChild(dot);
+        }
+        wrapper.appendChild(onesGrid);
+        card.appendChild(wrapper);
+      }
+
+      return card;
+    }
+
+    function generateMatchQuestion() {
+      // Pick numbers 4 to 16
+      matchCorrectVal = Math.floor(Math.random() * 12) + 4;
+      document.getElementById('matchTargetNumeral').innerText = matchCorrectVal;
+      document.getElementById('matchFeedback').innerText = "";
+
+      // Pick 2 distractor numbers
+      let distractors = new Set();
+      while (distractors.size < 2) {
+        let offset = (Math.random() > 0.5 ? 1 : -1) * (Math.floor(Math.random() * 2) + 1);
+        let dist = matchCorrectVal + offset;
+        if (dist >= 1 && dist <= 20 && dist !== matchCorrectVal) {
+          distractors.add(dist);
+        }
+      }
+
+      const options = [matchCorrectVal, ...Array.from(distractors)].sort(() => Math.random() - 0.5);
+      const container = document.getElementById('matchCardsContainer');
+      container.innerHTML = "";
+
+      options.forEach(opt => {
+        container.appendChild(renderMiniQuantityCard(opt));
+      });
+      playTap();
+    }
+
+    function checkMatchAnswer(selectedVal) {
+      const fb = document.getElementById('matchFeedback');
+      if (selectedVal === matchCorrectVal) {
+        fb.innerText = `Spot on! That card shows exactly ${matchCorrectVal}! ⭐`;
+        fb.className = "mt-6 text-lg font-bold font-kids min-h-[32px] text-emerald-600 animate-pop";
+        playChime();
+        setTimeout(generateMatchQuestion, 1600);
+      } else {
+        fb.innerText = `Not quite. That card shows ${selectedVal}. Look again!`;
+        fb.className = "mt-6 text-lg font-bold font-kids min-h-[32px] text-rose-600";
+        playErrorBuzz();
+      }
+    }
+
+    /* Mode C: Build the Numeral (Teen Place Value 11-20) */
+    let buildTargetVal = 16;
+    let buildHasTenPlate = false;
+    let buildOnesCount = 0;
+
+    function newBuildTarget() {
+      buildTargetVal = Math.floor(Math.random() * 9) + 11; // 11 to 19
+      document.getElementById('buildTargetNumber').innerText = buildTargetVal;
+      resetBuildTray();
+    }
+
+    function resetBuildTray() {
+      buildHasTenPlate = false;
+      buildOnesCount = 0;
+      updateBuildDisplay();
+      document.getElementById('buildFeedback').innerText = "";
+    }
+
+    function addTenPlateToTray() {
+      if (!buildHasTenPlate) {
+        buildHasTenPlate = true;
+        playTone(350, 'sine', 0.2);
+        updateBuildDisplay();
+        checkBuildSuccess();
+      }
+    }
+
+    function removeTenPlate() {
+      if (buildHasTenPlate) {
+        buildHasTenPlate = false;
+        playTap();
+        updateBuildDisplay();
+        checkBuildSuccess();
+      }
+    }
+
+    function addSingleOneToTray() {
+      if (buildOnesCount < 9) {
+        buildOnesCount++;
+        playTone(480 + (buildOnesCount * 40), 'sine', 0.15);
+        updateBuildDisplay();
+        checkBuildSuccess();
+      }
+    }
+
+    function removeLastOneFromTray() {
+      if (buildOnesCount > 0) {
+        buildOnesCount--;
+        playTap();
+        updateBuildDisplay();
+        checkBuildSuccess();
+      }
+    }
+
+    function updateBuildDisplay() {
+      const tenSlot = document.getElementById('slotTenPlate');
+      const onesTray = document.getElementById('slotOnesTray');
+      const btnTen = document.getElementById('btnPalletTen');
+
+      // 10 Plate Slot
+      if (buildHasTenPlate) {
+        tenSlot.innerHTML = `
+          <div class="bg-teal-600 text-white font-kids text-xs font-bold py-1 px-3 rounded-lg w-full text-center mb-1">1 Ten (10)</div>
+          <div class="grid grid-cols-5 gap-1 bg-teal-900 p-1.5 rounded-lg">
+            ${'<div class="w-4 h-4 rounded-full bg-teal-300"></div>'.repeat(10)}
+          </div>
+        `;
+        btnTen.classList.add('opacity-50', 'pointer-events-none');
+      } else {
+        tenSlot.innerHTML = `<span class="text-xs font-bold text-teal-400/60 uppercase">+ Tap to Add 10 Plate</span>`;
+        btnTen.classList.remove('opacity-50', 'pointer-events-none');
+      }
+
+      // Ones Tray
+      onesTray.innerHTML = "";
+      if (buildOnesCount === 0) {
+        onesTray.innerHTML = `<span class="text-xs font-bold text-amber-400/60 uppercase">Add Ones</span>`;
+      } else {
+        for (let i = 0; i < buildOnesCount; i++) {
+          const dot = document.createElement('div');
+          dot.className = "w-6 h-6 rounded-full bg-amber-400 shadow-md animate-pop";
+          onesTray.appendChild(dot);
+        }
+      }
+
+      const total = (buildHasTenPlate ? 10 : 0) + buildOnesCount;
+      document.getElementById('buildCurrentSum').innerText = total;
+    }
+
+    function checkBuildSuccess() {
+      const total = (buildHasTenPlate ? 10 : 0) + buildOnesCount;
+      const fb = document.getElementById('buildFeedback');
+      if (total === buildTargetVal && buildHasTenPlate) {
+        fb.innerText = `Brilliant! 1 Ten and ${buildOnesCount} Ones makes ${buildTargetVal}! ⭐`;
+        fb.className = "mt-2 text-base font-bold font-kids min-h-[28px] text-teal-600 animate-pop";
+        playChime();
+      } else if (total > buildTargetVal) {
+        fb.innerText = `Too many! You made ${total}. Remove some.`;
+        fb.className = "mt-2 text-base font-bold font-kids min-h-[28px] text-rose-500";
+      } else {
+        fb.innerText = "";
+      }
+    }
+
+    /* Mode D: Numeral Splat Game */
+    let splatTarget = 13;
+
+    function newSplatRound() {
+      splatTarget = Math.floor(Math.random() * 20) + 1;
+      document.getElementById('splatTargetNum').innerText = splatTarget;
+      document.getElementById('splatFeedback').innerText = "";
+
+      // Pool of numbers including target
+      let numbers = new Set([splatTarget]);
+      while (numbers.size < 15) {
+        numbers.add(Math.floor(Math.random() * 20) + 1);
+      }
+
+      const shuffled = Array.from(numbers).sort(() => Math.random() - 0.5);
+      const grid = document.getElementById('splatGrid');
+      grid.innerHTML = "";
+
+      shuffled.forEach(n => {
+        const bubble = document.createElement('button');
+        bubble.className = "h-14 rounded-2xl bg-white border-2 border-indigo-200 hover:border-indigo-400 font-kids font-bold text-xl text-slate-800 shadow-sm hover:scale-105 active:scale-95 transition flex items-center justify-center";
+        bubble.innerText = n;
+        bubble.onclick = () => tapSplatBubble(n, bubble);
+        grid.appendChild(bubble);
+      });
+      playTap();
+    }
+
+    function tapSplatBubble(num, el) {
+      const fb = document.getElementById('splatFeedback');
+      if (num === splatTarget) {
+        el.classList.add('bg-emerald-500', 'text-white', 'border-emerald-600', 'scale-110');
+        fb.innerText = `SPLAT! Found ${num}! 💥`;
+        fb.className = "mt-4 text-base font-bold font-kids min-h-[28px] text-emerald-600 animate-pop";
+        playChime();
+        setTimeout(newSplatRound, 1200);
+      } else {
+        el.classList.add('bg-rose-100', 'border-rose-400', 'text-rose-700');
+        fb.innerText = `That's ${num}. Keep looking for ${splatTarget}!`;
+        fb.className = "mt-4 text-base font-bold font-kids min-h-[28px] text-rose-600";
+        playErrorBuzz();
+      }
+    }
+
+    function speakSplatTarget() {
+      const text = `Find number ${splatTarget}!`;
+      if ('speechSynthesis' in window) {
+        const utter = new SpeechSynthesisUtterance(text);
+        utter.rate = 0.85;
+        window.speechSynthesis.speak(utter);
+      } else {
+        playTone(400, 'sine', 0.2);
+      }
+    }
+
+    /* ----------------------------------------------------
+       4. MODULE 1: FLASH SUBITISING LOGIC (1–4)
+       ---------------------------------------------------- */
+    let currentSubitiseNum = 3;
+    let isCovered = true;
+
+    function renderDots(num, style) {
+      const container = document.getElementById('subitiseDotsContainer');
+      container.innerHTML = '';
+
+      if (style === 'dice') {
+        // Standard Dice arrangement (3x3 grid)
+        const grid = document.createElement('div');
+        grid.className = 'grid grid-cols-3 grid-rows-3 gap-4 w-48 h-48 place-items-center';
+
+        const dotMatrix = {
+          1: [4],
+          2: [0, 8],
+          3: [0, 4, 8],
+          4: [0, 2, 6, 8]
+        };
+
+        const activeIndices = dotMatrix[num] || [4];
+        for (let i = 0; i < 9; i++) {
+          const cell = document.createElement('div');
+          cell.className = 'w-10 h-10 flex items-center justify-center';
+          if (activeIndices.includes(i)) {
+            const dot = document.createElement('div');
+            dot.className = 'w-9 h-9 rounded-full bg-amber-400 shadow-md shadow-amber-400/50';
+            cell.appendChild(dot);
+          }
+          grid.appendChild(cell);
+        }
+        container.appendChild(grid);
+
+      } else if (style === 'hungarian') {
+        // Hungarian 5-frame style row
+        const row = document.createElement('div');
+        row.className = 'flex gap-3 justify-center items-center';
+        for (let i = 0; i < num; i++) {
+          const dot = document.createElement('div');
+          dot.className = 'w-11 h-11 rounded-full bg-rose-500 shadow-lg';
+          row.appendChild(dot);
+        }
+        container.appendChild(row);
+
+      } else {
+        // Scattered / irregular
+        const scatterPositions = {
+          1: [{ top: '45%', left: '45%' }],
+          2: [{ top: '30%', left: '25%' }, { top: '65%', left: '70%' }],
+          3: [{ top: '25%', left: '50%' }, { top: '65%', left: '30%' }, { top: '70%', left: '75%' }],
+          4: [{ top: '25%', left: '30%' }, { top: '30%', left: '75%' }, { top: '75%', left: '35%' }, { top: '70%', left: '70%' }]
+        };
+
+        const coords = scatterPositions[num] || scatterPositions[1];
+        coords.forEach(c => {
+          const dot = document.createElement('div');
+          dot.className = 'absolute w-10 h-10 rounded-full bg-emerald-400 shadow-lg';
+          dot.style.top = c.top;
+          dot.style.left = c.left;
+          container.appendChild(dot);
+        });
+      }
+    }
+
+    function triggerFlash() {
+      // Pick random number from 1 to 4
+      currentSubitiseNum = Math.floor(Math.random() * 4) + 1;
+      const style = document.getElementById('subitisePatternStyle').value;
+      renderDots(currentSubitiseNum, style);
+
+      const cover = document.getElementById('subitiseCover');
+      const speed = parseInt(document.getElementById('subitiseSpeed').value);
+      const feedback = document.getElementById('subitiseFeedback');
+      feedback.innerText = 'Look closely...';
+      feedback.className = 'mt-4 min-h-[32px] text-lg font-bold font-kids text-indigo-600';
+
+      // Hide cover for the selected duration
+      cover.classList.add('opacity-0', 'pointer-events-none');
+      playTone(440, 'sine', 0.1);
+
+      setTimeout(() => {
+        cover.classList.remove('opacity-0', 'pointer-events-none');
+        feedback.innerText = 'Covered! Brooke & Amelia: What did you see?';
+      }, speed);
+    }
+
+    function revealDots() {
+      const cover = document.getElementById('subitiseCover');
+      cover.classList.toggle('opacity-0');
+      cover.classList.toggle('pointer-events-none');
+      playTap();
+    }
+
+    function checkSubitiseAnswer(selected) {
+      const feedback = document.getElementById('subitiseFeedback');
+      if (selected === currentSubitiseNum) {
+        feedback.innerText = `Spot on! It is ${selected}! Pop those fingers! ⭐`;
+        feedback.className = 'mt-4 min-h-[32px] text-lg font-bold font-kids text-emerald-600 animate-pop';
+        playChime();
+        // Reveal to confirm
+        document.getElementById('subitiseCover').classList.add('opacity-0', 'pointer-events-none');
+      } else {
+        feedback.innerText = `Not quite ${selected}. Let's peek again!`;
+        feedback.className = 'mt-4 min-h-[32px] text-lg font-bold font-kids text-rose-600';
+        playErrorBuzz();
+      }
+    }
+
+    /* ----------------------------------------------------
+       5. MODULE 2: MAGIC BOX & 5-FRAME LOGIC
+       ---------------------------------------------------- */
+    let boxInsideValue = 4;
+    let boxOutsideValue = 1;
+    let boxLabelVisible = true;
+    let fiveFrameState = [true, true, true, false, false];
+
+    function setupBox(val) {
+      boxInsideValue = val;
+      document.getElementById('boxLabelText').innerText = val;
+      updateBoxStem();
+      playTap();
+    }
+
+    function setOutsideCount(val) {
+      boxOutsideValue = val;
+      renderOutsideCounters();
+      updateBoxStem();
+      playTap();
+    }
+
+    function renderOutsideCounters() {
+      const cont = document.getElementById('outsideCountersContainer');
+      cont.innerHTML = '';
+      for (let i = 0; i < boxOutsideValue; i++) {
+        const c = document.createElement('div');
+        c.className = 'w-12 h-12 rounded-full bg-emerald-500 border-2 border-emerald-300 shadow flex items-center justify-center text-white font-kids font-bold text-lg cursor-pointer hover:scale-105 active:scale-90 transition';
+        c.innerText = `+1`;
+        c.onclick = () => tapOutsideCounter(i + 1);
+        cont.appendChild(c);
+      }
+    }
+
+    function toggleBoxLabel() {
+      boxLabelVisible = !boxLabelVisible;
+      const lbl = document.getElementById('boxLabelText');
+      const btn = document.getElementById('boxLabelBtn');
+      if (boxLabelVisible) {
+        lbl.classList.remove('opacity-0');
+        btn.innerText = 'Hide Label';
+      } else {
+        lbl.classList.add('opacity-0');
+        btn.innerText = 'Show Label';
+      }
+      playTap();
+    }
+
+    function tapMagicBox() {
+      const speech = document.getElementById('boxSpeech');
+      speech.innerText = `${boxInsideValue}!`;
+      speech.classList.remove('opacity-0');
+      playTone(200, 'triangle', 0.2);
+      
+      const box = document.getElementById('magicBoxGraphic');
+      box.classList.add('animate-hop');
+      setTimeout(() => box.classList.remove('animate-hop'), 450);
+
+      setTimeout(() => {
+        speech.classList.add('opacity-0');
+      }, 1500);
+    }
+
+    function tapOutsideCounter(step) {
+      const total = boxInsideValue + step;
+      playTone(400 + (step * 80), 'sine', 0.2);
+      const stem = document.getElementById('boxStemSentence');
+      stem.innerText = `Count on: "${boxInsideValue}... ${total}!"`;
+      stem.classList.add('bg-emerald-200');
+      setTimeout(() => stem.classList.remove('bg-emerald-200'), 500);
+    }
+
+    function updateBoxStem() {
+      const total = boxInsideValue + boxOutsideValue;
+      document.getElementById('boxStemSentence').innerText = 
+        `"There are ${boxInsideValue} in the box. ${boxOutsideValue} more makes ${total}!"`;
+    }
+
+    function renderFiveFrame() {
+      const cells = document.querySelectorAll('.five-cell');
+      let filledCount = 0;
+      cells.forEach((cell, idx) => {
+        cell.innerHTML = '';
+        if (fiveFrameState[idx]) {
+          filledCount++;
+          const counter = document.createElement('div');
+          counter.className = 'w-12 h-12 md:w-14 md:h-14 rounded-full bg-rose-500 shadow-md border-2 border-rose-300 animate-pop';
+          cell.appendChild(counter);
+        }
+      });
+
+      document.getElementById('fiveFrameFilled').innerText = filledCount;
+      const emptyCount = 5 - filledCount;
+      document.getElementById('fiveFrameEmpty').innerText = emptyCount;
+      document.getElementById('fiveFrameSentence').innerText = 
+        `"I see ${filledCount} red. I need ${emptyCount} more to make 5."`;
+    }
+
+    function toggle5Frame(idx) {
+      fiveFrameState[idx] = !fiveFrameState[idx];
+      playTap();
+      renderFiveFrame();
+    }
+
+    function set5Frame(val) {
+      fiveFrameState = [false, false, false, false, false];
+      for (let i = 0; i < val; i++) {
+        fiveFrameState[i] = true;
+      }
+      playTap();
+      renderFiveFrame();
+    }
+
+    function peekFiveFrameTest() {
+      const original = [...fiveFrameState];
+      // Random 2 to 5
+      const rnd = Math.floor(Math.random() * 4) + 2;
+      set5Frame(rnd);
+      setTimeout(() => {
+        set5Frame(0);
+        alert(`Brooke & Amelia: How many counters were there? (Was ${rnd})`);
+        set5Frame(rnd);
+      }, 700);
+    }
+
+    /* ----------------------------------------------------
+       6. MODULE 3: HUNGARIAN 10-FRAME (5-AND-A-BIT)
+       ---------------------------------------------------- */
+    let hungarianValue = 7;
+
+    function renderHungarian() {
+      // Top row (0 to 4) is always 5 Red
+      for (let i = 0; i < 5; i++) {
+        const cell = document.getElementById(`h-cell-${i}`);
+        cell.innerHTML = '';
+        const redCounter = document.createElement('div');
+        redCounter.className = 'w-12 h-12 md:w-14 md:h-14 rounded-full bg-rose-500 shadow-lg border-2 border-rose-300';
+        cell.appendChild(redCounter);
+      }
+
+      // Bottom row (5 to 9) holds yellow counters for values > 5
+      const extra = Math.max(0, hungarianValue - 5);
+      for (let i = 5; i < 10; i++) {
+        const cell = document.getElementById(`h-cell-${i}`);
+        cell.innerHTML = '';
+        if (i - 5 < extra) {
+          const yellowCounter = document.createElement('div');
+          yellowCounter.className = 'w-12 h-12 md:w-14 md:h-14 rounded-full bg-amber-400 shadow-lg border-2 border-amber-200 animate-pop';
+          cell.appendChild(yellowCounter);
+        }
+      }
+
+      const stem = document.getElementById('hungarianStemSentence');
+      stem.innerText = `"Top row is 5. 5 and ${extra} is ${hungarianValue}!"`;
+    }
+
+    function setHungarianValue(val) {
+      hungarianValue = val;
+      renderHungarian();
+      playChime();
+    }
+
+    function toggleHungarianBottom(idx) {
+      const currentExtra = hungarianValue - 5;
+      const clickedPos = idx - 4; // 1-indexed relative to row 2
+      if (currentExtra >= clickedPos) {
+        hungarianValue = 5 + (clickedPos - 1);
+      } else {
+        hungarianValue = 5 + clickedPos;
+      }
+      renderHungarian();
+      playTap();
+    }
+
+    function coverHungarianPeek() {
+      const cover = document.getElementById('hungarianCover');
+      cover.classList.remove('hidden');
+      playTone(300, 'triangle', 0.2);
+    }
+
+    function revealHungarian() {
+      document.getElementById('hungarianCover').classList.add('hidden');
+      playChime();
+    }
+
+    function speakHungarianStem() {
+      const extra = hungarianValue - 5;
+      const text = `Top row is 5. 5 and ${extra} is ${hungarianValue}!`;
+      if ('speechSynthesis' in window) {
+        const utter = new SpeechSynthesisUtterance(text);
+        utter.rate = 0.85;
+        window.speechSynthesis.speak(utter);
+      } else {
+        playChime();
+      }
+    }
+
+    /* ----------------------------------------------------
+       7. MODULE 4: BOXED NUMBER TRACK (1 TO 10)
+       ---------------------------------------------------- */
+    let currentTrackPos = 6;
+    let trackJump = 2;
+
+    function renderTrack() {
+      for (let i = 1; i <= 10; i++) {
+        const cell = document.getElementById(`track-cell-${i}`);
+        const existingToken = cell.querySelector('.track-token');
+        if (existingToken) existingToken.remove();
+
+        if (i === currentTrackPos) {
+          const token = document.createElement('div');
+          token.className = 'track-token w-10 h-10 rounded-full bg-purple-500 border-2 border-white shadow-lg flex items-center justify-center text-white font-kids font-black text-sm absolute top-5 animate-pop';
+          token.innerText = '🔴';
+          cell.appendChild(token);
+        }
+      }
+
+      document.getElementById('trackStartVal').innerText = currentTrackPos;
+      document.getElementById('trackJumpVal').innerText = trackJump;
+      document.getElementById('trackResultVal').innerText = '?';
+    }
+
+    function selectTrackStart(pos) {
+      currentTrackPos = pos;
+      renderTrack();
+      playTap();
+    }
+
+    function executeTrackHop(hops) {
+      trackJump = hops;
+      document.getElementById('trackJumpVal').innerText = hops;
+      let step = 0;
+
+      const interval = setInterval(() => {
+        if (step < hops && currentTrackPos < 10) {
+          currentTrackPos++;
+          step++;
+          renderTrack();
+          playHopSound();
+          
+          // Animate the cell
+          const activeCell = document.getElementById(`track-cell-${currentTrackPos}`);
+          activeCell.classList.add('animate-hop');
+          setTimeout(() => activeCell.classList.remove('animate-hop'), 450);
+        } else {
+          clearInterval(interval);
+          document.getElementById('trackResultVal').innerText = currentTrackPos;
+          playChime();
+        }
+      }, 600);
+    }
+
+    function resetTrack() {
+      currentTrackPos = 6;
+      trackJump = 2;
+      renderTrack();
+      playTap();
+    }
+
+    function playMistakeDemo() {
+      // Simulate buggy student counting the current cell as hop 1
+      const feedback = document.getElementById('mistakeFeedback');
+      feedback.innerText = 'Computer is making a mistake... Listen & Watch!';
+      currentTrackPos = 5;
+      renderTrack();
+
+      setTimeout(() => {
+        feedback.innerText = 'Bot says: "5 is hop 1... 6 is hop 2... Answer is 6!"';
+        playErrorBuzz();
+        // Hop only 1 physically because it counted 5
+        currentTrackPos = 6;
+        renderTrack();
+        setTimeout(() => {
+          feedback.innerHTML = '<span class="text-rose-600">BUG CAUGHT!</span> Did you hear? The bot counted 5 as hop 1! You only jump when moving forward!';
+        }, 1200);
+      }, 1000);
+    }
+
+    /* ----------------------------------------------------
+       8. MODULE 5: HEAD TAP & TEEN BRIDGING
+       ---------------------------------------------------- */
+    let headStart = 7;
+    let headAdd = 2;
+    let headCurrentStep = 0; // 0 = head, 1 = first hop, 2 = second hop
+
+    function setupHeadTap(start, add) {
+      headStart = start;
+      headAdd = add;
+      headCurrentStep = 0;
+      document.getElementById('headNumberBadge').innerText = `${start} In Head`;
+      document.getElementById('headTapSpeech').innerText = `"Tap head firmly: ${start}!"`;
+      playTap();
+    }
+
+    function performHeadTap() {
+      const avatar = document.getElementById('avatarHead');
+      const hand = document.getElementById('avatarHand');
+      
+      hand.classList.add('translate-x-2', 'scale-110');
+      avatar.classList.add('scale-95');
+      playTone(240, 'triangle', 0.25);
+
+      setTimeout(() => {
+        hand.classList.remove('translate-x-2', 'scale-110');
+        avatar.classList.remove('scale-95');
+      }, 200);
+    }
+
+    function progressHeadTapSequence() {
+      headCurrentStep++;
+      const speech = document.getElementById('headTapSpeech');
+
+      if (headCurrentStep === 1) {
+        performHeadTap();
+        speech.innerText = `Head: "${headStart}!"`;
+      } else if (headCurrentStep <= headAdd + 1) {
+        const countOnVal = headStart + (headCurrentStep - 1);
+        speech.innerText = `Pop finger ${headCurrentStep - 1}: "${countOnVal}!"`;
+        playHopSound();
+      } else {
+        speech.innerText = `Finished: "${headStart} + ${headAdd} = ${headStart + headAdd}!" ⭐`;
+        playChime();
+        headCurrentStep = 0;
+      }
+    }
+
+    // Teen Bridging (10 + N)
+    let currentTeenVal = 14;
+
+    function renderTeen() {
+      const looseCount = currentTeenVal - 10;
+      document.getElementById('teenLooseLabel').innerText = looseCount;
+      const cont = document.getElementById('teenLooseContainer');
+      cont.innerHTML = '';
+
+      for (let i = 0; i < looseCount; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'w-6 h-6 md:w-8 md:h-8 rounded-full bg-amber-400 shadow-md animate-pop';
+        cont.appendChild(dot);
+      }
+
+      document.getElementById('teenFormulaSentence').innerText = 
+        `"10 and ${looseCount} makes ${currentTeenVal}!"`;
+    }
+
+    function setTeenNumber(val) {
+      currentTeenVal = val;
+      renderTeen();
+      playChime();
+    }
+
+    function triggerTeenRapidFlash() {
+      const options = [11, 12, 13, 14, 15];
+      const target = options[Math.floor(Math.random() * options.length)];
+      setTeenNumber(target);
+      playChime();
+    }
+
+    /* ----------------------------------------------------
+       9. INITIALIZATION ON WINDOW LOAD
+       ---------------------------------------------------- */
+    window.onload = function () {
+      updateTimerDisplay();
+      nextFlashNumeral();
+      generateMatchQuestion();
+      newBuildTarget();
+      newSplatRound();
+      renderDots(3, 'dice');
+      renderOutsideCounters();
+      renderFiveFrame();
+      renderHungarian();
+      renderTrack();
+      renderTeen();
+    };
+  </script>
+</body>
+</html>
