@@ -1,0 +1,1879 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>P4B/P5B Numeracy Mastery Suite</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700;800&family=JetBrains+Mono:wght@600;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
+
+    :root {
+      --bg-dark: #070d18;
+      --card-dark: #0f172a;
+      --accent-blue: #38bdf8;
+      --accent-gold: #f59e0b;
+      --accent-emerald: #10b981;
+      --accent-rose: #f43f5e;
+    }
+
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--bg-dark);
+      color: #f1f5f9;
+      height: 100vh;
+      overflow: hidden;
+      margin: 0;
+      padding: 0;
+    }
+
+    .font-num {
+      font-family: 'Fredoka', cursive, sans-serif;
+    }
+    .font-mono-calc {
+      font-family: 'JetBrains Mono', monospace;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Tactile Keypad Buttons */
+    .key-btn {
+      transition: transform 0.08s ease, background-color 0.1s ease;
+      box-shadow: 0 4px 0 #070c18;
+    }
+    .key-btn:active {
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 #070c18;
+    }
+    .key-btn-enter {
+      box-shadow: 0 4px 0 #b45309;
+    }
+    .key-btn-enter:active {
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 #b45309;
+    }
+
+    /* Place Value Counter Tokens */
+    .pv-token {
+      width: 40px;
+      height: 40px;
+      border-radius: 9999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Fredoka', cursive, sans-serif;
+      font-weight: 700;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.25);
+      cursor: pointer;
+      transition: transform 0.1s ease;
+    }
+    .pv-token:active { transform: scale(0.92); }
+    .token-th { background: radial-gradient(circle at 35% 35%, #fb7185, #e11d48); color: #fff; font-size: 0.75rem; border: 2px solid #fda4af; }
+    .token-h  { background: radial-gradient(circle at 35% 35%, #fde047, #ca8a04); color: #422006; font-size: 0.8rem; border: 2px solid #fef08a; }
+    .token-t  { background: radial-gradient(circle at 35% 35%, #38bdf8, #0284c7); color: #082f49; font-size: 0.85rem; border: 2px solid #bae6fd; }
+    .token-u  { background: radial-gradient(circle at 35% 35%, #4ade80, #16a34a); color: #052e16; font-size: 0.95rem; border: 2px solid #bbf7d0; }
+
+    /* Large 100-Square Tiles */
+    .sq-tile {
+      aspect-ratio: 1 / 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      font-family: 'Fredoka', cursive, sans-serif;
+      font-weight: 700;
+      background: #18233a;
+      color: #94a3b8;
+      border: 1px solid #2d3b55;
+      cursor: pointer;
+      font-size: 1.05rem;
+      transition: all 0.15s ease;
+    }
+    .sq-tile:hover {
+      background: #25334d;
+      color: #f8fafc;
+      border-color: #38bdf8;
+    }
+
+    /* Animated Jump Line Arc */
+    .jump-line-arc {
+      stroke-dasharray: 6 6;
+      animation: dashMove 1.4s linear infinite;
+    }
+    @keyframes dashMove {
+      to { stroke-dashoffset: -24; }
+    }
+
+    /* Custom Touch Scrollbars */
+    .custom-scroll::-webkit-scrollbar { width: 8px; height: 8px; }
+    .custom-scroll::-webkit-scrollbar-track { background: #091122; border-radius: 4px; }
+    .custom-scroll::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+    .custom-scroll::-webkit-scrollbar-thumb:hover { background: #38bdf8; }
+  </style>
+</head>
+<body class="relative flex flex-col h-screen w-screen bg-[#070d18] text-slate-100 select-none overflow-hidden">
+
+  <!-- TOP APP HEADER -->
+  <header class="h-14 px-4 bg-[#0a1426] border-b border-slate-800 flex items-center justify-between shrink-0 z-30 shadow-md">
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-amber-400 to-emerald-500 flex items-center justify-center font-black text-slate-950 text-base shadow-md font-num">
+        P5B
+      </div>
+      <div>
+        <h1 class="text-sm font-extrabold tracking-tight text-white flex items-center gap-2">
+          Numeracy Mastery &amp; Recovery Suite
+          <span class="text-[10px] px-2 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-800 font-bold uppercase tracking-wider">Georgia, Paisley &amp; Ava</span>
+        </h1>
+        <p class="text-[10px] text-slate-400">Bonds to 10 &amp; 100 • Bridging Decades • Fact Families • Equal Groups • Maths Vocabulary &amp; Time</p>
+      </div>
+    </div>
+
+    <!-- Streak, Score & Dual-Mode Whiteboard Toggle -->
+    <div class="flex items-center gap-3">
+      <div class="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-slate-900 border border-slate-800 text-xs shadow-inner">
+        <span class="text-amber-400 font-bold">★ Streak:</span>
+        <span id="streakDisplay" class="font-num font-bold text-amber-300 text-sm">0</span>
+      </div>
+      <div class="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-slate-900 border border-slate-800 text-xs shadow-inner">
+        <span class="text-emerald-400 font-bold">✓ Score:</span>
+        <span id="scoreDisplay" class="font-num font-bold text-emerald-300 text-sm">0</span>
+      </div>
+
+      <button id="wbToggleBtn" onclick="toggleWhiteboard()" class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white font-extrabold text-xs shadow-md transition-all active:scale-95">
+        <span>✏️</span>
+        <span id="wbToggleLabel">Whiteboard</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- 7 DIAGNOSTIC TARGET MODULES -->
+  <nav class="h-11 px-3 bg-[#0a1222] border-b border-slate-800/80 flex items-center gap-1.5 overflow-x-auto shrink-0 z-20">
+    <button onclick="setModule(1)" id="modBtn-1" class="px-3 py-1 rounded-lg text-xs font-bold whitespace-nowrap bg-amber-400 text-slate-950 shadow">
+      1. Bonds to 10 &amp; 20
+    </button>
+    <button onclick="setModule(2)" id="modBtn-2" class="px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap bg-slate-800 text-slate-300 hover:bg-slate-700 text-amber-300">
+      2. Bonds to 100 &amp; 100 − ?
+    </button>
+    <button onclick="setModule(3)" id="modBtn-3" class="px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap bg-slate-800 text-slate-300 hover:bg-slate-700 text-sky-300">
+      3. Bridge 10, 20, 30... to 100
+    </button>
+    <button onclick="setModule(4)" id="modBtn-4" class="px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap bg-slate-800 text-slate-300 hover:bg-slate-700">
+      4. Fact Family Triangles (+ / −)
+    </button>
+    <button onclick="setModule(5)" id="modBtn-5" class="px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap bg-slate-800 text-slate-300 hover:bg-slate-700 text-purple-300">
+      5. Doubles, Halves &amp; Groups (×/÷)
+    </button>
+    <button onclick="setModule(6)" id="modBtn-6" class="px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap bg-slate-800 text-slate-300 hover:bg-slate-700 text-emerald-300">
+      6. Action Words (Difference &amp; Change)
+    </button>
+    <button onclick="setModule(7)" id="modBtn-7" class="px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap bg-slate-800 text-slate-300 hover:bg-slate-700 text-rose-300">
+      7. Bridge the Clock (Time)
+    </button>
+  </nav>
+
+  <!-- MAIN INTERACTIVE WORKSPACE -->
+  <main class="flex-1 flex overflow-hidden relative">
+
+    <!-- LEFT STAGE: VISUALIZERS & WORKBENCHES -->
+    <section class="flex-1 flex flex-col p-3 overflow-hidden border-r border-slate-800/80 relative">
+
+      <!-- SUB-MODULE FILTER BAR -->
+      <div id="subBar" class="h-9 mb-2 flex items-center justify-between px-2.5 bg-[#0f172a] rounded-lg border border-slate-800 text-xs shrink-0">
+        <div id="subOptions" class="flex items-center gap-1.5 overflow-x-auto">
+          <!-- Populated per module -->
+        </div>
+        <div class="flex items-center gap-2 shrink-0">
+          <button onclick="revealStepOrAnswer()" id="revealBtn" class="px-2.5 py-0.5 rounded bg-amber-500/20 text-amber-300 hover:bg-amber-500/30 text-[11px] font-bold border border-amber-500/40">
+            🔍 Model / Reveal
+          </button>
+        </div>
+      </div>
+
+      <!-- MAIN INTERACTIVE STAGE CARD -->
+      <div id="stageCard" class="flex-1 bg-[#0d1627] rounded-xl border border-slate-800 p-4 flex flex-col justify-between overflow-hidden relative shadow-inner">
+        <div id="problemContent" class="flex-1 flex flex-col items-center justify-center w-full overflow-y-auto">
+          <!-- Rendered dynamically -->
+        </div>
+
+        <!-- Guided Feedback & Oral Talk-Stem Banner -->
+        <div id="feedbackBanner" class="h-10 mt-2 px-3 rounded-lg bg-[#070d18] border border-slate-800 flex items-center justify-between text-xs shrink-0">
+          <div class="flex items-center gap-2 truncate">
+            <span id="feedbackIcon">💡</span>
+            <span id="feedbackText" class="text-slate-300 font-medium truncate">Read the question aloud together first, then use the visual model!</span>
+          </div>
+          <span id="stemSentence" class="hidden text-amber-400 font-bold text-[11px] whitespace-nowrap font-num"></span>
+        </div>
+      </div>
+
+      <!-- BOTTOM HELPER DRAWERS BAR (100-SQUARE & PLACE VALUE WORKBENCH) -->
+      <div class="h-9 mt-2 flex items-center gap-2 shrink-0">
+        <button onclick="toggleHundredSquareDrawer()" id="btn100Drawer" class="flex-1 h-full rounded-lg bg-[#111c33] hover:bg-[#162442] border border-slate-800 text-xs font-bold text-sky-300 flex items-center justify-center gap-1.5 transition-all">
+          <span>📊</span>
+          <span>100-Square Grid Helper</span>
+          <span id="arrow100" class="text-[10px]">▲ Open</span>
+        </button>
+
+        <button onclick="togglePVDrawer()" id="btnPVDrawer" class="flex-1 h-full rounded-lg bg-[#111c33] hover:bg-[#162442] border border-slate-800 text-xs font-bold text-amber-300 flex items-center justify-center gap-1.5 transition-all">
+          <span>🟡</span>
+          <span>Place Value Counter Workbench</span>
+          <span id="arrowPV" class="text-[10px]">▼</span>
+        </button>
+      </div>
+
+      <!-- FULL-STAGE LARGE 100-SQUARE HELPER OVERLAY -->
+      <div id="drawer100" class="hidden absolute inset-0 z-30 bg-[#070e1c]/98 p-4 flex flex-col backdrop-blur-md">
+        <div class="flex items-center justify-between pb-2 mb-2 border-b border-slate-800 shrink-0">
+          <div class="flex items-center gap-2">
+            <span class="text-sm font-extrabold text-sky-400 uppercase tracking-wide">100-Square Grid (1 to 100)</span>
+            <span class="text-xs text-slate-400 hidden sm:inline">(Jump down 1 row for +10, up 1 row for −10)</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <button onclick="highlight100('evens')" class="px-2.5 py-1 rounded-lg bg-slate-800 text-slate-200 hover:bg-slate-700 text-xs font-bold">Evens</button>
+            <button onclick="highlight100('odds')" class="px-2.5 py-1 rounded-lg bg-slate-800 text-slate-200 hover:bg-slate-700 text-xs font-bold">Odds</button>
+            <button onclick="highlight100('tens')" class="px-2.5 py-1 rounded-lg bg-slate-800 text-slate-200 hover:bg-slate-700 text-xs font-bold">10s</button>
+            <button onclick="highlight100('fives')" class="px-2.5 py-1 rounded-lg bg-slate-800 text-slate-200 hover:bg-slate-700 text-xs font-bold">5s</button>
+            <button onclick="clear100Highlights()" class="px-2.5 py-1 rounded-lg bg-rose-950/60 text-rose-300 hover:bg-rose-900 border border-rose-800 text-xs font-bold">Clear</button>
+            <button onclick="toggleHundredSquareDrawer()" class="ml-2 px-3 py-1 rounded-lg bg-sky-600 hover:bg-sky-500 text-white text-xs font-black shadow flex items-center gap-1">
+              <span>✕ Close Grid</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="flex-1 overflow-y-auto custom-scroll pr-1 flex items-start justify-center">
+          <div id="grid100" class="grid grid-cols-10 gap-1.5 w-full max-w-2xl py-2">
+            <!-- 100 tiles dynamically generated -->
+          </div>
+        </div>
+      </div>
+
+      <!-- COLLAPSIBLE: PLACE VALUE COUNTER WORKBENCH -->
+      <div id="drawerPV" class="hidden mt-2 p-3 bg-[#0d1629] rounded-xl border border-slate-800 shrink-0 max-h-[48vh] flex flex-col">
+        <div class="flex items-center justify-between mb-2 pb-1.5 border-b border-slate-800 shrink-0">
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-bold text-amber-400 uppercase tracking-wide">Place Value Manipulatives</span>
+            <button onclick="togglePVValueDisplay()" id="pvVisibilityBtn" class="px-2.5 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-semibold flex items-center gap-1">
+              <span id="pvVisIcon">👁️</span>
+              <span id="pvVisLabel">Values: Shown</span>
+            </button>
+          </div>
+          <div class="flex items-center gap-2">
+            <div id="pvTotalBadge" class="px-3 py-0.5 rounded-lg bg-slate-900 border border-amber-500/40 text-xs font-bold text-amber-300 font-num">
+              Total on Mat: <span id="pvMatTotal">0</span>
+            </div>
+            <button onclick="exchangePV10to1()" class="px-2 py-0.5 rounded bg-indigo-600/40 hover:bg-indigo-600/60 border border-indigo-500/50 text-indigo-200 text-xs font-bold">
+              🔄 Regroup 10➔1
+            </button>
+            <button onclick="clearPVMat()" class="px-2 py-0.5 rounded bg-rose-600/30 hover:bg-rose-600/50 border border-rose-500/40 text-rose-300 text-xs font-bold">
+              🧹 Clear Mat
+            </button>
+            <button onclick="togglePVFullscreen()" id="pvFullBtn" class="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold">
+              ⛶ Expand
+            </button>
+          </div>
+        </div>
+
+        <!-- 4-Column Manipulative Mat -->
+        <div class="flex-1 grid grid-cols-4 gap-2 min-h-[140px] overflow-hidden">
+          <div class="flex flex-col bg-[#070b14] rounded-lg border border-rose-950/60 p-2 overflow-hidden">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs font-extrabold text-rose-400">Thousands</span>
+              <span id="badge-th" class="text-[10px] font-bold text-rose-300 font-num">0 (0)</span>
+            </div>
+            <button onclick="addPVToken('th')" class="w-full py-1 mb-1 rounded bg-rose-600/30 hover:bg-rose-600/50 border border-rose-500/50 text-rose-200 text-xs font-bold flex items-center justify-center gap-1 shadow">
+              <span>＋ 1,000</span>
+            </button>
+            <div id="col-th" class="flex-1 p-1 flex flex-wrap gap-1.5 content-start overflow-y-auto custom-scroll"></div>
+          </div>
+
+          <div class="flex flex-col bg-[#070b14] rounded-lg border border-yellow-950/60 p-2 overflow-hidden">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs font-extrabold text-yellow-400">Hundreds</span>
+              <span id="badge-h" class="text-[10px] font-bold text-yellow-300 font-num">0 (0)</span>
+            </div>
+            <button onclick="addPVToken('h')" class="w-full py-1 mb-1 rounded bg-yellow-600/30 hover:bg-yellow-600/50 border border-yellow-500/50 text-yellow-200 text-xs font-bold flex items-center justify-center gap-1 shadow">
+              <span>＋ 100</span>
+            </button>
+            <div id="col-h" class="flex-1 p-1 flex flex-wrap gap-1.5 content-start overflow-y-auto custom-scroll"></div>
+          </div>
+
+          <div class="flex flex-col bg-[#070b14] rounded-lg border border-sky-950/60 p-2 overflow-hidden">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs font-extrabold text-sky-400">Tens</span>
+              <span id="badge-t" class="text-[10px] font-bold text-sky-300 font-num">0 (0)</span>
+            </div>
+            <button onclick="addPVToken('t')" class="w-full py-1 mb-1 rounded bg-sky-600/30 hover:bg-sky-600/50 border border-sky-500/50 text-sky-200 text-xs font-bold flex items-center justify-center gap-1 shadow">
+              <span>＋ 10</span>
+            </button>
+            <div id="col-t" class="flex-1 p-1 flex flex-wrap gap-1.5 content-start overflow-y-auto custom-scroll"></div>
+          </div>
+
+          <div class="flex flex-col bg-[#070b14] rounded-lg border border-emerald-950/60 p-2 overflow-hidden">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs font-extrabold text-emerald-400">Ones</span>
+              <span id="badge-u" class="text-[10px] font-bold text-emerald-300 font-num">0 (0)</span>
+            </div>
+            <button onclick="addPVToken('u')" class="w-full py-1 mb-1 rounded bg-emerald-600/30 hover:bg-emerald-600/50 border border-emerald-500/50 text-emerald-200 text-xs font-bold flex items-center justify-center gap-1 shadow">
+              <span>＋ 1</span>
+            </button>
+            <div id="col-u" class="flex-1 p-1 flex flex-wrap gap-1.5 content-start overflow-y-auto custom-scroll"></div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- RIGHT STAGE: TACTILE ARM-HEIGHT NUMBER KEYPAD -->
+    <aside class="w-64 bg-[#0a1222] flex flex-col p-3 justify-between shrink-0 select-none border-l border-slate-800">
+      
+      <!-- Active Answer Display -->
+      <div class="mb-2 shrink-0">
+        <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1 flex items-center justify-between">
+          <span class="text-amber-400">GROUP ANSWER</span>
+          <span id="keypadTargetIndicator" class="text-sky-400 font-mono-calc font-bold">TARGET: ?</span>
+        </div>
+        <div class="relative flex items-center">
+          <input type="text" id="answerInput" readonly placeholder="?" 
+            class="w-full h-12 bg-[#060c18] border-2 border-amber-400 rounded-xl text-center text-2xl font-num font-bold text-amber-300 tracking-wider shadow-inner outline-none">
+          <button onclick="clearCurrentInput()" class="absolute right-1.5 px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold active:scale-95">
+            CLR
+          </button>
+        </div>
+      </div>
+
+      <!-- 3x4 Tactile Keypad -->
+      <div class="grid grid-cols-3 gap-1.5 my-auto w-full">
+        <button onclick="pressDigit(1)" class="key-btn h-12 rounded-xl bg-[#15233e] hover:bg-[#1e3156] active:bg-sky-600 text-white font-num font-bold text-xl flex items-center justify-center border border-slate-700/60">1</button>
+        <button onclick="pressDigit(2)" class="key-btn h-12 rounded-xl bg-[#15233e] hover:bg-[#1e3156] active:bg-sky-600 text-white font-num font-bold text-xl flex items-center justify-center border border-slate-700/60">2</button>
+        <button onclick="pressDigit(3)" class="key-btn h-12 rounded-xl bg-[#15233e] hover:bg-[#1e3156] active:bg-sky-600 text-white font-num font-bold text-xl flex items-center justify-center border border-slate-700/60">3</button>
+
+        <button onclick="pressDigit(4)" class="key-btn h-12 rounded-xl bg-[#15233e] hover:bg-[#1e3156] active:bg-sky-600 text-white font-num font-bold text-xl flex items-center justify-center border border-slate-700/60">4</button>
+        <button onclick="pressDigit(5)" class="key-btn h-12 rounded-xl bg-[#15233e] hover:bg-[#1e3156] active:bg-sky-600 text-white font-num font-bold text-xl flex items-center justify-center border border-slate-700/60">5</button>
+        <button onclick="pressDigit(6)" class="key-btn h-12 rounded-xl bg-[#15233e] hover:bg-[#1e3156] active:bg-sky-600 text-white font-num font-bold text-xl flex items-center justify-center border border-slate-700/60">6</button>
+
+        <button onclick="pressDigit(7)" class="key-btn h-12 rounded-xl bg-[#15233e] hover:bg-[#1e3156] active:bg-sky-600 text-white font-num font-bold text-xl flex items-center justify-center border border-slate-700/60">7</button>
+        <button onclick="pressDigit(8)" class="key-btn h-12 rounded-xl bg-[#15233e] hover:bg-[#1e3156] active:bg-sky-600 text-white font-num font-bold text-xl flex items-center justify-center border border-slate-700/60">8</button>
+        <button onclick="pressDigit(9)" class="key-btn h-12 rounded-xl bg-[#15233e] hover:bg-[#1e3156] active:bg-sky-600 text-white font-num font-bold text-xl flex items-center justify-center border border-slate-700/60">9</button>
+
+        <button onclick="deleteDigit()" class="key-btn h-12 rounded-xl bg-slate-800/80 hover:bg-slate-700 active:bg-rose-600 text-rose-300 font-num font-bold text-lg flex items-center justify-center border border-slate-700/50">⌫</button>
+        <button onclick="pressDigit(0)" class="key-btn h-12 rounded-xl bg-[#15233e] hover:bg-[#1e3156] active:bg-sky-600 text-white font-num font-bold text-xl flex items-center justify-center border border-slate-700/60">0</button>
+        <button onclick="submitAnswer()" class="key-btn key-btn-enter h-12 rounded-xl bg-amber-400 hover:bg-amber-300 active:bg-amber-500 text-slate-950 font-num font-black text-xl flex items-center justify-center border border-amber-300">↵</button>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex gap-2 pt-2 border-t border-slate-800 shrink-0">
+        <button onclick="skipQuestion()" class="flex-1 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs border border-slate-700 shadow active:scale-95">
+          ⏭ Skip
+        </button>
+        <button onclick="nextQuestion()" class="flex-1 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs border border-sky-400 shadow active:scale-95">
+          Next Question ➔
+        </button>
+      </div>
+    </aside>
+
+  </main>
+
+  <!-- UNIVERSAL DUAL-MODE WHITEBOARD (OVERLAY & SCRATCHPAD) -->
+  <div id="wbOverlay" class="fixed inset-0 pointer-events-none z-50 hidden transition-colors duration-200">
+    <canvas id="whiteboardCanvas" class="w-full h-full pointer-events-none"></canvas>
+
+    <!-- Whiteboard Floating Toolbar -->
+    <div id="wbToolbar" class="fixed bottom-3 left-1/2 -translate-x-1/2 pointer-events-auto bg-[#070e1c]/95 border-2 border-amber-400/90 rounded-2xl px-4 py-2 shadow-2xl flex items-center gap-3 backdrop-blur-md max-w-[96vw]">
+      <div class="flex items-center gap-1 pr-2 border-r border-slate-700 text-amber-400 font-black text-xs">
+        <span>Pen</span>
+      </div>
+
+      <div class="flex items-center bg-[#060c18] p-0.5 rounded-lg border border-slate-800">
+        <button onclick="setBoardMode('overlay')" id="btnBoardMode-overlay" class="px-2.5 py-1 rounded text-xs font-bold bg-amber-400 text-slate-950 transition">Overlay</button>
+        <button onclick="setBoardMode('scratch')" id="btnBoardMode-scratch" class="px-2.5 py-1 rounded text-xs font-bold text-slate-300 hover:text-white transition">Scratchpad</button>
+      </div>
+
+      <div class="flex items-center bg-[#060c18] p-0.5 rounded-lg border border-slate-800">
+        <button onclick="setWbTool('pen')" id="wbTool-pen" class="p-1.5 rounded text-white bg-slate-800 border border-slate-700">✏️</button>
+        <button onclick="setWbTool('highlighter')" id="wbTool-highlighter" class="p-1.5 rounded text-slate-300 hover:text-white">🖍️</button>
+        <button onclick="setWbTool('eraser')" id="wbTool-eraser" class="p-1.5 rounded text-slate-300 hover:text-white">🧹</button>
+        <button onclick="setWbTool('touch')" id="wbTool-touch" class="px-2 py-1 rounded text-xs font-bold text-slate-300 hover:text-white flex items-center gap-1">
+          <span>👆</span><span>Touch</span>
+        </button>
+      </div>
+
+      <div class="flex items-center gap-1.5 px-1 bg-[#060c18] p-1 rounded-lg border border-slate-800">
+        <button onclick="setWbColor('#facc15')" class="w-6 h-6 rounded-full bg-yellow-400 border border-yellow-200"></button>
+        <button onclick="setWbColor('#ffffff')" class="w-6 h-6 rounded-full bg-white border border-slate-200"></button>
+        <button onclick="setWbColor('#38bdf8')" class="w-6 h-6 rounded-full bg-sky-400 border border-sky-200"></button>
+        <button onclick="setWbColor('#f43f5e')" class="w-6 h-6 rounded-full bg-rose-500 border border-rose-300"></button>
+        <button onclick="setWbColor('#4ade80')" class="w-6 h-6 rounded-full bg-emerald-400 border border-emerald-200"></button>
+      </div>
+
+      <div class="flex items-center bg-[#060c18] p-0.5 rounded-lg border border-slate-800 text-[11px] font-bold">
+        <button onclick="setWbSize(3)" id="wbSize-3" class="px-2 py-0.5 rounded text-slate-300 hover:text-white">Fine</button>
+        <button onclick="setWbSize(7)" id="wbSize-7" class="px-2 py-0.5 rounded bg-slate-800 text-white">Med</button>
+        <button onclick="setWbSize(14)" id="wbSize-14" class="px-2 py-0.5 rounded text-slate-300 hover:text-white">Thick</button>
+      </div>
+
+      <div class="flex items-center gap-1.5 pl-1 border-l border-slate-700">
+        <button onclick="undoWhiteboard()" title="Undo" class="p-1.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs">↩</button>
+        <button onclick="clearWhiteboard()" class="px-2.5 py-1 rounded bg-rose-600/40 hover:bg-rose-600/60 text-rose-300 text-xs font-bold border border-rose-500/40">Clear</button>
+        <button onclick="toggleWhiteboard()" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold">✕</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- APPLICATION LOGIC -->
+  <script>
+    // --- AUDIO SYNTHESIZER ---
+    let audioCtx = null;
+    function getAudioContext() {
+      if (!audioCtx) {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (AudioContextClass) audioCtx = new AudioContextClass();
+      }
+      return audioCtx;
+    }
+
+    function playKeypadTap() {
+      try {
+        const ctx = getAudioContext();
+        if (ctx.state === 'suspended') ctx.resume().catch(() => {});
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(520, ctx.currentTime);
+        gain.gain.setValueAtTime(0.04, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.04);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.04);
+      } catch (e) {}
+    }
+
+    function playTone(type) {
+      try {
+        const ctx = getAudioContext();
+        if (!ctx) return;
+        if (ctx.state === 'suspended') ctx.resume().catch(() => {});
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        const now = ctx.currentTime;
+        if (type === 'correct') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(523.25, now);
+          osc.frequency.exponentialRampToValueAtTime(659.25, now + 0.08);
+          osc.frequency.exponentialRampToValueAtTime(783.99, now + 0.16);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
+          osc.start(now);
+          osc.stop(now + 0.3);
+        } else {
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(220, now);
+          osc.frequency.linearRampToValueAtTime(140, now + 0.25);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.linearRampToValueAtTime(0.01, now + 0.25);
+          osc.start(now);
+          osc.stop(now + 0.25);
+        }
+      } catch (e) {}
+    }
+
+    // --- STATE ---
+    let currentModule = 1;
+    let subOptionSelection = {
+      1: 'bonds10',    // Module 1: Bonds to 10 & 20
+      2: 'sub100',     // Module 2: Bonds to 100 & 100 - ? (Bust 110 Trap)
+      3: 'bridge100',  // Module 3: Bridging through 10, 20, 30... to 100
+      4: 'subFact',    // Module 4: Fact Family Triangles
+      5: 'groups',     // Module 5: Doubles, Halves & Equal Groups (x / ÷)
+      6: 'difference', // Module 6: Action Words (Difference, Remaining, Change)
+      7: 'bridgeHour'  // Module 7: Bridge the Clock
+    };
+
+    let score = 0;
+    let streak = 0;
+    let currentInput = "";
+    let isAnswered = false;
+    let bondVisualModel = 'frames'; // 'frames' | 'jump' | 'cherry' | 'grid100'
+    let currentProblem = null;
+    let recentHistory = [];
+
+    // Place Value Workbench State
+    let pvCounters = { th: 0, h: 0, t: 0, u: 0 };
+    let pvValuesVisible = true;
+    let isPVFullscreen = false;
+
+    // --- MODULE NAVIGATION ---
+    function setModule(modNum) {
+      currentModule = modNum;
+      for (let i = 1; i <= 7; i++) {
+        const btn = document.getElementById(`modBtn-${i}`);
+        if (btn) {
+          btn.className = (i === modNum)
+            ? "px-3 py-1 rounded-lg text-xs font-bold whitespace-nowrap bg-amber-400 text-slate-950 shadow"
+            : "px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap bg-slate-800 text-slate-300 hover:bg-slate-700";
+        }
+      }
+      setupSubBar(modNum);
+      generateQuestion();
+    }
+
+    function setSubOption(mod, key) {
+      subOptionSelection[mod] = key;
+      setupSubBar(mod);
+      generateQuestion();
+    }
+
+    function setBondVisualModel(model) {
+      bondVisualModel = model;
+      renderProblemStage();
+    }
+
+    function setupSubBar(modNum) {
+      const sub = document.getElementById("subOptions");
+      if (!sub) return;
+      const current = subOptionSelection[modNum];
+      const btnClass = (active) => active
+        ? "px-2.5 py-0.5 rounded-lg bg-amber-400 text-slate-950 font-bold text-xs shadow"
+        : "px-2.5 py-0.5 rounded-lg bg-[#182747] text-slate-300 hover:text-white text-xs border border-slate-700";
+
+      if (modNum === 1) {
+        sub.innerHTML = `
+          <span class="text-slate-400 font-bold mr-1">Target:</span>
+          <button onclick="setSubOption(1, 'bonds10')" class="${btnClass(current === 'bonds10')}">Bonds to 10</button>
+          <button onclick="setSubOption(1, 'bonds20')" class="${btnClass(current === 'bonds20')}">Bonds to 20 (13 + ? = 20)</button>
+          <button onclick="setSubOption(1, 'bondsMixed')" class="${btnClass(current === 'bondsMixed')}">Mixed (10 &amp; 20)</button>
+        `;
+      } else if (modNum === 2) {
+        sub.innerHTML = `
+          <span class="text-slate-400 font-bold mr-1">Focus:</span>
+          <button onclick="setSubOption(2, 'sub100')" class="${btnClass(current === 'sub100')}">Subtract from 100 (100 − 35)</button>
+          <button onclick="setSubOption(2, 'add100')" class="${btnClass(current === 'add100')}">Make 100 (64 + ? = 100)</button>
+          <button onclick="setSubOption(2, 'mixed100')" class="${btnClass(current === 'mixed100')}">Mixed 100s</button>
+        `;
+      } else if (modNum === 3) {
+        sub.innerHTML = `
+          <span class="text-slate-400 font-bold mr-1">Bridging Range:</span>
+          <button onclick="setSubOption(3, 'bridge10')" class="${btnClass(current === 'bridge10')}">Through 10 (8 + 5)</button>
+          <button onclick="setSubOption(3, 'bridge20')" class="${btnClass(current === 'bridge20')}">Through 20 (17 + 6)</button>
+          <button onclick="setSubOption(3, 'bridge100')" class="${btnClass(current === 'bridge100')}">Decades 30..90 to 100 (38 + 7)</button>
+          <button onclick="setSubOption(3, 'bridgeSub')" class="${btnClass(current === 'bridgeSub')}">Bridge Backwards (−)</button>
+        `;
+      } else if (modNum === 4) {
+        sub.innerHTML = `
+          <span class="text-slate-400 font-bold mr-1">Fact Family:</span>
+          <button onclick="setSubOption(4, 'subFact')" class="${btnClass(current === 'subFact')}">Subtraction Partner (14 − 8 = ?)</button>
+          <button onclick="setSubOption(4, 'missingAdd')" class="${btnClass(current === 'missingAdd')}">Missing Part (? + 6 = 14)</button>
+        `;
+      } else if (modNum === 5) {
+        sub.innerHTML = `
+          <span class="text-slate-400 font-bold mr-1">Structure:</span>
+          <button onclick="setSubOption(5, 'groups')" class="${btnClass(current === 'groups')}">Equal Groups &amp; Arrays (4 × 5)</button>
+          <button onclick="setSubOption(5, 'sharing')" class="${btnClass(current === 'sharing')}">Equal Sharing (18 ÷ 3)</button>
+          <button onclick="setSubOption(5, 'doubleHalf')" class="${btnClass(current === 'doubleHalf')}">Double vs Half (Half of 30)</button>
+        `;
+      } else if (modNum === 6) {
+        sub.innerHTML = `
+          <span class="text-slate-400 font-bold mr-1">Action Word:</span>
+          <button onclick="setSubOption(6, 'difference')" class="${btnClass(current === 'difference')}">DIFFERENCE (24 vs 19)</button>
+          <button onclick="setSubOption(6, 'remaining')" class="${btnClass(current === 'remaining')}">REMAINING (40 − 12)</button>
+          <button onclick="setSubOption(6, 'change')" class="${btnClass(current === 'change')}">CHANGE from £1.00 (100p)</button>
+          <button onclick="setSubOption(6, 'product')" class="${btnClass(current === 'product')}">PRODUCT (4 × 6)</button>
+        `;
+      } else if (modNum === 7) {
+        sub.innerHTML = `
+          <span class="text-slate-400 font-bold mr-1">Clock Jump:</span>
+          <button onclick="setSubOption(7, 'bridgeHour')" class="${btnClass(current === 'bridgeHour')}">Bridge the Hour (3:45 + 30m)</button>
+          <button onclick="setSubOption(7, 'elapsed')" class="${btnClass(current === 'elapsed')}">Minutes Elapsed (:45 ➔ :15)</button>
+        `;
+      }
+    }
+
+    // --- QUESTION GENERATOR (ANTI-REPEAT) ---
+    function generateQuestion() {
+      currentInput = "";
+      isAnswered = false;
+
+      const inputEl = document.getElementById("answerInput");
+      if (inputEl) inputEl.value = "";
+      const stemEl = document.getElementById("stemSentence");
+      if (stemEl) stemEl.classList.add("hidden");
+
+      let attempts = 0;
+      do {
+        attempts++;
+        buildProblemForModule();
+      } while (recentHistory.includes(currentProblem.sig) && attempts < 12);
+
+      recentHistory.push(currentProblem.sig);
+      if (recentHistory.length > 15) recentHistory.shift();
+
+      renderProblemStage();
+    }
+
+    function buildProblemForModule() {
+      if (currentModule === 1) {
+        // Module 1: Bonds to 10 & 20
+        const mode = subOptionSelection[1] || 'bonds10';
+        const target = mode === 'bonds20' ? 20 : (mode === 'bondsMixed' ? (Math.random() > 0.4 ? 20 : 10) : 10);
+        const partA = target === 20 ? (Math.floor(Math.random() * 8) + 11) : (Math.floor(Math.random() * 8) + 1);
+        const partB = target - partA;
+        const missingFirst = Math.random() > 0.65;
+
+        currentProblem = {
+          type: 'numberBonds',
+          target,
+          partA,
+          partB,
+          missingFirst,
+          finalAns: (missingFirst ? partA : partB).toString(),
+          sig: `1-bond-${target}-${partA}-${missingFirst}`,
+          stem: `${partA} + ${partB} = ${target}!`
+        };
+      } else if (currentModule === 2) {
+        // Module 2: Bonds to 100 & 100 - ? (Busting the 100 - 35 = 75 trap!)
+        const mode = subOptionSelection[2] || 'sub100';
+        const isSub = mode === 'sub100' || (mode === 'mixed100' && Math.random() > 0.45);
+        const units = Math.floor(Math.random() * 8) + 1; // 1..8
+        const tens = (Math.floor(Math.random() * 7) + 1) * 10; // 10..70
+        const num = tens + units; // e.g. 35, 64
+        const comp = 100 - num;   // e.g. 65, 36
+
+        currentProblem = {
+          type: 'bonds100',
+          isSub,
+          num,
+          comp,
+          finalAns: comp.toString(),
+          sig: `2-${isSub ? 'sub' : 'add'}-${num}`,
+          stem: isSub
+            ? `100 − ${num} = ${comp}! Take ${tens} to reach ${100 - tens}, then take ${units} more to land on ${comp} (NOT ${comp + 10})!`
+            : `${num} + ${comp} = 100! Tens add to 90 (${tens} + ${Math.floor(comp/10)*10}) and ones make 10 (${units} + ${comp%10})!`
+        };
+      } else if (currentModule === 3) {
+        // Module 3: Bridging through 10, 20, 30... up to 100
+        const mode = subOptionSelection[3] || 'bridge100';
+
+        if (mode === 'bridge10') {
+          const a = Math.floor(Math.random() * 4) + 6;
+          const j1 = 10 - a;
+          const j2 = Math.floor(Math.random() * (a - 1)) + 2;
+          const b = j1 + j2;
+          const sum = a + b;
+          currentProblem = {
+            type: 'bridging',
+            isSub: false,
+            start: a,
+            add: b,
+            landmark: 10,
+            j1,
+            j2,
+            ans: sum,
+            finalAns: sum.toString(),
+            sig: `3-b10-${a}-${b}`,
+            stem: `Jump from ${a} to friendly 10 (+${j1}), then +${j2} more = ${sum}!`
+          };
+        } else if (mode === 'bridge20') {
+          const a = Math.floor(Math.random() * 4) + 16;
+          const j1 = 20 - a;
+          const j2 = Math.floor(Math.random() * 6) + 2;
+          const b = j1 + j2;
+          const sum = a + b;
+          currentProblem = {
+            type: 'bridging',
+            isSub: false,
+            start: a,
+            add: b,
+            landmark: 20,
+            j1,
+            j2,
+            ans: sum,
+            finalAns: sum.toString(),
+            sig: `3-b20-${a}-${b}`,
+            stem: `Jump from ${a} to friendly 20 (+${j1}), then +${j2} more = ${sum}!`
+          };
+        } else if (mode === 'bridge100') {
+          const decIdx = Math.floor(Math.random() * 7) + 3; // 30..90
+          const landmark = decIdx * 10;
+          const j1 = Math.floor(Math.random() * 4) + 1;
+          const a = landmark - j1; // e.g. 38, 57, 79
+          const j2 = Math.floor(Math.random() * 6) + 2;
+          const b = j1 + j2;
+          const sum = a + b;
+          currentProblem = {
+            type: 'bridging',
+            isSub: false,
+            start: a,
+            add: b,
+            landmark,
+            j1,
+            j2,
+            ans: sum,
+            finalAns: sum.toString(),
+            sig: `3-b100-${a}-${b}`,
+            stem: `Jump from ${a} to friendly ${landmark} (+${j1}), then +${j2} more = ${sum}!`
+          };
+        } else {
+          // Bridge backwards
+          const decIdx = Math.floor(Math.random() * 8) + 1; // 10..80
+          const landmark = decIdx * 10;
+          const j1 = Math.floor(Math.random() * 4) + 1;
+          const start = landmark + j1; // e.g. 42, 63
+          const j2 = Math.floor(Math.random() * 5) + 2;
+          const sub = j1 + j2;
+          const ans = start - sub;
+          currentProblem = {
+            type: 'bridging',
+            isSub: true,
+            start,
+            add: sub,
+            landmark,
+            j1,
+            j2,
+            ans,
+            finalAns: ans.toString(),
+            sig: `3-sub-${start}-${sub}`,
+            stem: `Jump back from ${start} to friendly ${landmark} (−${j1}), then −${j2} more = ${ans}!`
+          };
+        }
+      } else if (currentModule === 4) {
+        // Module 4: Fact Family Triangles (+ / -)
+        const mode = subOptionSelection[4] || 'subFact';
+        const partA = Math.floor(Math.random() * 6) + 4; // 4..9
+        const partB = Math.floor(Math.random() * 5) + 3; // 3..7
+        const whole = partA + partB; // e.g. 8 + 6 = 14
+
+        currentProblem = {
+          type: 'factTriangle',
+          mode,
+          whole,
+          partA,
+          partB,
+          finalAns: partB.toString(),
+          sig: `4-${mode}-${whole}-${partA}`,
+          stem: `Same 3 numbers (${whole}, ${partA}, ${partB}): ${whole} − ${partA} = ${partB}!`
+        };
+      } else if (currentModule === 5) {
+        // Module 5: Doubles, Halves & Equal Groups (x / ÷)
+        const mode = subOptionSelection[5] || 'groups';
+        if (mode === 'doubleHalf') {
+          const isHalf = Math.random() > 0.45;
+          if (isHalf) {
+            const halfPool = [10, 12, 14, 16, 18, 20, 24, 30, 40, 50];
+            const num = halfPool[Math.floor(Math.random() * halfPool.length)];
+            const ans = num / 2;
+            currentProblem = {
+              type: 'multDiv',
+              mode: 'half',
+              num,
+              ans,
+              finalAns: ans.toString(),
+              sig: `5-half-${num}`,
+              stem: `HALF of ${num} splits ${num} into 2 equal groups of ${ans} (NOT double ${num * 2})!`
+            };
+          } else {
+            const base = Math.floor(Math.random() * 12) + 8; // 8..19
+            const ans = base * 2;
+            currentProblem = {
+              type: 'multDiv',
+              mode: 'double',
+              num: base,
+              ans,
+              finalAns: ans.toString(),
+              sig: `5-dbl-${base}`,
+              stem: `DOUBLE ${base} = ${base} + ${base} = ${ans}!`
+            };
+          }
+        } else if (mode === 'sharing') {
+          const groups = Math.floor(Math.random() * 4) + 2; // 2..5
+          const each = Math.floor(Math.random() * 6) + 3;   // 3..8
+          const total = groups * each;
+          currentProblem = {
+            type: 'multDiv',
+            mode: 'sharing',
+            total,
+            groups,
+            each,
+            finalAns: each.toString(),
+            sig: `5-share-${total}-${groups}`,
+            stem: `${total} shared equally between ${groups} friends = ${each} each (${total} ÷ ${groups} = ${each})!`
+          };
+        } else {
+          const rows = Math.floor(Math.random() * 4) + 2; // 2..5
+          const cols = Math.floor(Math.random() * 5) + 3; // 3..7
+          const total = rows * cols;
+          currentProblem = {
+            type: 'multDiv',
+            mode: 'groups',
+            rows,
+            cols,
+            total,
+            finalAns: total.toString(),
+            sig: `5-grp-${rows}-${cols}`,
+            stem: `${rows} equal groups of ${cols} = ${rows} × ${cols} = ${total}!`
+          };
+        }
+      } else if (currentModule === 6) {
+        // Module 6: Action Words (Difference, Remaining, Change, Product)
+        const mode = subOptionSelection[6] || 'difference';
+        const names = ["Georgia", "Paisley", "Ava"];
+        const n1 = names[Math.floor(Math.random() * names.length)];
+        let n2 = names[Math.floor(Math.random() * names.length)];
+        if (n1 === n2) n2 = "Paisley";
+
+        if (mode === 'difference') {
+          const big = Math.floor(Math.random() * 14) + 16; // 16..29
+          const diff = Math.floor(Math.random() * 7) + 3;   // 3..9
+          const small = big - diff;
+          currentProblem = {
+            type: 'actionWord',
+            mode: 'difference',
+            n1, n2, big, small, ans: diff,
+            finalAns: diff.toString(),
+            sig: `6-diff-${big}-${small}`,
+            stem: `DIFFERENCE compares the bars: ${big} − ${small} = ${diff} (NOT ${big + small})!`
+          };
+        } else if (mode === 'remaining') {
+          const start = (Math.floor(Math.random() * 4) + 2) * 10; // 20, 30, 40, 50
+          const eaten = Math.floor(Math.random() * 14) + 6;       // 6..19
+          const rem = start - eaten;
+          currentProblem = {
+            type: 'actionWord',
+            mode: 'remaining',
+            n1, start, eaten, ans: rem,
+            finalAns: rem.toString(),
+            sig: `6-rem-${start}-${eaten}`,
+            stem: `REMAINING means subtract what was eaten: ${start} − ${eaten} = ${rem}!`
+          };
+        } else if (mode === 'change') {
+          const cost = Math.floor(Math.random() * 65) + 20; // 20p..84p
+          const change = 100 - cost;
+          currentProblem = {
+            type: 'actionWord',
+            mode: 'change',
+            cost,
+            change,
+            finalAns: change.toString(),
+            sig: `6-chg-${cost}`,
+            stem: `CHANGE from £1.00 (100p): 100p − ${cost}p = ${change}p!`
+          };
+        } else {
+          const a = Math.floor(Math.random() * 5) + 3; // 3..7
+          const b = Math.floor(Math.random() * 6) + 3; // 3..8
+          const prod = a * b;
+          currentProblem = {
+            type: 'actionWord',
+            mode: 'product',
+            a, b, ans: prod,
+            finalAns: prod.toString(),
+            sig: `6-prod-${a}-${b}`,
+            stem: `PRODUCT means multiply: ${a} × ${b} = ${prod}!`
+          };
+        }
+      } else {
+        // Module 7: Bridge the Clock (Time)
+        const mode = subOptionSelection[7] || 'bridgeHour';
+        const hour = Math.floor(Math.random() * 9) + 1; // 1..9
+        const startMinsPool = [35, 40, 45, 50];
+        const startM = startMinsPool[Math.floor(Math.random() * startMinsPool.length)];
+        const durPool = [20, 25, 30, 35, 40];
+        const dur = durPool[Math.floor(Math.random() * durPool.length)];
+
+        const endTotal = hour * 60 + startM + dur;
+        const endH = Math.floor(endTotal / 60);
+        const endM = endTotal % 60;
+        const pad = (n) => n.toString().padStart(2, '0');
+        const toHour = 60 - startM;
+        const pastHour = dur - toHour;
+
+        if (mode === 'elapsed') {
+          currentProblem = {
+            type: 'clockBridge',
+            mode: 'elapsed',
+            startStr: `${hour}:${pad(startM)}`,
+            nextHourStr: `${endH}:00`,
+            endStr: `${endH}:${pad(endM)}`,
+            toHour,
+            pastHour,
+            dur,
+            finalAns: dur.toString(),
+            sig: `7-el-${hour}-${startM}-${dur}`,
+            stem: `Jump ${toHour}m to ${endH}:00, then ${pastHour}m more = ${dur} minutes!`
+          };
+        } else {
+          // Enter the minutes past the new hour (e.g. 3:45 + 30 mins -> 4:[15])
+          currentProblem = {
+            type: 'clockBridge',
+            mode: 'bridgeHour',
+            startStr: `${hour}:${pad(startM)}`,
+            nextHourStr: `${endH}:00`,
+            endHour: endH,
+            endMins: endM,
+            endStr: `${endH}:${pad(endM)}`,
+            toHour,
+            pastHour,
+            dur,
+            finalAns: endM.toString(),
+            sig: `7-bh-${hour}-${startM}-${dur}`,
+            stem: `From ${hour}:${pad(startM)}, jump ${toHour}m to ${endH}:00, then ${pastHour}m more = ${endH}:${pad(endM)}!`
+          };
+        }
+      }
+    }
+
+    // --- STAGE RENDERER ---
+    function renderProblemStage() {
+      const stage = document.getElementById("problemContent");
+      const targetLabel = document.getElementById("keypadTargetIndicator");
+      const feedback = document.getElementById("feedbackText");
+      if (!stage || !currentProblem) return;
+
+      if (currentProblem.type === 'numberBonds') {
+        const p = currentProblem;
+        targetLabel.textContent = `TARGET: BOND TO ${p.target}`;
+        if (feedback) {
+          feedback.textContent = `Find what goes with ${p.missingFirst ? p.partB : p.partA} to make ${p.target}!`;
+        }
+
+        const eqHTML = p.missingFirst
+          ? `<span class="text-amber-400 underline decoration-dashed">${isAnswered ? p.partA : '?'}</span> + <span class="text-rose-400">${p.partB}</span> = <span class="text-emerald-400">${p.target}</span>`
+          : `<span class="text-rose-400">${p.partA}</span> + <span class="text-amber-400 underline decoration-dashed">${isAnswered ? p.partB : '?'}</span> = <span class="text-emerald-400">${p.target}</span>`;
+
+        const filledCount = p.missingFirst ? p.partB : p.partA;
+        const missingVal = p.missingFirst ? p.partA : p.partB;
+
+        const modelTabClass = (m) => bondVisualModel === m
+          ? "px-2.5 py-1 rounded-lg bg-amber-400 text-slate-950 font-black text-xs shadow transition"
+          : "px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs border border-slate-700 transition";
+
+        let visualBodyHTML = '';
+
+        if (bondVisualModel === 'frames') {
+          const renderFrame = (offset) => `
+            <div class="grid grid-cols-5 gap-2 p-3 bg-slate-900 border-2 border-slate-700 rounded-2xl shadow-inner">
+              ${Array.from({ length: 10 }).map((_, idx) => {
+                const slotNum = offset + idx;
+                const isRed = slotNum < filledCount;
+                const isYellow = isAnswered && !isRed;
+                return `
+                  <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl border-2 ${isRed ? 'border-rose-400 bg-rose-500 shadow' : (isYellow ? 'border-amber-300 bg-amber-400 shadow' : 'border-dashed border-slate-700 bg-slate-950')} flex items-center justify-center font-num font-black text-xs text-slate-950">
+                    ${isRed ? '●' : (isYellow ? '●' : '')}
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          `;
+          visualBodyHTML = `
+            <div class="flex flex-wrap items-center justify-center gap-3">
+              ${p.target === 10 ? renderFrame(0) : `${renderFrame(0)} ${renderFrame(10)}`}
+            </div>
+          `;
+        } else if (bondVisualModel === 'jump') {
+          let milestone = null;
+          if (p.target === 20 && filledCount < 10) milestone = 10;
+          else if (p.target === 10 && filledCount < 5) milestone = 5;
+          else if (p.target === 20 && filledCount > 10 && filledCount < 15) milestone = 15;
+
+          if (milestone !== null) {
+            const j1 = milestone - filledCount;
+            const j2 = p.target - milestone;
+            visualBodyHTML = `
+              <div class="w-full bg-[#0a1122] border border-slate-800 rounded-2xl p-3 shadow-inner">
+                <div class="text-xs font-bold text-slate-400 mb-1">Two-stage jump via friendly landmark <span class="text-sky-400 font-num font-black">${milestone}</span> to reach ${p.target}</div>
+                <svg class="w-full max-w-md h-28 mx-auto" viewBox="0 0 460 120">
+                  <line x1="45" y1="78" x2="415" y2="78" stroke="#475569" stroke-width="4" stroke-linecap="round" />
+                  <line x1="70" y1="66" x2="70" y2="90" stroke="#f43f5e" stroke-width="4" stroke-linecap="round" />
+                  <text x="70" y="110" text-anchor="middle" fill="#f43f5e" font-size="14" font-weight="bold" font-family="Fredoka">${filledCount}</text>
+
+                  <line x1="230" y1="63" x2="230" y2="93" stroke="#38bdf8" stroke-width="4.5" stroke-linecap="round" />
+                  <text x="230" y="110" text-anchor="middle" fill="#38bdf8" font-size="15" font-weight="black" font-family="Fredoka">${milestone}</text>
+
+                  <line x1="390" y1="66" x2="390" y2="90" stroke="#10b981" stroke-width="4" stroke-linecap="round" />
+                  <text x="390" y="110" text-anchor="middle" fill="#10b981" font-size="15" font-weight="black" font-family="Fredoka">${p.target}</text>
+
+                  <path d="M 70 68 Q 150 18 230 68" fill="none" stroke="#38bdf8" stroke-width="3.5" class="jump-line-arc" />
+                  <rect x="128" y="14" width="44" height="22" rx="6" fill="#182747" stroke="#38bdf8" stroke-width="2" />
+                  <text x="150" y="29" text-anchor="middle" fill="#38bdf8" font-size="12" font-weight="bold" font-family="Fredoka">${isAnswered ? '+' + j1 : '+?'}</text>
+
+                  <path d="M 230 68 Q 310 18 390 68" fill="none" stroke="#f59e0b" stroke-width="3.5" class="jump-line-arc" />
+                  <rect x="288" y="14" width="44" height="22" rx="6" fill="#182747" stroke="#f59e0b" stroke-width="2" />
+                  <text x="310" y="29" text-anchor="middle" fill="#f59e0b" font-size="12" font-weight="bold" font-family="Fredoka">${isAnswered ? '+' + j2 : '+?'}</text>
+                </svg>
+              </div>
+            `;
+          } else {
+            const leftAnchor = p.target === 20 ? 10 : 5;
+            visualBodyHTML = `
+              <div class="w-full bg-[#0a1122] border border-slate-800 rounded-2xl p-3 shadow-inner">
+                <div class="text-xs font-bold text-slate-400 mb-1">Jump from ${filledCount} up to friendly ${p.target}</div>
+                <svg class="w-full max-w-md h-28 mx-auto" viewBox="0 0 460 120">
+                  <line x1="45" y1="78" x2="415" y2="78" stroke="#475569" stroke-width="4" stroke-linecap="round" />
+                  <line x1="70" y1="68" x2="70" y2="88" stroke="#64748b" stroke-width="3" stroke-linecap="round" />
+                  <text x="70" y="110" text-anchor="middle" fill="#64748b" font-size="13" font-weight="bold" font-family="Fredoka">${leftAnchor}</text>
+
+                  <line x1="190" y1="65" x2="190" y2="91" stroke="#f43f5e" stroke-width="4" stroke-linecap="round" />
+                  <text x="190" y="110" text-anchor="middle" fill="#f43f5e" font-size="15" font-weight="bold" font-family="Fredoka">${filledCount}</text>
+
+                  <line x1="390" y1="65" x2="390" y2="91" stroke="#10b981" stroke-width="4" stroke-linecap="round" />
+                  <text x="390" y="110" text-anchor="middle" fill="#10b981" font-size="15" font-weight="black" font-family="Fredoka">${p.target}</text>
+
+                  <path d="M 190 68 Q 290 16 390 68" fill="none" stroke="#f59e0b" stroke-width="4" class="jump-line-arc" />
+                  <rect x="265" y="12" width="50" height="24" rx="7" fill="#182747" stroke="#f59e0b" stroke-width="2" />
+                  <text x="290" y="29" text-anchor="middle" fill="#f59e0b" font-size="13" font-weight="bold" font-family="Fredoka">${isAnswered ? '+' + missingVal : '+?'}</text>
+                </svg>
+              </div>
+            `;
+          }
+        } else if (bondVisualModel === 'cherry') {
+          visualBodyHTML = `
+            <div class="flex flex-col items-center bg-slate-900/90 border border-slate-800 px-10 py-4 rounded-2xl shadow-xl">
+              <div class="w-14 h-14 rounded-full bg-slate-800 border-4 border-emerald-400 font-num font-black text-2xl text-emerald-300 flex items-center justify-center shadow">
+                ${p.target}
+              </div>
+              <svg class="w-32 h-10" viewBox="0 0 120 40">
+                <line x1="60" y1="0" x2="25" y2="40" stroke="#f43f5e" stroke-width="4" stroke-linecap="round" />
+                <line x1="60" y1="0" x2="95" y2="40" stroke="#f59e0b" stroke-width="4" stroke-linecap="round" />
+              </svg>
+              <div class="flex items-center gap-8">
+                <div class="w-12 h-12 rounded-full bg-rose-950 border-3 border-rose-400 font-num font-bold text-lg text-rose-300 flex items-center justify-center shadow">
+                  ${filledCount}
+                </div>
+                <div class="w-12 h-12 rounded-full bg-amber-950/60 border-3 border-amber-400 font-num font-black text-lg text-amber-300 flex items-center justify-center shadow">
+                  ${isAnswered ? missingVal : '?'}
+                </div>
+              </div>
+            </div>
+          `;
+        } else {
+          visualBodyHTML = `
+            <div class="w-full max-w-md bg-slate-900 border border-slate-800 p-3 rounded-2xl shadow-inner">
+              <div class="text-[11px] font-bold text-sky-400 mb-2">100-Square Number Strip (Rows 1–20)</div>
+              <div class="grid grid-cols-10 gap-1.5">
+                ${Array.from({ length: 20 }).map((_, i) => {
+                  const n = i + 1;
+                  const isFilled = n <= filledCount;
+                  const isGap = !isFilled && n <= p.target;
+                  let cls = "aspect-square rounded-lg flex items-center justify-center font-num font-bold text-xs border ";
+                  if (isFilled) cls += "bg-rose-500 text-white border-rose-300 shadow";
+                  else if (isGap && isAnswered) cls += "bg-amber-400 text-slate-950 border-amber-200 font-black shadow";
+                  else if (isGap) cls += "bg-slate-800 text-amber-300 border-dashed border-amber-400/70";
+                  else cls += "bg-slate-950 text-slate-600 border-slate-800/60";
+                  return `<div class="${cls}">${n}</div>`;
+                }).join('')}
+              </div>
+            </div>
+          `;
+        }
+
+        stage.innerHTML = `
+          <div class="flex flex-col items-center justify-center my-auto max-w-xl w-full text-center">
+            <div class="flex items-center gap-1.5 bg-[#070e1b] p-1 rounded-xl border border-slate-800 mb-3">
+              <button onclick="setBondVisualModel('frames')" class="${modelTabClass('frames')}">Ten-Frames</button>
+              <button onclick="setBondVisualModel('jump')" class="${modelTabClass('jump')}">Jump Line</button>
+              <button onclick="setBondVisualModel('cherry')" class="${modelTabClass('cherry')}">Cherry Model</button>
+              <button onclick="setBondVisualModel('grid100')" class="${modelTabClass('grid100')}">100-Square</button>
+            </div>
+            <div class="text-4xl sm:text-5xl font-extrabold font-num text-white mb-4">
+              ${eqHTML}
+            </div>
+            ${visualBodyHTML}
+          </div>
+        `;
+
+      } else if (currentProblem.type === 'bonds100') {
+        const p = currentProblem;
+        targetLabel.textContent = "TARGET: BOND TO 100";
+        if (feedback) {
+          feedback.textContent = p.isSub
+            ? `Watch out for the 100 − 35 = 75 trap! Drop the tens first, then drop the ones.`
+            : `Beware the 110 trap! Tens add to 90 because the ones make the final 10.`;
+        }
+
+        const startVal = p.isSub ? p.num : p.num;
+        const nextDec = Math.ceil(startVal / 10) * 10;
+        const j1 = nextDec - startVal;
+        const j2 = 100 - nextDec;
+
+        stage.innerHTML = `
+          <div class="flex flex-col items-center justify-center my-auto max-w-xl w-full text-center">
+            <div class="text-4xl sm:text-5xl font-extrabold font-num text-white mb-4">
+              ${p.isSub
+                ? `100 − <span class="text-rose-400">${p.num}</span> = <span class="text-amber-400">${isAnswered ? p.comp : '?'}</span>`
+                : `<span class="text-rose-400">${p.num}</span> + <span class="text-amber-400 underline decoration-dashed">${isAnswered ? p.comp : '?'}</span> = 100`}
+            </div>
+
+            <div class="w-full bg-[#0a1122] border border-slate-800 rounded-2xl p-4 shadow-inner">
+              <div class="text-xs font-bold text-slate-400 mb-1">
+                Bridge from <span class="text-rose-400">${startVal}</span> up to friendly decade <span class="text-sky-400">${nextDec}</span>, then to <span class="text-emerald-400">100</span>
+              </div>
+              <svg class="w-full max-w-md h-32 mx-auto" viewBox="0 0 460 125">
+                <line x1="45" y1="80" x2="415" y2="80" stroke="#475569" stroke-width="4" stroke-linecap="round" />
+
+                <line x1="70" y1="68" x2="70" y2="92" stroke="#f43f5e" stroke-width="4" stroke-linecap="round" />
+                <text x="70" y="112" text-anchor="middle" fill="#f43f5e" font-size="15" font-weight="bold" font-family="Fredoka">${startVal}</text>
+
+                <line x1="210" y1="64" x2="210" y2="96" stroke="#38bdf8" stroke-width="4.5" stroke-linecap="round" />
+                <text x="210" y="112" text-anchor="middle" fill="#38bdf8" font-size="15" font-weight="black" font-family="Fredoka">${nextDec}</text>
+
+                <line x1="390" y1="68" x2="390" y2="92" stroke="#10b981" stroke-width="4" stroke-linecap="round" />
+                <text x="390" y="112" text-anchor="middle" fill="#10b981" font-size="16" font-weight="black" font-family="Fredoka">100</text>
+
+                <path d="M 70 70 Q 140 18 210 70" fill="none" stroke="#38bdf8" stroke-width="3.5" class="jump-line-arc" />
+                <rect x="118" y="14" width="44" height="24" rx="7" fill="#182747" stroke="#38bdf8" stroke-width="2" />
+                <text x="140" y="30" text-anchor="middle" fill="#38bdf8" font-size="13" font-weight="bold" font-family="Fredoka">${isAnswered ? '+' + j1 : '+?'}</text>
+
+                <path d="M 210 70 Q 300 18 390 70" fill="none" stroke="#f59e0b" stroke-width="3.5" class="jump-line-arc" />
+                <rect x="278" y="14" width="44" height="24" rx="7" fill="#182747" stroke="#f59e0b" stroke-width="2" />
+                <text x="300" y="30" text-anchor="middle" fill="#f59e0b" font-size="13" font-weight="bold" font-family="Fredoka">${isAnswered ? '+' + j2 : '+?'}</text>
+              </svg>
+            </div>
+          </div>
+        `;
+
+      } else if (currentProblem.type === 'bridging') {
+        const p = currentProblem;
+        targetLabel.textContent = p.isSub ? "TARGET: DIFFERENCE" : "TARGET: SUM";
+        if (feedback) {
+          feedback.textContent = p.isSub
+            ? `First jump back from ${p.start} to land on friendly ${p.landmark}, then take away the rest!`
+            : `First jump from ${p.start} to reach friendly ${p.landmark}, then add the rest!`;
+        }
+
+        const xStart = p.isSub ? 390 : 70;
+        const xMid = 230;
+        const xEnd = p.isSub ? 70 : 390;
+
+        stage.innerHTML = `
+          <div class="flex flex-col items-center justify-center my-auto max-w-xl w-full text-center">
+            <div class="text-4xl sm:text-5xl font-extrabold font-num text-white mb-4">
+              ${p.start} ${p.isSub ? '−' : '+'} ${p.add} = <span class="text-amber-400">${isAnswered ? p.ans : '?'}</span>
+            </div>
+
+            <div class="w-full bg-[#0a1122] border border-slate-800 rounded-2xl p-4 shadow-inner">
+              <div class="text-xs font-bold text-slate-400 mb-1">
+                Bridge via friendly landmark <span class="text-emerald-400 font-num font-extrabold">${p.landmark}</span>
+              </div>
+              <svg class="w-full max-w-md h-32 mx-auto" viewBox="0 0 460 125">
+                <line x1="45" y1="80" x2="415" y2="80" stroke="#475569" stroke-width="4" stroke-linecap="round" />
+
+                <line x1="${xStart}" y1="68" x2="${xStart}" y2="92" stroke="#f43f5e" stroke-width="4" stroke-linecap="round" />
+                <text x="${xStart}" y="112" text-anchor="middle" fill="#f43f5e" font-size="15" font-weight="bold" font-family="Fredoka">${p.start}</text>
+
+                <line x1="${xMid}" y1="64" x2="${xMid}" y2="96" stroke="#10b981" stroke-width="5" stroke-linecap="round" />
+                <text x="${xMid}" y="112" text-anchor="middle" fill="#10b981" font-size="16" font-weight="black" font-family="Fredoka">${p.landmark}</text>
+
+                <line x1="${xEnd}" y1="68" x2="${xEnd}" y2="92" stroke="#f59e0b" stroke-width="4" stroke-linecap="round" />
+                <text x="${xEnd}" y="112" text-anchor="middle" fill="#f59e0b" font-size="15" font-weight="bold" font-family="Fredoka">${isAnswered ? p.ans : '?'}</text>
+
+                <path d="M ${xStart} 70 Q ${(xStart + xMid)/2} 18 ${xMid} 70" fill="none" stroke="#38bdf8" stroke-width="3.5" class="jump-line-arc" />
+                <rect x="${(xStart + xMid)/2 - 22}" y="14" width="44" height="24" rx="7" fill="#182747" stroke="#38bdf8" stroke-width="2" />
+                <text x="${(xStart + xMid)/2}" y="30" text-anchor="middle" fill="#38bdf8" font-size="13" font-weight="bold" font-family="Fredoka">${isAnswered ? (p.isSub ? '−' : '+') + p.j1 : (p.isSub ? '−?' : '+?')}</text>
+
+                <path d="M ${xMid} 70 Q ${(xMid + xEnd)/2} 18 ${xEnd} 70" fill="none" stroke="#f59e0b" stroke-width="3.5" class="jump-line-arc" />
+                <rect x="${(xMid + xEnd)/2 - 22}" y="14" width="44" height="24" rx="7" fill="#182747" stroke="#f59e0b" stroke-width="2" />
+                <text x="${(xMid + xEnd)/2}" y="30" text-anchor="middle" fill="#f59e0b" font-size="13" font-weight="bold" font-family="Fredoka">${isAnswered ? (p.isSub ? '−' : '+') + p.j2 : (p.isSub ? '−?' : '+?')}</text>
+              </svg>
+            </div>
+          </div>
+        `;
+
+      } else if (currentProblem.type === 'factTriangle') {
+        const p = currentProblem;
+        targetLabel.textContent = "TARGET: PARTNER";
+        if (feedback) {
+          feedback.textContent = `Use the EXACT same three numbers (${p.whole}, ${p.partA}, ${p.partB})!`;
+        }
+
+        const headline = p.mode === 'subFact'
+          ? `If <span class="text-sky-400">${p.partA} + ${p.partB} = ${p.whole}</span>, then:<br><span class="text-4xl sm:text-5xl text-white mt-2 inline-block">${p.whole} − ${p.partA} = <span class="text-amber-400">${isAnswered ? p.partB : '?'}</span></span>`
+          : `<span class="text-4xl sm:text-5xl text-white"><span class="text-amber-400">${isAnswered ? p.partB : '?'}</span> + ${p.partA} = ${p.whole}</span>`;
+
+        stage.innerHTML = `
+          <div class="flex flex-col items-center justify-center my-auto max-w-lg w-full text-center">
+            <div class="text-xl sm:text-2xl font-extrabold font-num text-slate-200 mb-4 leading-snug">
+              ${headline}
+            </div>
+
+            <div class="relative w-52 h-40 bg-slate-900/90 border-2 border-amber-500/40 rounded-2xl flex flex-col items-center justify-between p-3 shadow-xl">
+              <div class="w-12 h-12 rounded-full bg-sky-950 border-2 border-sky-400 font-num font-black text-xl text-sky-300 flex items-center justify-center">
+                ${p.whole}
+              </div>
+              <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Fact Family</div>
+              <div class="w-full flex justify-between px-3">
+                <div class="w-11 h-11 rounded-full bg-emerald-950 border-2 border-emerald-400 font-num font-bold text-lg text-emerald-300 flex items-center justify-center">
+                  ${p.partA}
+                </div>
+                <div class="w-11 h-11 rounded-full bg-amber-950/60 border-2 border-amber-400 font-num font-black text-lg text-amber-300 flex items-center justify-center">
+                  ${isAnswered ? p.partB : '?'}
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+
+      } else if (currentProblem.type === 'multDiv') {
+        const p = currentProblem;
+        targetLabel.textContent = "TARGET: ANSWER";
+
+        if (p.mode === 'half' || p.mode === 'double') {
+          const isHalf = p.mode === 'half';
+          if (feedback) feedback.textContent = isHalf
+            ? `HALF means split into 2 equal groups (smaller than ${p.num})!`
+            : `DOUBLE means 2 groups of ${p.num} (${p.num} + ${p.num})!`;
+
+          stage.innerHTML = `
+            <div class="flex flex-col items-center justify-center my-auto max-w-lg w-full text-center">
+              <div class="text-4xl sm:text-5xl font-extrabold font-num text-white mb-5">
+                What is <span class="${isHalf ? 'text-sky-400' : 'text-emerald-400'} underline">${isHalf ? 'HALF' : 'DOUBLE'}</span> of <span class="text-amber-400">${p.num}</span>?
+              </div>
+
+              <div class="w-full max-w-md bg-slate-900 border border-slate-700 rounded-2xl p-4 flex flex-col gap-2">
+                <div class="text-xs font-bold text-slate-400 uppercase">${isHalf ? `Split ${p.num} into 2 equal halves` : `2 equal groups of ${p.num}`}</div>
+                <div class="grid grid-cols-2 gap-2 h-12">
+                  <div class="bg-sky-950 border-2 border-sky-400 rounded-xl flex items-center justify-center font-num font-black text-xl text-sky-300">
+                    ${isHalf ? (isAnswered ? p.ans : '?') : p.num}
+                  </div>
+                  <div class="bg-emerald-950 border-2 border-emerald-400 rounded-xl flex items-center justify-center font-num font-black text-xl text-emerald-300">
+                    ${isHalf ? (isAnswered ? p.ans : '?') : p.num}
+                  </div>
+                </div>
+              </div>
+            </div>
+          `;
+        } else if (p.mode === 'sharing') {
+          if (feedback) feedback.textContent = `Share ${p.total} equally into ${p.groups} boxes!`;
+          stage.innerHTML = `
+            <div class="flex flex-col items-center justify-center my-auto max-w-lg w-full text-center">
+              <div class="text-2xl sm:text-3xl font-extrabold font-num text-white mb-4">
+                Share <span class="text-sky-400">${p.total}</span> sweets equally between <span class="text-emerald-400">${p.groups}</span> friends:
+              </div>
+              <div class="w-full max-w-md bg-slate-900 border border-slate-700 rounded-2xl p-4">
+                <div class="text-xs font-bold text-slate-400 mb-2">Total: ${p.total} (${p.total} ÷ ${p.groups})</div>
+                <div class="grid gap-2 h-14" style="grid-template-columns: repeat(${p.groups}, minmax(0, 1fr));">
+                  ${Array.from({ length: p.groups }).map(() => `
+                    <div class="bg-amber-400 text-slate-950 rounded-xl flex items-center justify-center font-num font-black text-xl shadow">
+                      ${isAnswered ? p.each : '?'}
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            </div>
+          `;
+        } else {
+          if (feedback) feedback.textContent = `${p.rows} equal groups of ${p.cols} = ${p.rows} × ${p.cols} (repeated addition: ${Array.from({length: p.rows}, () => p.cols).join(' + ')})!`;
+          stage.innerHTML = `
+            <div class="flex flex-col items-center justify-center my-auto max-w-lg w-full text-center">
+              <div class="text-3xl sm:text-4xl font-extrabold font-num text-white mb-3">
+                <span class="text-amber-400">${p.rows}</span> equal groups of <span class="text-sky-400">${p.cols}</span> (${p.rows} × ${p.cols}) = <span class="text-emerald-400">${isAnswered ? p.total : '?'}</span>
+              </div>
+
+              <div class="p-4 bg-slate-900 border border-slate-700 rounded-2xl flex flex-col gap-2 shadow-xl">
+                ${Array.from({ length: p.rows }).map(() => `
+                  <div class="flex items-center justify-center gap-2">
+                    ${Array.from({ length: p.cols }).map(() => `
+                      <div class="w-7 h-7 rounded-full bg-amber-400 border border-amber-200 shadow"></div>
+                    `).join('')}
+                  </div>
+                `).join('')}
+              </div>
+              <div class="text-xs font-bold text-slate-400 mt-2">
+                Repeated addition: ${Array.from({ length: p.rows }, () => p.cols).join(' + ')} = ${p.rows} × ${p.cols}
+              </div>
+            </div>
+          `;
+        }
+
+      } else if (currentProblem.type === 'actionWord') {
+        const p = currentProblem;
+        targetLabel.textContent = "TARGET: ANSWER";
+
+        if (p.mode === 'difference') {
+          if (feedback) feedback.textContent = `DIFFERENCE compares the two bars! Find the gap (NOT ${p.big} + ${p.small}).`;
+          stage.innerHTML = `
+            <div class="flex flex-col items-center justify-center my-auto max-w-xl w-full text-center">
+              <div class="p-4 bg-slate-900 border-2 border-slate-700 rounded-2xl text-base sm:text-lg font-bold text-white mb-5 shadow">
+                "${p.n1} has <span class="text-sky-400">${p.big}</span> stickers and ${p.n2} has <span class="text-rose-400">${p.small}</span> stickers. What is the <span class="text-amber-400 underline">DIFFERENCE</span>?"
+              </div>
+
+              <div class="w-full max-w-md bg-slate-900/90 border border-slate-800 p-4 rounded-2xl flex flex-col gap-3">
+                <div class="flex items-center gap-2">
+                  <span class="w-20 text-right text-xs font-bold text-sky-400">${p.n1}:</span>
+                  <div class="h-8 bg-sky-500 rounded-lg flex items-center justify-center font-num font-black text-slate-950 text-sm" style="width: ${Math.min(260, p.big * 9)}px;">
+                    ${p.big}
+                  </div>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="w-20 text-right text-xs font-bold text-rose-400">${p.n2}:</span>
+                  <div class="h-8 bg-rose-500 rounded-lg flex items-center justify-center font-num font-black text-white text-sm" style="width: ${Math.min(220, p.small * 9)}px;">
+                    ${p.small}
+                  </div>
+                  <div class="h-8 border-2 border-dashed border-amber-400 bg-amber-950/40 rounded-lg flex items-center justify-center font-num font-black text-amber-300 text-xs px-2">
+                    ${isAnswered ? p.ans : '?'}
+                  </div>
+                </div>
+              </div>
+            </div>
+          `;
+        } else if (p.mode === 'remaining') {
+          if (feedback) feedback.textContent = `REMAINING means subtract what was eaten (${p.start} − ${p.eaten})!`;
+          stage.innerHTML = `
+            <div class="flex flex-col items-center justify-center my-auto max-w-xl w-full text-center">
+              <div class="p-4 bg-slate-900 border-2 border-slate-700 rounded-2xl text-base sm:text-lg font-bold text-white mb-5 shadow">
+                "${p.n1} has <span class="text-sky-400">${p.start}</span> grapes and eats <span class="text-rose-400">${p.eaten}</span> of them. How many are <span class="text-amber-400 underline">REMAINING</span>?"
+              </div>
+              <div class="w-full max-w-md bg-slate-900 border border-slate-800 p-4 rounded-2xl">
+                <div class="text-xs font-bold text-slate-400 mb-2">Part-Whole Bar: Whole = ${p.start}</div>
+                <div class="flex h-10 rounded-xl overflow-hidden border border-slate-700">
+                  <div class="bg-rose-600/80 text-white font-num font-bold flex items-center justify-center text-xs px-3" style="width: ${(p.eaten / p.start) * 100}%;">
+                    Eaten: ${p.eaten}
+                  </div>
+                  <div class="bg-emerald-500 text-slate-950 font-num font-black flex items-center justify-center text-sm flex-1">
+                    Left: ${isAnswered ? p.ans : '?'}
+                  </div>
+                </div>
+              </div>
+            </div>
+          `;
+        } else if (p.mode === 'change') {
+          if (feedback) feedback.textContent = `£1.00 = 100p! Jump up from ${p.cost}p to 100p to find the CHANGE.`;
+          const next10 = Math.ceil(p.cost / 10) * 10;
+          const j1 = next10 - p.cost;
+          const j2 = 100 - next10;
+          stage.innerHTML = `
+            <div class="flex flex-col items-center justify-center my-auto max-w-xl w-full text-center">
+              <div class="p-4 bg-slate-900 border-2 border-slate-700 rounded-2xl text-base sm:text-lg font-bold text-white mb-4 shadow">
+                "A notebook costs <span class="text-rose-400">${p.cost}p</span>. You pay with a <span class="text-emerald-400">£1.00 (100p)</span> coin. How much <span class="text-amber-400 underline">CHANGE</span> do you get?"
+              </div>
+
+              <div class="w-full bg-[#0a1122] border border-slate-800 rounded-2xl p-3 shadow-inner">
+                <svg class="w-full max-w-md h-28 mx-auto" viewBox="0 0 460 120">
+                  <line x1="45" y1="78" x2="415" y2="78" stroke="#475569" stroke-width="4" stroke-linecap="round" />
+                  <line x1="70" y1="66" x2="70" y2="90" stroke="#f43f5e" stroke-width="4" stroke-linecap="round" />
+                  <text x="70" y="110" text-anchor="middle" fill="#f43f5e" font-size="14" font-weight="bold" font-family="Fredoka">${p.cost}p</text>
+
+                  <line x1="210" y1="64" x2="210" y2="92" stroke="#38bdf8" stroke-width="4" stroke-linecap="round" />
+                  <text x="210" y="110" text-anchor="middle" fill="#38bdf8" font-size="14" font-weight="bold" font-family="Fredoka">${next10}p</text>
+
+                  <line x1="390" y1="66" x2="390" y2="90" stroke="#10b981" stroke-width="4" stroke-linecap="round" />
+                  <text x="390" y="110" text-anchor="middle" fill="#10b981" font-size="15" font-weight="black" font-family="Fredoka">100p</text>
+
+                  <path d="M 70 68 Q 140 18 210 68" fill="none" stroke="#38bdf8" stroke-width="3.5" class="jump-line-arc" />
+                  <rect x="118" y="14" width="44" height="22" rx="6" fill="#182747" stroke="#38bdf8" stroke-width="2" />
+                  <text x="140" y="29" text-anchor="middle" fill="#38bdf8" font-size="12" font-weight="bold" font-family="Fredoka">${isAnswered ? '+' + j1 + 'p' : '+?p'}</text>
+
+                  <path d="M 210 68 Q 300 18 390 68" fill="none" stroke="#f59e0b" stroke-width="3.5" class="jump-line-arc" />
+                  <rect x="278" y="14" width="44" height="22" rx="6" fill="#182747" stroke="#f59e0b" stroke-width="2" />
+                  <text x="300" y="29" text-anchor="middle" fill="#f59e0b" font-size="12" font-weight="bold" font-family="Fredoka">${isAnswered ? '+' + j2 + 'p' : '+?p'}</text>
+                </svg>
+              </div>
+            </div>
+          `;
+        } else {
+          if (feedback) feedback.textContent = `PRODUCT means MULTIPLY (${p.a} × ${p.b})!`;
+          stage.innerHTML = `
+            <div class="flex flex-col items-center justify-center my-auto max-w-lg w-full text-center">
+              <div class="p-4 bg-slate-900 border-2 border-slate-700 rounded-2xl text-xl font-bold text-white mb-4 shadow">
+                "What is the <span class="text-amber-400 underline">PRODUCT</span> of <span class="text-sky-400">${p.a}</span> and <span class="text-emerald-400">${p.b}</span>?"
+              </div>
+              <div class="text-4xl font-extrabold font-num text-white">
+                ${p.a} × ${p.b} = <span class="text-amber-400">${isAnswered ? p.ans : '?'}</span>
+              </div>
+            </div>
+          `;
+        }
+
+      } else {
+        // Module 7: Bridge the Clock (Time)
+        const p = currentProblem;
+        const isElapsed = p.mode === 'elapsed';
+        targetLabel.textContent = isElapsed ? "TARGET: MINUTES" : `TARGET: ${p.endHour}:??`;
+        if (feedback) {
+          feedback.textContent = isElapsed
+            ? `Bridge through ${p.nextHourStr}! How many minutes from ${p.startStr} to ${p.endStr}?`
+            : `Start at ${p.startStr}, add ${p.dur} mins by jumping to ${p.nextHourStr} first! Type the minutes past ${p.endHour}:00.`;
+        }
+
+        stage.innerHTML = `
+          <div class="flex flex-col items-center justify-center my-auto max-w-xl w-full text-center">
+            <div class="p-4 bg-slate-900 border-2 border-slate-700 rounded-2xl text-base sm:text-lg font-bold text-white mb-4 shadow">
+              ${isElapsed
+                ? `"A cartoon starts at <span class="text-sky-400">${p.startStr}</span> and ends at <span class="text-amber-400">${p.endStr}</span>. How many <span class="text-emerald-400 underline">MINUTES</span> did it last?"`
+                : `"A cartoon starts at <span class="text-sky-400">${p.startStr}</span> and lasts for <span class="text-emerald-400">${p.dur} minutes</span>. It finishes at <span class="text-amber-400">${p.endHour}:${isAnswered ? p.endMins.toString().padStart(2,'0') : '??'}</span>"`}
+            </div>
+
+            <div class="w-full bg-[#0a1122] border border-slate-800 rounded-2xl p-4 shadow-inner">
+              <div class="text-xs font-bold text-slate-400 mb-1">Bridge Through the O'Clock Hour (<span class="text-emerald-400">${p.nextHourStr}</span>)</div>
+              <svg class="w-full max-w-md h-32 mx-auto" viewBox="0 0 460 125">
+                <line x1="45" y1="80" x2="415" y2="80" stroke="#475569" stroke-width="4" stroke-linecap="round" />
+
+                <line x1="70" y1="68" x2="70" y2="92" stroke="#f43f5e" stroke-width="4" stroke-linecap="round" />
+                <text x="70" y="112" text-anchor="middle" fill="#f43f5e" font-size="15" font-weight="bold" font-family="Fredoka">${p.startStr}</text>
+
+                <line x1="230" y1="64" x2="230" y2="96" stroke="#10b981" stroke-width="5" stroke-linecap="round" />
+                <text x="230" y="112" text-anchor="middle" fill="#10b981" font-size="16" font-weight="black" font-family="Fredoka">${p.nextHourStr}</text>
+
+                <line x1="390" y1="68" x2="390" y2="92" stroke="#f59e0b" stroke-width="4" stroke-linecap="round" />
+                <text x="390" y="112" text-anchor="middle" fill="#f59e0b" font-size="15" font-weight="bold" font-family="Fredoka">${isElapsed || isAnswered ? p.endStr : `${p.endHour}:??`}</text>
+
+                <path d="M 70 70 Q 150 18 230 70" fill="none" stroke="#38bdf8" stroke-width="3.5" class="jump-line-arc" />
+                <rect x="125" y="14" width="50" height="24" rx="7" fill="#182747" stroke="#38bdf8" stroke-width="2" />
+                <text x="150" y="30" text-anchor="middle" fill="#38bdf8" font-size="12" font-weight="bold" font-family="Fredoka">${isAnswered ? '+' + p.toHour + 'm' : '+?m'}</text>
+
+                <path d="M 230 70 Q 310 18 390 70" fill="none" stroke="#f59e0b" stroke-width="3.5" class="jump-line-arc" />
+                <rect x="285" y="14" width="50" height="24" rx="7" fill="#182747" stroke="#f59e0b" stroke-width="2" />
+                <text x="310" y="30" text-anchor="middle" fill="#f59e0b" font-size="12" font-weight="bold" font-family="Fredoka">${isAnswered ? '+' + p.pastHour + 'm' : '+?m'}</text>
+              </svg>
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    // --- KEYPAD & SUBMISSION ---
+    function pressDigit(num) {
+      if (isAnswered) return;
+      playKeypadTap();
+      if (currentInput.length >= 4) return;
+      currentInput += num.toString();
+      const inputEl = document.getElementById("answerInput");
+      if (inputEl) inputEl.value = currentInput;
+    }
+
+    function deleteDigit() {
+      if (isAnswered) return;
+      playKeypadTap();
+      currentInput = currentInput.slice(0, -1);
+      const inputEl = document.getElementById("answerInput");
+      if (inputEl) inputEl.value = currentInput;
+    }
+
+    function clearCurrentInput() {
+      if (isAnswered) return;
+      playKeypadTap();
+      currentInput = "";
+      const inputEl = document.getElementById("answerInput");
+      if (inputEl) inputEl.value = "";
+    }
+
+    function submitAnswer() {
+      if (!currentProblem || !currentInput || currentInput.trim() === "") return;
+      const feedback = document.getElementById("feedbackText");
+
+      if (currentInput.trim() === currentProblem.finalAns.trim()) {
+        playTone('correct');
+        score += 10;
+        streak++;
+        document.getElementById("scoreDisplay").textContent = score;
+        document.getElementById("streakDisplay").textContent = streak;
+        isAnswered = true;
+
+        if (feedback) {
+          feedback.textContent = `✓ Brilliant! ${currentProblem.stem}`;
+          feedback.className = "text-emerald-400 font-extrabold truncate";
+        }
+        renderProblemStage();
+        setTimeout(nextQuestion, 2600);
+      } else {
+        playTone('wrong');
+        streak = 0;
+        document.getElementById("streakDisplay").textContent = streak;
+        if (feedback) {
+          feedback.textContent = `✕ Not quite (${currentInput}). Check the visual model and try again!`;
+          feedback.className = "text-rose-400 font-bold truncate";
+        }
+        clearCurrentInput();
+      }
+    }
+
+    function skipQuestion() { generateQuestion(); }
+    function nextQuestion() { generateQuestion(); }
+
+    function revealStepOrAnswer() {
+      if (!currentProblem) return;
+      isAnswered = true;
+      currentInput = currentProblem.finalAns;
+      const inputEl = document.getElementById("answerInput");
+      if (inputEl) inputEl.value = currentInput;
+      const feedback = document.getElementById("feedbackText");
+      if (feedback) {
+        feedback.textContent = `Model Answer: ${currentProblem.stem}`;
+        feedback.className = "text-amber-400 font-extrabold truncate";
+      }
+      renderProblemStage();
+    }
+
+    // --- 100-SQUARE ENGINE ---
+    function init100Square() {
+      const grid = document.getElementById("grid100");
+      if (!grid) return;
+      grid.innerHTML = "";
+      for (let i = 1; i <= 100; i++) {
+        const tile = document.createElement("button");
+        tile.id = `sq-${i}`;
+        tile.className = "sq-tile";
+        tile.textContent = i;
+        tile.onclick = () => {
+          if (tile.classList.contains("bg-sky-500")) {
+            tile.className = "sq-tile";
+          } else {
+            tile.className = "sq-tile bg-sky-500 text-slate-950 font-black border-sky-300 shadow-md";
+          }
+        };
+        grid.appendChild(tile);
+      }
+    }
+
+    function toggleHundredSquareDrawer() {
+      const drawer = document.getElementById("drawer100");
+      const arrow = document.getElementById("arrow100");
+      const isHidden = drawer.classList.contains("hidden");
+      if (isHidden) {
+        drawer.classList.remove("hidden");
+        if (arrow) arrow.textContent = "▼ Close";
+      } else {
+        drawer.classList.add("hidden");
+        if (arrow) arrow.textContent = "▲ Open";
+      }
+    }
+
+    function clear100Highlights() {
+      for (let i = 1; i <= 100; i++) {
+        const tile = document.getElementById(`sq-${i}`);
+        if (tile) tile.className = "sq-tile";
+      }
+    }
+
+    function highlight100(mode) {
+      clear100Highlights();
+      for (let i = 1; i <= 100; i++) {
+        const tile = document.getElementById(`sq-${i}`);
+        if (!tile) continue;
+        let match = false;
+        if (mode === 'evens' && i % 2 === 0) match = true;
+        if (mode === 'odds' && i % 2 !== 0) match = true;
+        if (mode === 'tens' && i % 10 === 0) match = true;
+        if (mode === 'fives' && i % 5 === 0) match = true;
+        if (match) {
+          tile.className = "sq-tile bg-amber-400 text-slate-950 font-black border-amber-300 shadow-md";
+        }
+      }
+    }
+
+    // --- PLACE VALUE COUNTER WORKBENCH ---
+    function togglePVDrawer() {
+      const drawer = document.getElementById("drawerPV");
+      const arrow = document.getElementById("arrowPV");
+      const isHidden = drawer.classList.contains("hidden");
+      if (isHidden) {
+        drawer.classList.remove("hidden");
+        if (arrow) arrow.textContent = "▲";
+      } else {
+        drawer.classList.add("hidden");
+        if (arrow) arrow.textContent = "▼";
+      }
+    }
+
+    function togglePVFullscreen() {
+      const drawer = document.getElementById("drawerPV");
+      const fullBtn = document.getElementById("pvFullBtn");
+      isPVFullscreen = !isPVFullscreen;
+      if (isPVFullscreen) {
+        drawer.className = "fixed inset-4 z-40 bg-[#0d1629] rounded-2xl border-2 border-amber-500/50 p-4 shadow-2xl flex flex-col";
+        if (fullBtn) fullBtn.textContent = "🗗 Contract";
+      } else {
+        drawer.className = "mt-2 p-3 bg-[#0d1629] rounded-xl border border-slate-800 shrink-0 max-h-[48vh] flex flex-col";
+        if (fullBtn) fullBtn.textContent = "⛶ Expand";
+      }
+    }
+
+    function togglePVValueDisplay() {
+      pvValuesVisible = !pvValuesVisible;
+      const btn = document.getElementById("pvVisibilityBtn");
+      const icon = document.getElementById("pvVisIcon");
+      const label = document.getElementById("pvVisLabel");
+      if (pvValuesVisible) {
+        if (icon) icon.textContent = "👁️";
+        if (label) label.textContent = "Values: Shown";
+        if (btn) btn.className = "px-2.5 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-semibold flex items-center gap-1";
+      } else {
+        if (icon) icon.textContent = "🙈";
+        if (label) label.textContent = "Values: Hidden";
+        if (btn) btn.className = "px-2.5 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-700 text-xs font-semibold flex items-center gap-1";
+      }
+      updatePVDisplay();
+    }
+
+    function addPVToken(col) {
+      pvCounters[col]++;
+      renderPVTokens(col);
+      updatePVDisplay();
+    }
+
+    function removePVToken(col) {
+      if (pvCounters[col] > 0) {
+        pvCounters[col]--;
+        renderPVTokens(col);
+        updatePVDisplay();
+      }
+    }
+
+    function clearPVMat() {
+      pvCounters = { th: 0, h: 0, t: 0, u: 0 };
+      ['th', 'h', 't', 'u'].forEach(col => renderPVTokens(col));
+      updatePVDisplay();
+    }
+
+    function exchangePV10to1() {
+      if (pvCounters.u >= 10) { pvCounters.u -= 10; pvCounters.t += 1; }
+      if (pvCounters.t >= 10) { pvCounters.t -= 10; pvCounters.h += 1; }
+      if (pvCounters.h >= 10) { pvCounters.h -= 10; pvCounters.th += 1; }
+      ['th', 'h', 't', 'u'].forEach(col => renderPVTokens(col));
+      updatePVDisplay();
+    }
+
+    function renderPVTokens(col) {
+      const container = document.getElementById(`col-${col}`);
+      if (!container) return;
+      container.innerHTML = "";
+      const count = pvCounters[col];
+      const tokenClass = col === 'th' ? 'token-th' : col === 'h' ? 'token-h' : col === 't' ? 'token-t' : 'token-u';
+      const label = col === 'th' ? '1k' : col === 'h' ? '100' : col === 't' ? '10' : '1';
+
+      for (let i = 0; i < count; i++) {
+        const tok = document.createElement("div");
+        tok.className = `pv-token ${tokenClass}`;
+        tok.textContent = label;
+        tok.onclick = () => removePVToken(col);
+        container.appendChild(tok);
+      }
+    }
+
+    function updatePVDisplay() {
+      const total = (pvCounters.th * 1000) + (pvCounters.h * 100) + (pvCounters.t * 10) + pvCounters.u;
+      const totalEl = document.getElementById("pvMatTotal");
+      if (totalEl) totalEl.textContent = pvValuesVisible ? total.toLocaleString() : "???";
+
+      const mults = { th: 1000, h: 100, t: 10, u: 1 };
+      ['th', 'h', 't', 'u'].forEach(col => {
+        const badge = document.getElementById(`badge-${col}`);
+        if (badge) {
+          const count = pvCounters[col];
+          const val = count * mults[col];
+          badge.textContent = pvValuesVisible ? `${count} (${val.toLocaleString()})` : `${count} (???)`;
+        }
+      });
+    }
+
+    // --- DUAL-MODE WHITEBOARD (OVERLAY & SCRATCHPAD) ---
+    let wbActive = false;
+    let boardMode = 'overlay';
+    let wbTool = 'pen';
+    let wbColor = '#facc15';
+    let wbSize = 7;
+    let isDrawing = false;
+    let wbHistory = [];
+    let canvas, ctx;
+
+    function initWhiteboard() {
+      canvas = document.getElementById("whiteboardCanvas");
+      if (!canvas) return;
+      ctx = canvas.getContext("2d");
+      resizeWhiteboard();
+      window.addEventListener("resize", resizeWhiteboard);
+
+      canvas.addEventListener("mousedown", startDrawing);
+      canvas.addEventListener("mousemove", draw);
+      canvas.addEventListener("mouseup", stopDrawing);
+      canvas.addEventListener("mouseleave", stopDrawing);
+
+      canvas.addEventListener("touchstart", (e) => {
+        e.preventDefault();
+        const touch = e.touches[0];
+        startDrawing({ clientX: touch.clientX, clientY: touch.clientY });
+      }, { passive: false });
+
+      canvas.addEventListener("touchmove", (e) => {
+        e.preventDefault();
+        const touch = e.touches[0];
+        draw({ clientX: touch.clientX, clientY: touch.clientY });
+      }, { passive: false });
+
+      canvas.addEventListener("touchend", stopDrawing);
+    }
+
+    function resizeWhiteboard() {
+      if (!canvas) return;
+      canvas.width = window.innerWidth || 800;
+      canvas.height = window.innerHeight || 600;
+      redrawHistory();
+    }
+
+    function toggleWhiteboard() {
+      wbActive = !wbActive;
+      const overlay = document.getElementById("wbOverlay");
+      const btn = document.getElementById("wbToggleBtn");
+      if (wbActive) {
+        if (overlay) overlay.classList.remove("hidden");
+        if (btn) btn.className = "flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs shadow-md transition-all";
+        setWbTool('pen');
+      } else {
+        if (overlay) overlay.classList.add("hidden");
+        if (btn) btn.className = "flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs shadow-md transition-all";
+        setWbTool('touch');
+      }
+    }
+
+    function setBoardMode(mode) {
+      boardMode = mode;
+      const overlay = document.getElementById("wbOverlay");
+      const bOverlay = document.getElementById("btnBoardMode-overlay");
+      const bScratch = document.getElementById("btnBoardMode-scratch");
+
+      if (mode === 'scratch') {
+        if (overlay) overlay.style.backgroundColor = '#0b1220fc';
+        if (bScratch) bScratch.className = "px-2.5 py-1 rounded text-xs font-bold bg-amber-400 text-slate-950 transition";
+        if (bOverlay) bOverlay.className = "px-2.5 py-1 rounded text-xs font-bold text-slate-300 hover:text-white transition";
+      } else {
+        if (overlay) overlay.style.backgroundColor = 'transparent';
+        if (bOverlay) bOverlay.className = "px-2.5 py-1 rounded text-xs font-bold bg-amber-400 text-slate-950 transition";
+        if (bScratch) bScratch.className = "px-2.5 py-1 rounded text-xs font-bold text-slate-300 hover:text-white transition";
+      }
+    }
+
+    function setWbTool(tool) {
+      wbTool = tool;
+      ['pen', 'highlighter', 'eraser', 'touch'].forEach(t => {
+        const b = document.getElementById(`wbTool-${t}`);
+        if (b) {
+          b.className = t === tool
+            ? "p-1.5 rounded text-white bg-slate-800 border border-slate-700"
+            : "p-1.5 rounded text-slate-300 hover:text-white";
+        }
+      });
+      if (!canvas) return;
+      if (tool === 'touch') {
+        canvas.style.pointerEvents = 'none';
+        canvas.style.cursor = 'default';
+      } else {
+        canvas.style.pointerEvents = 'auto';
+        canvas.style.cursor = 'crosshair';
+      }
+    }
+
+    function setWbColor(c) { wbColor = c; }
+    function setWbSize(s) {
+      wbSize = s;
+      [3, 7, 14].forEach(sz => {
+        const btn = document.getElementById(`wbSize-${sz}`);
+        if (btn) btn.className = sz === s ? "px-2 py-0.5 rounded bg-slate-800 text-white" : "px-2 py-0.5 rounded text-slate-300 hover:text-white";
+      });
+    }
+
+    function startDrawing(e) {
+      if (wbTool === 'touch' || !ctx) return;
+      isDrawing = true;
+      ctx.beginPath();
+      ctx.moveTo(e.clientX, e.clientY);
+      wbHistory.push({ type: 'start', x: e.clientX, y: e.clientY, tool: wbTool, color: wbColor, size: wbSize });
+    }
+
+    function draw(e) {
+      if (!isDrawing || wbTool === 'touch' || !ctx) return;
+      ctx.lineTo(e.clientX, e.clientY);
+      if (wbTool === 'eraser') {
+        ctx.globalCompositeOperation = 'destination-out';
+        ctx.lineWidth = wbSize * 3;
+      } else if (wbTool === 'highlighter') {
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.strokeStyle = wbColor + '55';
+        ctx.lineWidth = wbSize * 2.5;
+      } else {
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.strokeStyle = wbColor;
+        ctx.lineWidth = wbSize;
+      }
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.stroke();
+      wbHistory.push({ type: 'draw', x: e.clientX, y: e.clientY });
+    }
+
+    function stopDrawing() {
+      if (!isDrawing || !ctx) return;
+      isDrawing = false;
+      ctx.closePath();
+    }
+
+    function clearWhiteboard() {
+      if (!ctx || !canvas) return;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      wbHistory = [];
+    }
+
+    function undoWhiteboard() {
+      let lastStart = -1;
+      for (let i = wbHistory.length - 1; i >= 0; i--) {
+        if (wbHistory[i].type === 'start') { lastStart = i; break; }
+      }
+      if (lastStart >= 0) {
+        wbHistory = wbHistory.slice(0, lastStart);
+        redrawHistory();
+      }
+    }
+
+    function redrawHistory() {
+      if (!ctx || !canvas) return;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let item of wbHistory) {
+        if (item.type === 'start') {
+          ctx.beginPath();
+          ctx.moveTo(item.x, item.y);
+          if (item.tool === 'eraser') {
+            ctx.globalCompositeOperation = 'destination-out';
+            ctx.lineWidth = item.size * 3;
+          } else if (item.tool === 'highlighter') {
+            ctx.globalCompositeOperation = 'source-over';
+            ctx.strokeStyle = item.color + '55';
+            ctx.lineWidth = item.size * 2.5;
+          } else {
+            ctx.globalCompositeOperation = 'source-over';
+            ctx.strokeStyle = item.color;
+            ctx.lineWidth = item.size;
+          }
+          ctx.lineCap = 'round';
+          ctx.lineJoin = 'round';
+        } else if (item.type === 'draw') {
+          ctx.lineTo(item.x, item.y);
+          ctx.stroke();
+        }
+      }
+    }
+
+    // --- INITIALIZATION ---
+    window.onload = () => {
+      initWhiteboard();
+      init100Square();
+      setModule(1);
+
+      window.addEventListener('keydown', (e) => {
+        if (wbActive && wbTool !== 'touch') return;
+        if (e.key >= '0' && e.key <= '9') {
+          pressDigit(e.key);
+        } else if (e.key === 'Backspace') {
+          deleteDigit();
+        } else if (e.key === 'Enter') {
+          submitAnswer();
+        } else if (e.key === 'Escape') {
+          clearCurrentInput();
+        }
+      });
+    };
+  </script>
+</body>
+</html>
