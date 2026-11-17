@@ -1,0 +1,2329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P4B/P5B Group A: Reasoning into Attainment Hub</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f1f5f9;
+      color: #0f172a;
+      overflow-x: hidden;
+    }
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #e2e8f0;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #94a3b8;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #64748b;
+    }
+    #wb-canvas {
+      touch-action: none;
+      cursor: crosshair;
+    }
+    .dienes-flat {
+      background-image: linear-gradient(to right, rgba(255,255,255,0.45) 1px, transparent 1px),
+                        linear-gradient(to bottom, rgba(255,255,255,0.45) 1px, transparent 1px);
+      background-size: 6px 6px;
+    }
+    .dienes-rod {
+      background-image: linear-gradient(to bottom, rgba(255,255,255,0.5) 1px, transparent 1px);
+      background-size: 100% 7px;
+    }
+    @keyframes popIn {
+      0% { opacity: 0; transform: translateY(6px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    .animate-pop {
+      animation: popIn 0.2s ease-out forwards;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col select-none">
+
+  <!-- TOP PERSISTENT CLASSROOM HEADER -->
+  <header class="bg-slate-900 text-white shadow-lg border-b border-slate-700 sticky top-0 z-40">
+    <div class="max-w-[1640px] mx-auto px-3 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3">
+      <!-- Left: Back to Hub & Title -->
+      <div class="flex items-center gap-3">
+        <button id="btn-back-hub" onclick="goHome()" class="hidden items-center gap-2 bg-slate-800 hover:bg-slate-700 active:bg-slate-600 text-white font-bold px-3.5 py-2.5 rounded-xl border border-slate-600 transition shadow-sm text-sm sm:text-base">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+          </svg>
+          <span>Hub Menu</span>
+        </button>
+
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center font-black text-base shadow-inner border border-indigo-400">
+            1000
+          </div>
+          <div>
+            <h1 class="text-base sm:text-xl font-extrabold tracking-tight leading-tight">
+              P4B/P5B Group A: Reasoning into Attainment Hub
+            </h1>
+            <p class="text-xs text-slate-300 hidden sm:block">
+              5-Week Intervention Suite &bull; Paul Doherty, Oisin Mervyn, Julia Gibson &amp; Nevaeh Cunningham-Carroll
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Pupil Pills, Diagnostic Targets Drawer Toggle & Whiteboard Toggle -->
+      <div class="flex flex-wrap items-center gap-2 sm:gap-2.5">
+        <div class="hidden xl:flex items-center gap-1.5 bg-slate-800/90 px-3 py-1.5 rounded-xl border border-slate-700 text-xs font-semibold text-slate-200">
+          <span class="text-amber-400 font-bold">Group A:</span>
+          <span class="px-2 py-0.5 bg-slate-700 rounded-md">Paul</span>
+          <span class="px-2 py-0.5 bg-slate-700 rounded-md">Oisin</span>
+          <span class="px-2 py-0.5 bg-slate-700 rounded-md">Julia</span>
+          <span class="px-2 py-0.5 bg-slate-700 rounded-md">Nevaeh</span>
+        </div>
+
+        <button id="btn-toggle-targets" onclick="toggleTargetsDrawer()" class="flex items-center gap-2 bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-slate-950 font-extrabold px-3.5 py-2.5 rounded-xl shadow-md border border-amber-300 transition text-xs sm:text-sm">
+          <span>&#128203; Pupil Diagnostic Targets</span>
+        </button>
+
+        <button id="btn-toggle-wb" onclick="toggleWhiteboard()" class="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white font-extrabold px-4 py-2.5 rounded-xl shadow-md border border-emerald-400 transition text-xs sm:text-sm">
+          <span>&#9999;&#65039;</span>
+          <span id="wb-toggle-label">Open Whiteboard</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- COLLAPSIBLE PUPIL DIAGNOSTIC TARGETS DRAWER -->
+    <div id="pupil-targets-drawer" class="hidden bg-slate-800 border-t border-slate-700 px-3 sm:px-6 py-4 animate-pop">
+      <div class="max-w-[1640px] mx-auto space-y-3">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-extrabold uppercase tracking-wider text-amber-400">
+            Nov 16–17 Higher-Pitch Diagnostic Targets &amp; 5-Week Focus
+          </span>
+          <button onclick="toggleTargetsDrawer()" class="text-xs font-bold text-slate-300 hover:text-white px-2.5 py-1 rounded-lg bg-slate-700">
+            Close &times;
+          </button>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 text-xs">
+          <!-- Paul -->
+          <div class="bg-slate-900/90 rounded-xl p-3.5 border border-slate-700 space-y-1.5">
+            <div class="flex items-center justify-between">
+              <span class="font-extrabold text-sm text-white">Paul Doherty</span>
+              <span class="px-2 py-0.5 rounded bg-indigo-900 text-indigo-200 font-bold">CAT4 108 / PTM 88</span>
+            </div>
+            <p class="text-emerald-400 font-semibold">Strengths: 360 &amp; 650 complements, 3:15 pm time, £1.65 change, error analysis.</p>
+            <p class="text-amber-200 font-medium"><strong>Targets:</strong> Zero-exchange subtraction (502−147), working backwards ([ ]−35=48 &rarr; 83), 54&divide;6, 3/4 of 24 (18), factors of 18, 2-step completion.</p>
+          </div>
+          <!-- Oisin -->
+          <div class="bg-slate-900/90 rounded-xl p-3.5 border border-slate-700 space-y-1.5">
+            <div class="flex items-center justify-between">
+              <span class="font-extrabold text-sm text-white">Oisin Mervyn</span>
+              <span class="px-2 py-0.5 rounded bg-indigo-900 text-indigo-200 font-bold">CAT4 110 / PTM 90</span>
+            </div>
+            <p class="text-emerald-400 font-semibold">Strengths: Highest quantitative reasoning capacity in Group A (−20 SAS gap).</p>
+            <p class="text-amber-200 font-medium"><strong>Targets:</strong> Complements to 1,000, column exchange across zeros, systematic factor pairs, 4-side perimeter, and completing step 2 of word problems.</p>
+          </div>
+          <!-- Julia -->
+          <div class="bg-slate-900/90 rounded-xl p-3.5 border border-slate-700 space-y-1.5">
+            <div class="flex items-center justify-between">
+              <span class="font-extrabold text-sm text-white">Julia Gibson</span>
+              <span class="px-2 py-0.5 rounded bg-indigo-900 text-indigo-200 font-bold">CAT4 108 / PTM 95</span>
+            </div>
+            <p class="text-emerald-400 font-semibold">Strengths: 56&divide;8=7 fact family, Difference (35), 2-step "twice + altogether" (54).</p>
+            <p class="text-amber-200 font-medium"><strong>Targets:</strong> Defeating extra-hundred/pound traps (460, 750, £2.65), digit-reversal in subtraction (502−147), all-4-side perimeter (22 cm), 3/4 of 24.</p>
+          </div>
+          <!-- Nevaeh -->
+          <div class="bg-slate-900/90 rounded-xl p-3.5 border border-slate-700 space-y-1.5">
+            <div class="flex items-center justify-between">
+              <span class="font-extrabold text-sm text-white">Nevaeh C-Carroll</span>
+              <span class="px-2 py-0.5 rounded bg-indigo-900 text-indigo-200 font-bold">CAT4 105 / PTM 85</span>
+            </div>
+            <p class="text-emerald-400 font-semibold">Strengths: Flexible partitioning (180), &times;10 scaling (460), equivalent fractions (5/10).</p>
+            <p class="text-amber-200 font-medium"><strong>Targets:</strong> 1,100 complement trap (460), working backwards ([ ]−35=48), &times;/&divide; fact families, 3/4 of 24, difference &amp; factor vocabulary.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN WORKSPACE (FLEX SPLIT-SCREEN CAPABLE) -->
+  <div id="workspace-wrapper" class="flex-1 flex flex-col lg:flex-row max-w-[1640px] w-full mx-auto">
+
+    <!-- LEFT / PRIMARY TEACHING PANEL -->
+    <main id="main-teaching-pane" class="flex-1 p-4 sm:p-6 transition-all duration-200 overflow-y-auto">
+
+      <!-- VIEW 0: HUB LANDING DASHBOARD -->
+      <section id="view-hub" class="space-y-6">
+        <div class="bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-slate-200 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div>
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 font-bold text-xs uppercase tracking-wider mb-2 border border-indigo-200">
+              <span>5-Week Intervention Plan &bull; Strict Teacher-Controlled Scaffolding</span>
+            </div>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900">
+              Select a Pillar Module or the 100-Question Retrieval Bank
+            </h2>
+            <p class="text-slate-600 mt-1 text-sm sm:text-base max-w-3xl">
+              Every worked example and practice question starts with <strong class="text-slate-800">hints, visual models, worked steps, and answers hidden</strong> until you click the reveal buttons. Open the <strong class="text-emerald-700">Whiteboard</strong> side-by-side anytime for live Surface Pen modeling.
+            </p>
+          </div>
+          <button onclick="openModule(6)" class="shrink-0 bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold px-5 py-3.5 rounded-xl shadow-md transition flex items-center gap-2 text-base">
+            <span>Open 100-Question Bank</span>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+            </svg>
+          </button>
+        </div>
+
+        <!-- 6 Module Cards Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+          <!-- Module 1 -->
+          <div onclick="openModule(1)" class="group cursor-pointer bg-white hover:bg-blue-50/40 rounded-2xl p-6 shadow-sm hover:shadow-md border-2 border-slate-200 hover:border-blue-500 transition flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-4">
+                <span class="px-3 py-1 rounded-lg bg-blue-100 text-blue-800 font-extrabold text-xs uppercase">Module 1 &bull; Week 1</span>
+                <span class="text-xs font-bold text-slate-400 group-hover:text-blue-600">10 Examples + Dienes/Money &rarr;</span>
+              </div>
+              <h3 class="text-xl font-extrabold text-slate-900 group-hover:text-blue-700">Complements to 100, 1,000 &amp; £5.00</h3>
+              <p class="text-slate-600 text-sm mt-2 leading-relaxed">
+                The <strong>"90 / 900 / £4.00 Rule"</strong>: defeating the 1,100 trap (640 + 360 = 1,000), extra-hundred trap (1,000 − 350 = 650), extra-pound trap (£5.00 − £3.35 = £1.65), and 100 − 35 = 65.
+              </p>
+            </div>
+            <div class="mt-5 pt-4 border-t border-slate-100 flex flex-wrap gap-1.5">
+              <span class="text-xs font-semibold bg-slate-100 text-slate-700 px-2.5 py-1 rounded-md">640 + [ ] = 1,000</span>
+              <span class="text-xs font-semibold bg-slate-100 text-slate-700 px-2.5 py-1 rounded-md">£5.00 − £3.35</span>
+              <span class="text-xs font-semibold bg-slate-100 text-slate-700 px-2.5 py-1 rounded-md">Spot Mistake</span>
+            </div>
+          </div>
+
+          <!-- Module 2 -->
+          <div onclick="openModule(2)" class="group cursor-pointer bg-white hover:bg-emerald-50/40 rounded-2xl p-6 shadow-sm hover:shadow-md border-2 border-slate-200 hover:border-emerald-500 transition flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-4">
+                <span class="px-3 py-1 rounded-lg bg-emerald-100 text-emerald-800 font-extrabold text-xs uppercase">Module 2 &bull; Week 2</span>
+                <span class="text-xs font-bold text-slate-400 group-hover:text-emerald-600">10 Examples + Decomposer &rarr;</span>
+              </div>
+              <h3 class="text-xl font-extrabold text-slate-900 group-hover:text-emerald-700">Flexible Partitioning, Zero-Exchange &amp; Inverse</h3>
+              <p class="text-slate-600 text-sm mt-2 leading-relaxed">
+                Linking non-standard partitioning (482 = 300 + 180 + 2) to zero-exchange column subtraction (502 − 147 = 355) and Part-Whole bar models for working backwards ([ ? ] − 35 = 48 &rarr; 83).
+              </p>
+            </div>
+            <div class="mt-5 pt-4 border-t border-slate-100 flex flex-wrap gap-1.5">
+              <span class="text-xs font-semibold bg-slate-100 text-slate-700 px-2.5 py-1 rounded-md">502 − 147 = 355</span>
+              <span class="text-xs font-semibold bg-slate-100 text-slate-700 px-2.5 py-1 rounded-md">[ ] − 35 = 48</span>
+              <span class="text-xs font-semibold bg-slate-100 text-slate-700 px-2.5 py-1 rounded-md">482 Split</span>
+            </div>
+          </div>
+
+          <!-- Module 3 -->
+          <div onclick="openModule(3)" class="group cursor-pointer bg-white hover:bg-amber-50/40 rounded-2xl p-6 shadow-sm hover:shadow-md border-2 border-slate-200 hover:border-amber-500 transition flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-4">
+                <span class="px-3 py-1 rounded-lg bg-amber-100 text-amber-800 font-extrabold text-xs uppercase">Module 3 &bull; Week 3</span>
+                <span class="text-xs font-bold text-slate-400 group-hover:text-amber-600">10 Examples + Factor Rainbow &rarr;</span>
+              </div>
+              <h3 class="text-xl font-extrabold text-slate-900 group-hover:text-amber-700">Multiplicative Fluency, Fact Families &amp; Factors</h3>
+              <p class="text-slate-600 text-sm mt-2 leading-relaxed">
+                6&times;, 7&times;, 8&times; Fact Family Triangles (7 &times; 8 = 56 &harr; 56 &divide; 8 = 7, 54 &divide; 6 = 9), systematic Factor Rainbows for 12, 18, 20, 24, 36, and &times;10/&times;100 place-value shifting.
+              </p>
+            </div>
+            <div class="mt-5 pt-4 border-t border-slate-100 flex flex-wrap gap-1.5">
+              <span class="text-xs font-semibold bg-slate-100 text-slate-700 px-2.5 py-1 rounded-md">Factors of 18</span>
+              <span class="text-xs font-semibold bg-slate-100 text-slate-700 px-2.5 py-1 rounded-md">54 &divide; 6 = 9</span>
+              <span class="text-xs font-semibold bg-slate-100 text-slate-700 px-2.5 py-1 rounded-md">&times;10 Slider</span>
+            </div>
+          </div>
+
+          <!-- Module 4 -->
+          <div onclick="openModule(4)" class="group cursor-pointer bg-white hover:bg-purple-50/40 rounded-2xl p-6 shadow-sm hover:shadow-md border-2 border-slate-200 hover:border-purple-500 transition flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-4">
+                <span class="px-3 py-1 rounded-lg bg-purple-100 text-purple-800 font-extrabold text-xs uppercase">Module 4 &bull; Week 4</span>
+                <span class="text-xs font-bold text-slate-400 group-hover:text-purple-600">10 Examples + Fraction Lab &rarr;</span>
+              </div>
+              <h3 class="text-xl font-extrabold text-slate-900 group-hover:text-purple-700">Fractions of Amounts &amp; Equivalence</h3>
+              <p class="text-slate-600 text-sm mt-2 leading-relaxed">
+                "Divide by the denominator, multiply by the numerator" bar models proving 3/4 of 24 = 18 (not 12!), plus interactive Fraction Walls showing 1/2 = 5/10 and 3/4 = 6/8.
+              </p>
+            </div>
+            <div class="mt-5 pt-4 border-t border-slate-100 flex flex-wrap gap-1.5">
+              <span class="text-xs font-semibold bg-slate-100 text-slate-700 px-2.5 py-1 rounded-md">3/4 of 24 = 18</span>
+              <span class="text-xs font-semibold bg-slate-100 text-slate-700 px-2.5 py-1 rounded-md">1/2 = 5/10</span>
+              <span class="text-xs font-semibold bg-slate-100 text-slate-700 px-2.5 py-1 rounded-md">Fraction Wall</span>
+            </div>
+          </div>
+
+          <!-- Module 5 -->
+          <div onclick="openModule(5)" class="group cursor-pointer bg-white hover:bg-rose-50/40 rounded-2xl p-6 shadow-sm hover:shadow-md border-2 border-slate-200 hover:border-rose-500 transition flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-4">
+                <span class="px-3 py-1 rounded-lg bg-rose-100 text-rose-800 font-extrabold text-xs uppercase">Module 5 &bull; Week 5</span>
+                <span class="text-xs font-bold text-slate-400 group-hover:text-rose-600">10 Examples + Perimeter Tracer &rarr;</span>
+              </div>
+              <h3 class="text-xl font-extrabold text-slate-900 group-hover:text-rose-700">4-Side Perimeter, Time &amp; 2-Step Bar Models</h3>
+              <p class="text-slate-600 text-sm mt-2 leading-relaxed">
+                Walking all 4 sides of an 8 cm &times; 3 cm rectangle (22 cm, not 11 cm), bridging time across :00 (2:40 pm + 35m = 3:15 pm), "twice + altogether" (18 + 36 = 54), and 124 − 89 = 35.
+              </p>
+            </div>
+            <div class="mt-5 pt-4 border-t border-slate-100 flex flex-wrap gap-1.5">
+              <span class="text-xs font-semibold bg-slate-100 text-slate-700 px-2.5 py-1 rounded-md">4-Side 22 cm</span>
+              <span class="text-xs font-semibold bg-slate-100 text-slate-700 px-2.5 py-1 rounded-md">2:40 pm + 35m</span>
+              <span class="text-xs font-semibold bg-slate-100 text-slate-700 px-2.5 py-1 rounded-md">Twice + Total</span>
+            </div>
+          </div>
+
+          <!-- Module 6 -->
+          <div onclick="openModule(6)" class="group cursor-pointer bg-indigo-900 hover:bg-indigo-800 rounded-2xl p-6 shadow-md hover:shadow-lg border-2 border-indigo-700 transition flex flex-col justify-between text-white">
+            <div>
+              <div class="flex items-center justify-between mb-4">
+                <span class="px-3 py-1 rounded-lg bg-amber-400 text-slate-950 font-extrabold text-xs uppercase">Module 6 &bull; 100 Qs</span>
+                <span class="text-xs font-bold text-indigo-200 group-hover:text-white">Full Retrieval Bank &rarr;</span>
+              </div>
+              <h3 class="text-xl font-extrabold text-white">100-Question Group A Retrieval Bank</h3>
+              <p class="text-indigo-200 text-sm mt-2 leading-relaxed">
+                100 bespoke PTM-aligned questions (20 per pillar) with topic filters, Random Question picker, class score counter, and teacher-controlled Hint, Working &amp; Answer reveals.
+              </p>
+            </div>
+            <div class="mt-5 pt-4 border-t border-indigo-700/70 flex flex-wrap gap-1.5">
+              <span class="text-xs font-semibold bg-indigo-800 text-indigo-100 px-2.5 py-1 rounded-md">20 Qs per Pillar</span>
+              <span class="text-xs font-semibold bg-indigo-800 text-indigo-100 px-2.5 py-1 rounded-md">Auto-Reset Reveals</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 1: TEACHING MODULES 1 TO 5 -->
+      <section id="view-module" class="hidden space-y-5">
+        <!-- Module Sub-Header & Pill Switcher -->
+        <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200 flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <div class="flex items-center gap-2">
+              <span id="mod-badge" class="px-2.5 py-0.5 rounded-md bg-blue-100 text-blue-800 font-extrabold text-xs uppercase">Module 1 &bull; Week 1</span>
+              <span id="mod-counter" class="text-xs font-bold text-slate-500">Example 1 of 10</span>
+            </div>
+            <h2 id="mod-title" class="text-xl sm:text-2xl font-extrabold text-slate-900 mt-1">Complements to 100, 1,000 &amp; £5.00</h2>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-1.5">
+            <button onclick="openModule(1)" data-mod-tab="1" class="mod-tab-btn px-3 py-1.5 rounded-lg text-xs font-bold border transition">1. Complements</button>
+            <button onclick="openModule(2)" data-mod-tab="2" class="mod-tab-btn px-3 py-1.5 rounded-lg text-xs font-bold border transition">2. Zero-Exchange</button>
+            <button onclick="openModule(3)" data-mod-tab="3" class="mod-tab-btn px-3 py-1.5 rounded-lg text-xs font-bold border transition">3. Factors &amp; &divide;</button>
+            <button onclick="openModule(4)" data-mod-tab="4" class="mod-tab-btn px-3 py-1.5 rounded-lg text-xs font-bold border transition">4. Fractions</button>
+            <button onclick="openModule(5)" data-mod-tab="5" class="mod-tab-btn px-3 py-1.5 rounded-lg text-xs font-bold border transition">5. Perimeter &amp; 2-Step</button>
+            <button onclick="openModule(6)" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-indigo-600 text-white hover:bg-indigo-700 transition">100-Q Bank</button>
+          </div>
+        </div>
+
+        <!-- Worked Example Card (Strictly Hidden Hints, Steps & Answers Initially) -->
+        <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border-2 border-slate-200 space-y-6">
+          <div class="flex flex-wrap items-center justify-between gap-2 pb-4 border-b border-slate-100">
+            <span id="ex-skill-tag" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 text-slate-700 font-bold text-xs uppercase tracking-wide">
+              Core Skill
+            </span>
+            <div class="flex items-center gap-2">
+              <button onclick="prevExample()" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-800 font-bold text-sm transition">
+                &larr; Prev
+              </button>
+              <button onclick="nextExample()" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-800 font-bold text-sm transition">
+                Next Example &rarr;
+              </button>
+              <button onclick="generateDynamicExample()" class="px-3.5 py-2 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 font-bold text-sm transition flex items-center gap-1.5">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                </svg>
+                <span>Generate New Problem</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Large Classroom Display Prompt -->
+          <div class="py-2">
+            <p class="text-xs font-extrabold uppercase tracking-wider text-slate-400 mb-2">Class Discussion Prompt (Read &amp; Model Before Revealing)</p>
+            <div id="ex-question-text" class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 leading-snug">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+
+          <!-- STRICT TEACHER-CONTROLLED REVEAL BUTTONS (All Hidden by Default) -->
+          <div class="pt-4 border-t border-slate-100 flex flex-wrap items-center gap-3">
+            <button id="btn-ex-hint" onclick="toggleExampleReveal('hint')" class="px-4 py-3 rounded-xl font-bold text-sm sm:text-base border-2 border-amber-400 bg-amber-50 hover:bg-amber-100 text-amber-950 transition flex items-center gap-2 shadow-sm">
+              <span>&#128161; Show Visual Hint / Clue</span>
+            </button>
+
+            <button id="btn-ex-working" onclick="toggleExampleReveal('working')" class="px-4 py-3 rounded-xl font-bold text-sm sm:text-base border-2 border-blue-400 bg-blue-50 hover:bg-blue-100 text-blue-950 transition flex items-center gap-2 shadow-sm">
+              <span>&#129692; Show Step-by-Step Working</span>
+            </button>
+
+            <button id="btn-ex-answer" onclick="toggleExampleReveal('answer')" class="px-4 py-3 rounded-xl font-bold text-sm sm:text-base border-2 border-emerald-500 bg-emerald-600 hover:bg-emerald-700 text-white transition flex items-center gap-2 shadow-sm">
+              <span>&#9989; Reveal Final Answer</span>
+            </button>
+          </div>
+
+          <!-- HIDDEN-BY-DEFAULT REVEAL PANELS -->
+          <div class="space-y-4">
+            <!-- Panel 1: Visual Hint / Clue -->
+            <div id="ex-panel-hint" class="hidden animate-pop rounded-2xl bg-amber-50/90 border-2 border-amber-300 p-5 space-y-3">
+              <div class="text-amber-900 font-extrabold text-xs uppercase tracking-wider">
+                Teacher Visual Hint &amp; Stem Scaffold
+              </div>
+              <p id="ex-hint-text" class="text-slate-800 text-base sm:text-lg font-medium"></p>
+              <div id="ex-visual-box" class="pt-2"></div>
+            </div>
+
+            <!-- Panel 2: Step-by-Step Working -->
+            <div id="ex-panel-working" class="hidden animate-pop rounded-2xl bg-blue-50/90 border-2 border-blue-300 p-5 space-y-2">
+              <div class="text-blue-900 font-extrabold text-xs uppercase tracking-wider">
+                Step-by-Step Worked Strategy
+              </div>
+              <div id="ex-working-text" class="text-slate-800 text-base sm:text-lg font-semibold space-y-1.5"></div>
+            </div>
+
+            <!-- Panel 3: Final Answer -->
+            <div id="ex-panel-answer" class="hidden animate-pop rounded-2xl bg-emerald-50 border-2 border-emerald-400 p-5 flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <span class="text-emerald-800 font-extrabold text-xs uppercase tracking-wider block">Final Answer</span>
+                <span id="ex-answer-text" class="text-2xl sm:text-3xl font-black text-emerald-950"></span>
+              </div>
+              <span class="px-3 py-1 rounded-full bg-emerald-200 text-emerald-900 font-bold text-xs">Check &amp; Justify Aloud</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- COLLAPSIBLE / TEACHER-TOGGLED INTERACTIVE MANIPULATIVE PLAYGROUND -->
+        <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <span class="text-xs font-extrabold uppercase tracking-wider text-indigo-600 block">Interactive Teacher Demonstration Tool</span>
+              <h3 id="manip-header-title" class="text-base sm:text-lg font-extrabold text-slate-900">Base-10 Dienes &amp; Money Explorer</h3>
+            </div>
+            <button id="btn-toggle-manip" onclick="toggleManipulativeDrawer()" class="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs sm:text-sm transition">
+              Show Interactive Tool
+            </button>
+          </div>
+          <div id="manipulative-body" class="hidden mt-4 pt-4 border-t border-slate-100 animate-pop">
+            <!-- Populated dynamically per module -->
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 2: MODULE 6 - 100-QUESTION PRACTICE & RETRIEVAL BANK -->
+      <section id="view-bank" class="hidden space-y-5">
+        <!-- Header & Class Score Tracker -->
+        <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200 flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-0.5 rounded-md bg-indigo-100 text-indigo-800 font-extrabold text-xs uppercase">Module 6 &bull; 100-Question Bank</span>
+              <span id="bank-filtered-count" class="text-xs font-bold text-slate-500">Showing 100 Questions</span>
+            </div>
+            <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900 mt-1">Group A PTM Retrieval &amp; Reasoning Bank</h2>
+          </div>
+
+          <!-- Score Counter -->
+          <div class="flex items-center gap-3 bg-slate-50 px-4 py-2.5 rounded-xl border border-slate-200">
+            <div class="text-right">
+              <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">Group Score</span>
+              <span class="text-lg font-black text-slate-900"><span id="bank-score-correct">0</span> / <span id="bank-score-attempted">0</span></span>
+            </div>
+            <div class="flex items-center gap-1.5 border-l border-slate-200 pl-3">
+              <button onclick="markBankScore(true)" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-sm transition">+1 Mastered</button>
+              <button onclick="markBankScore(false)" class="px-3 py-1.5 rounded-lg bg-rose-100 hover:bg-rose-200 text-rose-800 font-bold text-xs transition">Revisit</button>
+              <button onclick="resetBankScore()" class="px-2.5 py-1.5 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-xs transition">Reset</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pillar Filter Tabs & Jumper -->
+        <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200 flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-3">
+          <div class="flex flex-wrap items-center gap-1.5">
+            <button onclick="setBankFilter('all')" data-bank-filter="all" class="bank-filter-btn px-3 py-2 rounded-xl text-xs font-bold border transition">All 100</button>
+            <button onclick="setBankFilter('Complements & Money')" data-bank-filter="Complements & Money" class="bank-filter-btn px-3 py-2 rounded-xl text-xs font-bold border transition">1. Complements &amp; £ (20)</button>
+            <button onclick="setBankFilter('Zero-Exchange & Inverse')" data-bank-filter="Zero-Exchange & Inverse" class="bank-filter-btn px-3 py-2 rounded-xl text-xs font-bold border transition">2. Zero-Exchange &amp; Inverse (20)</button>
+            <button onclick="setBankFilter('Factors & Division')" data-bank-filter="Factors & Division" class="bank-filter-btn px-3 py-2 rounded-xl text-xs font-bold border transition">3. Factors &amp; &divide; (20)</button>
+            <button onclick="setBankFilter('Fractions')" data-bank-filter="Fractions" class="bank-filter-btn px-3 py-2 rounded-xl text-xs font-bold border transition">4. Fractions (20)</button>
+            <button onclick="setBankFilter('Perimeter & 2-Step')" data-bank-filter="Perimeter & 2-Step" class="bank-filter-btn px-3 py-2 rounded-xl text-xs font-bold border transition">5. Perimeter &amp; 2-Step (20)</button>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <label for="bank-jump-select" class="text-xs font-bold text-slate-600 whitespace-nowrap">Jump:</label>
+            <select id="bank-jump-select" onchange="jumpToBankQuestion(this.value)" class="bg-slate-50 border border-slate-300 text-slate-900 text-sm font-bold rounded-xl px-3 py-2 focus:ring-2 focus:ring-indigo-500 outline-none">
+              <!-- Populated by JS -->
+            </select>
+            <button onclick="randomBankQuestion()" class="px-3.5 py-2 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-950 font-extrabold text-xs sm:text-sm border border-amber-300 transition whitespace-nowrap">
+              &#127922; Random Question
+            </button>
+          </div>
+        </div>
+
+        <!-- Question Card -->
+        <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border-2 border-slate-200 space-y-6">
+          <div class="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-slate-100">
+            <div class="flex items-center gap-2.5">
+              <span id="bank-q-number" class="px-3.5 py-1.5 rounded-xl bg-slate-900 text-white font-black text-sm sm:text-base">Question #1</span>
+              <span id="bank-q-topic" class="px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200 font-bold text-xs uppercase">Complements &amp; Money</span>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <button onclick="prevBankQuestion()" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-800 font-bold text-sm transition">
+                &larr; Previous
+              </button>
+              <button onclick="nextBankQuestion()" class="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-bold text-sm transition shadow-sm">
+                Next Question &rarr;
+              </button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center py-2">
+            <div class="lg:col-span-8">
+              <p class="text-xs font-extrabold uppercase tracking-wider text-slate-400 mb-2">Circle Key Words &amp; Solve on Mini-Whiteboards</p>
+              <div id="bank-q-text" class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 leading-snug">
+                <!-- Question Text -->
+              </div>
+            </div>
+
+            <!-- Optional Quick Check Box -->
+            <div class="lg:col-span-4 bg-slate-50 rounded-2xl p-4 sm:p-5 border-2 border-dashed border-slate-300 flex flex-col justify-center">
+              <label for="bank-pupil-input" class="text-xs font-extrabold uppercase tracking-wider text-slate-500 mb-2">Optional Group Check Box</label>
+              <div class="flex items-center gap-2">
+                <input id="bank-pupil-input" type="text" placeholder="Enter answer..." class="w-full bg-white border-2 border-slate-300 focus:border-indigo-500 rounded-xl px-3.5 py-2.5 text-xl font-extrabold text-slate-900 outline-none" onkeydown="if(event.key==='Enter') checkPupilInput()" />
+                <button onclick="checkPupilInput()" class="px-4 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-sm transition shrink-0">
+                  Check
+                </button>
+              </div>
+              <p id="bank-input-feedback" class="text-xs font-bold mt-2 min-h-[1.25rem]"></p>
+            </div>
+          </div>
+
+          <!-- STRICT TEACHER-CONTROLLED REVEAL BUTTONS (All Hidden by Default) -->
+          <div class="pt-4 border-t border-slate-100 flex flex-wrap items-center gap-3">
+            <button id="btn-bank-hint" onclick="toggleBankReveal('hint')" class="px-4 py-3 rounded-xl font-bold text-sm sm:text-base border-2 border-amber-400 bg-amber-50 hover:bg-amber-100 text-amber-950 transition flex items-center gap-2 shadow-sm">
+              <span>&#128161; Show Visual Hint / Clue</span>
+            </button>
+
+            <button id="btn-bank-working" onclick="toggleBankReveal('working')" class="px-4 py-3 rounded-xl font-bold text-sm sm:text-base border-2 border-blue-400 bg-blue-50 hover:bg-blue-100 text-blue-950 transition flex items-center gap-2 shadow-sm">
+              <span>&#129692; Show Step-by-Step Working</span>
+            </button>
+
+            <button id="btn-bank-answer" onclick="toggleBankReveal('answer')" class="px-4 py-3 rounded-xl font-bold text-sm sm:text-base border-2 border-emerald-500 bg-emerald-600 hover:bg-emerald-700 text-white transition flex items-center gap-2 shadow-sm">
+              <span>&#9989; Reveal Final Answer</span>
+            </button>
+          </div>
+
+          <!-- HIDDEN-BY-DEFAULT REVEAL BOXES -->
+          <div class="space-y-3">
+            <div id="bank-panel-hint" class="hidden animate-pop rounded-2xl bg-amber-50 border-2 border-amber-300 p-4 sm:p-5">
+              <span class="text-amber-900 font-extrabold text-xs uppercase tracking-wider block mb-1">Visual Hint / Clue</span>
+              <p id="bank-hint-text" class="text-slate-800 text-base sm:text-lg font-semibold"></p>
+            </div>
+
+            <div id="bank-panel-working" class="hidden animate-pop rounded-2xl bg-blue-50 border-2 border-blue-300 p-4 sm:p-5">
+              <span class="text-blue-900 font-extrabold text-xs uppercase tracking-wider block mb-1">Step-by-Step Working</span>
+              <p id="bank-working-text" class="text-slate-800 text-base sm:text-lg font-semibold"></p>
+            </div>
+
+            <div id="bank-panel-answer" class="hidden animate-pop rounded-2xl bg-emerald-50 border-2 border-emerald-400 p-4 sm:p-5 flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <span class="text-emerald-800 font-extrabold text-xs uppercase tracking-wider block">Final Answer</span>
+                <span id="bank-answer-text" class="text-2xl sm:text-3xl font-black text-emerald-950"></span>
+              </div>
+              <button onclick="nextBankQuestion()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-sm transition">
+                Next Question &rarr;
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- RIGHT / FULLSCREEN INTERACTIVE SCRATCHPAD WHITEBOARD -->
+    <aside id="whiteboard-pane" class="hidden lg:w-[46%] xl:w-[48%] bg-white border-t-4 lg:border-t-0 lg:border-l-4 border-slate-300 flex flex-col shadow-2xl z-30">
+      <!-- Whiteboard Toolbar -->
+      <div class="bg-slate-800 text-white p-3 flex flex-wrap items-center justify-between gap-2 border-b border-slate-700">
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="font-extrabold text-xs sm:text-sm tracking-wide text-emerald-400">WHITEBOARD</span>
+          <!-- 5 Pen Colors -->
+          <div class="flex items-center gap-1.5 bg-slate-900 px-2 py-1 rounded-xl border border-slate-700">
+            <button onclick="setWbColor('#0f172a')" data-wb-color="#0f172a" class="wb-color-btn w-6 h-6 rounded-full bg-slate-900 border-2 border-white ring-2 ring-emerald-400" title="Black Pen"></button>
+            <button onclick="setWbColor('#2563eb')" data-wb-color="#2563eb" class="wb-color-btn w-6 h-6 rounded-full bg-blue-600 border-2 border-white/60" title="Blue Pen"></button>
+            <button onclick="setWbColor('#dc2626')" data-wb-color="#dc2626" class="wb-color-btn w-6 h-6 rounded-full bg-red-600 border-2 border-white/60" title="Red Pen"></button>
+            <button onclick="setWbColor('#059669')" data-wb-color="#059669" class="wb-color-btn w-6 h-6 rounded-full bg-emerald-600 border-2 border-white/60" title="Green Pen"></button>
+            <button onclick="setWbColor('#ea580c')" data-wb-color="#ea580c" class="wb-color-btn w-6 h-6 rounded-full bg-orange-600 border-2 border-white/60" title="Orange Pen"></button>
+          </div>
+
+          <!-- Pen Thickness & Eraser -->
+          <div class="flex items-center gap-1 bg-slate-900 px-2 py-1 rounded-xl border border-slate-700">
+            <button onclick="setWbSize(3)" data-wb-size="3" class="wb-size-btn px-2 py-0.5 rounded text-xs font-bold bg-slate-700 text-white">Thin</button>
+            <button onclick="setWbSize(6)" data-wb-size="6" class="wb-size-btn px-2 py-0.5 rounded text-xs font-bold text-slate-300 hover:text-white">Med</button>
+            <button onclick="setWbSize(11)" data-wb-size="11" class="wb-size-btn px-2 py-0.5 rounded text-xs font-bold text-slate-300 hover:text-white">Bold</button>
+            <button onclick="setWbTool('eraser')" id="btn-wb-eraser" class="px-2 py-0.5 rounded text-xs font-bold text-amber-300 hover:bg-slate-700 transition">Eraser</button>
+          </div>
+        </div>
+
+        <!-- Background Templates, Undo, Expand & Clear -->
+        <div class="flex flex-wrap items-center gap-1.5">
+          <select id="wb-bg-select" onchange="setWbBackground(this.value)" class="bg-slate-900 text-white text-xs font-bold px-2.5 py-1.5 rounded-lg border border-slate-600 outline-none">
+            <option value="blank">Blank White</option>
+            <option value="grid">Squared Maths Grid</option>
+            <option value="numberline">Empty Number Line</option>
+            <option value="hto">H | T | O Columns</option>
+          </select>
+
+          <button onclick="undoWbStroke()" class="px-2.5 py-1.5 rounded-lg bg-slate-700 hover:bg-slate-600 text-xs font-bold text-white transition" title="Undo Last Stroke">
+            Undo
+          </button>
+          <button onclick="toggleWbFullscreen()" id="btn-wb-expand" class="px-2.5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-xs font-bold text-white transition" title="Expand or Split Screen">
+            Fullscreen
+          </button>
+          <button onclick="clearWhiteboard()" class="px-2.5 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-xs font-bold text-white transition">
+            Clear
+          </button>
+          <button onclick="toggleWhiteboard()" class="px-2.5 py-1.5 rounded-lg bg-slate-700 hover:bg-slate-600 text-xs font-bold text-slate-200 transition">
+            &times;
+          </button>
+        </div>
+      </div>
+
+      <!-- Canvas Area -->
+      <div id="wb-canvas-wrapper" class="relative flex-1 min-h-[400px] lg:min-h-[calc(100vh-115px)] bg-white overflow-hidden">
+        <canvas id="wb-canvas" class="block w-full h-full"></canvas>
+      </div>
+    </aside>
+  </div>
+
+  <script>
+    // =========================================================================
+    // 1. TEACHING EXAMPLES DATA (MODULES 1–5, 10 WORKED EXAMPLES EACH)
+    // =========================================================================
+    const MODULES_DATA = {
+      1: {
+        badge: "Module 1 • Week 1",
+        title: "Complements to 100, 1,000 & £5.00 (The 90 / 900 / £4.00 Rule)",
+        manipTitle: "Base-10 Dienes & £5.00 Complement Explorer",
+        examples: [
+          {
+            skill: "Complements to 1,000 (Defeating the 1,100 Trap)",
+            question: "Find the missing number to make 1,000:   640 + [ ? ] = 1,000",
+            hint: "Stem Sentence: 'When the tens make 100 (40 + 60 = 100), the hundreds only make 900 (600 + 300 = 900)!' Avoid 460 because 640 + 460 = 1,100.",
+            visual: "jumps:640,+60->700,+300->1,000",
+            working: [
+              "1. Jump from 640 to the next friendly hundred (700): + 60",
+              "2. Jump from 700 to 1,000: + 300",
+              "3. Combine jumps: 300 + 60 = 360 (Check: 640 + 360 = 1,000)."
+            ],
+            answer: "360"
+          },
+          {
+            skill: "Subtracting from 1,000 (Defeating the Extra-Hundred Trap)",
+            question: "Work out:   1,000 − 350",
+            hint: "Jump backwards from 1,000: subtract 300 first to land on 700, then subtract 50 more! Do NOT write 750.",
+            visual: "jumps:1,000,-300->700,-50->650",
+            working: [
+              "1. Start at 1,000 and subtract 300: 1,000 − 300 = 700",
+              "2. Subtract the remaining 50: 700 − 50 = 650",
+              "3. Inverse check: 650 + 350 = 1,000."
+            ],
+            answer: "650"
+          },
+          {
+            skill: "Change from £5.00 (Defeating the Extra-Pound Trap)",
+            question: "Julia buys a book for £3.35. She pays with a £5.00 note. How much change should she get?",
+            hint: "Use the £4.00 Rule! Count up from £3.35 to £4.00 (+65p), then jump from £4.00 to £5.00 (+£1.00). Watch out for the £2.65 trap!",
+            visual: "jumps:£3.35,+65p->£4.00,+£1.00->£5.00",
+            working: [
+              "1. Count up pence to the next whole pound (£4.00): 35p + 65p = £1.00",
+              "2. Count up pounds from £4.00 to £5.00: + £1.00",
+              "3. Total change = £1.00 + 65p = £1.65 (Check: £3.35 + £1.65 = £5.00)."
+            ],
+            answer: "£1.65"
+          },
+          {
+            skill: "Spot the Mistake (Extra-Ten Trap)",
+            question: "Spot the Mistake: Paul was asked to work out 100 − 35. He wrote 75. Explain why 75 is wrong and write the correct answer.",
+            hint: "Check by adding back: 75 + 35 = 110! He subtracted 30 from 100 to get 70, then added 5 instead of subtracting 5.",
+            visual: "jumps:100,-30->70,-5->65",
+            working: [
+              "1. Why 75 is wrong: 75 + 35 = 110 (he forgot to drop a ten when subtracting the 5 ones).",
+              "2. Correct working: 100 − 30 = 70, then 70 − 5 = 65."
+            ],
+            answer: "65 (75 + 35 = 110; he didn't exchange a ten)"
+          },
+          {
+            skill: "Complements to 1,000",
+            question: "Find the missing number to make 1,000:   720 + [ ? ] = 1,000",
+            hint: "20 + 80 = 100, so the hundreds digits only need to add to 900 (700 + 200)!",
+            visual: "jumps:720,+80->800,+200->1,000",
+            working: [
+              "1. Jump from 720 to 800: + 80",
+              "2. Jump from 800 to 1,000: + 200",
+              "3. Total = 280."
+            ],
+            answer: "280"
+          },
+          {
+            skill: "Subtracting Down from 1,000",
+            question: "Work out:   1,000 − 430",
+            hint: "1,000 take away 400 is 600. Now take away 30 more!",
+            visual: "jumps:1,000,-400->600,-30->570",
+            working: [
+              "1. 1,000 − 400 = 600",
+              "2. 600 − 30 = 570",
+              "3. Check: 570 + 430 = 1,000."
+            ],
+            answer: "570"
+          },
+          {
+            skill: "Change from £5.00",
+            question: "Oisin buys a game for £2.45 and pays with a £5.00 note. How much change does he get?",
+            hint: "Jump from £2.45 to £3.00 (+55p), then from £3.00 to £5.00 (+£2.00).",
+            visual: "jumps:£2.45,+55p->£3.00,+£2.00->£5.00",
+            working: [
+              "1. £2.45 + 55p = £3.00",
+              "2. £3.00 + £2.00 = £5.00",
+              "3. Total change = £2.55."
+            ],
+            answer: "£2.55"
+          },
+          {
+            skill: "Complements to 100",
+            question: "Work out:   100 − 45",
+            hint: "100 − 40 = 60, then take away 5 more (avoid 65!).",
+            visual: "jumps:100,-40->60,-5->55",
+            working: [
+              "1. 100 − 40 = 60",
+              "2. 60 − 5 = 55"
+            ],
+            answer: "55"
+          },
+          {
+            skill: "Inverse Bar Model to 1,000",
+            question: "Find the missing number:   [ ? ] + 360 = 1,000",
+            hint: "Use your 640 + 360 = 1,000 fact family! 360 + 40 = 400, + 600 = 1,000.",
+            visual: "cherry:1,000,?,360",
+            working: [
+              "1. 1,000 − 300 = 700",
+              "2. 700 − 60 = 640"
+            ],
+            answer: "640"
+          },
+          {
+            skill: "Change from £10.00 Stretch",
+            question: "Nevaeh spends £6.35 and pays with a £10.00 note. How much change should she get?",
+            hint: "Jump from £6.35 to £7.00 (+65p), then from £7.00 to £10.00 (+£3.00).",
+            visual: "jumps:£6.35,+65p->£7.00,+£3.00->£10.00",
+            working: [
+              "1. £6.35 + 65p = £7.00",
+              "2. £7.00 + £3.00 = £10.00",
+              "3. Change = £3.65."
+            ],
+            answer: "£3.65"
+          }
+        ]
+      },
+      2: {
+        badge: "Module 2 • Week 2",
+        title: "Flexible Partitioning, Zero-Exchange Subtraction & Working Backwards",
+        manipTitle: "Interactive Zero-Exchange & Inverse Bar Visualizer",
+        examples: [
+          {
+            skill: "Flexible Non-Standard Partitioning",
+            question: "Complete this non-standard partitioning:   482 = 300 + [ ? ] + 2",
+            hint: "482 is normally 400 + 80 + 2. One hundred (100) has been moved from 400 over to join the 80!",
+            visual: "cherry:480,300,?",
+            working: [
+              "1. Standard split: 482 = 400 + 80 + 2",
+              "2. Exchange 100 from 400 (leaving 300) into the tens: 100 + 80 = 180",
+              "3. Check: 300 + 180 + 2 = 482."
+            ],
+            answer: "180"
+          },
+          {
+            skill: "Zero-Decomposition Column Subtraction",
+            question: "Work out:   502 − 147",
+            hint: "Never flip 7 − 2 = 5! Because there are 0 tens in 502, exchange 1 hundred from 500 to make 10 tens, then exchange 1 ten to make 12 ones (400 + 90 + 12).",
+            visual: "zeroex:502 -> 400 + 90 + 12",
+            working: [
+              "1. Decompose 502 across the zero: 500 + 0 + 2 becomes 400 + 90 + 12.",
+              "2. Ones: 12 − 7 = 5",
+              "3. Tens: 90 − 40 = 50 (5 tens)",
+              "4. Hundreds: 400 − 100 = 300 (3 hundreds) -> 355 (Check: 355 + 147 = 502)."
+            ],
+            answer: "355"
+          },
+          {
+            skill: "Working Backwards (Missing Starting Whole)",
+            question: "Find the missing starting number:   [ ? ] − 35 = 48",
+            hint: "The starting number at the front of subtraction is the BIGGEST number (the whole)! Do NOT subtract 48 − 35 = 13. Use the inverse: ADD 48 + 35.",
+            visual: "cherry:?,48,35",
+            working: [
+              "1. Draw a Part-Whole Bar Model: the two parts are 48 and 35.",
+              "2. Add the parts together: 48 + 35 = 83",
+              "3. Check by plugging it back in: 83 − 35 = 48."
+            ],
+            answer: "83"
+          },
+          {
+            skill: "Zero-Decomposition Column Subtraction",
+            question: "Work out:   604 − 238",
+            hint: "Decompose 604 into 500 + 90 + 14 so you can subtract 8 ones and 3 tens cleanly.",
+            visual: "zeroex:604 -> 500 + 90 + 14",
+            working: [
+              "1. 604 becomes 5 hundreds, 9 tens, and 14 ones.",
+              "2. Ones: 14 − 8 = 6 | Tens: 9 − 3 = 6 | Hundreds: 5 − 2 = 3",
+              "3. Answer = 366 (Check: 366 + 238 = 604)."
+            ],
+            answer: "366"
+          },
+          {
+            skill: "Working Backwards (Missing Starting Whole)",
+            question: "Find the missing starting number:   [ ? ] − 27 = 56",
+            hint: "The missing number is the whole! Add 56 + 27.",
+            visual: "cherry:?,56,27",
+            working: [
+              "1. 56 + 20 = 76",
+              "2. 76 + 7 = 83",
+              "3. Check: 83 − 27 = 56."
+            ],
+            answer: "83"
+          },
+          {
+            skill: "4-Digit Place Value Identification",
+            question: "What is the value of the underlined digit in 4,829? (Underlined digit: 8)",
+            hint: "Read the columns from right to left: Ones (9), Tens (2), Hundreds (8), Thousands (4).",
+            visual: "thhto:4,8,2,9",
+            working: [
+              "1. 4 is in the Thousands column (4,000).",
+              "2. 8 is in the Hundreds column = 800."
+            ],
+            answer: "800 (or 8 hundreds)"
+          },
+          {
+            skill: "Ordering 4-Digit Numbers (Smallest to Largest)",
+            question: "Put these numbers in order from SMALLEST to LARGEST:   2,405  |  2,045  |  2,540  |  2,450",
+            hint: "Check the direction: SMALLEST first! All four start with 2,000, so compare the HUNDREDS digit next (0 hundreds, 4 hundreds, 5 hundreds).",
+            visual: "jumps:2,045,2,405,2,450,2,540",
+            working: [
+              "1. 2,045 is smallest (0 hundreds).",
+              "2. Compare 2,405 (0 tens) vs 2,450 (5 tens).",
+              "3. 2,540 is largest (5 hundreds)."
+            ],
+            answer: "2,045 ; 2,405 ; 2,450 ; 2,540"
+          },
+          {
+            skill: "Rounding to the Nearest 100",
+            question: "Round 648 to the nearest 100.",
+            hint: "648 sits between 600 and 700. Look at the TENS digit (4): 4 tens (48) is less than halfway (50), so round down!",
+            visual: "jumps:600,648 (round down),700",
+            working: [
+              "1. Hundreds either side: 600 and 700.",
+              "2. Tens digit is 4 (less than 5), so round down to 600."
+            ],
+            answer: "600"
+          },
+          {
+            skill: "Flexible Non-Standard Partitioning",
+            question: "Complete:   635 = 500 + [ ? ] + 5",
+            hint: "100 from 600 has moved into the tens column with 30!",
+            visual: "cherry:630,500,?",
+            working: [
+              "1. 635 = 600 + 30 + 5 = 500 + 130 + 5."
+            ],
+            answer: "130"
+          },
+          {
+            skill: "Zero-Decomposition Across Two Zeros",
+            question: "Work out:   700 − 246",
+            hint: "Decompose 700 into 600 + 90 + 10 (or count up from 246 to 300, then to 700!).",
+            visual: "zeroex:700 -> 600 + 90 + 10",
+            working: [
+              "1. Ones: 10 − 6 = 4 | Tens: 9 − 4 = 5 | Hundreds: 6 − 2 = 4",
+              "2. Answer = 454 (Check: 454 + 246 = 700)."
+            ],
+            answer: "454"
+          }
+        ]
+      },
+      3: {
+        badge: "Module 3 • Week 3",
+        title: "Multiplicative Fluency (6×, 7×, 8×), Fact Families & Factor Rainbows",
+        manipTitle: "Interactive Factor-Pair Rainbow & ×10 Slider",
+        examples: [
+          {
+            skill: "Systematic Factor Pairs (Eliminating Non-Factors)",
+            question: "Circle ALL the numbers below that are FACTORS of 18:   1 | 2 | 3 | 4 | 6 | 9 | 12 | 18",
+            hint: "Test factor pairs in order starting from 1×: 1×18, 2×9, 3×6. Does 4 divide evenly into 18? (4×4=16, 4×5=20 — NO!). Does 12 divide into 18? (NO!).",
+            visual: "factors:18",
+            working: [
+              "1. 1 × 18 = 18 (so 1 and 18 are factors)",
+              "2. 2 × 9 = 18 (so 2 and 9 are factors)",
+              "3. 3 × 6 = 18 (so 3 and 6 are factors)",
+              "4. 4 and 12 leave a remainder, so they are NOT factors."
+            ],
+            answer: "1, 2, 3, 6, 9, 18"
+          },
+          {
+            skill: "Core Division Recall (6× Table)",
+            question: "Work out:   54 ÷ 6",
+            hint: "Use 5 × 6 = 30 or 10 × 6 = 60! 60 is just one group of 6 more than 54, so 54 is 9 groups of 6.",
+            visual: "family:54,6,9",
+            working: [
+              "1. 10 × 6 = 60",
+              "2. Subtract one group of 6: 60 − 6 = 54 -> 9 × 6 = 54",
+              "3. Therefore, 54 ÷ 6 = 9."
+            ],
+            answer: "9"
+          },
+          {
+            skill: "Multiplicative Inverse Fact Family",
+            question: "Write ONE division fact that belongs in the same fact family as 7 × 8 = 56.",
+            hint: "Read carefully: write a DIVISION (÷) fact, not another multiplication! Start with the biggest number (56) at the front.",
+            visual: "family:56,7,8",
+            working: [
+              "1. Place 56 at the top of the Fact Family Triangle, with 7 and 8 at the base.",
+              "2. Division facts: 56 ÷ 7 = 8 OR 56 ÷ 8 = 7."
+            ],
+            answer: "56 ÷ 7 = 8 (or 56 ÷ 8 = 7)"
+          },
+          {
+            skill: "Multiplying by 10 (Place Value Shift)",
+            question: "Work out:   46 × 10",
+            hint: "Every digit shifts ONE column to the LEFT: 4 tens become 4 hundreds (400), 6 ones become 6 tens (60).",
+            visual: "thhto:0,4,6,0",
+            working: [
+              "1. 40 × 10 = 400",
+              "2. 6 × 10 = 60",
+              "3. 46 × 10 = 460."
+            ],
+            answer: "460"
+          },
+          {
+            skill: "Systematic Factor Pairs of 24",
+            question: "Find ALL 8 factors of 24 using factor pairs.",
+            hint: "Test 1×, 2×, 3×, 4× in order until the pairs meet in the middle!",
+            visual: "factors:24",
+            working: [
+              "1. 1 × 24 = 24",
+              "2. 2 × 12 = 24",
+              "3. 3 × 8 = 24",
+              "4. 4 × 6 = 24 -> Factors: 1, 2, 3, 4, 6, 8, 12, 24."
+            ],
+            answer: "1, 2, 3, 4, 6, 8, 12, 24"
+          },
+          {
+            skill: "Core Division Recall (8× Table)",
+            question: "Work out:   56 ÷ 8",
+            hint: "Use your 7 × 8 = 56 fact family!",
+            visual: "family:56,7,8",
+            working: [
+              "1. 7 × 8 = 56, so 56 ÷ 8 = 7."
+            ],
+            answer: "7"
+          },
+          {
+            skill: "Factors vs. Multiples Distinction",
+            question: "Name ONE number that is BOTH a factor of 18 AND a multiple of 3.",
+            hint: "Look at the factors of 18 (1, 2, 3, 6, 9, 18) and pick one that is in the 3 times table!",
+            visual: "factors:18",
+            working: [
+              "1. Factors of 18: 1, 2, 3, 6, 9, 18.",
+              "2. Multiples of 3 in that list: 3, 6, 9, or 18."
+            ],
+            answer: "6 (or 3, 9, 18)"
+          },
+          {
+            skill: "Spot the Mistake (Factors of 18)",
+            question: "Spot the Mistake: Ali says 4 and 12 are factors of 18 because 12 + 6 = 18. Explain why Ali is wrong.",
+            hint: "Factors are about MULTIPLYING and DIVIDING evenly, not adding!",
+            visual: "factors:18",
+            working: [
+              "1. 18 ÷ 4 = 4 remainder 2 (4 does not divide evenly into 18).",
+              "2. 18 ÷ 12 = 1 remainder 6 (12 + 6 = 18 uses addition, not multiplication)."
+            ],
+            answer: "Neither 4 nor 12 divides evenly into 18 without a remainder"
+          },
+          {
+            skill: "Multiplying by 100",
+            question: "Work out:   34 × 100",
+            hint: "Shift every digit TWO places to the left (34 hundreds = 3,400).",
+            visual: "thhto:3,4,0,0",
+            working: [
+              "1. 30 × 100 = 3,000",
+              "2. 4 × 100 = 400 -> 3,400."
+            ],
+            answer: "3,400"
+          },
+          {
+            skill: "Missing Factor Puzzle",
+            question: "Find the missing factor:   6 × [ ? ] = 48",
+            hint: "Count in 6s or use 5 × 6 = 30 plus 3 × 6 = 18.",
+            visual: "family:48,6,8",
+            working: [
+              "1. 48 ÷ 6 = 8 (since 6 × 8 = 48)."
+            ],
+            answer: "8"
+          }
+        ]
+      },
+      4: {
+        badge: "Module 4 • Week 4",
+        title: "Unit & Non-Unit Fractions of Amounts & Equivalence",
+        manipTitle: "Interactive Fraction Sharing Bar & Equivalence Wall",
+        examples: [
+          {
+            skill: "Non-Unit Fraction of an Amount (3/4 of 24)",
+            question: "Find 3/4 of 24.",
+            hint: "Stem Sentence: 'Divide by the denominator (4) to find ONE quarter, then multiply by the numerator (3)!' Do NOT halve 24 to get 12.",
+            visual: "fracbar:24,4,3",
+            working: [
+              "1. Step 1 (Find 1/4): Divide 24 into 4 equal parts -> 24 ÷ 4 = 6",
+              "2. Step 2 (Find 3/4): Multiply 1 part by 3 -> 6 × 3 = 18",
+              "3. Check: 3/4 of 24 (18) is larger than 1/2 of 24 (12)."
+            ],
+            answer: "18"
+          },
+          {
+            skill: "Equivalent Fractions (1/2 = ? / 10)",
+            question: "Find the missing number to make these fractions EQUIVALENT:   1/2 = [ ? ] / 10",
+            hint: "1/2 means the top number (numerator) is ALWAYS half of the bottom number (denominator)! What is half of 10?",
+            visual: "equiv:1,2,5,10",
+            working: [
+              "1. Look at the denominators: 2 × 5 = 10",
+              "2. Multiply the numerator by the same number: 1 × 5 = 5",
+              "3. 1/2 = 5/10 (5 is half of 10)."
+            ],
+            answer: "5"
+          },
+          {
+            skill: "Non-Unit Fraction of an Amount (2/3 of 18)",
+            question: "Find 2/3 of 18.",
+            hint: "Step 1: Divide 18 by 3 to find 1/3. Step 2: Multiply by 2!",
+            visual: "fracbar:18,3,2",
+            working: [
+              "1. 1/3 of 18 = 18 ÷ 3 = 6",
+              "2. 2/3 of 18 = 6 × 2 = 12."
+            ],
+            answer: "12"
+          },
+          {
+            skill: "Non-Unit Fraction of an Amount (3/4 of 20)",
+            question: "Find 3/4 of 20.",
+            hint: "Divide 20 into 4 equal parts first (20 ÷ 4 = 5), then take 3 of those parts!",
+            visual: "fracbar:20,4,3",
+            working: [
+              "1. 1/4 of 20 = 20 ÷ 4 = 5",
+              "2. 3/4 of 20 = 5 × 3 = 15."
+            ],
+            answer: "15"
+          },
+          {
+            skill: "Equivalent Fractions (3/4 = ? / 8)",
+            question: "Find the missing numerator:   3/4 = [ ? ] / 8",
+            hint: "4 × 2 = 8 on the bottom, so multiply the top (3) by 2 as well!",
+            visual: "equiv:3,4,6,8",
+            working: [
+              "1. Denominator: 4 × 2 = 8",
+              "2. Numerator: 3 × 2 = 6 -> 6/8."
+            ],
+            answer: "6"
+          },
+          {
+            skill: "Working Backwards from a Unit Fraction",
+            question: "If 1/4 of a ribbon is 6 cm long, how long is the WHOLE ribbon?",
+            hint: "There are 4 quarters in a whole! Multiply 6 cm × 4.",
+            visual: "fracbar:24,4,1",
+            working: [
+              "1. 1 part = 6 cm",
+              "2. Whole (4 parts) = 6 × 4 = 24 cm."
+            ],
+            answer: "24 cm"
+          },
+          {
+            skill: "Comparing Fractions of Amounts",
+            question: "Which is larger:   3/4 of 20   OR   1/2 of 24?",
+            hint: "Work out both separately first! 3/4 of 20 vs half of 24.",
+            visual: "fracbar:20,4,3",
+            working: [
+              "1. 3/4 of 20: 20 ÷ 4 = 5, 5 × 3 = 15.",
+              "2. 1/2 of 24: 24 ÷ 2 = 12.",
+              "3. 15 is larger than 12, so 3/4 of 20 is larger."
+            ],
+            answer: "3/4 of 20 (15 > 12)"
+          },
+          {
+            skill: "Non-Unit Fraction Word Problem",
+            question: "A pizza has 24 slices. 3/4 of the slices are eaten. How many slices are REMAINING?",
+            hint: "Two ways: find 3/4 eaten (18) and subtract from 24, OR notice that 1/4 of the pizza is remaining!",
+            visual: "fracbar:24,4,3",
+            working: [
+              "1. 1/4 of 24 = 6 slices.",
+              "2. 3/4 eaten = 18 slices; 1/4 remaining = 6 slices."
+            ],
+            answer: "6 slices"
+          },
+          {
+            skill: "Equivalent Fractions (1/2 = ? / 6)",
+            question: "Find the missing number:   1/2 = [ ? ] / 6",
+            hint: "What is half of 6?",
+            visual: "equiv:1,2,3,6",
+            working: [
+              "1. 2 × 3 = 6, so 1 × 3 = 3 -> 3/6."
+            ],
+            answer: "3"
+          },
+          {
+            skill: "Fifths of an Amount (3/5 of 20)",
+            question: "Find 3/5 of 20.",
+            hint: "Divide 20 by 5 (= 4), then multiply by 3!",
+            visual: "fracbar:20,5,3",
+            working: [
+              "1. 1/5 of 20 = 20 ÷ 5 = 4",
+              "2. 3/5 of 20 = 4 × 3 = 12."
+            ],
+            answer: "12"
+          }
+        ]
+      },
+      5: {
+        badge: "Module 5 • Week 5",
+        title: "4-Side Perimeter, Time Bridging & 2-Step Comparison Bar Models",
+        manipTitle: "Interactive All-4-Side Perimeter & Hour-Bridge Lab",
+        examples: [
+          {
+            skill: "Rectangle Perimeter (All 4 Sides)",
+            question: "A rectangle has a length of 8 cm and a width of 3 cm. What is its PERIMETER (total distance around the outside)?",
+            hint: "Stem Sentence: 'Perimeter walks ALL FOUR sides of the rectangle!' Label all 4 sides (8 cm, 3 cm, 8 cm, 3 cm) so you don't stop at 11 cm.",
+            visual: "perim:8,3",
+            working: [
+              "1. Label opposite sides: Top = 8 cm, Bottom = 8 cm, Left = 3 cm, Right = 3 cm.",
+              "2. Add all 4 sides: 8 + 3 + 8 + 3 = 22 cm (or double 11 = 22 cm)."
+            ],
+            answer: "22 cm"
+          },
+          {
+            skill: "Two-Step Comparison ('Twice + Altogether')",
+            question: "Oisin has 18 marbles. Nevaeh has TWICE as many marbles as Oisin. How many marbles do they have ALTOGETHER?",
+            hint: "Underline BOTH steps! Step 1: Find Nevaeh's marbles ('twice' = 18 × 2 = 36). Step 2: Add Oisin + Nevaeh ('altogether' = 18 + 36).",
+            visual: "twicebar:18",
+            working: [
+              "1. Oisin = 18 marbles (1 bar).",
+              "2. Nevaeh = twice 18 = 18 × 2 = 36 marbles (2 bars).",
+              "3. Altogether = 18 + 36 = 54 marbles (3 bars of 18)."
+            ],
+            answer: "54 marbles"
+          },
+          {
+            skill: "Bridging Time Past the Hour (:00 Landmark)",
+            question: "A film starts at 2:40 pm and lasts for 35 minutes. What time does it finish?",
+            hint: "60 minutes = 1 hour! Split 35 minutes into 20 minutes (to reach 3:00 pm) + 15 minutes.",
+            visual: "jumps:2:40 pm,+20 mins->3:00 pm,+15 mins->3:15 pm",
+            working: [
+              "1. Jump from 2:40 pm to 3:00 pm: + 20 minutes",
+              "2. Remaining minutes: 35 − 20 = 15 minutes",
+              "3. 3:00 pm + 15 minutes = 3:15 pm."
+            ],
+            answer: "3:15 pm"
+          },
+          {
+            skill: "Difference Bridging Across 100",
+            question: "What is the DIFFERENCE between 124 and 89?",
+            hint: "Count up from 89 to 100 (+11), then from 100 to 124 (+24). Remember to add BOTH jumps together!",
+            visual: "jumps:89,+11->100,+24->124",
+            working: [
+              "1. Jump from 89 to 100: + 11",
+              "2. Jump from 100 to 124: + 24",
+              "3. Total difference = 11 + 24 = 35."
+            ],
+            answer: "35"
+          },
+          {
+            skill: "Rectangle Perimeter (7 cm × 4 cm)",
+            question: "A rectangle has a length of 7 cm and a width of 4 cm. What is its PERIMETER?",
+            hint: "Walk all 4 sides: 7 + 4 + 7 + 4.",
+            visual: "perim:7,4",
+            working: [
+              "1. 7 + 4 = 11 cm (two sides)",
+              "2. Double 11 cm = 22 cm (all four sides)."
+            ],
+            answer: "22 cm"
+          },
+          {
+            skill: "Time Interval Bridging Across the Hour",
+            question: "A train leaves Lurgan at 10:45 am and arrives in Belfast at 11:20 am. How many minutes does the journey take?",
+            hint: "Jump from 10:45 am to 11:00 am (+15 mins), then from 11:00 am to 11:20 am (+20 mins).",
+            visual: "jumps:10:45 am,+15 mins->11:00 am,+20 mins->11:20 am",
+            working: [
+              "1. 10:45 am to 11:00 am = 15 minutes",
+              "2. 11:00 am to 11:20 am = 20 minutes",
+              "3. 15 + 20 = 35 minutes."
+            ],
+            answer: "35 minutes"
+          },
+          {
+            skill: "Two-Step Comparison ('Twice + Altogether')",
+            question: "Paul scores 24 points. Julia scores TWICE as many points as Paul. How many points do they score ALTOGETHER?",
+            hint: "Step 1: Julia = 24 × 2 = 48. Step 2: Altogether = 24 + 48.",
+            visual: "twicebar:24",
+            working: [
+              "1. Julia = 24 × 2 = 48 points.",
+              "2. Altogether = 24 + 48 = 72 points."
+            ],
+            answer: "72 points"
+          },
+          {
+            skill: "Perimeter vs. Area Distinction",
+            question: "A rectangle is 9 cm long and 2 cm wide. Find (a) its PERIMETER and (b) its AREA.",
+            hint: "Perimeter = distance AROUND all 4 sides (add). Area = space INSIDE (length × width).",
+            visual: "perim:9,2",
+            working: [
+              "1. Perimeter = 9 + 2 + 9 + 2 = 22 cm.",
+              "2. Area = 9 × 2 = 18 cm²."
+            ],
+            answer: "Perimeter: 22 cm | Area: 18 cm²"
+          },
+          {
+            skill: "Two-Step Money Problem",
+            question: "Ellie buys 3 notebooks at £2.50 each and pays with a £10.00 note. How much change should she get?",
+            hint: "Step 1: 3 × £2.50 = £7.50. Step 2: Count up from £7.50 to £10.00.",
+            visual: "jumps:£7.50,+50p->£8.00,+£2.00->£10.00",
+            working: [
+              "1. Cost of 3 notebooks: £2.50 + £2.50 + £2.50 = £7.50",
+              "2. Change from £10.00: £10.00 − £7.50 = £2.50."
+            ],
+            answer: "£2.50"
+          },
+          {
+            skill: "Difference Across 100",
+            question: "What is the DIFFERENCE between 132 and 78?",
+            hint: "Jump from 78 to 100 (+22), then 100 to 132 (+32).",
+            visual: "jumps:78,+22->100,+32->132",
+            working: [
+              "1. 78 + 22 = 100",
+              "2. 100 + 32 = 132",
+              "3. Total difference = 22 + 32 = 54."
+            ],
+            answer: "54"
+          }
+        ]
+      }
+    };
+
+    // =========================================================================
+    // 2. 100-QUESTION GROUP A RETRIEVAL BANK (20 PER PILLAR = 100 QUESTIONS)
+    // =========================================================================
+    const BANK_QUESTIONS = [
+      // --- PILLAR 1: COMPLEMENTS & MONEY (Q1 - Q20) ---
+      { id: 1, topic: "Complements & Money", q: "Find the missing number to make 1,000: 640 + [ ? ] = 1,000", hint: "40 + 60 = 100, so the hundreds add to 900 (600 + 300). Avoid 460!", working: "640 + 60 = 700; 700 + 300 = 1,000 -> 360", answer: "360" },
+      { id: 2, topic: "Complements & Money", q: "Work out: 1,000 − 350", hint: "1,000 − 300 = 700, then subtract 50 more!", working: "700 − 50 = 650", answer: "650" },
+      { id: 3, topic: "Complements & Money", q: "Julia buys a book for £3.35 and pays with a £5.00 note. How much change should she get?", hint: "Jump from £3.35 to £4.00 (+65p), then +£1.00 to £5.00.", working: "65p + £1.00 = £1.65", answer: "£1.65" },
+      { id: 4, topic: "Complements & Money", q: "Spot the Mistake: Paul wrote 100 − 35 = 75. What is the correct answer?", hint: "75 + 35 = 110! Subtract 30 (= 70), then subtract 5.", working: "100 − 30 − 5 = 65", answer: "65" },
+      { id: 5, topic: "Complements & Money", q: "Find the missing number: 720 + [ ? ] = 1,000", hint: "720 + 80 = 800, then + 200 = 1,000.", working: "200 + 80 = 280", answer: "280" },
+      { id: 6, topic: "Complements & Money", q: "Work out: 1,000 − 430", hint: "1,000 − 400 = 600, then − 30.", working: "600 − 30 = 570", answer: "570" },
+      { id: 7, topic: "Complements & Money", q: "Oisin spends £2.45 and pays with a £5.00 note. How much change does he get?", hint: "£2.45 + 55p = £3.00, then + £2.00 = £5.00.", working: "£2.00 + 55p = £2.55", answer: "£2.55" },
+      { id: 8, topic: "Complements & Money", q: "Work out: 100 − 45", hint: "100 − 40 = 60, then − 5.", working: "60 − 5 = 55", answer: "55" },
+      { id: 9, topic: "Complements & Money", q: "Find the missing number: 180 + [ ? ] = 1,000", hint: "180 + 20 = 200, then + 800 = 1,000.", working: "800 + 20 = 820", answer: "820" },
+      { id: 10, topic: "Complements & Money", q: "Work out: 1,000 − 610", hint: "1,000 − 600 = 400, then − 10.", working: "400 − 10 = 390", answer: "390" },
+      { id: 11, topic: "Complements & Money", q: "Che buys a sandwich for £2.65 and pays with a £5.00 note. How much change?", hint: "£2.65 + 35p = £3.00, then + £2.00.", working: "£2.35", answer: "£2.35" },
+      { id: 12, topic: "Complements & Money", q: "Find the missing number: 540 + [ ? ] = 1,000", hint: "540 + 60 = 600, + 400 = 1,000.", working: "460", answer: "460" },
+      { id: 13, topic: "Complements & Money", q: "Work out: 100 − 68", hint: "100 − 60 = 40, then − 8.", working: "40 − 8 = 32", answer: "32" },
+      { id: 14, topic: "Complements & Money", q: "Find the missing number: [ ? ] + 290 = 1,000", hint: "290 + 10 = 300, + 700 = 1,000.", working: "710", answer: "710" },
+      { id: 15, topic: "Complements & Money", q: "Nevaeh buys a toy for £1.85 and pays with £5.00. How much change?", hint: "£1.85 + 15p = £2.00, + £3.00 = £5.00.", working: "£3.15", answer: "£3.15" },
+      { id: 16, topic: "Complements & Money", q: "Work out: 1,000 − 250", hint: "1,000 − 200 = 800, − 50.", working: "750", answer: "750" },
+      { id: 17, topic: "Complements & Money", q: "Find the missing number: 64 + [ ? ] = 100", hint: "64 + 6 = 70, + 30 = 100.", working: "36", answer: "36" },
+      { id: 18, topic: "Complements & Money", q: "Work out: 1,000 − 840", hint: "840 + 60 = 900, + 100 = 1,000.", working: "160", answer: "160" },
+      { id: 19, topic: "Complements & Money", q: "How much change from £5.00 if you spend £4.15?", hint: "£4.15 + 85p = £5.00.", working: "85p (or £0.85)", answer: "85p" },
+      { id: 20, topic: "Complements & Money", q: "Find the missing number: 370 + [ ? ] = 1,000", hint: "370 + 30 = 400, + 600 = 1,000.", working: "630", answer: "630" },
+
+      // --- PILLAR 2: ZERO-EXCHANGE & INVERSE (Q21 - Q40) ---
+      { id: 21, topic: "Zero-Exchange & Inverse", q: "Work out: 502 − 147", hint: "Decompose 502 into 400 + 90 + 12 (never flip 7 − 2!).", working: "12−7=5 | 9−4=5 | 4−1=3 -> 355", answer: "355" },
+      { id: 22, topic: "Zero-Exchange & Inverse", q: "Find the missing starting number: [ ? ] − 35 = 48", hint: "The missing number is the whole! Add 48 + 35 (do NOT subtract!).", working: "48 + 35 = 83", answer: "83" },
+      { id: 23, topic: "Zero-Exchange & Inverse", q: "Complete this non-standard partitioning: 482 = 300 + [ ? ] + 2", hint: "100 from 400 moved over to join the 80.", working: "100 + 80 = 180", answer: "180" },
+      { id: 24, topic: "Zero-Exchange & Inverse", q: "What is the value of the digit 8 in 4,829?", hint: "8 is in the hundreds place.", working: "8 hundreds = 800", answer: "800" },
+      { id: 25, topic: "Zero-Exchange & Inverse", q: "Round 648 to the nearest 100.", hint: "Tens digit is 4 (less than 5), so round down.", working: "648 rounds to 600", answer: "600" },
+      { id: 26, topic: "Zero-Exchange & Inverse", q: "Put in order from SMALLEST to LARGEST: 2,405 | 2,045 | 2,540 | 2,450", hint: "Compare hundreds first: 0 hundreds, then 4 hundreds, then 5 hundreds.", working: "2,045 < 2,405 < 2,450 < 2,540", answer: "2,045, 2,405, 2,450, 2,540" },
+      { id: 27, topic: "Zero-Exchange & Inverse", q: "Work out: 604 − 238", hint: "604 becomes 500 + 90 + 14.", working: "14−8=6 | 9−3=6 | 5−2=3 -> 366", answer: "366" },
+      { id: 28, topic: "Zero-Exchange & Inverse", q: "Find the missing starting number: [ ? ] − 27 = 56", hint: "Use the inverse: add 56 + 27.", working: "56 + 27 = 83", answer: "83" },
+      { id: 29, topic: "Zero-Exchange & Inverse", q: "Complete: 635 = 500 + [ ? ] + 5", hint: "100 + 30 = 130.", working: "130", answer: "130" },
+      { id: 30, topic: "Zero-Exchange & Inverse", q: "Work out: 403 − 156", hint: "403 becomes 300 + 90 + 13.", working: "13−6=7 | 9−5=4 | 3−1=2 -> 247", answer: "247" },
+      { id: 31, topic: "Zero-Exchange & Inverse", q: "Find the missing starting number: [ ? ] − 25 = 60", hint: "Add 60 + 25.", working: "60 + 25 = 85", answer: "85" },
+      { id: 32, topic: "Zero-Exchange & Inverse", q: "Round 752 to the nearest 100.", hint: "Tens digit is 5 -> round up!", working: "800", answer: "800" },
+      { id: 33, topic: "Zero-Exchange & Inverse", q: "What is 100 LESS than 1,045?", hint: "Cross 1,000 backwards: 1,045 − 45 = 1,000, − 55 = 945.", working: "945", answer: "945" },
+      { id: 34, topic: "Zero-Exchange & Inverse", q: "Work out: 701 − 345", hint: "701 becomes 600 + 90 + 11.", working: "11−5=6 | 9−4=5 | 6−3=3 -> 356", answer: "356" },
+      { id: 35, topic: "Zero-Exchange & Inverse", q: "Find the missing starting number: [ ? ] − 45 = 38", hint: "Add 38 + 45.", working: "38 + 45 = 83", answer: "83" },
+      { id: 36, topic: "Zero-Exchange & Inverse", q: "Write three thousand, four hundred and six in digits.", hint: "3 thousands, 4 hundreds, 0 tens, 6 ones.", working: "3,406", answer: "3,406" },
+      { id: 37, topic: "Zero-Exchange & Inverse", q: "Work out: 800 − 364", hint: "800 becomes 700 + 90 + 10.", working: "10−4=6 | 9−6=3 | 7−3=4 -> 436", answer: "436" },
+      { id: 38, topic: "Zero-Exchange & Inverse", q: "Complete: 724 = 600 + [ ? ] + 4", hint: "100 + 20 = 120.", working: "120", answer: "120" },
+      { id: 39, topic: "Zero-Exchange & Inverse", q: "Round 1,349 to the nearest 100.", hint: "Tens digit is 4, so round down to 1,300.", working: "1,300", answer: "1,300" },
+      { id: 40, topic: "Zero-Exchange & Inverse", q: "Find the missing number: 36 + [ ? ] = 81", hint: "81 − 36 = 45.", working: "45", answer: "45" },
+
+      // --- PILLAR 3: FACTORS & DIVISION (Q41 - Q60) ---
+      { id: 41, topic: "Factors & Division", q: "Work out: 54 ÷ 6", hint: "6 × 9 = 54 (10 × 6 = 60, minus one 6 = 54).", working: "54 ÷ 6 = 9", answer: "9" },
+      { id: 42, topic: "Factors & Division", q: "Write ONE division fact in the same fact family as 7 × 8 = 56.", hint: "Start with 56 at the front!", working: "56 ÷ 7 = 8 or 56 ÷ 8 = 7", answer: "56 ÷ 8 = 7" },
+      { id: 43, topic: "Factors & Division", q: "List ALL 6 factors of 18.", hint: "Factor pairs: 1×18, 2×9, 3×6 (do NOT include 4 or 12!).", working: "1, 2, 3, 6, 9, 18", answer: "1, 2, 3, 6, 9, 18" },
+      { id: 44, topic: "Factors & Division", q: "Work out: 46 × 10", hint: "Shift every digit one place to the left.", working: "460", answer: "460" },
+      { id: 45, topic: "Factors & Division", q: "Work out: 56 ÷ 7", hint: "Use 7 × 8 = 56.", working: "8", answer: "8" },
+      { id: 46, topic: "Factors & Division", q: "List ALL 6 factors of 12.", hint: "1×12, 2×6, 3×4.", working: "1, 2, 3, 4, 6, 12", answer: "1, 2, 3, 4, 6, 12" },
+      { id: 47, topic: "Factors & Division", q: "Work out: 48 ÷ 6", hint: "6 × 8 = 48.", working: "8", answer: "8" },
+      { id: 48, topic: "Factors & Division", q: "Write ONE division fact from 6 × 9 = 54.", hint: "Start with 54!", working: "54 ÷ 6 = 9 or 54 ÷ 9 = 6", answer: "54 ÷ 6 = 9" },
+      { id: 49, topic: "Factors & Division", q: "Work out: 34 × 100", hint: "Shift digits two places to the left.", working: "3,400", answer: "3,400" },
+      { id: 50, topic: "Factors & Division", q: "List ALL 6 factors of 20.", hint: "1×20, 2×10, 4×5.", working: "1, 2, 4, 5, 10, 20", answer: "1, 2, 4, 5, 10, 20" },
+      { id: 51, topic: "Factors & Division", q: "Work out: 64 ÷ 8", hint: "8 × 8 = 64.", working: "8", answer: "8" },
+      { id: 52, topic: "Factors & Division", q: "Which number is a MULTIPLE of 6: 15, 22, 30, or 40?", hint: "5 × 6 = 30.", working: "30", answer: "30" },
+      { id: 53, topic: "Factors & Division", q: "Work out: 42 ÷ 7", hint: "7 × 6 = 42.", working: "6", answer: "6" },
+      { id: 54, topic: "Factors & Division", q: "Is 4 a factor of 18? Explain why or why not.", hint: "4 × 4 = 16 and 4 × 5 = 20.", working: "No, 18 ÷ 4 = 4 r 2", answer: "No (leaves remainder 2)" },
+      { id: 55, topic: "Factors & Division", q: "Work out: 72 ÷ 8", hint: "8 × 9 = 72.", working: "9", answer: "9" },
+      { id: 56, topic: "Factors & Division", q: "Work out: 580 ÷ 10", hint: "Shift digits one place to the right.", working: "58", answer: "58" },
+      { id: 57, topic: "Factors & Division", q: "Find the missing factor: 7 × [ ? ] = 63", hint: "63 ÷ 7 = 9.", working: "9", answer: "9" },
+      { id: 58, topic: "Factors & Division", q: "List ALL 8 factors of 24.", hint: "1×24, 2×12, 3×8, 4×6.", working: "1, 2, 3, 4, 6, 8, 12, 24", answer: "1, 2, 3, 4, 6, 8, 12, 24" },
+      { id: 59, topic: "Factors & Division", q: "Work out: 36 ÷ 6", hint: "6 × 6 = 36.", working: "6", answer: "6" },
+      { id: 60, topic: "Factors & Division", q: "What is the PRODUCT of 7 and 8?", hint: "Product = multiply!", working: "7 × 8 = 56", answer: "56" },
+
+      // --- PILLAR 4: FRACTIONS (Q61 - Q80) ---
+      { id: 61, topic: "Fractions", q: "Find 3/4 of 24.", hint: "Divide by the bottom (24 ÷ 4 = 6), multiply by the top (6 × 3 = 18).", working: "24 ÷ 4 = 6; 6 × 3 = 18", answer: "18" },
+      { id: 62, topic: "Fractions", q: "Find the missing number to make these fractions EQUIVALENT: 1/2 = [ ? ] / 10", hint: "What is half of 10?", working: "2 × 5 = 10; 1 × 5 = 5", answer: "5" },
+      { id: 63, topic: "Fractions", q: "Find 3/4 of 20.", hint: "20 ÷ 4 = 5, then 5 × 3 = 15.", working: "15", answer: "15" },
+      { id: 64, topic: "Fractions", q: "Find 2/3 of 18.", hint: "18 ÷ 3 = 6, then 6 × 2 = 12.", working: "12", answer: "12" },
+      { id: 65, topic: "Fractions", q: "Find the missing numerator: 3/4 = [ ? ] / 8", hint: "4 × 2 = 8, so 3 × 2 = 6.", working: "6", answer: "6" },
+      { id: 66, topic: "Fractions", q: "Find 3/4 of 32.", hint: "32 ÷ 4 = 8, then 8 × 3 = 24.", working: "24", answer: "24" },
+      { id: 67, topic: "Fractions", q: "Find the missing number: 1/2 = [ ? ] / 8", hint: "Half of 8 is 4.", working: "4", answer: "4" },
+      { id: 68, topic: "Fractions", q: "Find 3/5 of 20.", hint: "20 ÷ 5 = 4, then 4 × 3 = 12.", working: "12", answer: "12" },
+      { id: 69, topic: "Fractions", q: "If 1/4 of a bar is 6, what is the WHOLE bar?", hint: "6 × 4 = 24.", working: "24", answer: "24" },
+      { id: 70, topic: "Fractions", q: "Find 2/3 of 24.", hint: "24 ÷ 3 = 8, then 8 × 2 = 16.", working: "16", answer: "16" },
+      { id: 71, topic: "Fractions", q: "Find the missing number: 1/2 = [ ? ] / 6", hint: "Half of 6 is 3.", working: "3", answer: "3" },
+      { id: 72, topic: "Fractions", q: "Find 3/4 of 16.", hint: "16 ÷ 4 = 4, then 4 × 3 = 12.", working: "12", answer: "12" },
+      { id: 73, topic: "Fractions", q: "Which is larger: 3/4 of 20 OR 1/2 of 24?", hint: "3/4 of 20 = 15; 1/2 of 24 = 12.", working: "15 > 12 -> 3/4 of 20", answer: "3/4 of 20" },
+      { id: 74, topic: "Fractions", q: "Find 4/5 of 25.", hint: "25 ÷ 5 = 5, then 5 × 4 = 20.", working: "20", answer: "20" },
+      { id: 75, topic: "Fractions", q: "Find the missing denominator: 1/2 = 4 / [ ? ]", hint: "4 is half of 8.", working: "8", answer: "8" },
+      { id: 76, topic: "Fractions", q: "A box has 24 chocolates. 3/4 are eaten. How many are LEFT?", hint: "3/4 eaten = 18; 1/4 left = 6.", working: "6", answer: "6" },
+      { id: 77, topic: "Fractions", q: "Find 2/5 of 30.", hint: "30 ÷ 5 = 6, then 6 × 2 = 12.", working: "12", answer: "12" },
+      { id: 78, topic: "Fractions", q: "Find 3/4 of 40.", hint: "40 ÷ 4 = 10, then 10 × 3 = 30.", working: "30", answer: "30" },
+      { id: 79, topic: "Fractions", q: "If 3/4 of a number is 18, what is 1/4 of that number?", hint: "Divide 18 by 3!", working: "18 ÷ 3 = 6", answer: "6" },
+      { id: 80, topic: "Fractions", q: "Find the missing numerator: 2/3 = [ ? ] / 6", hint: "3 × 2 = 6, so 2 × 2 = 4.", working: "4", answer: "4" },
+
+      // --- PILLAR 5: PERIMETER & 2-STEP (Q81 - Q100) ---
+      { id: 81, topic: "Perimeter & 2-Step", q: "A rectangle has a length of 8 cm and a width of 3 cm. What is its PERIMETER?", hint: "Walk all 4 sides: 8 + 3 + 8 + 3 (NOT 11 cm!).", working: "8 + 3 + 8 + 3 = 22 cm", answer: "22 cm" },
+      { id: 82, topic: "Perimeter & 2-Step", q: "Oisin has 18 marbles. Nevaeh has TWICE as many marbles as Oisin. How many marbles do they have ALTOGETHER?", hint: "Step 1: Nevaeh = 18 × 2 = 36. Step 2: 18 + 36 = 54.", working: "18 + 36 = 54", answer: "54" },
+      { id: 83, topic: "Perimeter & 2-Step", q: "A film starts at 2:40 pm and lasts for 35 minutes. What time does it finish?", hint: "2:40 pm + 20 mins = 3:00 pm, + 15 mins = 3:15 pm.", working: "3:15 pm", answer: "3:15 pm" },
+      { id: 84, topic: "Perimeter & 2-Step", q: "What is the DIFFERENCE between 124 and 89?", hint: "89 + 11 = 100, + 24 = 124 -> 11 + 24 = 35.", working: "35", answer: "35" },
+      { id: 85, topic: "Perimeter & 2-Step", q: "A rectangle has length 7 cm and width 4 cm. What is its PERIMETER?", hint: "7 + 4 + 7 + 4 = 22 cm.", working: "22 cm", answer: "22 cm" },
+      { id: 86, topic: "Perimeter & 2-Step", q: "A train leaves at 10:45 am and arrives at 11:20 am. How many minutes is the journey?", hint: "15 mins to 11:00 am + 20 mins = 35 mins.", working: "35 minutes", answer: "35 minutes" },
+      { id: 87, topic: "Perimeter & 2-Step", q: "Paul has 24 stickers. Julia has TWICE as many. How many stickers do they have ALTOGETHER?", hint: "Julia = 48; Altogether = 24 + 48 = 72.", working: "72", answer: "72" },
+      { id: 88, topic: "Perimeter & 2-Step", q: "A square has sides of 6 cm. What is its PERIMETER?", hint: "All 4 sides are 6 cm: 6 × 4 = 24 cm.", working: "24 cm", answer: "24 cm" },
+      { id: 89, topic: "Perimeter & 2-Step", q: "What is the DIFFERENCE between 132 and 78?", hint: "78 + 22 = 100, + 32 = 132 -> 54.", working: "54", answer: "54" },
+      { id: 90, topic: "Perimeter & 2-Step", q: "Ellie buys 3 notebooks at £2.50 each and pays with £10.00. How much change?", hint: "3 × £2.50 = £7.50; £10.00 − £7.50 = £2.50.", working: "£2.50", answer: "£2.50" },
+      { id: 91, topic: "Perimeter & 2-Step", q: "A rectangle is 9 cm long and 2 cm wide. What is its AREA?", hint: "Area = length × width (9 × 2).", working: "18 cm²", answer: "18 cm²" },
+      { id: 92, topic: "Perimeter & 2-Step", q: "Lesson starts at 1:35 pm and lasts 45 minutes. What time does it end?", hint: "1:35 pm + 25 mins = 2:00 pm, + 20 mins = 2:20 pm.", working: "2:20 pm", answer: "2:20 pm" },
+      { id: 93, topic: "Perimeter & 2-Step", q: "Nevaeh has 15 cards. Oisin has THREE TIMES as many. How many ALTOGETHER?", hint: "Oisin = 45; Altogether = 15 + 45 = 60.", working: "60", answer: "60" },
+      { id: 94, topic: "Perimeter & 2-Step", q: "What is the DIFFERENCE between 115 and 67?", hint: "67 + 33 = 100, + 15 = 115 -> 48.", working: "48", answer: "48" },
+      { id: 95, topic: "Perimeter & 2-Step", q: "A rectangle has length 10 cm and width 4 cm. What is its PERIMETER?", hint: "10 + 4 + 10 + 4 = 28 cm.", working: "28 cm", answer: "28 cm" },
+      { id: 96, topic: "Perimeter & 2-Step", q: "A number line goes from 0 to 100 in 4 equal steps. What is the first mark after 0?", hint: "100 ÷ 4 = 25.", working: "25", answer: "25" },
+      { id: 97, topic: "Perimeter & 2-Step", q: "Bus leaves at 4:50 pm and takes 25 minutes. When does it arrive?", hint: "4:50 pm + 10 mins = 5:00 pm, + 15 mins = 5:15 pm.", working: "5:15 pm", answer: "5:15 pm" },
+      { id: 98, topic: "Perimeter & 2-Step", q: "Julia has 16 sweets. Paul has TWICE as many. How many MORE sweets does Paul have than Julia?", hint: "Paul = 32; Difference = 32 − 16 = 16.", working: "16", answer: "16" },
+      { id: 99, topic: "Perimeter & 2-Step", q: "Convert 2.5 kilograms (kg) into grams (g).", hint: "1 kg = 1,000 g.", working: "2,500 g", answer: "2,500 g" },
+      { id: 100, topic: "Perimeter & 2-Step", q: "A rectangle has perimeter 20 cm and length 6 cm. What is its width?", hint: "Two lengths = 12 cm; 20 − 12 = 8 cm left for two widths -> 4 cm.", working: "4 cm", answer: "4 cm" }
+    ];
+
+    // =========================================================================
+    // 3. APP STATE & NAVIGATION
+    // =========================================================================
+    let currentModule = 0; // 0 = hub, 1-5 = modules, 6 = 100-q bank
+    let currentExIndex = 0;
+    let customDynamicExample = null;
+    let exReveals = { hint: false, working: false, answer: false };
+    let manipOpen = false;
+
+    // Interactive Tool States
+    let compExplorerStart = 640; // Module 1 interactive complement explorer
+    let factorExplorerNum = 18;  // Module 3 interactive factor rainbow
+    let pvSliderBase = 46;       // Module 3 x10/x100 slider
+    let fracTotal = 24;          // Module 4 fraction bar
+    let fracDenom = 4;
+    let fracNumer = 3;
+    let perimL = 8;              // Module 5 perimeter tracer
+    let perimW = 3;
+
+    // 100-Q Bank State
+    let bankFilter = 'all';
+    let filteredBank = [...BANK_QUESTIONS];
+    let currentBankPos = 0;
+    let bankReveals = { hint: false, working: false, answer: false };
+    let bankScore = { correct: 0, attempted: 0 };
+
+    // Whiteboard State
+    let wbOpen = false;
+    let wbFullscreen = false;
+    let wbColor = '#0f172a';
+    let wbSize = 3;
+    let wbTool = 'pen';
+    let wbBg = 'blank';
+    let isDrawing = false;
+    let lastX = 0;
+    let lastY = 0;
+    let wbHistory = [];
+
+    function toggleTargetsDrawer() {
+      const drawer = document.getElementById('pupil-targets-drawer');
+      drawer.classList.toggle('hidden');
+    }
+
+    function goHome() {
+      currentModule = 0;
+      document.getElementById('view-hub').classList.remove('hidden');
+      document.getElementById('view-module').classList.add('hidden');
+      document.getElementById('view-bank').classList.add('hidden');
+      document.getElementById('btn-back-hub').classList.add('hidden');
+      document.getElementById('btn-back-hub').classList.remove('flex');
+    }
+
+    function openModule(modNum) {
+      currentModule = modNum;
+      document.getElementById('view-hub').classList.add('hidden');
+      document.getElementById('btn-back-hub').classList.remove('hidden');
+      document.getElementById('btn-back-hub').classList.add('flex');
+
+      if (modNum === 6) {
+        document.getElementById('view-module').classList.add('hidden');
+        document.getElementById('view-bank').classList.remove('hidden');
+        renderBankQuestion();
+        return;
+      }
+
+      document.getElementById('view-bank').classList.add('hidden');
+      document.getElementById('view-module').classList.remove('hidden');
+
+      currentExIndex = 0;
+      customDynamicExample = null;
+      manipOpen = false;
+      document.getElementById('manipulative-body').classList.add('hidden');
+      document.getElementById('btn-toggle-manip').textContent = 'Show Interactive Tool';
+
+      updateModuleTabStyles(modNum);
+      renderModuleExample();
+      renderManipulativePlayground(modNum);
+    }
+
+    function updateModuleTabStyles(activeMod) {
+      document.querySelectorAll('.mod-tab-btn').forEach(btn => {
+        const num = parseInt(btn.getAttribute('data-mod-tab'), 10);
+        if (num === activeMod) {
+          btn.className = 'mod-tab-btn px-3 py-1.5 rounded-lg text-xs font-extrabold bg-slate-900 text-white border border-slate-900 transition';
+        } else {
+          btn.className = 'mod-tab-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-50 text-slate-700 border border-slate-200 hover:bg-slate-100 transition';
+        }
+      });
+    }
+
+    // =========================================================================
+    // 4. WORKED EXAMPLES & STRICT HIDDEN-UNTIL-CLICKED REVEALS
+    // =========================================================================
+    function resetExampleReveals() {
+      exReveals = { hint: false, working: false, answer: false };
+      document.getElementById('ex-panel-hint').classList.add('hidden');
+      document.getElementById('ex-panel-working').classList.add('hidden');
+      document.getElementById('ex-panel-answer').classList.add('hidden');
+
+      document.getElementById('btn-ex-hint').innerHTML = '<span>&#128161; Show Visual Hint / Clue</span>';
+      document.getElementById('btn-ex-working').innerHTML = '<span>&#129692; Show Step-by-Step Working</span>';
+      document.getElementById('btn-ex-answer').innerHTML = '<span>&#9989; Reveal Final Answer</span>';
+    }
+
+    function toggleExampleReveal(type) {
+      exReveals[type] = !exReveals[type];
+      const panel = document.getElementById(`ex-panel-${type}`);
+      const btn = document.getElementById(`btn-ex-${type}`);
+
+      if (exReveals[type]) {
+        panel.classList.remove('hidden');
+        if (type === 'hint') btn.innerHTML = '<span>&#128161; Hide Visual Hint / Clue</span>';
+        if (type === 'working') btn.innerHTML = '<span>&#129692; Hide Step-by-Step Working</span>';
+        if (type === 'answer') btn.innerHTML = '<span>&#9989; Hide Final Answer</span>';
+      } else {
+        panel.classList.add('hidden');
+        if (type === 'hint') btn.innerHTML = '<span>&#128161; Show Visual Hint / Clue</span>';
+        if (type === 'working') btn.innerHTML = '<span>&#129692; Show Step-by-Step Working</span>';
+        if (type === 'answer') btn.innerHTML = '<span>&#9989; Reveal Final Answer</span>';
+      }
+    }
+
+    function renderModuleExample() {
+      resetExampleReveals();
+      const mod = MODULES_DATA[currentModule];
+      const ex = customDynamicExample || mod.examples[currentExIndex];
+
+      document.getElementById('mod-badge').textContent = mod.badge;
+      document.getElementById('mod-title').textContent = mod.title;
+      document.getElementById('manip-header-title').textContent = mod.manipTitle;
+      document.getElementById('mod-counter').textContent = customDynamicExample
+        ? 'Generated Practice Problem'
+        : `Example ${currentExIndex + 1} of ${mod.examples.length}`;
+
+      document.getElementById('ex-skill-tag').textContent = ex.skill;
+      document.getElementById('ex-question-text').textContent = ex.question;
+      document.getElementById('ex-hint-text').textContent = ex.hint;
+      document.getElementById('ex-visual-box').innerHTML = buildVisualDiagramHTML(ex.visual);
+
+      const workingContainer = document.getElementById('ex-working-text');
+      workingContainer.innerHTML = ex.working.map(step => `<div class="flex items-start gap-2"><span class="text-blue-600 font-black">&bull;</span><span>${step}</span></div>`).join('');
+
+      document.getElementById('ex-answer-text').textContent = ex.answer;
+    }
+
+    function prevExample() {
+      customDynamicExample = null;
+      const list = MODULES_DATA[currentModule].examples;
+      currentExIndex = (currentExIndex - 1 + list.length) % list.length;
+      renderModuleExample();
+    }
+
+    function nextExample() {
+      customDynamicExample = null;
+      const list = MODULES_DATA[currentModule].examples;
+      currentExIndex = (currentExIndex + 1) % list.length;
+      renderModuleExample();
+    }
+
+    function generateDynamicExample() {
+      const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+
+      if (currentModule === 1) {
+        const mode = rand(1, 3);
+        if (mode === 1) {
+          const start = rand(1, 8) * 100 + rand(1, 9) * 10;
+          const comp = 1000 - start;
+          const nextH = Math.ceil(start / 100) * 100;
+          customDynamicExample = {
+            skill: "Generated Complement to 1,000",
+            question: `Find the missing number to make 1,000:   ${start} + [ ? ] = 1,000`,
+            hint: `Use the 900 Rule! Jump from ${start} to ${nextH} (+${nextH - start}), then jump from ${nextH} to 1,000 (+${1000 - nextH}).`,
+            visual: `jumps:${start},+${nextH - start}->${nextH},+${1000 - nextH}->1,000`,
+            working: [
+              `1. ${start} + ${nextH - start} = ${nextH}`,
+              `2. ${nextH} + ${1000 - nextH} = 1,000`,
+              `3. Total complement = ${comp}.`
+            ],
+            answer: `${comp}`
+          };
+        } else if (mode === 2) {
+          const sub = rand(2, 8) * 100 + rand(1, 9) * 10;
+          const ans = 1000 - sub;
+          const hSub = Math.floor(sub / 100) * 100;
+          const tSub = sub % 100;
+          customDynamicExample = {
+            skill: "Generated Subtracting from 1,000",
+            question: `Work out:   1,000 − ${sub}`,
+            hint: `Subtract ${hSub} first (= ${1000 - hSub}), then subtract ${tSub} more!`,
+            visual: `jumps:1,000,-${hSub}->${1000 - hSub},-${tSub}->${ans}`,
+            working: [
+              `1. 1,000 − ${hSub} = ${1000 - hSub}`,
+              `2. ${1000 - hSub} − ${tSub} = ${ans}`
+            ],
+            answer: `${ans}`
+          };
+        } else {
+          const pounds = rand(1, 3);
+          const pence = rand(1, 18) * 5;
+          const spentCents = pounds * 100 + pence;
+          const changeCents = 500 - spentCents;
+          const spentStr = `£${pounds}.${String(pence).padStart(2, '0')}`;
+          const changeStr = `£${Math.floor(changeCents / 100)}.${String(changeCents % 100).padStart(2, '0')}`;
+          const toNextPound = 100 - pence;
+          customDynamicExample = {
+            skill: "Generated Change from £5.00",
+            question: `A pupil spends ${spentStr} and pays with a £5.00 note. How much change should they get?`,
+            hint: `Jump from ${spentStr} to £${pounds + 1}.00 (+${toNextPound}p), then up to £5.00!`,
+            visual: `jumps:${spentStr},+${toNextPound}p->£${pounds + 1}.00,+£${4 - pounds}.00->£5.00`,
+            working: [
+              `1. ${spentStr} + ${toNextPound}p = £${pounds + 1}.00`,
+              `2. £${pounds + 1}.00 + £${4 - pounds}.00 = £5.00`,
+              `3. Change = ${changeStr}.`
+            ],
+            answer: changeStr
+          };
+        }
+      } else if (currentModule === 2) {
+        if (rand(1, 2) === 1) {
+          const h = rand(4, 8);
+          const o = rand(1, 5);
+          const top = h * 100 + o;
+          const subH = rand(1, h - 2);
+          const subT = rand(2, 8);
+          const subO = rand(o + 2, 9);
+          const bot = subH * 100 + subT * 10 + subO;
+          const ans = top - bot;
+          customDynamicExample = {
+            skill: "Generated Zero-Exchange Subtraction",
+            question: `Work out:   ${top} − ${bot}`,
+            hint: `Decompose ${top} into ${(h - 1) * 100} + 90 + ${10 + o} across the zero!`,
+            visual: `zeroex:${top} -> ${(h - 1) * 100} + 90 + ${10 + o}`,
+            working: [
+              `1. Ones: ${10 + o} − ${subO} = ${10 + o - subO}`,
+              `2. Tens: 9 − ${subT} = ${9 - subT}`,
+              `3. Hundreds: ${h - 1} − ${subH} = ${h - 1 - subH} -> ${ans}`
+            ],
+            answer: `${ans}`
+          };
+        } else {
+          const p1 = rand(18, 45);
+          const p2 = rand(24, 54);
+          const whole = p1 + p2;
+          customDynamicExample = {
+            skill: "Generated Working Backwards",
+            question: `Find the missing starting number:   [ ? ] − ${p1} = ${p2}`,
+            hint: `The starting number is the whole! Add ${p2} + ${p1}.`,
+            visual: `cherry:?,${p2},${p1}`,
+            working: [
+              `1. Inverse of subtraction is addition: ${p2} + ${p1}`,
+              `2. ${p2} + ${p1} = ${whole}`
+            ],
+            answer: `${whole}`
+          };
+        }
+      } else if (currentModule === 3) {
+        const pairs = [
+          { a: 6, b: 7 }, { a: 6, b: 8 }, { a: 6, b: 9 },
+          { a: 7, b: 8 }, { a: 7, b: 9 }, { a: 8, b: 9 }
+        ];
+        const pick = pairs[rand(0, pairs.length - 1)];
+        const prod = pick.a * pick.b;
+        customDynamicExample = {
+          skill: "Generated Core Division Recall",
+          question: `Work out:   ${prod} ÷ ${pick.a}`,
+          hint: `Think of the Fact Family Triangle with ${prod} at the top and ${pick.a} at the bottom: ${pick.a} × [ ? ] = ${prod}.`,
+          visual: `family:${prod},${pick.a},${pick.b}`,
+          working: [
+            `1. ${pick.a} × ${pick.b} = ${prod}`,
+            `2. Therefore ${prod} ÷ ${pick.a} = ${pick.b}.`
+          ],
+          answer: `${pick.b}`
+        };
+      } else if (currentModule === 4) {
+        const d = [3, 4, 5][rand(0, 2)];
+        const n = d === 3 ? 2 : (d === 4 ? 3 : rand(2, 4));
+        const unit = rand(4, 9);
+        const total = d * unit;
+        const ans = unit * n;
+        customDynamicExample = {
+          skill: `Generated Non-Unit Fraction (${n}/${d})`,
+          question: `Find ${n}/${d} of ${total}.`,
+          hint: `Divide ${total} by the denominator (${d}) first, then multiply by the numerator (${n})!`,
+          visual: `fracbar:${total},${d},${n}`,
+          working: [
+            `1. 1/${d} of ${total} = ${total} ÷ ${d} = ${unit}`,
+            `2. ${n}/${d} of ${total} = ${unit} × ${n} = ${ans}`
+          ],
+          answer: `${ans}`
+        };
+      } else if (currentModule === 5) {
+        const l = rand(6, 12);
+        const w = rand(2, 5);
+        const perim = 2 * (l + w);
+        customDynamicExample = {
+          skill: "Generated 4-Side Rectangle Perimeter",
+          question: `A rectangle has a length of ${l} cm and a width of ${w} cm. What is its PERIMETER?`,
+          hint: `Add ALL FOUR sides: ${l} + ${w} + ${l} + ${w}!`,
+          visual: `perim:${l},${w}`,
+          working: [
+            `1. Two sides = ${l} + ${w} = ${l + w} cm`,
+            `2. All four sides = ${l + w} + ${l + w} = ${perim} cm.`
+          ],
+          answer: `${perim} cm`
+        };
+      }
+
+      renderModuleExample();
+    }
+
+    // Visual Diagram Renderer (Only shown when Teacher clicks "Show Visual Hint / Clue")
+    function buildVisualDiagramHTML(code) {
+      if (!code) return '';
+      const idx = code.indexOf(':');
+      const type = code.slice(0, idx);
+      const payload = code.slice(idx + 1);
+
+      if (type === 'jumps') {
+        const steps = payload.split(',');
+        return `
+          <div class="flex flex-wrap items-center gap-2 bg-white p-3 rounded-xl border border-amber-200 font-bold text-sm">
+            ${steps.map(s => `<span class="px-3 py-1.5 rounded-lg bg-slate-100 border border-slate-300 text-slate-900">${s}</span>`).join('<span class="text-amber-600 font-black">&rarr;</span>')}
+          </div>
+        `;
+      }
+
+      if (type === 'cherry') {
+        const [top, left, right] = payload.split(',');
+        return `
+          <div class="inline-flex flex-col items-center bg-white px-6 py-3 rounded-xl border border-amber-200">
+            <div class="px-4 h-11 rounded-full bg-indigo-100 border-2 border-indigo-500 flex items-center justify-center font-black text-base text-indigo-950">${top}</div>
+            <div class="flex items-center gap-10 -mt-1">
+              <div class="w-0.5 h-5 bg-slate-400 rotate-25"></div>
+              <div class="w-0.5 h-5 bg-slate-400 -rotate-25"></div>
+            </div>
+            <div class="flex items-center gap-6">
+              <div class="px-3.5 h-11 rounded-full bg-emerald-100 border-2 border-emerald-500 flex items-center justify-center font-black text-sm text-emerald-950">${left}</div>
+              <div class="px-3.5 h-11 rounded-full bg-amber-100 border-2 border-amber-500 flex items-center justify-center font-black text-sm text-amber-950">${right}</div>
+            </div>
+          </div>
+        `;
+      }
+
+      if (type === 'zeroex') {
+        return `
+          <div class="inline-block bg-white px-4 py-2.5 rounded-xl border-2 border-emerald-300 font-extrabold text-sm sm:text-base text-emerald-950">
+            &#128260; Zero-Exchange Split: <span class="text-indigo-700">${payload}</span>
+          </div>
+        `;
+      }
+
+      if (type === 'thhto') {
+        const [th, h, t, o] = payload.split(',');
+        return `
+          <div class="grid grid-cols-4 gap-2 max-w-lg bg-white p-3 rounded-xl border border-amber-200 text-center">
+            <div class="bg-purple-50 rounded-lg p-2 border border-purple-200"><div class="text-[11px] font-extrabold text-purple-800">Th</div><div class="text-xl font-black">${th}</div></div>
+            <div class="bg-blue-50 rounded-lg p-2 border border-blue-200"><div class="text-[11px] font-extrabold text-blue-800">H</div><div class="text-xl font-black">${h}</div></div>
+            <div class="bg-emerald-50 rounded-lg p-2 border border-emerald-200"><div class="text-[11px] font-extrabold text-emerald-800">T</div><div class="text-xl font-black">${t}</div></div>
+            <div class="bg-amber-50 rounded-lg p-2 border border-amber-200"><div class="text-[11px] font-extrabold text-amber-800">O</div><div class="text-xl font-black">${o}</div></div>
+          </div>
+        `;
+      }
+
+      if (type === 'factors') {
+        const n = Number(payload);
+        const pairs = [];
+        for (let i = 1; i <= Math.sqrt(n); i++) {
+          if (n % i === 0) pairs.push(`${i} &times; ${n / i} = ${n}`);
+        }
+        return `
+          <div class="flex flex-wrap gap-2 bg-white p-3 rounded-xl border border-amber-200">
+            ${pairs.map(p => `<span class="px-3 py-1 rounded-lg bg-indigo-50 border border-indigo-300 font-extrabold text-xs sm:text-sm text-indigo-950">${p}</span>`).join('')}
+          </div>
+        `;
+      }
+
+      if (type === 'family') {
+        const [top, a, b] = payload.split(',');
+        return `
+          <div class="inline-flex flex-col items-center bg-white px-6 py-3 rounded-xl border border-amber-200">
+            <div class="px-4 py-1 rounded-lg bg-rose-100 border-2 border-rose-400 font-black text-base text-rose-950">${top}</div>
+            <div class="text-[11px] font-bold text-slate-500 my-1">&times; / &divide;</div>
+            <div class="flex gap-6">
+              <div class="px-3 py-1 rounded-lg bg-blue-100 border-2 border-blue-400 font-black text-sm text-blue-950">${a}</div>
+              <div class="px-3 py-1 rounded-lg bg-blue-100 border-2 border-blue-400 font-black text-sm text-blue-950">${b}</div>
+            </div>
+          </div>
+        `;
+      }
+
+      if (type === 'fracbar') {
+        const [tot, den, num] = payload.split(',').map(Number);
+        const unitVal = tot / den;
+        let cells = '';
+        for (let i = 0; i < den; i++) {
+          const active = i < num;
+          cells += `<div class="flex-1 py-2 text-center font-black text-xs sm:text-sm border ${active ? 'bg-purple-600 text-white border-purple-800' : 'bg-purple-50 text-purple-900 border-purple-300'}">${unitVal}</div>`;
+        }
+        return `
+          <div class="max-w-md bg-white p-3 rounded-xl border border-amber-200 space-y-1.5">
+            <div class="text-center font-black text-xs bg-slate-900 text-white py-1 rounded-lg">Whole = ${tot} (Each 1/${den} = ${unitVal})</div>
+            <div class="flex gap-1">${cells}</div>
+          </div>
+        `;
+      }
+
+      if (type === 'equiv') {
+        const [n1, d1, n2, d2] = payload.split(',').map(Number);
+        const makeRow = (n, d, cls) => {
+          let row = '';
+          for (let i = 0; i < d; i++) {
+            row += `<div class="flex-1 h-6 border border-slate-400 ${i < n ? cls : 'bg-white'}"></div>`;
+          }
+          return `<div class="flex gap-0.5">${row}</div>`;
+        };
+        return `
+          <div class="max-w-md bg-white p-3 rounded-xl border border-amber-200 space-y-2">
+            <div><span class="text-xs font-extrabold">${n1}/${d1}:</span>${makeRow(n1, d1, 'bg-indigo-500')}</div>
+            <div><span class="text-xs font-extrabold">${n2}/${d2}:</span>${makeRow(n2, d2, 'bg-emerald-500')}</div>
+          </div>
+        `;
+      }
+
+      if (type === 'perim') {
+        const [l, w] = payload.split(',');
+        return `
+          <div class="inline-flex flex-col items-center bg-white px-8 py-4 rounded-xl border border-amber-200">
+            <span class="text-xs font-black text-rose-700 mb-1">${l} cm</span>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-black text-blue-700">${w} cm</span>
+              <div class="w-32 h-16 border-4 border-slate-800 bg-amber-50 flex items-center justify-center text-xs font-bold text-slate-500">All 4 Sides!</div>
+              <span class="text-xs font-black text-blue-700">${w} cm</span>
+            </div>
+            <span class="text-xs font-black text-rose-700 mt-1">${l} cm</span>
+          </div>
+        `;
+      }
+
+      if (type === 'twicebar') {
+        const base = Number(payload);
+        return `
+          <div class="max-w-md bg-white p-3 rounded-xl border border-amber-200 space-y-2 text-xs font-extrabold">
+            <div class="flex items-center gap-2"><span class="w-16">Person 1:</span><div class="w-1/3 bg-blue-500 text-white text-center py-1 rounded">${base}</div></div>
+            <div class="flex items-center gap-2"><span class="w-16">Twice:</span><div class="w-1/3 bg-emerald-500 text-white text-center py-1 rounded">${base}</div><div class="w-1/3 bg-emerald-500 text-white text-center py-1 rounded">${base}</div></div>
+          </div>
+        `;
+      }
+
+      return '';
+    }
+
+    // =========================================================================
+    // 5. INTERACTIVE TEACHER DEMONSTRATION TOOLS (TOGGLEABLE PER MODULE)
+    // =========================================================================
+    function toggleManipulativeDrawer() {
+      manipOpen = !manipOpen;
+      const body = document.getElementById('manipulative-body');
+      const btn = document.getElementById('btn-toggle-manip');
+      if (manipOpen) {
+        body.classList.remove('hidden');
+        btn.textContent = 'Hide Interactive Tool';
+        renderManipulativePlayground(currentModule);
+      } else {
+        body.classList.add('hidden');
+        btn.textContent = 'Show Interactive Tool';
+      }
+    }
+
+    function renderManipulativePlayground(modNum) {
+      const box = document.getElementById('manipulative-body');
+      if (!box) return;
+
+      if (modNum === 1) {
+        const comp = 1000 - compExplorerStart;
+        const h1 = Math.floor(compExplorerStart / 100);
+        const t1 = (compExplorerStart % 100) / 10;
+        const h2 = Math.floor(comp / 100);
+        const t2 = (comp % 100) / 10;
+        box.innerHTML = `
+          <div class="space-y-4">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div class="flex items-center gap-2">
+                <span class="text-xs font-extrabold text-slate-600">Adjust Start Number:</span>
+                <button onclick="stepCompExplorer(-10)" class="px-3 py-1 rounded-lg bg-slate-200 font-black">−10</button>
+                <span class="px-3 py-1 rounded-lg bg-slate-900 text-white font-black">${compExplorerStart}</span>
+                <button onclick="stepCompExplorer(10)" class="px-3 py-1 rounded-lg bg-slate-200 font-black">+10</button>
+              </div>
+              <div class="text-sm font-black text-emerald-800 bg-emerald-50 px-3 py-1.5 rounded-xl border border-emerald-300">
+                ${compExplorerStart} + ${comp} = 1,000 &nbsp;|&nbsp; Hundreds: ${h1} + ${h2} = ${h1 + h2} &nbsp;|&nbsp; Tens: ${t1} + ${t2} = ${t1 + t2}
+              </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="p-3 rounded-xl bg-blue-50 border border-blue-200">
+                <div class="text-xs font-extrabold text-blue-900 mb-2">Start (${compExplorerStart}): ${h1} Hundreds + ${t1} Tens</div>
+                <div class="flex flex-wrap gap-1.5 items-end">
+                  ${Array(h1).fill('<div class="w-9 h-9 bg-blue-500 border border-blue-700 rounded dienes-flat"></div>').join('')}
+                  ${Array(t1).fill('<div class="w-2.5 h-10 bg-blue-400 border border-blue-600 rounded-sm dienes-rod"></div>').join('')}
+                </div>
+              </div>
+              <div class="p-3 rounded-xl bg-amber-50 border border-amber-200">
+                <div class="text-xs font-extrabold text-amber-900 mb-2">Complement (${comp}): ${h2} Hundreds + ${t2} Tens</div>
+                <div class="flex flex-wrap gap-1.5 items-end">
+                  ${Array(h2).fill('<div class="w-9 h-9 bg-amber-400 border border-amber-600 rounded dienes-flat"></div>').join('')}
+                  ${Array(t2).fill('<div class="w-2.5 h-10 bg-amber-300 border border-amber-500 rounded-sm dienes-rod"></div>').join('')}
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      } else if (modNum === 2) {
+        box.innerHTML = `
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+              <div class="text-xs font-extrabold uppercase text-indigo-700">Zero-Exchange Side-by-Side (502 − 147)</div>
+              <div class="font-mono text-sm sm:text-base font-bold bg-white p-3 rounded-lg border border-slate-200 space-y-1">
+                <div>502 = 500 + 00 + 2 &rarr; <span class="text-emerald-700">400 + 90 + 12</span></div>
+                <div>147 = 100 + 40 + 7 &rarr; <span class="text-rose-700">100 + 40 + 7</span></div>
+                <div class="border-t border-slate-300 pt-1 text-indigo-900">Diff = 300 + 50 + 5 = <strong>355</strong></div>
+              </div>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+              <div class="text-xs font-extrabold uppercase text-emerald-700">Working Backwards Bar Model ([ ? ] − 35 = 48)</div>
+              <div class="bg-white p-3 rounded-lg border border-slate-200 space-y-1.5 text-center font-extrabold text-xs">
+                <div class="bg-indigo-600 text-white py-1.5 rounded">Whole Starting Number = 48 + 35 = 83</div>
+                <div class="flex gap-1">
+                  <div class="flex-1 bg-emerald-100 border border-emerald-400 py-1.5 rounded text-emerald-950">Left: 48</div>
+                  <div class="flex-1 bg-amber-100 border border-amber-400 py-1.5 rounded text-amber-950">Taken Away: 35</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      } else if (modNum === 3) {
+        const nums = [12, 18, 20, 24, 36];
+        const pairs = [];
+        for (let i = 1; i <= Math.sqrt(factorExplorerNum); i++) {
+          if (factorExplorerNum % i === 0) pairs.push([i, factorExplorerNum / i]);
+        }
+        box.innerHTML = `
+          <div class="space-y-4">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div class="flex items-center gap-1.5">
+                <span class="text-xs font-extrabold text-slate-600">Factor Rainbow for:</span>
+                ${nums.map(n => `<button onclick="setFactorNum(${n})" class="px-3 py-1 rounded-lg text-xs font-extrabold ${factorExplorerNum === n ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-800'}">${n}</button>`).join('')}
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="text-xs font-extrabold text-slate-600">Place Value Shift:</span>
+                <span class="px-2.5 py-1 rounded-lg bg-indigo-50 border border-indigo-200 text-xs font-black text-indigo-900">${pvSliderBase} &times; 10 = ${pvSliderBase * 10} &nbsp;|&nbsp; &times; 100 = ${pvSliderBase * 100}</span>
+              </div>
+            </div>
+            <div class="flex flex-wrap gap-2 bg-slate-50 p-3 rounded-xl border border-slate-200">
+              ${pairs.map(([a, b]) => `<span class="px-3.5 py-1.5 rounded-xl bg-white border-2 border-indigo-300 font-extrabold text-sm text-indigo-950">${a} &times; ${b} = ${factorExplorerNum}</span>`).join('')}
+            </div>
+          </div>
+        `;
+      } else if (modNum === 4) {
+        const unitVal = Math.round((fracTotal / fracDenom) * 10) / 10;
+        const ansVal = Math.round(unitVal * fracNumer * 10) / 10;
+        let cells = '';
+        for (let i = 0; i < fracDenom; i++) {
+          const on = i < fracNumer;
+          cells += `<div class="flex-1 py-3 text-center font-black text-base border-2 ${on ? 'bg-purple-600 text-white border-purple-800' : 'bg-white text-slate-700 border-slate-300'}">${unitVal}</div>`;
+        }
+        box.innerHTML = `
+          <div class="space-y-3">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div class="flex flex-wrap items-center gap-2 text-xs font-extrabold">
+                <span>Whole:</span>
+                ${[12, 16, 20, 24, 32].map(t => `<button onclick="setFracBar(${t}, ${fracDenom}, ${fracNumer})" class="px-2.5 py-1 rounded-lg ${fracTotal === t ? 'bg-slate-900 text-white' : 'bg-slate-100'}">${t}</button>`).join('')}
+                <span class="ml-2">Denominator:</span>
+                ${[2, 3, 4].map(d => `<button onclick="setFracBar(${fracTotal}, ${d}, ${Math.min(fracNumer, d)})" class="px-2.5 py-1 rounded-lg ${fracDenom === d ? 'bg-purple-700 text-white' : 'bg-slate-100'}">/${d}</button>`).join('')}
+                <span class="ml-2">Numerator:</span>
+                ${[1, 2, 3, 4].filter(n => n <= fracDenom).map(n => `<button onclick="setFracBar(${fracTotal}, ${fracDenom}, ${n})" class="px-2.5 py-1 rounded-lg ${fracNumer === n ? 'bg-emerald-600 text-white' : 'bg-slate-100'}">${n}</button>`).join('')}
+              </div>
+              <div class="px-3 py-1.5 rounded-xl bg-purple-100 text-purple-950 font-black text-sm">
+                ${fracNumer}/${fracDenom} of ${fracTotal} = ${ansVal}
+              </div>
+            </div>
+            <div class="flex gap-1.5">${cells}</div>
+          </div>
+        `;
+      } else if (modNum === 5) {
+        const perim = 2 * (perimL + perimW);
+        const area = perimL * perimW;
+        box.innerHTML = `
+          <div class="flex flex-wrap items-center justify-between gap-4">
+            <div class="space-y-2 text-xs font-extrabold">
+              <div class="flex items-center gap-2">
+                <span>Length:</span>
+                ${[6, 7, 8, 9, 10].map(l => `<button onclick="setPerimDims(${l}, ${perimW})" class="px-2.5 py-1 rounded-lg ${perimL === l ? 'bg-rose-600 text-white' : 'bg-slate-100'}">${l} cm</button>`).join('')}
+              </div>
+              <div class="flex items-center gap-2">
+                <span>Width:</span>
+                ${[2, 3, 4, 5].map(w => `<button onclick="setPerimDims(${perimL}, ${w})" class="px-2.5 py-1 rounded-lg ${perimW === w ? 'bg-blue-600 text-white' : 'bg-slate-100'}">${w} cm</button>`).join('')}
+              </div>
+              <div class="pt-1 text-sm font-black text-slate-900">
+                All 4 Sides: ${perimL} + ${perimW} + ${perimL} + ${perimW} = <span class="text-emerald-700">${perim} cm</span> &nbsp;|&nbsp; Area = ${area} cm&sup2;
+              </div>
+            </div>
+            <div>${buildVisualDiagramHTML(`perim:${perimL},${perimW}`)}</div>
+          </div>
+        `;
+      }
+    }
+
+    function stepCompExplorer(delta) {
+      compExplorerStart = Math.max(110, Math.min(950, compExplorerStart + delta));
+      renderManipulativePlayground(1);
+    }
+    function setFactorNum(n) {
+      factorExplorerNum = n;
+      renderManipulativePlayground(3);
+    }
+    function setFracBar(tot, den, num) {
+      fracTotal = tot; fracDenom = den; fracNumer = num;
+      renderManipulativePlayground(4);
+    }
+    function setPerimDims(l, w) {
+      perimL = l; perimW = w;
+      renderManipulativePlayground(5);
+    }
+
+    // =========================================================================
+    // 6. 100-QUESTION RETRIEVAL BANK LOGIC
+    // =========================================================================
+    function initBankUI() {
+      setBankFilter('all');
+    }
+
+    function setBankFilter(topic) {
+      bankFilter = topic;
+      filteredBank = topic === 'all'
+        ? [...BANK_QUESTIONS]
+        : BANK_QUESTIONS.filter(item => item.topic === topic);
+      currentBankPos = 0;
+
+      document.querySelectorAll('.bank-filter-btn').forEach(btn => {
+        if (btn.getAttribute('data-bank-filter') === topic) {
+          btn.className = 'bank-filter-btn px-3 py-2 rounded-xl text-xs font-extrabold bg-slate-900 text-white border border-slate-900 transition';
+        } else {
+          btn.className = 'bank-filter-btn px-3 py-2 rounded-xl text-xs font-bold bg-slate-50 text-slate-700 border border-slate-200 hover:bg-slate-100 transition';
+        }
+      });
+
+      document.getElementById('bank-filtered-count').textContent = `Showing ${filteredBank.length} Questions`;
+
+      const select = document.getElementById('bank-jump-select');
+      select.innerHTML = filteredBank.map((qObj, idx) =>
+        `<option value="${idx}">#${qObj.id} — ${qObj.topic}</option>`
+      ).join('');
+
+      renderBankQuestion();
+    }
+
+    function resetBankReveals() {
+      bankReveals = { hint: false, working: false, answer: false };
+      document.getElementById('bank-panel-hint').classList.add('hidden');
+      document.getElementById('bank-panel-working').classList.add('hidden');
+      document.getElementById('bank-panel-answer').classList.add('hidden');
+
+      document.getElementById('btn-bank-hint').innerHTML = '<span>&#128161; Show Visual Hint / Clue</span>';
+      document.getElementById('btn-bank-working').innerHTML = '<span>&#129692; Show Step-by-Step Working</span>';
+      document.getElementById('btn-bank-answer').innerHTML = '<span>&#9989; Reveal Final Answer</span>';
+
+      document.getElementById('bank-pupil-input').value = '';
+      document.getElementById('bank-input-feedback').textContent = '';
+    }
+
+    function toggleBankReveal(type) {
+      bankReveals[type] = !bankReveals[type];
+      const panel = document.getElementById(`bank-panel-${type}`);
+      const btn = document.getElementById(`btn-bank-${type}`);
+
+      if (bankReveals[type]) {
+        panel.classList.remove('hidden');
+        if (type === 'hint') btn.innerHTML = '<span>&#128161; Hide Visual Hint / Clue</span>';
+        if (type === 'working') btn.innerHTML = '<span>&#129692; Hide Step-by-Step Working</span>';
+        if (type === 'answer') btn.innerHTML = '<span>&#9989; Hide Final Answer</span>';
+      } else {
+        panel.classList.add('hidden');
+        if (type === 'hint') btn.innerHTML = '<span>&#128161; Show Visual Hint / Clue</span>';
+        if (type === 'working') btn.innerHTML = '<span>&#129692; Show Step-by-Step Working</span>';
+        if (type === 'answer') btn.innerHTML = '<span>&#9989; Reveal Final Answer</span>';
+      }
+    }
+
+    function renderBankQuestion() {
+      resetBankReveals();
+      const item = filteredBank[currentBankPos];
+      if (!item) return;
+
+      document.getElementById('bank-q-number').textContent = `Question #${item.id}`;
+      document.getElementById('bank-q-topic').textContent = item.topic;
+      document.getElementById('bank-q-text').textContent = item.q;
+      document.getElementById('bank-hint-text').textContent = item.hint;
+      document.getElementById('bank-working-text').textContent = item.working;
+      document.getElementById('bank-answer-text').textContent = item.answer;
+      document.getElementById('bank-jump-select').value = String(currentBankPos);
+    }
+
+    function prevBankQuestion() {
+      currentBankPos = (currentBankPos - 1 + filteredBank.length) % filteredBank.length;
+      renderBankQuestion();
+    }
+
+    function nextBankQuestion() {
+      currentBankPos = (currentBankPos + 1) % filteredBank.length;
+      renderBankQuestion();
+    }
+
+    function jumpToBankQuestion(idx) {
+      currentBankPos = parseInt(idx, 10) || 0;
+      renderBankQuestion();
+    }
+
+    function randomBankQuestion() {
+      if (filteredBank.length <= 1) return;
+      let next = currentBankPos;
+      while (next === currentBankPos) {
+        next = Math.floor(Math.random() * filteredBank.length);
+      }
+      currentBankPos = next;
+      renderBankQuestion();
+    }
+
+    function checkPupilInput() {
+      const val = document.getElementById('bank-pupil-input').value.trim().toLowerCase();
+      const fb = document.getElementById('bank-input-feedback');
+      if (!val) {
+        fb.textContent = 'Type an answer first!';
+        fb.className = 'text-xs font-bold mt-2 text-amber-700';
+        return;
+      }
+      const item = filteredBank[currentBankPos];
+      const cleanAns = item.answer.toLowerCase();
+      if (cleanAns === val || cleanAns.startsWith(val + ' ') || cleanAns.startsWith(val + '(')) {
+        fb.textContent = 'Spot on! Great reasoning.';
+        fb.className = 'text-xs font-extrabold mt-2 text-emerald-700';
+      } else {
+        fb.textContent = 'Check again—use the whiteboard or reveal a hint!';
+        fb.className = 'text-xs font-extrabold mt-2 text-rose-600';
+      }
+    }
+
+    function markBankScore(isCorrect) {
+      bankScore.attempted += 1;
+      if (isCorrect) bankScore.correct += 1;
+      document.getElementById('bank-score-correct').textContent = bankScore.correct;
+      document.getElementById('bank-score-attempted').textContent = bankScore.attempted;
+    }
+
+    function resetBankScore() {
+      bankScore = { correct: 0, attempted: 0 };
+      document.getElementById('bank-score-correct').textContent = '0';
+      document.getElementById('bank-score-attempted').textContent = '0';
+    }
+
+    // =========================================================================
+    // 7. INTERACTIVE SURFACE PEN / TOUCH WHITEBOARD ENGINE
+    // =========================================================================
+    const canvas = document.getElementById('wb-canvas');
+    const ctx = canvas.getContext('2d');
+
+    function saveWbSnapshot() {
+      try {
+        if (wbHistory.length > 15) wbHistory.shift();
+        wbHistory.push(canvas.toDataURL());
+      } catch (e) {}
+    }
+
+    function undoWbStroke() {
+      if (wbHistory.length === 0) return;
+      const lastData = wbHistory.pop();
+      const img = new Image();
+      img.onload = function () {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0);
+      };
+      img.src = lastData;
+    }
+
+    function toggleWhiteboard() {
+      wbOpen = !wbOpen;
+      const wbPane = document.getElementById('whiteboard-pane');
+      const mainPane = document.getElementById('main-teaching-pane');
+      const label = document.getElementById('wb-toggle-label');
+
+      if (wbOpen) {
+        wbPane.classList.remove('hidden');
+        label.textContent = 'Close Whiteboard';
+        setTimeout(resizeCanvasKeepDrawing, 40);
+      } else {
+        wbPane.classList.add('hidden');
+        mainPane.classList.remove('hidden');
+        wbFullscreen = false;
+        document.getElementById('btn-wb-expand').textContent = 'Fullscreen';
+        wbPane.className = 'hidden lg:w-[46%] xl:w-[48%] bg-white border-t-4 lg:border-t-0 lg:border-l-4 border-slate-300 flex flex-col shadow-2xl z-30';
+        label.textContent = 'Open Whiteboard';
+      }
+    }
+
+    function toggleWbFullscreen() {
+      wbFullscreen = !wbFullscreen;
+      const wbPane = document.getElementById('whiteboard-pane');
+      const mainPane = document.getElementById('main-teaching-pane');
+      const btn = document.getElementById('btn-wb-expand');
+
+      if (wbFullscreen) {
+        mainPane.classList.add('hidden');
+        wbPane.className = 'w-full bg-white flex flex-col shadow-2xl z-30';
+        btn.textContent = 'Split Screen';
+      } else {
+        mainPane.classList.remove('hidden');
+        wbPane.className = 'lg:w-[46%] xl:w-[48%] bg-white border-t-4 lg:border-t-0 lg:border-l-4 border-slate-300 flex flex-col shadow-2xl z-30';
+        btn.textContent = 'Fullscreen';
+      }
+      setTimeout(resizeCanvasKeepDrawing, 40);
+    }
+
+    function setWbColor(color) {
+      wbTool = 'pen';
+      wbColor = color;
+      document.getElementById('btn-wb-eraser').classList.remove('bg-amber-400', 'text-slate-950');
+      document.querySelectorAll('.wb-color-btn').forEach(btn => {
+        if (btn.getAttribute('data-wb-color') === color) {
+          btn.classList.add('ring-2', 'ring-emerald-400');
+        } else {
+          btn.classList.remove('ring-2', 'ring-emerald-400');
+        }
+      });
+    }
+
+    function setWbSize(size) {
+      wbTool = 'pen';
+      wbSize = size;
+      document.querySelectorAll('.wb-size-btn').forEach(btn => {
+        if (parseInt(btn.getAttribute('data-wb-size'), 10) === size) {
+          btn.className = 'wb-size-btn px-2 py-0.5 rounded text-xs font-bold bg-slate-700 text-white';
+        } else {
+          btn.className = 'wb-size-btn px-2 py-0.5 rounded text-xs font-bold text-slate-300 hover:text-white';
+        }
+      });
+    }
+
+    function setWbTool(tool) {
+      wbTool = tool;
+      const eraserBtn = document.getElementById('btn-wb-eraser');
+      if (tool === 'eraser') {
+        eraserBtn.classList.add('bg-amber-400', 'text-slate-950');
+      } else {
+        eraserBtn.classList.remove('bg-amber-400', 'text-slate-950');
+      }
+    }
+
+    function setWbBackground(bgType) {
+      wbBg = bgType;
+      clearWhiteboard();
+    }
+
+    function drawWbTemplate() {
+      const w = canvas.width;
+      const h = canvas.height;
+      ctx.save();
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, w, h);
+
+      if (wbBg === 'grid') {
+        ctx.strokeStyle = '#e2e8f0';
+        ctx.lineWidth = 1;
+        const step = 28;
+        for (let x = 0; x < w; x += step) {
+          ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+        }
+        for (let y = 0; y < h; y += step) {
+          ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+        }
+      } else if (wbBg === 'numberline') {
+        const y = Math.round(h * 0.55);
+        const pad = 36;
+        ctx.strokeStyle = '#334155';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(pad, y);
+        ctx.lineTo(w - pad, y);
+        ctx.stroke();
+
+        for (let i = 0; i <= 10; i++) {
+          const x = pad + ((w - pad * 2) * i) / 10;
+          ctx.beginPath();
+          ctx.moveTo(x, y - 10);
+          ctx.lineTo(x, y + 10);
+          ctx.stroke();
+        }
+      } else if (wbBg === 'hto') {
+        const colW = w / 3;
+        ctx.strokeStyle = '#94a3b8';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(colW, 20); ctx.lineTo(colW, h - 20);
+        ctx.moveTo(colW * 2, 20); ctx.lineTo(colW * 2, h - 20);
+        ctx.moveTo(20, 64); ctx.lineTo(w - 20, 64);
+        ctx.stroke();
+
+        ctx.font = '800 18px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#1d4ed8'; ctx.fillText('Hundreds (H)', colW * 0.5, 48);
+        ctx.fillStyle = '#047857'; ctx.fillText('Tens (T)', colW * 1.5, 48);
+        ctx.fillStyle = '#b45309'; ctx.fillText('Ones (O)', colW * 2.5, 48);
+      }
+      ctx.restore();
+    }
+
+    function clearWhiteboard() {
+      saveWbSnapshot();
+      const wrapper = document.getElementById('wb-canvas-wrapper');
+      canvas.width = wrapper.clientWidth || 500;
+      canvas.height = wrapper.clientHeight || 420;
+      drawWbTemplate();
+    }
+
+    function resizeCanvasKeepDrawing() {
+      const wrapper = document.getElementById('wb-canvas-wrapper');
+      if (!wrapper || wrapper.clientWidth === 0) return;
+      const temp = document.createElement('canvas');
+      temp.width = canvas.width;
+      temp.height = canvas.height;
+      temp.getContext('2d').drawImage(canvas, 0, 0);
+
+      canvas.width = wrapper.clientWidth;
+      canvas.height = wrapper.clientHeight;
+      drawWbTemplate();
+      ctx.drawImage(temp, 0, 0);
+    }
+
+    function getCanvasCoords(e) {
+      const rect = canvas.getBoundingClientRect();
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      return {
+        x: clientX - rect.left,
+        y: clientY - rect.top
+      };
+    }
+
+    function startStroke(e) {
+      saveWbSnapshot();
+      isDrawing = true;
+      const pos = getCanvasCoords(e);
+      lastX = pos.x;
+      lastY = pos.y;
+    }
+
+    function moveStroke(e) {
+      if (!isDrawing) return;
+      if (e.cancelable) e.preventDefault();
+      const pos = getCanvasCoords(e);
+      ctx.save();
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      if (wbTool === 'eraser') {
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 26;
+      } else {
+        ctx.strokeStyle = wbColor;
+        ctx.lineWidth = wbSize;
+      }
+      ctx.beginPath();
+      ctx.moveTo(lastX, lastY);
+      ctx.lineTo(pos.x, pos.y);
+      ctx.stroke();
+      ctx.restore();
+
+      lastX = pos.x;
+      lastY = pos.y;
+    }
+
+    function endStroke() {
+      isDrawing = false;
+    }
+
+    canvas.addEventListener('mousedown', startStroke);
+    canvas.addEventListener('mousemove', moveStroke);
+    window.addEventListener('mouseup', endStroke);
+
+    canvas.addEventListener('touchstart', startStroke, { passive: false });
+    canvas.addEventListener('touchmove', moveStroke, { passive: false });
+    window.addEventListener('touchend', endStroke);
+
+    window.addEventListener('resize', () => {
+      if (wbOpen) resizeCanvasKeepDrawing();
+    });
+
+    window.onload = function () {
+      initBankUI();
+      clearWhiteboard();
+    };
+  </script>
+</body>
+</html>
