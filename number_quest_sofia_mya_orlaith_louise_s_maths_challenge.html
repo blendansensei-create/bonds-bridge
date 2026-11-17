@@ -1,0 +1,1610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Number Quest: Sofia, Mya &amp; Orlaith-Louise's Maths Challenge!</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Inter:wght@500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #eef2ff 0%, #f0fdf4 50%, #fefce8 100%);
+      color: #0f172a;
+      overflow-x: hidden;
+    }
+    .font-game {
+      font-family: 'Fredoka', 'Inter', sans-serif;
+    }
+    @keyframes bouncePop {
+      0% { transform: scale(0.92); opacity: 0; }
+      70% { transform: scale(1.03); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .animate-bounce-pop {
+      animation: bouncePop 0.25s ease-out forwards;
+    }
+    @keyframes shakeX {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-8px); }
+      40%, 80% { transform: translateX(8px); }
+    }
+    .animate-shake {
+      animation: shakeX 0.35s ease-in-out;
+    }
+    .dienes-rod-mini {
+      background-image: linear-gradient(to bottom, rgba(255,255,255,0.6) 1px, transparent 1px);
+      background-size: 100% 6px;
+    }
+    #confetti-canvas {
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col select-none">
+
+  <!-- CONFETTI OVERLAY FOR END-OF-GAME CELEBRATION -->
+  <canvas id="confetti-canvas" class="fixed inset-0 w-full h-full z-50 hidden"></canvas>
+
+  <!-- TOP GAME BAR -->
+  <header class="bg-indigo-950 text-white shadow-lg border-b-4 border-indigo-700 sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-3 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-2">
+      <!-- Left: Logo & Home -->
+      <div class="flex items-center gap-2.5">
+        <button id="btn-home" onclick="showScreen('profiles')" class="hidden items-center gap-1.5 bg-indigo-800 hover:bg-indigo-700 active:scale-95 text-white font-bold px-3 py-2 rounded-xl border border-indigo-600 transition text-xs sm:text-sm">
+          <span>&#127968;</span>
+          <span>Menu</span>
+        </button>
+        <div class="flex items-center gap-2.5">
+          <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-indigo-950 font-game font-bold text-xl shadow-md">
+            &#9733;
+          </div>
+          <div>
+            <h1 class="font-game text-lg sm:text-2xl font-bold tracking-wide leading-none text-white">
+              Number Quest
+            </h1>
+            <p class="text-[11px] sm:text-xs text-indigo-200 font-semibold">
+              Sofia, Mya &amp; Orlaith-Louise's Maths Challenge!
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Active Player Pill, Streak & Sound Toggle -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        <div id="hud-player-badge" class="hidden items-center gap-2 bg-indigo-900 px-3 py-1.5 rounded-xl border border-indigo-700">
+          <span id="hud-avatar" class="text-lg">&#129412;</span>
+          <span id="hud-name" class="font-extrabold text-xs sm:text-sm text-amber-300">Sofia</span>
+          <span class="text-xs font-bold text-indigo-200 border-l border-indigo-700 pl-2">&#11088; <span id="hud-stars">0</span></span>
+        </div>
+
+        <div id="hud-streak-badge" class="hidden items-center gap-1 bg-amber-500/20 border border-amber-400/50 px-2.5 py-1.5 rounded-xl text-amber-300 font-extrabold text-xs sm:text-sm">
+          <span>&#128293;</span>
+          <span id="hud-streak">0</span>
+        </div>
+
+        <button id="btn-sound" onclick="toggleSound()" class="p-2 rounded-xl bg-indigo-800 hover:bg-indigo-700 text-white border border-indigo-600 transition text-sm font-bold" title="Toggle Sound Effects">
+          &#128266;
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT CONTAINER -->
+  <main class="flex-1 max-w-6xl w-full mx-auto px-3 sm:px-6 py-5 sm:py-7 flex flex-col justify-center">
+
+    <!-- ===================================================================== -->
+    <!-- SCREEN 1: PLAYER PROFILE & ARENA SELECTOR                              -->
+    <!-- ===================================================================== -->
+    <section id="screen-profiles" class="space-y-6 animate-bounce-pop">
+      <!-- Step 1: Who is playing? -->
+      <div class="bg-white rounded-3xl p-5 sm:p-7 shadow-md border-2 border-indigo-100">
+        <div class="text-center max-w-2xl mx-auto mb-6">
+          <span class="inline-block px-3.5 py-1 rounded-full bg-indigo-100 text-indigo-800 font-extrabold text-xs uppercase tracking-wider mb-2">
+            Step 1 &bull; Choose Your Explorer
+          </span>
+          <h2 class="font-game text-2xl sm:text-4xl font-bold text-slate-900">
+            Who is playing today?
+          </h2>
+          <p class="text-slate-600 text-sm sm:text-base mt-1 font-medium">
+            Tap your name to load your stars and start your maths adventure!
+          </p>
+        </div>
+
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+          <button onclick="selectPlayer('Sofia')" data-player="Sofia" class="player-card group rounded-2xl p-4 sm:p-5 border-4 transition flex flex-col items-center text-center shadow-sm active:scale-95">
+            <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-pink-100 flex items-center justify-center text-4xl sm:text-5xl mb-2 group-hover:scale-110 transition">&#129412;</div>
+            <span class="font-game text-xl sm:text-2xl font-bold text-slate-900">Sofia</span>
+            <span class="mt-1 px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 font-extrabold text-xs">&#11088; <span id="stars-Sofia">0</span> Stars</span>
+          </button>
+
+          <button onclick="selectPlayer('Mya')" data-player="Mya" class="player-card group rounded-2xl p-4 sm:p-5 border-4 transition flex flex-col items-center text-center shadow-sm active:scale-95">
+            <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-purple-100 flex items-center justify-center text-4xl sm:text-5xl mb-2 group-hover:scale-110 transition">&#129419;</div>
+            <span class="font-game text-xl sm:text-2xl font-bold text-slate-900">Mya</span>
+            <span class="mt-1 px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 font-extrabold text-xs">&#11088; <span id="stars-Mya">0</span> Stars</span>
+          </button>
+
+          <button onclick="selectPlayer('Orlaith-Louise')" data-player="Orlaith-Louise" class="player-card group rounded-2xl p-4 sm:p-5 border-4 transition flex flex-col items-center text-center shadow-sm active:scale-95">
+            <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-emerald-100 flex items-center justify-center text-4xl sm:text-5xl mb-2 group-hover:scale-110 transition">&#128034;</div>
+            <span class="font-game text-lg sm:text-xl font-bold text-slate-900 leading-tight">Orlaith-Louise</span>
+            <span class="mt-1 px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 font-extrabold text-xs">&#11088; <span id="stars-Orlaith-Louise">0</span> Stars</span>
+          </button>
+
+          <button onclick="selectPlayer('Guest')" data-player="Guest" class="player-card group rounded-2xl p-4 sm:p-5 border-4 transition flex flex-col items-center text-center shadow-sm active:scale-95">
+            <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-sky-100 flex items-center justify-center text-4xl sm:text-5xl mb-2 group-hover:scale-110 transition">&#128640;</div>
+            <span class="font-game text-xl sm:text-2xl font-bold text-slate-900">Guest Explorer</span>
+            <span class="mt-1 px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 font-extrabold text-xs">&#11088; <span id="stars-Guest">0</span> Stars</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Step 2: Choose Full Quest or Individual Arena -->
+      <div class="bg-white rounded-3xl p-5 sm:p-7 shadow-md border-2 border-indigo-100 space-y-5">
+        <div class="flex flex-col md:flex-row items-center justify-between gap-4 pb-5 border-b-2 border-slate-100">
+          <div>
+            <span class="inline-block px-3 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-extrabold text-xs uppercase tracking-wider mb-1">
+              Step 2 &bull; Pick Your Challenge
+            </span>
+            <h3 class="font-game text-xl sm:text-3xl font-bold text-slate-900">
+              Ready, <span id="welcome-player-name" class="text-indigo-600">Sofia</span>?
+            </h3>
+            <p class="text-slate-600 text-sm mt-0.5">
+              Play the <strong>Full Quest (18 Questions)</strong> across all 6 skills, or practice one arena at a time!
+            </p>
+          </div>
+
+          <button onclick="startFullQuest()" class="w-full md:w-auto shrink-0 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 hover:from-indigo-500 hover:to-pink-500 active:scale-95 text-white font-game text-lg sm:text-xl font-bold px-7 py-4 rounded-2xl shadow-lg border-b-4 border-indigo-900 transition flex items-center justify-center gap-2.5">
+            <span>&#127942;</span>
+            <span>Start Full Quest (18 Qs)</span>
+          </button>
+        </div>
+
+        <!-- 6 Arena Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <button onclick="startSingleArena(1)" class="text-left rounded-2xl p-4 bg-amber-50 hover:bg-amber-100/80 border-2 border-amber-300 transition shadow-sm active:scale-98 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-2xl">&#128290;</span>
+                <span id="best-1" class="text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-white text-amber-800 border border-amber-300">Best: —</span>
+              </div>
+              <h4 class="font-game text-lg font-bold text-slate-900">1. Odd &amp; Even Sorter</h4>
+              <p class="text-xs text-slate-600 mt-1 font-medium">Check the ones digit to sort 2-digit and 3-digit numbers into Odd or Even!</p>
+            </div>
+            <div class="mt-3 text-xs font-extrabold text-amber-800">Play 8 Questions &rarr;</div>
+          </button>
+
+          <button onclick="startSingleArena(2)" class="text-left rounded-2xl p-4 bg-sky-50 hover:bg-sky-100/80 border-2 border-sky-300 transition shadow-sm active:scale-98 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-2xl">&#127753;</span>
+                <span id="best-2" class="text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-white text-sky-800 border border-sky-300">Best: —</span>
+              </div>
+              <h4 class="font-game text-lg font-bold text-slate-900">2. Bridging Ten Bridge</h4>
+              <p class="text-xs text-slate-600 mt-1 font-medium">Make 10 or the next friendly ten first (8 + 5, 9 + 6, 48 + 7)!</p>
+            </div>
+            <div class="mt-3 text-xs font-extrabold text-sky-800">Play 8 Questions &rarr;</div>
+          </button>
+
+          <button onclick="startSingleArena(3)" class="text-left rounded-2xl p-4 bg-rose-50 hover:bg-rose-100/80 border-2 border-rose-300 transition shadow-sm active:scale-98 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-2xl">&#127968;</span>
+                <span id="best-3" class="text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-white text-rose-800 border border-rose-300">Best: —</span>
+              </div>
+              <h4 class="font-game text-lg font-bold text-slate-900">3. Sign Spotter &amp; Fact Roof</h4>
+              <p class="text-xs text-slate-600 mt-1 font-medium">Spot + vs − signs and build subtraction &amp; division facts with the Boss Number first!</p>
+            </div>
+            <div class="mt-3 text-xs font-extrabold text-rose-800">Play 8 Questions &rarr;</div>
+          </button>
+
+          <button onclick="startSingleArena(4)" class="text-left rounded-2xl p-4 bg-emerald-50 hover:bg-emerald-100/80 border-2 border-emerald-300 transition shadow-sm active:scale-98 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-2xl">&#129521;</span>
+                <span id="best-4" class="text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-white text-emerald-800 border border-emerald-300">Best: —</span>
+              </div>
+              <h4 class="font-game text-lg font-bold text-slate-900">4. Tens &amp; Ones Ten-Frames</h4>
+              <p class="text-xs text-slate-600 mt-1 font-medium">Count full ten-frames and build 2-digit and 3-digit numbers with Tens &amp; Ones!</p>
+            </div>
+            <div class="mt-3 text-xs font-extrabold text-emerald-800">Play 8 Questions &rarr;</div>
+          </button>
+
+          <button onclick="startSingleArena(5)" class="text-left rounded-2xl p-4 bg-purple-50 hover:bg-purple-100/80 border-2 border-purple-300 transition shadow-sm active:scale-98 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-2xl">&#128269;</span>
+                <span id="best-5" class="text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-white text-purple-800 border border-purple-300">Best: —</span>
+              </div>
+              <h4 class="font-game text-lg font-bold text-slate-900">5. Maths Word Detective</h4>
+              <p class="text-xs text-slate-600 mt-1 font-medium">Crack Difference, Remaining, Product, Multiple &amp; Factor with Read-Aloud audio!</p>
+            </div>
+            <div class="mt-3 text-xs font-extrabold text-purple-800">Play 8 Questions &rarr;</div>
+          </button>
+
+          <button onclick="startSingleArena(6)" class="text-left rounded-2xl p-4 bg-indigo-50 hover:bg-indigo-100/80 border-2 border-indigo-300 transition shadow-sm active:scale-98 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-2xl">&#128175;</span>
+                <span id="best-6" class="text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-white text-indigo-800 border border-indigo-300">Best: —</span>
+              </div>
+              <h4 class="font-game text-lg font-bold text-slate-900">6. Bonds to 100 Challenge</h4>
+              <p class="text-xs text-slate-600 mt-1 font-medium">Solve 73 + ? = 100 and 100 − 45 on the 100-square without falling into the extra-ten trap!</p>
+            </div>
+            <div class="mt-3 text-xs font-extrabold text-indigo-800">Play 8 Questions &rarr;</div>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- SCREEN 2: ACTIVE GAME ARENA                                           -->
+    <!-- ===================================================================== -->
+    <section id="screen-game" class="hidden space-y-4">
+      <!-- Progress Bar & Question Counter -->
+      <div class="bg-white rounded-2xl p-3.5 sm:p-4 shadow-sm border-2 border-indigo-100 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div class="flex items-center gap-2.5 w-full sm:w-auto justify-between sm:justify-start">
+          <span id="game-arena-badge" class="px-3 py-1 rounded-xl bg-indigo-100 text-indigo-900 font-extrabold text-xs sm:text-sm">
+            Arena 1: Odd &amp; Even Sorter
+          </span>
+          <span id="game-q-counter" class="font-extrabold text-xs sm:text-sm text-slate-600">
+            Question 1 of 18
+          </span>
+        </div>
+
+        <div class="w-full sm:w-64 bg-slate-200 h-3.5 rounded-full overflow-hidden border border-slate-300">
+          <div id="game-progress-bar" class="bg-gradient-to-r from-emerald-500 to-teal-400 h-full transition-all duration-300" style="width: 5%"></div>
+        </div>
+
+        <div class="hidden sm:flex items-center gap-1.5 font-extrabold text-sm text-emerald-700 bg-emerald-50 px-3 py-1 rounded-xl border border-emerald-200">
+          <span>Score:</span>
+          <span id="game-live-score">0</span>
+        </div>
+      </div>
+
+      <!-- Main Question Stage Card -->
+      <div id="question-stage-card" class="bg-white rounded-3xl p-5 sm:p-8 shadow-lg border-4 border-indigo-100 space-y-6">
+        <!-- Prompt Row + Read Aloud Button -->
+        <div class="flex items-start justify-between gap-3">
+          <div class="space-y-1.5">
+            <span id="q-instruction-tag" class="inline-block px-3 py-0.5 rounded-full bg-slate-100 text-slate-600 font-extrabold text-xs uppercase tracking-wider">
+              Read &amp; Solve
+            </span>
+            <h2 id="q-prompt-text" class="font-game text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 leading-snug">
+              <!-- Populated by JS -->
+            </h2>
+          </div>
+
+          <button onclick="speakCurrentQuestion()" class="shrink-0 flex items-center gap-1.5 px-3.5 py-2.5 rounded-2xl bg-amber-100 hover:bg-amber-200 active:scale-95 text-amber-950 font-extrabold text-xs sm:text-sm border-2 border-amber-300 shadow-sm transition" title="Read Question Aloud">
+            <span class="text-lg">&#128264;</span>
+            <span class="hidden sm:inline">Read Aloud</span>
+          </button>
+        </div>
+
+        <!-- Visual Stage (Shows Ten-Frames, Number Display, Fact Roof, etc. BEFORE or AFTER depending on question) -->
+        <div id="q-visual-stage" class="flex justify-center">
+          <!-- Populated dynamically -->
+        </div>
+
+        <!-- Interactive Input / Choice Area -->
+        <div id="q-interaction-area" class="pt-2">
+          <!-- Populated dynamically: Multiple Choice Buttons OR On-Screen Keypad -->
+        </div>
+
+        <!-- Feedback & Visual Scaffold Box (Hidden until Attempt 1 or 2) -->
+        <div id="q-feedback-box" class="hidden rounded-2xl p-4 sm:p-5 border-2 space-y-3 animate-bounce-pop">
+          <div class="flex items-center justify-between gap-2">
+            <div class="flex items-center gap-2">
+              <span id="q-feedback-icon" class="text-2xl">&#127881;</span>
+              <h3 id="q-feedback-title" class="font-game text-xl font-bold">Awesome Job!</h3>
+            </div>
+            <button id="btn-next-question" onclick="advanceQuestion()" class="hidden px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-game text-base sm:text-lg font-bold shadow-md transition">
+              Next Question &rarr;
+            </button>
+          </div>
+          <p id="q-feedback-message" class="text-sm sm:text-base font-semibold leading-relaxed"></p>
+          <div id="q-feedback-visual" class="pt-1"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- SCREEN 3: END-OF-GAME CELEBRATION & SCORE CERTIFICATE                 -->
+    <!-- ===================================================================== -->
+    <section id="screen-results" class="hidden animate-bounce-pop">
+      <div class="bg-white rounded-3xl p-6 sm:p-9 shadow-xl border-4 border-amber-300 max-w-4xl mx-auto space-y-6 text-center">
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-100 text-amber-900 font-extrabold text-xs sm:text-sm uppercase tracking-wider border border-amber-300">
+          <span>&#127942;</span>
+          <span id="res-mode-label">Quest Complete!</span>
+        </div>
+
+        <div>
+          <div id="res-avatar" class="text-6xl sm:text-7xl mb-2">&#129412;</div>
+          <h2 class="font-game text-3xl sm:text-5xl font-bold text-slate-900">
+            Well done, <span id="res-player-name" class="text-indigo-600">Sofia</span>!
+          </h2>
+          <p id="res-encouragement" class="text-slate-600 text-base sm:text-lg font-semibold mt-1">
+            You completed your Number Quest challenge!
+          </p>
+        </div>
+
+        <!-- Big Star Rating -->
+        <div id="res-stars-row" class="flex items-center justify-center gap-3 text-5xl sm:text-6xl py-1">
+          <span>&#11088;</span><span>&#11088;</span><span>&#11088;</span>
+        </div>
+
+        <!-- Score Summary Cards -->
+        <div class="grid grid-cols-3 gap-3 sm:gap-5 max-w-xl mx-auto">
+          <div class="rounded-2xl bg-indigo-50 border-2 border-indigo-200 p-4">
+            <span class="text-xs font-extrabold uppercase text-indigo-700 block">Final Score</span>
+            <span id="res-score-fraction" class="font-game text-2xl sm:text-4xl font-bold text-indigo-950">15 / 18</span>
+          </div>
+          <div class="rounded-2xl bg-emerald-50 border-2 border-emerald-200 p-4">
+            <span class="text-xs font-extrabold uppercase text-emerald-700 block">Accuracy</span>
+            <span id="res-accuracy" class="font-game text-2xl sm:text-4xl font-bold text-emerald-950">83%</span>
+          </div>
+          <div class="rounded-2xl bg-amber-50 border-2 border-amber-200 p-4">
+            <span class="text-xs font-extrabold uppercase text-amber-700 block">Stars Earned</span>
+            <span id="res-stars-earned" class="font-game text-2xl sm:text-4xl font-bold text-amber-950">+3 &#11088;</span>
+          </div>
+        </div>
+
+        <!-- Skill-by-Skill Breakdown -->
+        <div class="text-left bg-slate-50 rounded-2xl p-4 sm:p-5 border-2 border-slate-200 space-y-3">
+          <h3 class="font-game text-lg font-bold text-slate-900 flex items-center gap-2">
+            <span>&#128202;</span>
+            <span>Your Maths Skill Report</span>
+          </h3>
+          <div id="res-skill-breakdown" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex flex-wrap items-center justify-center gap-3 pt-2">
+          <button onclick="replaySameMode()" class="px-6 py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-game text-lg font-bold shadow-md transition">
+            &#128260; Play Again
+          </button>
+          <button id="btn-practice-weakest" onclick="practiceWeakestArena()" class="hidden px-6 py-3.5 rounded-2xl bg-amber-500 hover:bg-amber-600 active:scale-95 text-slate-950 font-game text-lg font-bold shadow-md transition">
+            &#127919; Practise Tricky Skill
+          </button>
+          <button onclick="showScreen('profiles')" class="px-6 py-3.5 rounded-2xl bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-game text-lg font-bold shadow-md transition">
+            &#127968; Back to Menu
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    // =========================================================================
+    // 1. PLAYER PROFILES & LOCAL STORAGE PERSISTENCE
+    // =========================================================================
+    const AVATARS = {
+      'Sofia': '🦄',
+      'Mya': '🦋',
+      'Orlaith-Louise': '🐢',
+      'Guest': '🚀'
+    };
+
+    const ARENA_NAMES = {
+      1: 'Odd & Even Sorter',
+      2: 'Bridging Ten Bridge',
+      3: 'Sign Spotter & Fact Roof',
+      4: 'Tens & Ones Ten-Frames',
+      5: 'Maths Word Detective',
+      6: 'Bonds to 100 Challenge'
+    };
+
+    let profilesData = {
+      'Sofia': { stars: 0, best: {} },
+      'Mya': { stars: 0, best: {} },
+      'Orlaith-Louise': { stars: 0, best: {} },
+      'Guest': { stars: 0, best: {} }
+    };
+
+    let currentPlayer = 'Sofia';
+    let soundEnabled = true;
+
+    function loadProfiles() {
+      try {
+        const saved = localStorage.getItem('number_quest_p4p5_v1');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          profilesData = { ...profilesData, ...parsed };
+        }
+      } catch (e) {
+        // Ignore storage restrictions
+      }
+      refreshProfileCards();
+    }
+
+    function saveProfiles() {
+      try {
+        localStorage.setItem('number_quest_p4p5_v1', JSON.stringify(profilesData));
+      } catch (e) {
+        // Ignore storage restrictions
+      }
+      refreshProfileCards();
+    }
+
+    function refreshProfileCards() {
+      Object.keys(profilesData).forEach(name => {
+        const el = document.getElementById(`stars-${name}`);
+        if (el) el.textContent = profilesData[name].stars || 0;
+      });
+
+      document.querySelectorAll('.player-card').forEach(card => {
+        const p = card.getAttribute('data-player');
+        if (p === currentPlayer) {
+          card.className = 'player-card group rounded-2xl p-4 sm:p-5 border-4 border-indigo-600 bg-indigo-50/70 transition flex flex-col items-center text-center shadow-md scale-[1.02]';
+        } else {
+          card.className = 'player-card group rounded-2xl p-4 sm:p-5 border-4 border-slate-200 bg-white hover:border-indigo-300 transition flex flex-col items-center text-center shadow-sm active:scale-95';
+        }
+      });
+
+      document.getElementById('welcome-player-name').textContent = currentPlayer;
+      document.getElementById('hud-avatar').textContent = AVATARS[currentPlayer] || '🚀';
+      document.getElementById('hud-name').textContent = currentPlayer;
+      document.getElementById('hud-stars').textContent = profilesData[currentPlayer]?.stars || 0;
+
+      // Update best scores on Arena cards
+      for (let a = 1; a <= 6; a++) {
+        const bestVal = profilesData[currentPlayer]?.best?.[a];
+        const badge = document.getElementById(`best-${a}`);
+        if (badge) {
+          badge.textContent = bestVal !== undefined ? `Best: ${bestVal}/8` : 'Best: —';
+        }
+      }
+    }
+
+    function selectPlayer(name) {
+      currentPlayer = name;
+      playTone('pop');
+      refreshProfileCards();
+    }
+
+    // =========================================================================
+    // 2. GENTLE WEB AUDIO SOUND EFFECTS & READ-ALOUD SPEECH
+    // =========================================================================
+    let audioCtx = null;
+
+    function toggleSound() {
+      soundEnabled = !soundEnabled;
+      document.getElementById('btn-sound').innerHTML = soundEnabled ? '&#128266;' : '&#128263;';
+    }
+
+    function playTone(type) {
+      if (!soundEnabled) return;
+      try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        if (type === 'pop') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(520, now);
+          osc.frequency.exponentialRampToValueAtTime(680, now + 0.08);
+          gain.gain.setValueAtTime(0.08, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.09);
+          osc.start(now);
+          osc.stop(now + 0.09);
+        } else if (type === 'correct') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(523.25, now); // C5
+          osc.frequency.setValueAtTime(659.25, now + 0.09); // E5
+          osc.frequency.setValueAtTime(783.99, now + 0.18); // G5
+          gain.gain.setValueAtTime(0.12, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+          osc.start(now);
+          osc.stop(now + 0.36);
+        } else if (type === 'retry') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(340, now);
+          osc.frequency.linearRampToValueAtTime(280, now + 0.18);
+          gain.gain.setValueAtTime(0.09, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+          osc.start(now);
+          osc.stop(now + 0.21);
+        } else if (type === 'fanfare') {
+          const notes = [523.25, 659.25, 783.99, 1046.5];
+          notes.forEach((freq, idx) => {
+            const o = audioCtx.createOscillator();
+            const g = audioCtx.createGain();
+            o.type = 'triangle';
+            o.connect(g);
+            g.connect(audioCtx.destination);
+            o.frequency.setValueAtTime(freq, now + idx * 0.11);
+            g.gain.setValueAtTime(0.12, now + idx * 0.11);
+            g.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.11 + 0.35);
+            o.start(now + idx * 0.11);
+            o.stop(now + idx * 0.11 + 0.36);
+          });
+        }
+      } catch (e) {
+        // Audio optional
+      }
+    }
+
+    function speakCurrentQuestion() {
+      if (!('speechSynthesis' in window)) return;
+      const q = gameState.questions[gameState.index];
+      if (!q) return;
+      window.speechSynthesis.cancel();
+      const cleanText = q.speech || q.prompt.replace(/\[ \? \]/g, 'blank').replace(/−/g, 'minus').replace(/×/g, 'times').replace(/÷/g, 'divided by');
+      const utter = new SpeechSynthesisUtterance(cleanText);
+      utter.rate = 0.92;
+      window.speechSynthesis.speak(utter);
+    }
+
+    // =========================================================================
+    // 3. QUESTION GENERATORS FOR ALL 6 ARENAS
+    // =========================================================================
+    function shuffle(arr) {
+      const copy = [...arr];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function buildArenaQuestions(arenaId) {
+      if (arenaId === 1) {
+        // ARENA 1: Odd & Even Sorter
+        const nums = shuffle([12, 7, 15, 24, 39, 46, 51, 68, 142, 237, 358, 419]);
+        return nums.map(n => {
+          const isEven = n % 2 === 0;
+          const ones = n % 10;
+          return {
+            arena: 1,
+            tag: 'Odd or Even Detective',
+            prompt: `Is the number ${n} ODD or EVEN?`,
+            speech: `Is the number ${n} odd or even?`,
+            inputType: 'choice',
+            choices: ['EVEN', 'ODD'],
+            answer: isEven ? 'EVEN' : 'ODD',
+            stageVisual: () => `
+              <div class="px-8 py-4 rounded-3xl bg-amber-100 border-4 border-amber-400 shadow-inner">
+                <span class="font-game text-5xl sm:text-6xl font-bold text-slate-900 tracking-wider">${n}</span>
+              </div>
+            `,
+            retryHint: `Look ONLY at the last digit (the ones digit) of ${n}. Is ${ones} in the 2 times table (0, 2, 4, 6, 8)?`,
+            explainVisual: () => buildOddEvenVisual(n, ones, isEven),
+            explainText: isEven
+              ? `${n} ends in ${ones}. Even numbers always end in 0, 2, 4, 6, or 8 because every counter has a partner!`
+              : `${n} ends in ${ones}. Odd numbers always end in 1, 3, 5, 7, or 9 because 1 counter is left without a partner!`
+          };
+        });
+      }
+
+      if (arenaId === 2) {
+        // ARENA 2: Bridging Ten Bridge
+        const pool = shuffle([
+          { a: 8, b: 5, toTen: 2, rem: 3, ten: 10 },
+          { a: 9, b: 6, toTen: 1, rem: 5, ten: 10 },
+          { a: 7, b: 5, toTen: 3, rem: 2, ten: 10 },
+          { a: 8, b: 6, toTen: 2, rem: 4, ten: 10 },
+          { a: 9, b: 4, toTen: 1, rem: 3, ten: 10 },
+          { a: 48, b: 7, toTen: 2, rem: 5, ten: 50 },
+          { a: 39, b: 5, toTen: 1, rem: 4, ten: 40 },
+          { a: 27, b: 6, toTen: 3, rem: 3, ten: 30 },
+          { a: 58, b: 6, toTen: 2, rem: 4, ten: 60 },
+          { a: 69, b: 7, toTen: 1, rem: 6, ten: 70 }
+        ]);
+        return pool.map(item => {
+          const total = item.a + item.b;
+          return {
+            arena: 2,
+            tag: 'Bridge Through Friendly Ten',
+            prompt: `Use bridging through ${item.ten} to solve: ${item.a} + ${item.b} = [ ? ]`,
+            speech: `Use bridging through ${item.ten} to solve: ${item.a} plus ${item.b}`,
+            inputType: 'keypad',
+            answer: String(total),
+            stageVisual: () => `
+              <div class="flex items-center gap-3 bg-sky-50 px-5 py-3 rounded-2xl border-2 border-sky-200 font-bold text-sky-950 text-sm sm:text-base">
+                <span>Start at <strong>${item.a}</strong></span>
+                <span>&rarr;</span>
+                <span class="px-2.5 py-1 rounded-lg bg-white border border-sky-300">Jump to ${item.ten} (+${item.toTen})</span>
+                <span>&rarr;</span>
+                <span class="px-2.5 py-1 rounded-lg bg-white border border-sky-300">Add +${item.rem}</span>
+              </div>
+            `,
+            retryHint: `Split ${item.b} into ${item.toTen} and ${item.rem}. First do ${item.a} + ${item.toTen} = ${item.ten}, then add ${item.rem} more!`,
+            explainVisual: () => buildBridgingVisual(item),
+            explainText: `${item.a} + ${item.toTen} makes friendly ${item.ten}. Then ${item.ten} + ${item.rem} = ${total}!`
+          };
+        });
+      }
+
+      if (arenaId === 3) {
+        // ARENA 3: Sign Spotter & Fact Family Roof
+        const items = shuffle([
+          {
+            tag: 'Sign Spotter (− vs +)',
+            prompt: 'Look carefully at the sign! Work out: 10 − 8 = [ ? ]',
+            speech: 'Look carefully at the sign! Work out 10 minus 8.',
+            inputType: 'keypad',
+            answer: '2',
+            stageVisual: () => `
+              <div class="flex items-center gap-3 px-6 py-3 rounded-2xl bg-rose-100 border-4 border-rose-500">
+                <span class="font-game text-4xl font-bold text-slate-900">10</span>
+                <span class="w-12 h-12 rounded-full bg-rose-600 text-white flex items-center justify-center font-black text-3xl shadow">−</span>
+                <span class="font-game text-4xl font-bold text-slate-900">8</span>
+              </div>
+            `,
+            retryHint: 'The red minus sign (−) means TAKE AWAY! Start with 10 fingers and put 8 down—do NOT add 10 + 8!',
+            explainVisual: () => buildTenFrameVisual(10, 8, 'subtract'),
+            explainText: '10 take away 8 leaves 2! (18 is 10 + 8, not 10 − 8).'
+          },
+          {
+            tag: 'Sign Spotter (− vs +)',
+            prompt: 'Circle the sign in your head! Work out: 12 − 7 = [ ? ]',
+            speech: 'Work out 12 minus 7.',
+            inputType: 'keypad',
+            answer: '5',
+            stageVisual: () => `
+              <div class="flex items-center gap-3 px-6 py-3 rounded-2xl bg-rose-100 border-4 border-rose-500">
+                <span class="font-game text-4xl font-bold text-slate-900">12</span>
+                <span class="w-12 h-12 rounded-full bg-rose-600 text-white flex items-center justify-center font-black text-3xl shadow">−</span>
+                <span class="font-game text-4xl font-bold text-slate-900">7</span>
+              </div>
+            `,
+            retryHint: 'Red minus (−) means subtract! Count up from 7 to 10 (+3) and then to 12 (+2).',
+            explainVisual: () => `<div class="px-4 py-2 rounded-xl bg-white border border-rose-300 font-extrabold text-rose-900">12 − 7 = 5 (Check: 7 + 5 = 12)</div>`,
+            explainText: '12 take away 7 equals 5!'
+          },
+          {
+            tag: 'Fact Family Roof (Subtraction)',
+            prompt: 'Which SUBTRACTION fact belongs in the same fact family as 7 + 3 = 10?',
+            speech: 'Which subtraction fact belongs in the same fact family as 7 plus 3 equals 10?',
+            inputType: 'choice',
+            choices: ['10 − 7 = 3', '3 + 7 = 10', '7 − 3 = 10', '10 + 7 = 17'],
+            answer: '10 − 7 = 3',
+            stageVisual: () => buildFactRoofVisual(10, 7, 3, '+ / −'),
+            retryHint: 'Careful! 3 + 7 = 10 is an ADDITION fact. A SUBTRACTION fact must have a minus sign (−) and start with the Boss Number (10) at the top!',
+            explainVisual: () => buildFactRoofVisual(10, 7, 3, '+ / −'),
+            explainText: 'The Boss Number 10 goes first in subtraction: 10 − 7 = 3 (and 10 − 3 = 7)!'
+          },
+          {
+            tag: 'Fact Family Roof (Subtraction)',
+            prompt: 'Which SUBTRACTION fact belongs in the same fact family as 6 + 4 = 10?',
+            speech: 'Which subtraction fact belongs in the same fact family as 6 plus 4 equals 10?',
+            inputType: 'choice',
+            choices: ['10 − 4 = 6', '4 + 6 = 10', '6 − 4 = 10', '10 + 4 = 14'],
+            answer: '10 − 4 = 6',
+            stageVisual: () => buildFactRoofVisual(10, 6, 4, '+ / −'),
+            retryHint: 'Remember: 4 + 6 = 10 is addition! Put the Boss Number 10 at the front with a minus (−) sign.',
+            explainVisual: () => buildFactRoofVisual(10, 6, 4, '+ / −'),
+            explainText: '10 − 4 = 6 uses the exact same three family numbers (10, 6, and 4)!'
+          },
+          {
+            tag: 'Fact Family Roof (Division)',
+            prompt: 'Which DIVISION fact belongs in the same fact family as 3 × 8 = 24?',
+            speech: 'Which division fact belongs in the same fact family as 3 times 8 equals 24?',
+            inputType: 'choice',
+            choices: ['24 ÷ 8 = 3', '8 × 3 = 24', '3 ÷ 8 = 24', '24 + 8 = 32'],
+            answer: '24 ÷ 8 = 3',
+            stageVisual: () => buildFactRoofVisual(24, 3, 8, '× / ÷'),
+            retryHint: '8 × 3 = 24 is multiplication! For a DIVISION fact, put the Boss Number (24) at the front with a ÷ sign.',
+            explainVisual: () => buildFactRoofVisual(24, 3, 8, '× / ÷'),
+            explainText: 'In division, the biggest number goes first: 24 ÷ 8 = 3 (or 24 ÷ 3 = 8)!'
+          },
+          {
+            tag: 'Fact Family Roof (Division)',
+            prompt: 'Which DIVISION fact belongs in the same fact family as 4 × 7 = 28?',
+            speech: 'Which division fact belongs in the same fact family as 4 times 7 equals 28?',
+            inputType: 'choice',
+            choices: ['28 ÷ 4 = 7', '7 × 4 = 28', '4 ÷ 7 = 28', '28 − 4 = 24'],
+            answer: '28 ÷ 4 = 7',
+            stageVisual: () => buildFactRoofVisual(28, 4, 7, '× / ÷'),
+            retryHint: 'Start with the top Boss Number 28 and divide by one of the bottom numbers!',
+            explainVisual: () => buildFactRoofVisual(28, 4, 7, '× / ÷'),
+            explainText: '28 ÷ 4 = 7 belongs in the (28, 4, 7) fact family!'
+          },
+          {
+            tag: 'Sign Spotter (− vs +)',
+            prompt: 'Work out: 15 − 9 = [ ? ]',
+            speech: 'Work out 15 minus 9.',
+            inputType: 'keypad',
+            answer: '6',
+            stageVisual: () => `
+              <div class="flex items-center gap-3 px-6 py-3 rounded-2xl bg-rose-100 border-4 border-rose-500">
+                <span class="font-game text-4xl font-bold text-slate-900">15</span>
+                <span class="w-12 h-12 rounded-full bg-rose-600 text-white flex items-center justify-center font-black text-3xl shadow">−</span>
+                <span class="font-game text-4xl font-bold text-slate-900">9</span>
+              </div>
+            `,
+            retryHint: 'Subtract 9 from 15 (do not add 15 + 9 = 24!). Count up from 9 to 10 (+1) and to 15 (+5).',
+            explainVisual: () => `<div class="px-4 py-2 rounded-xl bg-white border border-rose-300 font-extrabold text-rose-900">15 − 9 = 6</div>`,
+            explainText: '15 take away 9 equals 6!'
+          },
+          {
+            tag: 'Sign Spotter (+ vs −)',
+            prompt: 'Check the green plus sign! Work out: 9 + 7 = [ ? ]',
+            speech: 'Work out 9 plus 7.',
+            inputType: 'keypad',
+            answer: '16',
+            stageVisual: () => `
+              <div class="flex items-center gap-3 px-6 py-3 rounded-2xl bg-emerald-100 border-4 border-emerald-500">
+                <span class="font-game text-4xl font-bold text-slate-900">9</span>
+                <span class="w-12 h-12 rounded-full bg-emerald-600 text-white flex items-center justify-center font-black text-3xl shadow">+</span>
+                <span class="font-game text-4xl font-bold text-slate-900">7</span>
+              </div>
+            `,
+            retryHint: 'Green plus (+) means join together! Give 1 from the 7 to the 9 to make 10, then add 6.',
+            explainVisual: () => `<div class="px-4 py-2 rounded-xl bg-white border border-emerald-300 font-extrabold text-emerald-900">9 + 1 = 10, then 10 + 6 = 16</div>`,
+            explainText: '9 + 7 = 16!'
+          }
+        ]);
+        return items;
+      }
+
+      if (arenaId === 4) {
+        // ARENA 4: Tens & Ones Ten-Frame Builder
+        return shuffle([
+          {
+            tag: 'Full Ten-Frame + Ones',
+            prompt: 'The top ten-frame is FULL with 10 red counters, and there are 4 yellow counters below. How many counters in TOTAL?',
+            speech: 'The top ten-frame is full with 10 red counters, and there are 4 yellow counters below. How many counters in total?',
+            inputType: 'keypad',
+            answer: '14',
+            stageVisual: () => buildDoubleTenFrame(10, 4),
+            retryHint: 'Don’t forget the full 10-frame! Count 10 red counters + 4 yellow counters = ?',
+            explainVisual: () => buildDoubleTenFrame(10, 4),
+            explainText: '1 full ten-frame (10) + 4 yellow counters = 14 counters in total!'
+          },
+          {
+            tag: 'Full Ten-Frame + Ones',
+            prompt: 'How many counters are shown in TOTAL across both ten-frames?',
+            speech: 'How many counters are shown in total across both ten-frames?',
+            inputType: 'keypad',
+            answer: '17',
+            stageVisual: () => buildDoubleTenFrame(10, 7),
+            retryHint: 'The first frame is a full 10! Count on from 10: 11, 12, 13, 14, 15, 16, 17.',
+            explainVisual: () => buildDoubleTenFrame(10, 7),
+            explainText: '10 + 7 = 17 counters!'
+          },
+          {
+            tag: 'Tens & Ones Unitising',
+            prompt: 'How many TENS and ONES are in the number 34?',
+            speech: 'How many tens and ones are in the number 34?',
+            inputType: 'choice',
+            choices: ['3 tens and 4 ones', '30 tens and 4 ones', '4 tens and 3 ones', '34 tens and 0 ones'],
+            answer: '3 tens and 4 ones',
+            stageVisual: () => buildDienesVisual(0, 3, 4),
+            retryHint: 'Careful! 3 tens have a VALUE of 30, so there are 3 ten-sticks (NOT 30 ten-sticks!) and 4 ones.',
+            explainVisual: () => buildDienesVisual(0, 3, 4),
+            explainText: '34 is made of 3 tens (worth 30) and 4 ones!'
+          },
+          {
+            tag: 'Tens & Ones Unitising',
+            prompt: 'What number is made of 5 tens and 2 ones?',
+            speech: 'What number is made of 5 tens and 2 ones?',
+            inputType: 'keypad',
+            answer: '52',
+            stageVisual: () => buildDienesVisual(0, 5, 2),
+            retryHint: 'Count in 10s five times (10, 20, 30, 40, 50) and add 2 ones!',
+            explainVisual: () => buildDienesVisual(0, 5, 2),
+            explainText: '5 tens (50) + 2 ones = 52!'
+          },
+          {
+            tag: 'Partitioning Tens & Ones',
+            prompt: 'Partition 86 into tens and ones: 86 = [ ? ] + 6',
+            speech: 'Partition 86 into tens and ones: 86 equals blank plus 6.',
+            inputType: 'keypad',
+            answer: '80',
+            stageVisual: () => buildDienesVisual(0, 8, 6),
+            retryHint: 'The 8 in 86 stands for 8 tens. What is 8 tens worth?',
+            explainVisual: () => buildDienesVisual(0, 8, 6),
+            explainText: '86 splits into 80 + 6!'
+          },
+          {
+            tag: '3-Digit Digit Value',
+            prompt: 'What is the VALUE of the digit 5 in the number 359?',
+            speech: 'What is the value of the digit 5 in the number 359?',
+            inputType: 'choice',
+            choices: ['50', '5', '500', '3'],
+            answer: '50',
+            stageVisual: () => buildDienesVisual(3, 5, 9),
+            retryHint: '3 is in the hundreds, 5 is in the TENS column, and 9 is in the ones. 5 tens = ?',
+            explainVisual: () => buildDienesVisual(3, 5, 9),
+            explainText: 'In 359, the digit 5 is in the tens column, so its value is 50!'
+          },
+          {
+            tag: 'Full Ten-Frame + Ones',
+            prompt: 'There is 1 full ten-frame and 9 loose counters. How many counters altogether?',
+            speech: 'There is 1 full ten-frame and 9 loose counters. How many counters altogether?',
+            inputType: 'keypad',
+            answer: '19',
+            stageVisual: () => buildDoubleTenFrame(10, 9),
+            retryHint: '1 ten and 9 ones = ?',
+            explainVisual: () => buildDoubleTenFrame(10, 9),
+            explainText: '10 + 9 = 19!'
+          },
+          {
+            tag: 'Tens & Ones Unitising',
+            prompt: 'How many TENS and ONES are in the number 67?',
+            speech: 'How many tens and ones are in the number 67?',
+            inputType: 'choice',
+            choices: ['6 tens and 7 ones', '60 tens and 7 ones', '7 tens and 6 ones', '6 tens and 70 ones'],
+            answer: '6 tens and 7 ones',
+            stageVisual: () => buildDienesVisual(0, 6, 7),
+            retryHint: 'Count the green 10-rods: there are 6 ten-rods (worth 60) and 7 ones!',
+            explainVisual: () => buildDienesVisual(0, 6, 7),
+            explainText: '67 has 6 tens and 7 ones!'
+          }
+        ]);
+      }
+
+      if (arenaId === 5) {
+        // ARENA 5: Maths Word Detective
+        return shuffle([
+          {
+            tag: 'Action Word: DIFFERENCE',
+            prompt: 'Mya has 12 marbles and Sofia has 8 marbles. What is the DIFFERENCE between their marble totals?',
+            speech: 'Mya has 12 marbles and Sofia has 8 marbles. What is the difference between their marble totals?',
+            inputType: 'keypad',
+            answer: '4',
+            stageVisual: () => `
+              <div class="px-5 py-2.5 rounded-2xl bg-purple-100 border-2 border-purple-300 font-extrabold text-purple-950 text-sm sm:text-base">
+                Clue Word: <span class="underline decoration-4 decoration-rose-500">DIFFERENCE</span> = Compare the gap (Subtract!)
+              </div>
+            `,
+            retryHint: 'DIFFERENCE never means add! Compare 12 and 8 by subtracting: 12 − 8 = ?',
+            explainVisual: () => buildComparisonBars(12, 8),
+            explainText: 'The gap between 12 and 8 is 4 (12 − 8 = 4)!'
+          },
+          {
+            tag: 'Action Word: REMAINING',
+            prompt: 'Brooklyn has 15 grapes. She eats 6 of them. How many grapes are REMAINING?',
+            speech: 'Brooklyn has 15 grapes. She eats 6 of them. How many grapes are remaining?',
+            inputType: 'keypad',
+            answer: '9',
+            stageVisual: () => `
+              <div class="px-5 py-2.5 rounded-2xl bg-purple-100 border-2 border-purple-300 font-extrabold text-purple-950 text-sm sm:text-base">
+                Clue Word: <span class="underline decoration-4 decoration-rose-500">REMAINING</span> = Left over after taking away
+              </div>
+            `,
+            retryHint: 'Start with 15 grapes and cross out the 6 she ate: 15 − 6 = ?',
+            explainVisual: () => buildCrossOutCounters(15, 6),
+            explainText: '15 take away 6 leaves 9 grapes remaining!'
+          },
+          {
+            tag: 'Action Word: PRODUCT',
+            prompt: 'What is the PRODUCT of 3 and 7?',
+            speech: 'What is the product of 3 and 7?',
+            inputType: 'keypad',
+            answer: '21',
+            stageVisual: () => `
+              <div class="px-5 py-2.5 rounded-2xl bg-purple-100 border-2 border-purple-300 font-extrabold text-purple-950 text-sm sm:text-base">
+                Clue Word: <span class="underline decoration-4 decoration-emerald-600">PRODUCT</span> = Multiply (×)
+              </div>
+            `,
+            retryHint: 'Do NOT add 3 + 7! PRODUCT means multiply: 3 × 7 = ?',
+            explainVisual: () => `<div class="px-4 py-2 rounded-xl bg-white border border-purple-300 font-extrabold text-purple-900">3 groups of 7: 7 + 7 + 7 = 21</div>`,
+            explainText: '3 × 7 = 21! The product of 3 and 7 is 21.'
+          },
+          {
+            tag: 'Action Word: MULTIPLE',
+            prompt: 'Write the next MULTIPLE of 5 after 35.',
+            speech: 'Write the next multiple of 5 after 35.',
+            inputType: 'keypad',
+            answer: '40',
+            stageVisual: () => `
+              <div class="px-5 py-2.5 rounded-2xl bg-purple-100 border-2 border-purple-300 font-extrabold text-purple-950 text-sm sm:text-base">
+                Count in 5s: 25 &rarr; 30 &rarr; 35 &rarr; [ ? ]
+              </div>
+            `,
+            retryHint: 'A multiple of 5 is in the 5 times table. Add 5 to 35!',
+            explainVisual: () => `<div class="px-4 py-2 rounded-xl bg-white border border-purple-300 font-extrabold text-purple-900">35 + 5 = 40 (8 × 5 = 40)</div>`,
+            explainText: '40 is the next multiple of 5 after 35!'
+          },
+          {
+            tag: 'Action Word: FACTOR',
+            prompt: 'Which number below is a FACTOR of 12 (not 1 or 12)?',
+            speech: 'Which number below is a factor of 12, not 1 or 12?',
+            inputType: 'choice',
+            choices: ['4', '5', '7', '9'],
+            answer: '4',
+            stageVisual: () => `
+              <div class="px-5 py-2.5 rounded-2xl bg-purple-100 border-2 border-purple-300 font-extrabold text-purple-950 text-sm sm:text-base">
+                Clue: A <span class="underline decoration-4 decoration-blue-500">FACTOR</span> of 12 multiplies cleanly to make 12!
+              </div>
+            `,
+            retryHint: 'Which number divides into 12 with nothing left over? Check: 3 × ? = 12!',
+            explainVisual: () => `<div class="px-4 py-2 rounded-xl bg-white border border-purple-300 font-extrabold text-purple-900">Factor pairs of 12: 1×12, 2×6, 3×4</div>`,
+            explainText: '4 is a factor of 12 because 3 × 4 = 12!'
+          },
+          {
+            tag: 'Action Word: REMAINING',
+            prompt: 'Orlaith-Louise has 50p and buys a pencil for 28p. How much money is REMAINING?',
+            speech: 'Orlaith-Louise has 50p and buys a pencil for 28p. How much money is remaining?',
+            inputType: 'keypad',
+            answer: '22',
+            stageVisual: () => `
+              <div class="px-5 py-2.5 rounded-2xl bg-purple-100 border-2 border-purple-300 font-extrabold text-purple-950 text-sm sm:text-base">
+                50p − 28p = [ ? ]p (Tip: Count up from 28p to 30p, then to 50p!)
+              </div>
+            `,
+            retryHint: 'Count up from 28p: +2p gets to 30p, and +20p gets to 50p. 20 + 2 = ?',
+            explainVisual: () => `<div class="px-4 py-2 rounded-xl bg-white border border-purple-300 font-extrabold text-purple-900">28p + 2p = 30p, then + 20p = 50p &rarr; 22p</div>`,
+            explainText: '50p − 28p = 22p remaining!'
+          },
+          {
+            tag: 'Action Word: DIFFERENCE',
+            prompt: 'Mya has 32 marbles and Sofia has 18 marbles. What is the DIFFERENCE between 32 and 18?',
+            speech: 'Mya has 32 marbles and Sofia has 18 marbles. What is the difference between 32 and 18?',
+            inputType: 'keypad',
+            answer: '14',
+            stageVisual: () => `
+              <div class="px-5 py-2.5 rounded-2xl bg-purple-100 border-2 border-purple-300 font-extrabold text-purple-950 text-sm sm:text-base">
+                Find the gap between 18 and 32: 18 &rarr; 20 (+2) &rarr; 32 (+12)
+              </div>
+            `,
+            retryHint: 'Subtract 32 − 18! Jump from 18 to 20 (+2), then 20 to 32 (+12).',
+            explainVisual: () => buildComparisonBars(32, 18),
+            explainText: '32 − 18 = 14! Mya has 14 more marbles than Sofia.'
+          },
+          {
+            tag: 'Action Word: PRODUCT',
+            prompt: 'What is the PRODUCT of 6 and 5?',
+            speech: 'What is the product of 6 and 5?',
+            inputType: 'keypad',
+            answer: '30',
+            stageVisual: () => `
+              <div class="px-5 py-2.5 rounded-2xl bg-purple-100 border-2 border-purple-300 font-extrabold text-purple-950 text-sm sm:text-base">
+                PRODUCT = Multiply (6 × 5)
+              </div>
+            `,
+            retryHint: 'Count in 5s six times: 5, 10, 15, 20, 25, ...',
+            explainVisual: () => `<div class="px-4 py-2 rounded-xl bg-white border border-purple-300 font-extrabold text-purple-900">6 × 5 = 30</div>`,
+            explainText: '6 × 5 = 30!'
+          }
+        ]);
+      }
+
+      if (arenaId === 6) {
+        // ARENA 6: Bonds to 100 Challenge
+        return shuffle([
+          {
+            tag: 'Complement to 100',
+            prompt: 'Find the missing number to make 100: 73 + [ ? ] = 100',
+            speech: 'Find the missing number to make 100: 73 plus blank equals 100.',
+            inputType: 'keypad',
+            answer: '27',
+            stageVisual: () => buildMini100Square(73),
+            retryHint: 'Watch out for the 110 trap (37 is too big!). 73 + 7 = 80, then + 20 = 100.',
+            explainVisual: () => buildMini100Square(73),
+            explainText: '73 + 27 = 100 (70 + 20 = 90, and 3 + 7 = 10; 90 + 10 = 100)!'
+          },
+          {
+            tag: 'Subtracting Down from 100',
+            prompt: 'Work out: 100 − 45 = [ ? ]',
+            speech: 'Work out 100 minus 45.',
+            inputType: 'keypad',
+            answer: '55',
+            stageVisual: () => buildMini100Square(55),
+            retryHint: 'Watch out for the 65 trap! Take away 40 from 100 first (= 60), then take away 5 more!',
+            explainVisual: () => `<div class="px-4 py-2 rounded-xl bg-white border border-indigo-300 font-extrabold text-indigo-900">100 − 40 = 60, then 60 − 5 = 55</div>`,
+            explainText: '100 − 45 = 55! (Check: 55 + 45 = 100).'
+          },
+          {
+            tag: 'Complement to 100',
+            prompt: 'Find the missing number to make 100: 64 + [ ? ] = 100',
+            speech: 'Find the missing number to make 100: 64 plus blank equals 100.',
+            inputType: 'keypad',
+            answer: '36',
+            stageVisual: () => buildMini100Square(64),
+            retryHint: '64 + 6 = 70, then jump 30 more to reach 100!',
+            explainVisual: () => buildMini100Square(64),
+            explainText: '64 + 36 = 100!'
+          },
+          {
+            tag: 'Subtracting Down from 100',
+            prompt: 'Work out: 100 − 35 = [ ? ]',
+            speech: 'Work out 100 minus 35.',
+            inputType: 'keypad',
+            answer: '65',
+            stageVisual: () => buildMini100Square(65),
+            retryHint: '100 take away 30 is 70, then take away 5 more!',
+            explainVisual: () => `<div class="px-4 py-2 rounded-xl bg-white border border-indigo-300 font-extrabold text-indigo-900">100 − 30 = 70, then 70 − 5 = 65</div>`,
+            explainText: '100 − 35 = 65!'
+          },
+          {
+            tag: 'Complement to 100',
+            prompt: 'Find the missing number to make 100: 82 + [ ? ] = 100',
+            speech: 'Find the missing number to make 100: 82 plus blank equals 100.',
+            inputType: 'keypad',
+            answer: '18',
+            stageVisual: () => buildMini100Square(82),
+            retryHint: '82 + 8 = 90, then + 10 = 100.',
+            explainVisual: () => buildMini100Square(82),
+            explainText: '82 + 18 = 100!'
+          },
+          {
+            tag: 'Subtracting Down from 100',
+            prompt: 'Work out: 100 − 28 = [ ? ]',
+            speech: 'Work out 100 minus 28.',
+            inputType: 'keypad',
+            answer: '72',
+            stageVisual: () => buildMini100Square(72),
+            retryHint: '100 − 20 = 80, then 80 − 8 = ?',
+            explainVisual: () => `<div class="px-4 py-2 rounded-xl bg-white border border-indigo-300 font-extrabold text-indigo-900">100 − 20 = 80, then 80 − 8 = 72</div>`,
+            explainText: '100 − 28 = 72!'
+          },
+          {
+            tag: 'Complement to 100',
+            prompt: 'Find the missing number to make 100: 46 + [ ? ] = 100',
+            speech: 'Find the missing number to make 100: 46 plus blank equals 100.',
+            inputType: 'keypad',
+            answer: '54',
+            stageVisual: () => buildMini100Square(46),
+            retryHint: '46 + 4 = 50, then + 50 = 100.',
+            explainVisual: () => buildMini100Square(46),
+            explainText: '46 + 54 = 100!'
+          },
+          {
+            tag: 'Subtracting Down from 100',
+            prompt: 'Work out: 100 − 65 = [ ? ]',
+            speech: 'Work out 100 minus 65.',
+            inputType: 'keypad',
+            answer: '35',
+            stageVisual: () => buildMini100Square(35),
+            retryHint: '100 − 60 = 40, then 40 − 5 = ?',
+            explainVisual: () => `<div class="px-4 py-2 rounded-xl bg-white border border-indigo-300 font-extrabold text-indigo-900">100 − 60 = 40, then 40 − 5 = 35</div>`,
+            explainText: '100 − 65 = 35!'
+          }
+        ]);
+      }
+      return [];
+    }
+
+    // =========================================================================
+    // 4. VISUAL MANIPULATIVE HTML HELPERS
+    // =========================================================================
+    function buildOddEvenVisual(n, ones, isEven) {
+      let dots = '';
+      for (let i = 0; i < ones; i++) {
+        dots += `<span class="w-5 h-5 rounded-full ${i === ones - 1 && !isEven ? 'bg-rose-500 ring-2 ring-rose-300' : 'bg-emerald-500'} inline-block"></span>`;
+      }
+      return `
+        <div class="bg-white p-3 rounded-2xl border border-amber-300 inline-flex flex-col items-center gap-2">
+          <div class="text-sm font-extrabold text-slate-700">Ones digit of ${n} is <span class="px-2 py-0.5 bg-amber-300 rounded text-slate-950 font-black">${ones}</span></div>
+          <div class="flex flex-wrap gap-1.5 justify-center max-w-[140px]">${ones === 0 ? '<span class="text-xs font-bold text-emerald-700">0 ones = Always Even!</span>' : dots}</div>
+        </div>
+      `;
+    }
+
+    function buildBridgingVisual(item) {
+      return `
+        <div class="flex flex-wrap items-center justify-center gap-2 bg-white p-3 rounded-2xl border border-sky-300 font-extrabold text-sm">
+          <span class="px-3 py-1 rounded-lg bg-slate-100">${item.a}</span>
+          <span class="text-sky-600">+ ${item.toTen} &rarr;</span>
+          <span class="px-3 py-1 rounded-lg bg-emerald-100 text-emerald-900 border border-emerald-400">${item.ten}</span>
+          <span class="text-sky-600">+ ${item.rem} &rarr;</span>
+          <span class="px-3 py-1 rounded-lg bg-indigo-600 text-white">${item.a + item.b}</span>
+        </div>
+      `;
+    }
+
+    function buildFactRoofVisual(boss, left, right, signs) {
+      return `
+        <div class="inline-flex flex-col items-center bg-white px-6 py-3 rounded-2xl border-2 border-rose-300 shadow-sm">
+          <span class="text-[10px] font-extrabold uppercase tracking-wider text-rose-600 mb-1">Boss Number (Goes First in − / ÷)</span>
+          <div class="px-5 py-1.5 rounded-xl bg-rose-500 text-white font-game text-2xl font-bold shadow">${boss}</div>
+          <div class="text-xs font-black text-slate-400 my-1">${signs}</div>
+          <div class="flex gap-6">
+            <div class="px-4 py-1 rounded-xl bg-indigo-100 border-2 border-indigo-400 font-game text-xl font-bold text-indigo-950">${left}</div>
+            <div class="px-4 py-1 rounded-xl bg-indigo-100 border-2 border-indigo-400 font-game text-xl font-bold text-indigo-950">${right}</div>
+          </div>
+        </div>
+      `;
+    }
+
+    function buildTenFrameVisual(total, removed, mode) {
+      let cells = '';
+      for (let i = 0; i < 10; i++) {
+        const isRemoved = mode === 'subtract' && i >= (total - removed);
+        cells += `<div class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg border border-slate-400 flex items-center justify-center bg-white">
+          <span class="w-5 h-5 rounded-full ${isRemoved ? 'bg-rose-200 line-through opacity-40' : 'bg-rose-500'}"></span>
+        </div>`;
+      }
+      return `<div class="grid grid-cols-5 gap-1 bg-slate-200 p-2 rounded-xl border-2 border-slate-400 inline-grid">${cells}</div>`;
+    }
+
+    function buildDoubleTenFrame(topCount, bottomCount) {
+      const makeFrame = (count, colorClass) => {
+        let cells = '';
+        for (let i = 0; i < 10; i++) {
+          cells += `<div class="w-7 h-7 sm:w-8 sm:h-8 rounded-md border border-slate-400 bg-white flex items-center justify-center">
+            ${i < count ? `<span class="w-5 h-5 rounded-full ${colorClass}"></span>` : ''}
+          </div>`;
+        }
+        return `<div class="grid grid-cols-5 gap-1 bg-slate-200 p-1.5 rounded-xl border-2 border-slate-400">${cells}</div>`;
+      };
+      return `
+        <div class="flex flex-col sm:flex-row items-center gap-3">
+          ${makeFrame(topCount, 'bg-rose-500')}
+          <span class="font-black text-xl text-slate-500">+</span>
+          ${makeFrame(bottomCount, 'bg-amber-400 border border-amber-600')}
+        </div>
+      `;
+    }
+
+    function buildDienesVisual(h, t, o) {
+      return `
+        <div class="flex flex-wrap items-end justify-center gap-4 bg-white px-5 py-3 rounded-2xl border-2 border-emerald-200">
+          ${h > 0 ? `<div class="flex flex-col items-center"><div class="flex gap-1">${Array(h).fill('<div class="w-9 h-9 bg-blue-500 border border-blue-700 rounded"></div>').join('')}</div><span class="text-xs font-extrabold text-blue-800 mt-1">${h} Hundreds</span></div>` : ''}
+          ${t > 0 ? `<div class="flex flex-col items-center"><div class="flex gap-1">${Array(t).fill('<div class="w-2.5 h-11 bg-emerald-500 border border-emerald-700 rounded-sm dienes-rod-mini"></div>').join('')}</div><span class="text-xs font-extrabold text-emerald-800 mt-1">${t} Tens</span></div>` : ''}
+          ${o > 0 ? `<div class="flex flex-col items-center"><div class="flex flex-wrap gap-1 max-w-[90px]">${Array(o).fill('<div class="w-3.5 h-3.5 bg-amber-400 border border-amber-700 rounded-sm"></div>').join('')}</div><span class="text-xs font-extrabold text-amber-800 mt-1">${o} Ones</span></div>` : ''}
+        </div>
+      `;
+    }
+
+    function buildComparisonBars(big, small) {
+      const pct = Math.round((small / big) * 100);
+      return `
+        <div class="max-w-sm mx-auto bg-white p-3 rounded-xl border border-purple-200 space-y-1.5 text-xs font-extrabold">
+          <div class="w-full bg-indigo-500 text-white px-3 py-1 rounded-lg text-left">Larger = ${big}</div>
+          <div class="flex items-center gap-1">
+            <div style="width:${pct}%" class="bg-emerald-500 text-white px-3 py-1 rounded-lg text-left">Smaller = ${small}</div>
+            <div class="flex-1 border-2 border-dashed border-rose-500 text-rose-700 py-1 rounded-lg text-center">Gap = ${big - small}</div>
+          </div>
+        </div>
+      `;
+    }
+
+    function buildCrossOutCounters(total, eaten) {
+      let items = '';
+      for (let i = 0; i < total; i++) {
+        const gone = i >= (total - eaten);
+        items += `<span class="w-6 h-6 rounded-full inline-flex items-center justify-center text-xs font-black ${gone ? 'bg-rose-200 text-rose-700 line-through opacity-60' : 'bg-purple-500 text-white'}">${gone ? '×' : ''}</span>`;
+      }
+      return `<div class="flex flex-wrap gap-1.5 justify-center max-w-xs mx-auto bg-white p-2.5 rounded-xl border border-purple-200">${items}</div>`;
+    }
+
+    function buildMini100Square(shaded) {
+      let cells = '';
+      for (let i = 1; i <= 100; i++) {
+        cells += `<div class="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-[2px] ${i <= shaded ? 'bg-indigo-500' : 'bg-amber-300'}"></div>`;
+      }
+      return `
+        <div class="inline-flex flex-col items-center bg-white p-2.5 rounded-xl border-2 border-indigo-200">
+          <div class="grid grid-cols-10 gap-0.5">${cells}</div>
+          <div class="flex gap-3 mt-1.5 text-[11px] font-extrabold">
+            <span class="text-indigo-700">&#9632; Shaded: ${shaded}</span>
+            <span class="text-amber-700">&#9632; Unshaded: ${100 - shaded}</span>
+          </div>
+        </div>
+      `;
+    }
+
+    // =========================================================================
+    // 5. GAME ENGINE & FLOW CONTROL
+    // =========================================================================
+    let gameState = {
+      mode: 'full', // 'full' or 'single'
+      arenaId: null,
+      questions: [],
+      index: 0,
+      score: 0,
+      streak: 0,
+      attempt: 1,
+      typedValue: '',
+      answered: false,
+      skillStats: {} // { arenaId: { correct: 0, total: 0 } }
+    };
+
+    function showScreen(screenName) {
+      document.getElementById('screen-profiles').classList.add('hidden');
+      document.getElementById('screen-game').classList.add('hidden');
+      document.getElementById('screen-results').classList.add('hidden');
+
+      const btnHome = document.getElementById('btn-home');
+      const hudPlayer = document.getElementById('hud-player-badge');
+      const hudStreak = document.getElementById('hud-streak-badge');
+
+      if (screenName === 'profiles') {
+        document.getElementById('screen-profiles').classList.remove('hidden');
+        btnHome.classList.add('hidden');
+        btnHome.classList.remove('flex');
+        hudPlayer.classList.add('hidden');
+        hudPlayer.classList.remove('flex');
+        hudStreak.classList.add('hidden');
+        hudStreak.classList.remove('flex');
+        stopConfetti();
+        refreshProfileCards();
+      } else {
+        document.getElementById(`screen-${screenName}`).classList.remove('hidden');
+        btnHome.classList.remove('hidden');
+        btnHome.classList.add('flex');
+        hudPlayer.classList.remove('hidden');
+        hudPlayer.classList.add('flex');
+        hudStreak.classList.remove('hidden');
+        hudStreak.classList.add('flex');
+      }
+    }
+
+    function startFullQuest() {
+      playTone('pop');
+      let all = [];
+      for (let a = 1; a <= 6; a++) {
+        const arenaQs = buildArenaQuestions(a).slice(0, 3);
+        all = all.concat(arenaQs);
+      }
+      launchGame('full', null, all);
+    }
+
+    function startSingleArena(arenaId) {
+      playTone('pop');
+      const arenaQs = buildArenaQuestions(arenaId).slice(0, 8);
+      launchGame('single', arenaId, arenaQs);
+    }
+
+    function launchGame(mode, arenaId, questions) {
+      gameState = {
+        mode,
+        arenaId,
+        questions,
+        index: 0,
+        score: 0,
+        streak: 0,
+        attempt: 1,
+        typedValue: '',
+        answered: false,
+        skillStats: {}
+      };
+      questions.forEach(q => {
+        if (!gameState.skillStats[q.arena]) {
+          gameState.skillStats[q.arena] = { correct: 0, total: 0 };
+        }
+        gameState.skillStats[q.arena].total += 1;
+      });
+
+      document.getElementById('hud-streak').textContent = '0';
+      document.getElementById('game-live-score').textContent = '0';
+      showScreen('game');
+      renderCurrentQuestion();
+    }
+
+    function renderCurrentQuestion() {
+      const q = gameState.questions[gameState.index];
+      gameState.attempt = 1;
+      gameState.typedValue = '';
+      gameState.answered = false;
+
+      document.getElementById('game-arena-badge').textContent = `Arena ${q.arena}: ${ARENA_NAMES[q.arena]}`;
+      document.getElementById('game-q-counter').textContent = `Question ${gameState.index + 1} of ${gameState.questions.length}`;
+      const pct = Math.round(((gameState.index) / gameState.questions.length) * 100);
+      document.getElementById('game-progress-bar').style.width = `${Math.max(6, pct)}%`;
+
+      document.getElementById('q-instruction-tag').textContent = q.tag;
+      document.getElementById('q-prompt-text').textContent = q.prompt;
+      document.getElementById('q-visual-stage').innerHTML = q.stageVisual ? q.stageVisual() : '';
+
+      const fbBox = document.getElementById('q-feedback-box');
+      fbBox.classList.add('hidden');
+      document.getElementById('btn-next-question').classList.add('hidden');
+
+      const area = document.getElementById('q-interaction-area');
+      if (q.inputType === 'choice') {
+        area.innerHTML = `
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-2xl mx-auto">
+            ${q.choices.map(choice => `
+              <button onclick="submitChoice('${choice.replace(/'/g, "\\'")}')" class="choice-btn py-4 px-5 rounded-2xl bg-indigo-50 hover:bg-indigo-100 active:scale-95 border-3 border-indigo-300 hover:border-indigo-500 font-game text-xl sm:text-2xl font-bold text-indigo-950 shadow-sm transition">
+                ${choice}
+              </button>
+            `).join('')}
+          </div>
+        `;
+      } else {
+        area.innerHTML = `
+          <div class="max-w-md mx-auto space-y-3">
+            <div class="flex items-center justify-center gap-3">
+              <div id="keypad-display" class="w-44 h-14 rounded-2xl bg-slate-100 border-4 border-indigo-400 flex items-center justify-center font-game text-3xl sm:text-4xl font-bold text-slate-900 shadow-inner">
+                ?
+              </div>
+              <button onclick="submitKeypad()" class="px-6 h-14 rounded-2xl bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-game text-xl font-bold shadow-md border-b-4 border-emerald-800 transition">
+                Check &#10003;
+              </button>
+            </div>
+            <div class="grid grid-cols-3 gap-2 pt-1">
+              ${[1, 2, 3, 4, 5, 6, 7, 8, 9, 'Clear', 0, '⌫'].map(key => {
+                if (key === 'Clear') {
+                  return `<button onclick="pressKey('clear')" class="py-3 rounded-xl bg-rose-100 hover:bg-rose-200 active:scale-95 text-rose-900 font-extrabold text-sm sm:text-base border border-rose-300 transition">Clear</button>`;
+                }
+                if (key === '⌫') {
+                  return `<button onclick="pressKey('back')" class="py-3 rounded-xl bg-amber-100 hover:bg-amber-200 active:scale-95 text-amber-950 font-extrabold text-lg border border-amber-300 transition">&#9003;</button>`;
+                }
+                return `<button onclick="pressKey('${key}')" class="py-3 rounded-xl bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-900 font-game text-2xl font-bold border border-slate-300 shadow-sm transition">${key}</button>`;
+              }).join('')}
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    function pressKey(k) {
+      if (gameState.answered) return;
+      playTone('pop');
+      if (k === 'clear') {
+        gameState.typedValue = '';
+      } else if (k === 'back') {
+        gameState.typedValue = gameState.typedValue.slice(0, -1);
+      } else if (gameState.typedValue.length < 4) {
+        gameState.typedValue += String(k);
+      }
+      const disp = document.getElementById('keypad-display');
+      if (disp) disp.textContent = gameState.typedValue || '?';
+    }
+
+    function submitKeypad() {
+      if (gameState.answered || !gameState.typedValue) return;
+      evaluateAnswer(gameState.typedValue);
+    }
+
+    function submitChoice(val) {
+      if (gameState.answered) return;
+      evaluateAnswer(val);
+    }
+
+    function evaluateAnswer(userVal) {
+      const q = gameState.questions[gameState.index];
+      const isCorrect = String(userVal).trim().toUpperCase() === String(q.answer).trim().toUpperCase();
+
+      const fbBox = document.getElementById('q-feedback-box');
+      const fbIcon = document.getElementById('q-feedback-icon');
+      const fbTitle = document.getElementById('q-feedback-title');
+      const fbMsg = document.getElementById('q-feedback-message');
+      const fbVis = document.getElementById('q-feedback-visual');
+      const btnNext = document.getElementById('btn-next-question');
+      const stageCard = document.getElementById('question-stage-card');
+
+      fbBox.classList.remove('hidden');
+
+      if (isCorrect) {
+        gameState.answered = true;
+        gameState.score += 1;
+        gameState.streak += 1;
+        gameState.skillStats[q.arena].correct += 1;
+
+        document.getElementById('game-live-score').textContent = gameState.score;
+        document.getElementById('hud-streak').textContent = gameState.streak;
+
+        playTone('correct');
+        fbBox.className = 'rounded-2xl p-4 sm:p-5 border-2 border-emerald-400 bg-emerald-50 text-emerald-950 space-y-2 animate-bounce-pop';
+        fbIcon.textContent = '🌟';
+        fbTitle.textContent = gameState.streak >= 3 ? `Brilliant! ${gameState.streak} in a row!` : `Spot on, ${currentPlayer}!`;
+        fbMsg.textContent = q.explainText;
+        fbVis.innerHTML = q.explainVisual ? q.explainVisual() : '';
+        btnNext.classList.remove('hidden');
+        btnNext.textContent = gameState.index === gameState.questions.length - 1 ? 'See My Final Score 🏆' : 'Next Question →';
+      } else if (gameState.attempt === 1) {
+        // First mistake: Give an encouraging visual clue & allow Attempt 2!
+        gameState.attempt = 2;
+        gameState.streak = 0;
+        document.getElementById('hud-streak').textContent = '0';
+        gameState.typedValue = '';
+        const disp = document.getElementById('keypad-display');
+        if (disp) disp.textContent = '?';
+
+        playTone('retry');
+        stageCard.classList.remove('animate-shake');
+        void stageCard.offsetWidth;
+        stageCard.classList.add('animate-shake');
+
+        fbBox.className = 'rounded-2xl p-4 sm:p-5 border-2 border-amber-400 bg-amber-50 text-amber-950 space-y-2 animate-bounce-pop';
+        fbIcon.textContent = '💡';
+        fbTitle.textContent = 'Almost! Have another go with this clue:';
+        fbMsg.textContent = q.retryHint;
+        fbVis.innerHTML = q.explainVisual ? q.explainVisual() : '';
+        btnNext.classList.add('hidden');
+      } else {
+        // Second mistake: Show clear worked explanation and move forward
+        gameState.answered = true;
+        playTone('retry');
+        fbBox.className = 'rounded-2xl p-4 sm:p-5 border-2 border-rose-300 bg-rose-50 text-rose-950 space-y-2 animate-bounce-pop';
+        fbIcon.textContent = '🧩';
+        fbTitle.textContent = `Good try! The answer is ${q.answer}`;
+        fbMsg.textContent = q.explainText;
+        fbVis.innerHTML = q.explainVisual ? q.explainVisual() : '';
+        btnNext.classList.remove('hidden');
+        btnNext.textContent = gameState.index === gameState.questions.length - 1 ? 'See My Final Score 🏆' : 'Next Question →';
+      }
+    }
+
+    function advanceQuestion() {
+      playTone('pop');
+      if (gameState.index < gameState.questions.length - 1) {
+        gameState.index += 1;
+        renderCurrentQuestion();
+      } else {
+        finishGame();
+      }
+    }
+
+    // Physical keyboard support for Chromebooks/Surface Pros
+    window.addEventListener('keydown', (e) => {
+      if (document.getElementById('screen-game').classList.contains('hidden')) return;
+      const q = gameState.questions[gameState.index];
+      if (!q || q.inputType !== 'keypad') return;
+
+      if (e.key >= '0' && e.key <= '9') {
+        pressKey(e.key);
+      } else if (e.key === 'Backspace') {
+        pressKey('back');
+      } else if (e.key === 'Enter') {
+        if (gameState.answered) advanceQuestion();
+        else submitKeypad();
+      }
+    });
+
+    // =========================================================================
+    // 6. END-OF-GAME SCORE CERTIFICATE & CONFETTI
+    // =========================================================================
+    let weakestArenaId = null;
+
+    function finishGame() {
+      playTone('fanfare');
+      const total = gameState.questions.length;
+      const score = gameState.score;
+      const pct = Math.round((score / total) * 100);
+
+      let starsEarned = 1;
+      if (pct >= 80) starsEarned = 3;
+      else if (pct >= 50) starsEarned = 2;
+
+      // Save stars & best score
+      if (!profilesData[currentPlayer]) profilesData[currentPlayer] = { stars: 0, best: {} };
+      profilesData[currentPlayer].stars = (profilesData[currentPlayer].stars || 0) + starsEarned;
+      if (gameState.mode === 'single' && gameState.arenaId) {
+        const prevBest = profilesData[currentPlayer].best[gameState.arenaId] || 0;
+        if (score > prevBest) profilesData[currentPlayer].best[gameState.arenaId] = score;
+      }
+      saveProfiles();
+
+      // Populate Results Screen
+      document.getElementById('res-mode-label').textContent =
+        gameState.mode === 'full' ? 'Full 6-Arena Quest Complete!' : `${ARENA_NAMES[gameState.arenaId]} Complete!`;
+      document.getElementById('res-avatar').textContent = AVATARS[currentPlayer] || '🚀';
+      document.getElementById('res-player-name').textContent = currentPlayer;
+      document.getElementById('res-score-fraction').textContent = `${score} / ${total}`;
+      document.getElementById('res-accuracy').textContent = `${pct}%`;
+      document.getElementById('res-stars-earned').textContent = `+${starsEarned} ⭐`;
+
+      document.getElementById('res-encouragement').textContent =
+        pct >= 80
+          ? 'Superstar maths reasoning! You unlocked the patterns!'
+          : pct >= 50
+            ? 'Great effort! Look at your skill report below to see what you mastered.'
+            : 'Nice warming up! Tap Practise Tricky Skill below to power up your score.';
+
+      let starIcons = '';
+      for (let i = 1; i <= 3; i++) {
+        starIcons += i <= starsEarned
+          ? '<span class="drop-shadow">⭐</span>'
+          : '<span class="opacity-25">⭐</span>';
+      }
+      document.getElementById('res-stars-row').innerHTML = starIcons;
+
+      // Skill Breakdown
+      const breakdownEl = document.getElementById('res-skill-breakdown');
+      let lowestRatio = 2;
+      weakestArenaId = null;
+
+      breakdownEl.innerHTML = Object.keys(gameState.skillStats).map(aKey => {
+        const aId = Number(aKey);
+        const st = gameState.skillStats[aId];
+        const ratio = st.correct / st.total;
+        if (ratio < 1 && ratio < lowestRatio) {
+          lowestRatio = ratio;
+          weakestArenaId = aId;
+        }
+        const mastered = ratio >= 0.66;
+        return `
+          <div class="flex items-center justify-between bg-white px-3.5 py-2.5 rounded-xl border ${mastered ? 'border-emerald-300' : 'border-amber-300'}">
+            <div>
+              <span class="font-extrabold text-xs sm:text-sm text-slate-900 block">${ARENA_NAMES[aId]}</span>
+              <span class="text-[11px] font-bold ${mastered ? 'text-emerald-700' : 'text-amber-700'}">
+                ${mastered ? '✓ Mastered!' : '★ Keep Practising'}
+              </span>
+            </div>
+            <span class="px-2.5 py-1 rounded-lg font-black text-sm ${mastered ? 'bg-emerald-100 text-emerald-900' : 'bg-amber-100 text-amber-900'}">
+              ${st.correct} / ${st.total}
+            </span>
+          </div>
+        `;
+      }).join('');
+
+      const btnWeak = document.getElementById('btn-practice-weakest');
+      if (weakestArenaId) {
+        btnWeak.classList.remove('hidden');
+        btnWeak.textContent = `🎯 Practise ${ARENA_NAMES[weakestArenaId]}`;
+      } else {
+        btnWeak.classList.add('hidden');
+      }
+
+      showScreen('results');
+      launchConfetti();
+    }
+
+    function replaySameMode() {
+      stopConfetti();
+      if (gameState.mode === 'full') startFullQuest();
+      else startSingleArena(gameState.arenaId);
+    }
+
+    function practiceWeakestArena() {
+      stopConfetti();
+      if (weakestArenaId) startSingleArena(weakestArenaId);
+    }
+
+    // =========================================================================
+    // 7. SIMPLE CELEBRATION CONFETTI ENGINE
+    // =========================================================================
+    let confettiAnim = null;
+    function launchConfetti() {
+      const canvas = document.getElementById('confetti-canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      canvas.classList.remove('hidden');
+
+      const colors = ['#f59e0b', '#10b981', '#6366f1', '#ec4899', '#3b82f6'];
+      const pieces = Array.from({ length: 85 }, () => ({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height - canvas.height,
+        w: Math.random() * 10 + 6,
+        h: Math.random() * 6 + 4,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        vy: Math.random() * 3 + 2,
+        vx: Math.random() * 2 - 1,
+        rot: Math.random() * 360
+      }));
+
+      let frames = 0;
+      function loop() {
+        frames++;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        pieces.forEach(p => {
+          p.y += p.vy;
+          p.x += p.vx;
+          p.rot += 4;
+          if (p.y > canvas.height) p.y = -10;
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate((p.rot * Math.PI) / 180);
+          ctx.fillStyle = p.color;
+          ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+          ctx.restore();
+        });
+        if (frames < 240) {
+          confettiAnim = requestAnimationFrame(loop);
+        } else {
+          stopConfetti();
+        }
+      }
+      confettiAnim = requestAnimationFrame(loop);
+    }
+
+    function stopConfetti() {
+      if (confettiAnim) cancelAnimationFrame(confettiAnim);
+      const canvas = document.getElementById('confetti-canvas');
+      canvas.classList.add('hidden');
+    }
+
+    // Boot Game
+    window.onload = function () {
+      loadProfiles();
+      showScreen('profiles');
+    };
+  </script>
+</body>
+</html>
