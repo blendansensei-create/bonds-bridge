@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reasoning Quest: Paul, Oisin, Julia & Nevaeh's Maths Challenge!</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap');
+        body { font-family: 'Fredoka', sans-serif; }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900 min-h-screen text-white flex flex-col items-center justify-between p-4">
+
+    <!-- HEADER BAR -->
+    <header class="w-full max-w-4xl bg-white/10 backdrop-blur-md rounded-2xl p-4 flex justify-between items-center shadow-xl border border-white/20">
+        <div class="flex items-center space-x-3">
+            <span class="text-3xl">🚀</span>
+            <div>
+                <h1 class="text-xl font-bold tracking-wide">Reasoning Quest</h1>
+                <p class="text-xs text-purple-200">P4B/P5B Group A • Reasoning into Attainment</p>
+            </div>
+        </div>
+        <div id="player-hud" class="hidden flex items-center space-x-4 bg-black/30 px-4 py-2 rounded-xl border border-white/10">
+            <span id="hud-avatar" class="text-2xl">🐱</span>
+            <div>
+                <div id="hud-name" class="font-bold text-sm text-yellow-300">Player</div>
+                <div class="text-xs text-purple-300">⭐ <span id="hud-stars">0</span> stars | 🔥 <span id="hud-streak">4</span> streak</div>
+            </div>
+            <button onclick="returnToMenu()" class="ml-2 text-xs bg-white/20 hover:bg-white/30 px-2.5 py-1.5 rounded-lg transition">Menu</button>
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <main class="w-full max-w-4xl my-auto py-6 flex flex-col items-center">
+
+        <!-- SCREEN 1: PROFILE SELECTOR -->
+        <div id="screen-profiles" class="w-full max-w-2xl bg-white/10 backdrop-blur-lg rounded-3xl p-8 shadow-2xl border border-white/20 text-center">
+            <h2 class="text-3xl font-bold mb-2 text-yellow-300">Choose Your Hero!</h2>
+            <p class="text-purple-200 mb-8 text-sm">Select your profile to start your personalised maths mission.</p>
+            
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-8">
+                <button onclick="selectProfile('Paul', '🦊')" class="bg-gradient-to-br from-blue-600 to-indigo-700 hover:scale-105 transition p-5 rounded-2xl flex flex-col items-center shadow-lg border border-white/10">
+                    <span class="text-4xl mb-2">🦊</span>
+                    <span class="font-bold text-lg">Paul</span>
+                    <span class="text-xs text-blue-200 mt-1">Complements & Measures</span>
+                </button>
+                <button onclick="selectProfile('Oisin', '🦁')" class="bg-gradient-to-br from-amber-600 to-orange-700 hover:scale-105 transition p-5 rounded-2xl flex flex-col items-center shadow-lg border border-white/10">
+                    <span class="text-4xl mb-2">🦁</span>
+                    <span class="font-bold text-lg">Oisin</span>
+                    <span class="text-xs text-amber-200 mt-1">Reasoning & Factors</span>
+                </button>
+                <button onclick="selectProfile('Julia', '🦄')" class="bg-gradient-to-br from-pink-600 to-purple-700 hover:scale-105 transition p-5 rounded-2xl flex flex-col items-center shadow-lg border border-white/10">
+                    <span class="text-4xl mb-2">🦄</span>
+                    <span class="font-bold text-lg">Julia</span>
+                    <span class="text-xs text-pink-200 mt-1">Column Subtraction & Time</span>
+                </button>
+                <button onclick="selectProfile('Nevaeh', '🐼')" class="bg-gradient-to-br from-emerald-600 to-teal-700 hover:scale-105 transition p-5 rounded-2xl flex flex-col items-center shadow-lg border border-white/10">
+                    <span class="text-4xl mb-2">🐼</span>
+                    <span class="font-bold text-lg">Nevaeh</span>
+                    <span class="text-xs text-emerald-200 mt-1">Fractions & Inverse</span>
+                </button>
+                <button onclick="selectProfile('Guest', '🦖')" class="col-span-2 sm:col-span-2 bg-gradient-to-br from-slate-700 to-zinc-800 hover:scale-105 transition p-5 rounded-2xl flex flex-col items-center shadow-lg border border-white/10">
+                    <span class="text-4xl mb-2">🦖</span>
+                    <span class="font-bold text-lg">Class Guest</span>
+                    <span class="text-xs text-slate-300 mt-1">Full 15-Mission Quest</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- SCREEN 2: GAME HUB / ARENAS -->
+        <div id="screen-hub" class="hidden w-full max-w-3xl bg-white/10 backdrop-blur-lg rounded-3xl p-8 shadow-2xl border border-white/20 text-center">
+            <h2 id="hub-welcome" class="text-2xl font-bold mb-2 text-yellow-300">Welcome Back!</h2>
+            <p class="text-purple-200 mb-6 text-sm">Choose an arena or start your full customised mission.</p>
+            
+            <button onclick="startFullQuest()" class="w-full bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-400 hover:to-amber-500 text-black font-bold text-lg py-4 px-6 rounded-2xl shadow-xl transition transform hover:scale-[1.02] mb-6 flex items-center justify-center space-x-3">
+                <span class="text-2xl">⭐</span>
+                <span>Start Personalised Quest (15 Questions)</span>
+            </button>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <button onclick="startArena(1)" class="bg-white/10 hover:bg-white/20 p-4 rounded-xl text-left border border-white/10 transition">
+                    <div class="font-bold text-yellow-300 flex items-center"><span class="mr-2">🏛️</span> Arena 1: Complements to 1,000 & £5.00</div>
+                    <div class="text-xs text-purple-200 mt-1">Defeat extra-hundred & extra-pound traps</div>
+                </button>
+                <button onclick="startArena(2)" class="bg-white/10 hover:bg-white/20 p-4 rounded-xl text-left border border-white/10 transition">
+                    <div class="font-bold text-yellow-300 flex items-center"><span class="mr-2">🏛️</span> Arena 2: Subtraction & Working Backwards</div>
+                    <div class="text-xs text-purple-200 mt-1">Zero-exchange column subtraction & bar models</div>
+                </button>
+                <button onclick="startArena(3)" class="bg-white/10 hover:bg-white/20 p-4 rounded-xl text-left border border-white/10 transition">
+                    <div class="font-bold text-yellow-300 flex items-center"><span class="mr-2">🏛️</span> Arena 3: Factors & Fact Families</div>
+                    <div class="text-xs text-purple-200 mt-1">Factor rainbows and 6x, 7x, 8x division inverse</div>
+                </button>
+                <button onclick="startArena(4)" class="bg-white/10 hover:bg-white/20 p-4 rounded-xl text-left border border-white/10 transition">
+                    <div class="font-bold text-yellow-300 flex items-center"><span class="mr-2">🏛️</span> Arena 4: Fractions & Equivalence</div>
+                    <div class="text-xs text-purple-200 mt-1">3/4 of 24 and equivalent fraction walls (1/2 = 5/10)</div>
+                </button>
+                <button onclick="startArena(5)" class="col-span-1 sm:col-span-2 bg-white/10 hover:bg-white/20 p-4 rounded-xl text-left border border-white/10 transition">
+                    <div class="font-bold text-yellow-300 flex items-center"><span class="mr-2">🏛️</span> Arena 5: Perimeter, Time & 2-Step Problems</div>
+                    <div class="text-xs text-purple-200 mt-1">All-4-side perimeter, time bridging across `:00`, and "twice + altogether"</div>
+                </button>
+            </div>
+        </div>
+
+        <!-- SCREEN 3: ACTIVE GAMEPLAY -->
+        <div id="screen-game" class="hidden w-full max-w-2xl bg-white/10 backdrop-blur-lg rounded-3xl p-6 sm:p-8 shadow-2xl border border-white/20">
+            <div class="flex justify-between items-center mb-6 border-b border-white/10 pb-4">
+                <span id="game-arena-badge" class="bg-purple-600/60 text-purple-200 text-xs px-3 py-1 rounded-full font-semibold">Arena 1</span>
+                <span id="game-progress" class="text-sm font-bold text-yellow-300">Question 1 of 15</span>
+            </div>
+
+            <div id="question-container" class="mb-6">
+                <h3 id="question-text" class="text-xl sm:text-2xl font-bold mb-4 leading-snug">Question text goes here?</h3>
+                <div id="visual-cue-box" class="hidden bg-black/40 border border-yellow-400/30 rounded-2xl p-4 mb-4 text-sm text-yellow-200">
+                    <span class="font-bold">💡 Visual Hint & Worked Step:</span> <span id="visual-cue-text">Hint description...</span>
+                </div>
+            </div>
+
+            <div id="options-container" class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
+                <!-- Dynamic Answer Buttons -->
+            </div>
+
+            <div id="feedback-box" class="hidden p-4 rounded-2xl mb-4 text-center font-bold text-sm">
+                <!-- Correct / Incorrect feedback -->
+            </div>
+
+            <div class="flex justify-end">
+                <button id="next-btn" onclick="nextQuestion()" class="hidden bg-yellow-400 hover:bg-yellow-300 text-black font-bold px-6 py-3 rounded-xl shadow-lg transition">Next Question →</button>
+            </div>
+        </div>
+
+        <!-- SCREEN 4: END OF GAME CERTIFICATE -->
+        <div id="screen-certificate" class="hidden w-full max-w-2xl bg-white/15 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border border-white/30 text-center">
+            <span class="text-6xl mb-4 inline-block">🏆</span>
+            <h2 class="text-3xl font-bold mb-2 text-yellow-300">Mission Accomplished!</h2>
+            <p id="cert-player" class="text-purple-200 mb-6">Fantastic reasoning work!</p>
+
+            <div class="bg-black/30 rounded-2xl p-6 mb-6 border border-white/10 grid grid-cols-3 gap-4 text-center">
+                <div>
+                    <div class="text-xs text-purple-300">Final Score</div>
+                    <div id="cert-score" class="text-2xl font-bold text-yellow-300">15 / 15</div>
+                </div>
+                <div>
+                    <div class="text-xs text-purple-300">Stars Earned</div>
+                    <div id="cert-stars" class="text-2xl font-bold text-yellow-400">+15 ⭐</div>
+                </div>
+                <div>
+                    <div class="text-xs text-purple-300">Accuracy</div>
+                    <div id="cert-accuracy" class="text-2xl font-bold text-emerald-400">100%</div>
+                </div>
+            </div>
+
+            <div class="flex space-x-4">
+                <button onclick="returnToMenu()" class="flex-1 bg-white/20 hover:bg-white/30 font-bold py-3 px-6 rounded-xl transition">Return to Menu</button>
+                <button onclick="startFullQuest()" class="flex-1 bg-yellow-400 hover:bg-yellow-300 text-black font-bold py-3 px-6 rounded-xl shadow-lg transition">Play Again</button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="text-xs text-purple-300/60 pb-2">
+        St Kieran's Primary School • P4B/P5B Group A Intervention Tool
+    </footer>
+
+    <!-- GAME ENGINE SCRIPT -->
+    <script>
+        const questionBank = [
+            // Arena 1: Complements to 1,000 & £5.00
+            { arena: 1, q: "Find the missing number to make 1,000: 640 + [ ? ] = 1,000", options: ["360", "460", "340", "660"], correct: "360", hint: "Bridge up: 640 + 60 = 700, then + 300 = 1,000. Total added = 360 (watch out for the 1,100 trap!)." },
+            { arena: 1, q: "Work out: 1,000 − 350", options: ["650", "750", "640", "740"], correct: "650", hint: "1,000 − 300 = 700, then subtract 50 more to land on 650 (avoiding the extra-hundred trap)." },
+            { arena: 1, q: "Julia buys a book for £3.35. She pays with a £5.00 note. How much change?", options: ["£1.65", "£2.65", "£1.55", "£2.35"], correct: "£1.65", hint: "Count up from £3.35 to £4.00 (65p), then add £1.00 to reach £5.00. Total change = £1.65." },
+            
+            // Arena 2: Subtraction & Working Backwards
+            { arena: 2, q: "Work out: 502 − 147", options: ["355", "465", "365", "343"], correct: "355", hint: "Exchange 1 hundred into 9 tens and 12 ones across the zero before subtracting (never flip 7 − 2 = 5!)." },
+            { arena: 2, q: "Find the missing starting number: [ ? ] − 35 = 48", options: ["83", "13", "73", "84"], correct: "83", hint: "Use inverse operations: add 48 + 35 to find the missing starting whole (= 83)." },
+            { arena: 2, q: "What is the DIFFERENCE between 124 and 89?", options: ["35", "24", "45", "213"], correct: "35", hint: "Bridge from 89 up to 100 (+11), then 100 up to 124 (+24). Total difference = 35." },
+            
+            // Arena 3: Factors & Fact Families
+            { arena: 3, q: "Write ONE division fact in the same fact family as 7 × 8 = 56.", options: ["56 ÷ 8 = 7", "56 ÷ 7 = 8", "Both A and B", "87 − 56 = 31"], correct: "Both A and B", hint: "The whole is 56; divide by either part to find the other part (56 ÷ 8 = 7 or 56 ÷ 7 = 8)." },
+            { arena: 3, q: "Work out: 54 ÷ 6", options: ["9", "8", "7", "6"], correct: "9", hint: "Think: what number multiplied by 6 makes 54? (6 × 9 = 54)." },
+            { arena: 3, q: "Circle ALL correct factor pairs of 18 (Select the matching pair):", options: ["2 × 9", "4 × 4.5", "5 × 3", "7 × 2"], correct: "2 × 9", hint: "18 divides evenly by 1, 2, 3, 6, 9, and 18. (2 × 9 is a correct factor pair)." },
+            
+            // Arena 4: Fractions & Equivalence
+            { arena: 4, q: "Find 3/4 of 24.", options: ["18", "12", "6", "9"], correct: "18", hint: "Step 1: Divide 24 by 4 (= 6). Step 2: Multiply by 3 (= 18). Never just halve it to 12!" },
+            { arena: 4, q: "Find the missing number to make these fractions EQUIVALENT: 1/2 = [ ? ] / 10", options: ["5", "2", "10", "3"], correct: "5", hint: "Whatever you multiply the denominator (2) by to get 10 (×5), do the same to the numerator (1 × 5 = 5)." },
+            { arena: 4, q: "A pizza has 24 slices; 3/4 are eaten. How many slices are eaten?", options: ["18", "6", "12", "16"], correct: "18", hint: "Find 3/4 of 24 (24 ÷ 4 × 3 = 18)." },
+            
+            // Arena 5: Perimeter, Time & 2-Step Problems
+            { arena: 5, q: "A rectangle has a length of 8 cm and a width of 3 cm. What is its PERIMETER?", options: ["22 cm", "11 cm", "24 cm", "19 cm"], correct: "22 cm", hint: "Perimeter walks ALL 4 sides: 8 + 3 + 8 + 3 = 22 cm (don't just add two sides = 11 cm!)." },
+            { arena: 5, q: "A film starts at 2:40 pm and lasts for 35 minutes. What time does it finish?", options: ["3:15 pm", "3:05 pm", "3:25 pm", "2:75 pm"], correct: "3:15 pm", hint: "Bridge across the hour: 2:40 pm + 20 mins reaches 3:00 pm, plus 15 mins = 3:15 pm." },
+            { arena: 5, q: "Oisin has 18 marbles. Nevaeh has TWICE as many. How many marbles do they have ALTOGETHER?", options: ["54", "36", "26", "72"], correct: "54", hint: "Step 1: Twice 18 = 36. Step 2 (Altogether): 18 + 36 = 54 (don't stop at 36!)." }
+        ];
+
+        let state = {
+            player: null,
+            avatar: '🐱',
+            stars: 0,
+            streak: 0,
+            activeQuestions: [],
+            currentIndex: 0,
+            score: 0
+        };
+
+        function selectProfile(name, avatar) {
+            state.player = name;
+            state.avatar = avatar;
+            state.stars = parseInt(localStorage.getItem(`stars_${name}`) || '0');
+            state.streak = parseInt(localStorage.getItem(`streak_${name}`) || '4');
+            
+            document.getElementById('hud-avatar').innerText = avatar;
+            document.getElementById('hud-name').innerText = name;
+            document.getElementById('hud-stars').innerText = state.stars;
+            document.getElementById('hud-streak').innerText = state.streak;
+            document.getElementById('player-hud').classList.remove('hidden');
+            
+            document.getElementById('screen-profiles').classList.add('hidden');
+            document.getElementById('screen-hub').classList.remove('hidden');
+            document.getElementById('hub-welcome').innerText = `Welcome back, ${name}!`;
+        }
+
+        function returnToMenu() {
+            document.getElementById('screen-game').classList.add('hidden');
+            document.getElementById('screen-certificate').classList.add('hidden');
+            document.getElementById('screen-hub').classList.remove('hidden');
+            document.getElementById('player-hud').classList.remove('hidden');
+        }
+
+        function startFullQuest() {
+            state.activeQuestions = [...questionBank];
+            state.currentIndex = 0;
+            state.score = 0;
+            launchGame("Full Personalised Quest (15 Missions)");
+        }
+
+        function startArena(arenaNum) {
+            state.activeQuestions = questionBank.filter(q => q.arena === arenaNum);
+            state.currentIndex = 0;
+            state.score = 0;
+            launchGame(`Arena ${arenaNum} Focus`);
+        }
+
+        function launchGame(arenaTitle) {
+            document.getElementById('screen-hub').classList.add('hidden');
+            document.getElementById('screen-certificate').classList.add('hidden');
+            document.getElementById('screen-game').classList.remove('hidden');
+            document.getElementById('game-arena-badge').innerText = arenaTitle;
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const q = state.activeQuestions[state.currentIndex];
+            document.getElementById('game-progress').innerText = `Question ${state.currentIndex + 1} of ${state.activeQuestions.length}`;
+            document.getElementById('question-text').innerText = q.q;
+            
+            const cueBox = document.getElementById('visual-cue-box');
+            cueBox.classList.add('hidden');
+            document.getElementById('visual-cue-text').innerText = q.hint;
+
+            const feedback = document.getElementById('feedback-box');
+            feedback.classList.add('hidden');
+            document.getElementById('next-btn').classList.add('hidden');
+
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+
+            const shuffled = [...q.options].sort(() => Math.random() - 0.5);
+            shuffled.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = "bg-white/10 hover:bg-white/20 border border-white/20 p-4 rounded-xl text-lg font-bold transition transform hover:scale-[1.01] text-center";
+                btn.innerText = opt;
+                btn.onclick = () => checkAnswer(opt, q.correct, btn);
+                container.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selected, correct, btn) {
+            const feedback = document.getElementById('feedback-box');
+            feedback.classList.remove('hidden');
+            
+            const allBtns = document.getElementById('options-container').querySelectorAll('button');
+            allBtns.forEach(b => b.disabled = true);
+
+            if (selected === correct) {
+                btn.classList.remove('bg-white/10', 'hover:bg-white/20');
+                btn.classList.add('bg-emerald-600', 'border-emerald-400');
+                feedback.className = "p-4 rounded-2xl mb-4 text-center font-bold text-sm bg-emerald-900/60 border border-emerald-500 text-emerald-200";
+                feedback.innerText = "🎉 Brilliant! Spot on!";
+                state.score++;
+                state.stars++;
+                document.getElementById('hud-stars').innerText = state.stars;
+                localStorage.setItem(`stars_${state.player}`, state.stars);
+                document.getElementById('next-btn').classList.remove('hidden');
+            } else {
+                btn.classList.remove('bg-white/10', 'hover:bg-white/20');
+                btn.classList.add('bg-rose-600', 'border-rose-400');
+                feedback.className = "p-4 rounded-2xl mb-4 text-center font-bold text-sm bg-rose-900/60 border border-rose-500 text-rose-200";
+                feedback.innerText = "❌ Not quite! Check the visual hint above to see how to solve it.";
+                
+                document.getElementById('visual-cue-box').classList.remove('hidden');
+                
+                allBtns.forEach(b => {
+                    if (b.innerText === correct) {
+                        b.classList.add('bg-emerald-800/80', 'border-emerald-400');
+                    }
+                });
+                document.getElementById('next-btn').classList.remove('hidden');
+            }
+        }
+
+        function nextQuestion() {
+            state.currentIndex++;
+            if (state.currentIndex < state.activeQuestions.length) {
+                loadQuestion();
+            } else {
+                showCertificate();
+            }
+        }
+
+        function showCertificate() {
+            document.getElementById('screen-game').classList.add('hidden');
+            document.getElementById('screen-certificate').classList.remove('hidden');
+            
+            const total = state.activeQuestions.length;
+            const accuracy = Math.round((state.score / total) * 100);
+            
+            document.getElementById('cert-player').innerText = `Fantastic reasoning work, ${state.player}!`;
+            document.getElementById('cert-score').innerText = `${state.score} / ${total}`;
+            document.getElementById('cert-stars').innerText = `+${state.score} ⭐`;
+            document.getElementById('cert-accuracy').innerText = `${accuracy}%`;
+        }
+    </script>
+</body>
+</html>
