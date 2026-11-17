@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>P3/P4 Diagnostic Recovery Lab • Jimmy, Brooklyn, Katy, Eva, Ariana, Aleen & Dolce</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap');
+        body { font-family: 'Fredoka', sans-serif; }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-900 via-indigo-900 to-slate-900 min-h-screen text-white flex flex-col justify-between p-4">
+
+    <!-- HEADER -->
+    <header class="w-full max-w-6xl mx-auto bg-white/10 backdrop-blur-md rounded-2xl p-4 flex justify-between items-center shadow-xl border border-white/20">
+        <div>
+            <h1 class="text-xl font-bold tracking-wide text-yellow-300">P3/P4 Diagnostic Recovery Lab</h1>
+            <p class="text-xs text-blue-200">Jimmy, Brooklyn, Katy, Eva, Ariana, Aleen & Dolce • Teacher Attainment Hub</p>
+        </div>
+        <div class="flex space-x-2">
+            <button onclick="switchTab('bridging')" id="btn-bridging" class="bg-yellow-400 text-black font-bold text-xs px-3 py-2 rounded-xl transition">Base-10 Bridging Lab</button>
+            <button onclick="switchTab('vocab')" id="btn-vocab" class="bg-white/20 hover:bg-white/30 font-bold text-xs px-3 py-2 rounded-xl transition">Word Decoder & Bonds</button>
+        </div>
+    </header>
+
+    <!-- MAIN APP CONTENT -->
+    <main class="w-full max-w-6xl mx-auto my-6 flex flex-col items-center">
+
+        <!-- MODULE 1: ZERO-SCROLL BASE-10 BRIDGING LAB -->
+        <div id="tab-bridging" class="w-full bg-white/10 backdrop-blur-lg rounded-3xl p-6 shadow-2xl border border-white/20">
+            <div class="flex justify-between items-center mb-4 border-b border-white/10 pb-3">
+                <span class="bg-emerald-600/60 text-emerald-200 text-xs px-3 py-1 rounded-full font-semibold">Zero-Scroll Tactile Lab</span>
+                <span class="text-sm font-bold text-yellow-300">Target: Bridging Through 10 & Decades</span>
+            </div>
+
+            <!-- STEP TRACKER BAR -->
+            <div class="grid grid-cols-3 gap-2 mb-6">
+                <div id="step-pill-1" class="bg-yellow-400 text-black text-center py-2 rounded-xl font-bold text-xs shadow-md transition">1. Count Blocks</div>
+                <div id="step-pill-2" class="bg-white/20 text-white text-center py-2 rounded-xl font-bold text-xs shadow-md transition">2. Move Cubes to Make 10</div>
+                <div id="step-pill-3" class="bg-white/20 text-white text-center py-2 rounded-xl font-bold text-xs shadow-md transition">3. Cherry Split & Total</div>
+            </div>
+
+            <!-- ZERO SCROLL WORKSPACE GRID -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <!-- START NUMBER CARD -->
+                <div class="bg-white/5 border border-white/10 rounded-2xl p-4 flex flex-col items-center justify-between">
+                    <div class="w-full flex justify-between items-center mb-2">
+                        <span class="text-xs font-bold text-blue-200 uppercase">Start Number (Make Next 10)</span>
+                        <div class="bg-black/30 px-3 py-1 rounded-lg text-xs font-bold text-yellow-300">Count: <span id="start-count-display">?</span></div>
+                    </div>
+                    <!-- Ten Frame View -->
+                    <div id="ten-frame-container" class="grid grid-cols-5 gap-2 my-4 bg-blue-950/40 p-4 rounded-xl border border-blue-400/20">
+                        <!-- 10 Slots generated via JS -->
+                    </div>
+                    <div id="step1-input-area" class="w-full text-center mt-2">
+                        <p class="text-xs text-blue-200 mb-2">How many blue blocks are in the ten-frame?</p>
+                        <div class="flex justify-center space-x-2">
+                            <input type="number" id="input-start-num" class="w-20 bg-black/40 border border-white/20 rounded-xl px-3 py-2 text-center text-lg font-bold text-yellow-300" placeholder="?">
+                            <button onclick="verifyStartCount()" class="bg-yellow-400 text-black font-bold px-4 py-2 rounded-xl text-xs hover:bg-yellow-300 transition">Check</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ADD CUBES CARD -->
+                <div class="bg-white/5 border border-white/10 rounded-2xl p-4 flex flex-col items-center justify-between">
+                    <div class="w-full flex justify-between items-center mb-2">
+                        <span class="text-xs font-bold text-amber-200 uppercase">Add Cubes Bank</span>
+                        <div class="bg-black/30 px-3 py-1 rounded-lg text-xs font-bold text-yellow-300">Add: <span id="add-count-display">?</span></div>
+                    </div>
+                    <div id="add-bank-container" class="grid grid-cols-3 gap-2 my-4 bg-amber-950/40 p-4 rounded-xl border border-amber-400/20 min-h-[100px] items-center justify-center">
+                        <!-- Yellow add cubes generated via JS -->
+                    </div>
+                    <div id="step1-add-input" class="w-full text-center mt-2">
+                        <p class="text-xs text-amber-200 mb-2">How many yellow cubes to add?</p>
+                        <div class="flex justify-center space-x-2">
+                            <input type="number" id="input-add-num" class="w-20 bg-black/40 border border-white/20 rounded-xl px-3 py-2 text-center text-lg font-bold text-yellow-300" placeholder="?">
+                            <button onclick="verifyAddCount()" class="bg-yellow-400 text-black font-bold px-4 py-2 rounded-xl text-xs hover:bg-yellow-300 transition">Check</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CHERRY SPLIT & NUMBER LINE ZONE -->
+            <div id="bridging-bottom-zone" class="bg-black/30 border border-white/10 rounded-2xl p-4 text-center">
+                <div id="calculation-banner" class="text-lg font-bold text-yellow-300 mb-2">Equation: [ ? ] + [ ? ] = [ ? ]</div>
+                <div class="text-xs text-blue-200">Tap the button below to load a new Jimmy-group bridging round!</div>
+                <button onclick="resetBridgingLab()" class="mt-3 bg-indigo-600 hover:bg-indigo-500 font-bold px-5 py-2 rounded-xl text-xs transition">Next P3/P4 Question 🚀</button>
+            </div>
+        </div>
+
+        <!-- MODULE 2: WORD DECODER & BONDS HUB -->
+        <div id="tab-vocab" class="hidden w-full bg-white/10 backdrop-blur-lg rounded-3xl p-6 shadow-2xl border border-white/20">
+            <h2 class="text-2xl font-bold mb-2 text-yellow-300">Word Decoder & Bonds Recovery</h2>
+            <p class="text-blue-200 mb-6 text-sm">Targeting Jimmy & Brooklyn's action-word decoding (*difference*, *remaining*, *altogether*).</p>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                <div class="bg-white/5 border border-white/10 p-4 rounded-2xl">
+                    <h3 class="font-bold text-yellow-300 mb-1">Difference</h3>
+                    <p class="text-xs text-blue-200 mb-3">Means subtract to find the gap between two numbers (e.g., 12 and 8).</p>
+                    <button onclick="loadVocabCard('difference')" class="bg-white/20 hover:bg-white/30 text-xs font-bold py-2 px-3 rounded-xl transition">Practice Question</button>
+                </div>
+                <div class="bg-white/5 border border-white/10 p-4 rounded-2xl">
+                    <h3 class="font-bold text-yellow-300 mb-1">Remaining</h3>
+                    <p class="text-xs text-blue-200 mb-3">Means what is left over after taking away (e.g., Brooklyn's grapes).</p>
+                    <button onclick="loadVocabCard('remaining')" class="bg-white/20 hover:bg-white/30 text-xs font-bold py-2 px-3 rounded-xl transition">Practice Question</button>
+                </div>
+                <div class="bg-white/5 border border-white/10 p-4 rounded-2xl">
+                    <h3 class="font-bold text-yellow-300 mb-1">Altogether</h3>
+                    <p class="text-xs text-blue-200 mb-3>Means combine both groups to find the total (e.g., stickers).</p>
+                    <button onclick="loadVocabCard('altogether')" class="bg-white/20 hover:bg-white/30 text-xs font-bold py-2 px-3 rounded-xl transition">Practice Question</button>
+                </div>
+            </div>
+
+            <div id="vocab-practice-box" class="bg-black/30 border border-white/10 rounded-2xl p-6 text-center hidden">
+                <h3 id="vocab-q-title" class="text-lg font-bold text-yellow-300 mb-2">Question Title</h3>
+                <p id="vocab-q-text" class="text-sm text-blue-200 mb-4">Question description...</p>
+                <div class="flex justify-center space-x-3">
+                    <input type="text" id="vocab-answer-input" class="w-32 bg-black/40 border border-white/20 rounded-xl px-3 py-2 text-center font-bold text-yellow-300" placeholder="Answer">
+                    <button onclick="checkVocabAnswer()" class="bg-yellow-400 text-black font-bold px-5 py-2 rounded-xl text-xs hover:bg-yellow-300 transition">Check Answer</button>
+                </div>
+                <div id="vocab-feedback" class="mt-3 font-bold text-sm"></div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="text-center text-xs text-blue-300/60 pb-4">
+        St Kieran's Primary School • Jimmy, Brooklyn, Katy, Eva, Ariana, Aleen & Dolce Recovery Hub
+    </footer>
+
+    <!-- APP SCRIPT -->
+    <script>
+        let currentStart = 8;
+        let currentAdd = 5;
+        let currentStep = 1;
+
+        function switchTab(tab) {
+            document.getElementById('tab-bridging').classList.toggle('hidden', tab !== 'bridging');
+            document.getElementById('tab-vocab').classList.toggle('hidden', tab !== 'vocab');
+            document.getElementById('btn-bridging').className = tab === 'bridging' ? "bg-yellow-400 text-black font-bold text-xs px-3 py-2 rounded-xl transition" : "bg-white/20 hover:bg-white/30 font-bold text-xs px-3 py-2 rounded-xl transition";
+            document.getElementById('btn-vocab').className = tab === 'vocab' ? "bg-yellow-400 text-black font-bold text-xs px-3 py-2 rounded-xl transition" : "bg-white/20 hover:bg-white/30 font-bold text-xs px-3 py-2 rounded-xl transition";
+            if(tab === 'bridging') resetBridgingLab();
+        }
+
+        function resetBridgingLab() {
+            const pairs = [{s: 8, a: 5}, {s: 9, a: 6}, {s: 7, a: 5}, {s: 8, a: 4}];
+            const p = pairs[Math.floor(Math.random() * pairs.length)];
+            currentStart = p.s;
+            currentAdd = p.a;
+            currentStep = 1;
+
+            document.getElementById('start-count-display').innerText = "?";
+            document.getElementById('add-count-display').innerText = "?";
+            document.getElementById('calculation-banner').innerText = "Equation: [ ? ] + [ ? ] = [ ? ]";
+            document.getElementById('input-start-num').value = "";
+            document.getElementById('input-add-num').value = "";
+            document.getElementById('step1-input-area').classList.remove('hidden');
+            document.getElementById('step1-add-input').classList.remove('hidden');
+
+            updateStepPills(1);
+            renderTenFrame(currentStart, false);
+            renderAddBank(currentAdd, false);
+        }
+
+        function renderTenFrame(filledCount, revealed) {
+            const container = document.getElementById('ten-frame-container');
+            container.innerHTML = '';
+            for (let i = 0; i < 10; i++) {
+                const box = document.createElement('div');
+                box.className = "w-10 h-10 rounded-lg flex items-center justify-center font-bold text-xs border " + 
+                    (i < filledCount ? "bg-blue-600 border-blue-400 shadow-md text-white" : "bg-white/5 border-white/20 text-white/30");
+                box.innerText = i + 1;
+                container.appendChild(box);
+            }
+        }
+
+        function renderAddBank(count, revealed) {
+            const container = document.getElementById('add-bank-container');
+            container.innerHTML = '';
+            for (let i = 0; i < count; i++) {
+                const cube = document.createElement('div');
+                cube.className = "w-8 h-8 bg-amber-500 border border-amber-300 rounded-md shadow-md flex items-center justify-center font-bold text-xs text-black";
+                cube.innerText = "+1";
+                container.appendChild(cube);
+            }
+        }
+
+        function verifyStartCount() {
+            const val = parseInt(document.getElementById('input-start-num').value);
+            if (val === currentStart) {
+                document.getElementById('start-count-display').innerText = currentStart;
+                document.getElementById('step1-input-area').classList.add('hidden');
+                alert("Correct start count! Now count the yellow add cubes.");
+            } else {
+                alert("Not quite! Subitise and count the blue blocks again.");
+            }
+        }
+
+        function verifyAddCount() {
+            const val = parseInt(document.getElementById('input-add-num').value);
+            if (val === currentAdd) {
+                document.getElementById('add-count-display').innerText = currentAdd;
+                document.getElementById('step1-add-input').classList.add('hidden');
+                document.getElementById('calculation-banner').innerText = `Equation: ${currentStart} + ${currentAdd} = [ ? ]`;
+                updateStepPills(2);
+                alert("Brilliant! Now let's bridge through 10 to solve the total.");
+            } else {
+                alert("Check the yellow cubes again!");
+            }
+        }
+
+        function updateStepPills(step) {
+            document.getElementById('step-pill-1').className = step >= 1 ? "bg-emerald-500 text-black text-center py-2 rounded-xl font-bold text-xs shadow-md" : "bg-white/20 text-white text-center py-2 rounded-xl font-bold text-xs shadow-md";
+            document.getElementById('step-pill-2').className = step === 2 ? "bg-yellow-400 text-black text-center py-2 rounded-xl font-bold text-xs shadow-md" : (step > 2 ? "bg-emerald-500 text-black text-center py-2 rounded-xl font-bold text-xs shadow-md" : "bg-white/20 text-white text-center py-2 rounded-xl font-bold text-xs shadow-md");
+            document.getElementById('step-pill-3').className = step === 3 ? "bg-yellow-400 text-black text-center py-2 rounded-xl font-bold text-xs shadow-md" : "bg-white/20 text-white text-center py-2 rounded-xl font-bold text-xs shadow-md";
+        }
+
+        function loadVocabCard(type) {
+            document.getElementById('vocab-practice-box').classList.remove('hidden');
+            const title = document.getElementById('vocab-q-title');
+            const text = document.getElementById('vocab-q-text');
+            if(type === 'difference') {
+                title.innerText = "Word Decoder: DIFFERENCE";
+                text.innerText = "What is the DIFFERENCE between 12 and 8?";
+            } else if(type === 'remaining') {
+                title.innerText = "Word Decoder: REMAINING";
+                text.innerText = "Brooklyn has 15 grapes. She eats 6 of them. How many grapes are REMAINING?";
+            } else {
+                title.innerText = "Word Decoder: ALTOGETHER";
+                text.innerText = "Jimmy has 8 stickers and Ariana has 5 stickers. How many stickers do they have ALTOGETHER?";
+            }
+        }
+
+        // Initialize
+        resetBridgingLab();
+    </script>
+</body>
+</html>
