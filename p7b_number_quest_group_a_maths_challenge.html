@@ -1,0 +1,2060 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P7B Number Quest: Group A Maths Challenge!</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Inter:wght@500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #eef2ff 0%, #f0fdf4 50%, #fefce8 100%);
+      color: #0f172a;
+      overflow-x: hidden;
+    }
+    .font-game {
+      font-family: 'Fredoka', 'Inter', sans-serif;
+    }
+    @keyframes bouncePop {
+      0% { transform: scale(0.92); opacity: 0; }
+      70% { transform: scale(1.03); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .animate-bounce-pop {
+      animation: bouncePop 0.25s ease-out forwards;
+    }
+    @keyframes shakeX {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-8px); }
+      40%, 80% { transform: translateX(8px); }
+    }
+    .animate-shake {
+      animation: shakeX 0.35s ease-in-out;
+    }
+    #confetti-canvas {
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body class="min-h-[100dvh] flex flex-col select-none">
+
+  <!-- CONFETTI OVERLAY FOR END-OF-GAME CELEBRATION -->
+  <canvas id="confetti-canvas" class="fixed inset-0 w-full h-full z-50 hidden"></canvas>
+
+  <!-- TOP GAME BAR -->
+  <header class="bg-slate-900 text-white shadow-lg border-b-4 border-indigo-600 sticky top-0 z-40 shrink-0">
+    <div class="max-w-6xl mx-auto px-3 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-2">
+      <!-- Left: Logo & Menu Button -->
+      <div class="flex items-center gap-2.5">
+        <button id="btn-home" onclick="showScreen('profiles')" class="hidden items-center gap-1.5 bg-slate-800 hover:bg-slate-700 active:scale-95 text-white font-bold px-3 py-1.5 rounded-xl border border-slate-600 transition text-xs sm:text-sm">
+          <span>&#127968;</span>
+          <span>Menu</span>
+        </button>
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-slate-950 font-game font-bold text-base shadow-md">
+            P7B
+          </div>
+          <div>
+            <h1 class="font-game text-base sm:text-xl font-bold tracking-wide leading-none text-white">
+              P7B Number Quest
+            </h1>
+            <p class="text-[10px] sm:text-xs text-indigo-200 font-semibold">
+              Group A Personalised Missions &bull; Che, Lillie, Eireann, Ellie, Leah &amp; Aaliyah
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Active Player Pill, Streak & Sound Toggle -->
+      <div class="flex items-center gap-2">
+        <div id="hud-player-badge" class="hidden items-center gap-2 bg-slate-800 px-2.5 py-1 rounded-xl border border-slate-700">
+          <span id="hud-avatar" class="text-base">&#129418;</span>
+          <span id="hud-name" class="font-extrabold text-xs sm:text-sm text-amber-300">Che</span>
+          <span class="text-xs font-bold text-indigo-200 border-l border-slate-700 pl-2">&#11088; <span id="hud-stars">0</span></span>
+        </div>
+
+        <div id="hud-streak-badge" class="hidden items-center gap-1 bg-amber-500/20 border border-amber-400/50 px-2 py-1 rounded-xl text-amber-300 font-extrabold text-xs sm:text-sm">
+          <span>&#128293;</span>
+          <span id="hud-streak">0</span>
+        </div>
+
+        <button id="btn-sound" onclick="toggleSound()" class="p-1.5 sm:p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white border border-slate-600 transition text-xs sm:text-sm font-bold" title="Toggle Sound Effects">
+          &#128266;
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT CONTAINER -->
+  <main id="main-shell" class="flex-1 max-w-6xl w-full mx-auto px-3 sm:px-6 py-4 flex flex-col justify-center">
+
+    <!-- ===================================================================== -->
+    <!-- SCREEN 1: PLAYER PROFILE, AVATAR PICKER & ARENA HUB                   -->
+    <!-- ===================================================================== -->
+    <section id="screen-profiles" class="space-y-6 animate-bounce-pop">
+      <div class="bg-white rounded-3xl p-5 sm:p-7 shadow-md border-2 border-indigo-100 space-y-5">
+        <div class="text-center">
+          <span class="inline-block px-3 py-0.5 rounded-full bg-indigo-100 text-indigo-800 font-extrabold text-xs uppercase tracking-wider mb-1">
+            Step 1 &bull; Select Your Name &amp; Character
+          </span>
+          <h2 class="font-game text-2xl sm:text-4xl font-bold text-slate-900">
+            Who is playing today?
+          </h2>
+          <p class="text-slate-600 text-sm sm:text-base mt-1 font-medium">
+            Tap your name below, pick your favourite avatar, and start your custom P7B mission!
+          </p>
+        </div>
+
+        <!-- 7 Player Cards (Che, Lillie, Eireann, Ellie, Leah, Aaliyah, Guest) -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+          <button onclick="selectPlayer('Che')" data-player="Che" class="player-card group rounded-2xl p-4 border-4 transition flex flex-col items-center text-center shadow-sm active:scale-95">
+            <div class="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center text-4xl mb-2 group-hover:scale-110 transition">&#129418;</div>
+            <span class="font-game text-xl font-bold text-slate-900">Che</span>
+            <span class="text-[11px] font-bold text-blue-700 mt-0.5">kg &rarr; g, Tables &amp; Multi-Step</span>
+            <span class="mt-1.5 px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 font-extrabold text-xs">&#11088; <span id="stars-Che">0</span> Stars</span>
+          </button>
+
+          <button onclick="selectPlayer('Lillie')" data-player="Lillie" class="player-card group rounded-2xl p-4 border-4 transition flex flex-col items-center text-center shadow-sm active:scale-95">
+            <div class="w-16 h-16 rounded-full bg-pink-100 flex items-center justify-center text-4xl mb-2 group-hover:scale-110 transition">&#129412;</div>
+            <span class="font-game text-xl font-bold text-slate-900">Lillie</span>
+            <span class="text-[11px] font-bold text-pink-700 mt-0.5">4-Side Perimeter, Decimals &amp; 100s</span>
+            <span class="mt-1.5 px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 font-extrabold text-xs">&#11088; <span id="stars-Lillie">0</span> Stars</span>
+          </button>
+
+          <button onclick="selectPlayer('Eireann')" data-player="Eireann" class="player-card group rounded-2xl p-4 border-4 transition flex flex-col items-center text-center shadow-sm active:scale-95">
+            <div class="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center text-4xl mb-2 group-hover:scale-110 transition">&#128034;</div>
+            <span class="font-game text-xl font-bold text-slate-900">Eireann</span>
+            <span class="text-[11px] font-bold text-emerald-700 mt-0.5">Place Value, Bonds to 100 &amp; Facts</span>
+            <span class="mt-1.5 px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 font-extrabold text-xs">&#11088; <span id="stars-Eireann">0</span> Stars</span>
+          </button>
+
+          <button onclick="selectPlayer('Ellie')" data-player="Ellie" class="player-card group rounded-2xl p-4 border-4 transition flex flex-col items-center text-center shadow-sm active:scale-95">
+            <div class="w-16 h-16 rounded-full bg-purple-100 flex items-center justify-center text-4xl mb-2 group-hover:scale-110 transition">&#129419;</div>
+            <span class="font-game text-xl font-bold text-slate-900">Ellie</span>
+            <span class="text-[11px] font-bold text-purple-700 mt-0.5">Time Bridge, Area, Decimals &amp; 3/4</span>
+            <span class="mt-1.5 px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 font-extrabold text-xs">&#11088; <span id="stars-Ellie">0</span> Stars</span>
+          </button>
+
+          <button onclick="selectPlayer('Leah')" data-player="Leah" class="player-card group rounded-2xl p-4 border-4 transition flex flex-col items-center text-center shadow-sm active:scale-95">
+            <div class="w-16 h-16 rounded-full bg-amber-100 flex items-center justify-center text-4xl mb-2 group-hover:scale-110 transition">&#129409;</div>
+            <span class="font-game text-xl font-bold text-slate-900">Leah</span>
+            <span class="text-[11px] font-bold text-amber-700 mt-0.5">Full P7B Mastery Quest</span>
+            <span class="mt-1.5 px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 font-extrabold text-xs">&#11088; <span id="stars-Leah">0</span> Stars</span>
+          </button>
+
+          <button onclick="selectPlayer('Aaliyah')" data-player="Aaliyah" class="player-card group rounded-2xl p-4 border-4 transition flex flex-col items-center text-center shadow-sm active:scale-95">
+            <div class="w-16 h-16 rounded-full bg-rose-100 flex items-center justify-center text-4xl mb-2 group-hover:scale-110 transition">&#128060;</div>
+            <span class="font-game text-xl font-bold text-slate-900">Aaliyah</span>
+            <span class="text-[11px] font-bold text-rose-700 mt-0.5">Full P7B Mastery Quest</span>
+            <span class="mt-1.5 px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 font-extrabold text-xs">&#11088; <span id="stars-Aaliyah">0</span> Stars</span>
+          </button>
+
+          <button onclick="selectPlayer('Guest')" data-player="Guest" class="player-card col-span-2 sm:col-span-1 lg:col-span-2 group rounded-2xl p-4 border-4 transition flex flex-col items-center text-center shadow-sm active:scale-95">
+            <div class="w-16 h-16 rounded-full bg-sky-100 flex items-center justify-center text-4xl mb-2 group-hover:scale-110 transition">&#128640;</div>
+            <span class="font-game text-xl font-bold text-slate-900">Class / Guest</span>
+            <span class="text-[11px] font-bold text-sky-700 mt-0.5">Balanced P7B Practice Mission</span>
+            <span class="mt-1.5 px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 font-extrabold text-xs">&#11088; <span id="stars-Guest">0</span> Stars</span>
+          </button>
+        </div>
+
+        <!-- Character / Avatar Customiser -->
+        <div class="bg-slate-50 rounded-2xl p-3.5 sm:p-4 border-2 border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div class="text-center sm:text-left">
+            <span class="text-xs font-extrabold uppercase tracking-wider text-indigo-700 block">Pick Your Own Avatar</span>
+            <span class="text-xs text-slate-600 font-medium">Tap any character to save it to <strong id="picker-player-label" class="text-slate-900">Che</strong>'s profile!</span>
+          </div>
+          <div id="character-picker-grid" class="flex flex-wrap items-center justify-center gap-2">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2: Personalised Quest Card + Individual Arenas -->
+      <div class="bg-white rounded-3xl p-5 sm:p-7 shadow-md border-2 border-indigo-100 space-y-5">
+        <div class="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 pb-5 border-b-2 border-slate-100">
+          <div class="space-y-2 flex-1">
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="inline-block px-3 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-extrabold text-xs uppercase tracking-wider">
+                Step 2 &bull; Customised Mission
+              </span>
+              <span id="mission-subtitle-pill" class="inline-block px-3 py-0.5 rounded-full bg-indigo-100 text-indigo-900 font-extrabold text-xs">
+                Built from Che's Check-Up (15/30)
+              </span>
+            </div>
+            <h3 class="font-game text-xl sm:text-3xl font-bold text-slate-900">
+              <span id="welcome-player-name" class="text-indigo-600">Che</span>'s Personalised Quest (15 Qs)
+            </h3>
+            <p id="mission-description" class="text-slate-600 text-sm font-medium">
+              Targeted practice on kg to g conversions, core times tables &amp; fact families, zero-exchange subtraction, and multi-step problems!
+            </p>
+            <div id="mission-focus-badges" class="flex flex-wrap gap-1.5 pt-1">
+              <!-- Populated dynamically per child -->
+            </div>
+          </div>
+
+          <button onclick="startPersonalisedQuest()" class="w-full lg:w-auto shrink-0 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 hover:from-indigo-500 hover:to-pink-500 active:scale-95 text-white font-game text-lg sm:text-xl font-bold px-7 py-4 rounded-2xl shadow-lg border-b-4 border-indigo-900 transition flex items-center justify-center gap-2.5">
+            <span>&#127942;</span>
+            <span id="btn-start-quest-label">Start Che's Quest (15 Qs)</span>
+          </button>
+        </div>
+
+        <!-- 6 Individual Skill Arenas -->
+        <div>
+          <p class="text-xs font-extrabold uppercase tracking-wider text-slate-500 mb-3">
+            Or choose a skill arena to practise (<span class="text-amber-600">&#9733; Top Pick</span> = priority target for <span id="arenas-player-name">Che</span>):
+          </p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <button onclick="startSingleArena(1)" id="arena-card-1" class="text-left rounded-2xl p-4 bg-blue-50 hover:bg-blue-100/80 border-2 border-blue-300 transition shadow-sm active:scale-98 flex flex-col justify-between relative">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-2xl">&#128290;</span>
+                  <div class="flex items-center gap-1.5">
+                    <span id="pick-1" class="hidden text-[11px] font-black px-2 py-0.5 rounded-full bg-amber-400 text-slate-950">&#9733; Top Pick</span>
+                    <span id="best-1" class="text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-white text-blue-800 border border-blue-300">Best: —</span>
+                  </div>
+                </div>
+                <h4 class="font-game text-lg font-bold text-slate-900">1. Place Value &amp; Rounding</h4>
+                <p class="text-xs text-slate-600 mt-1 font-medium">4-digit zero placeholders (3,406), rounding to nearest 10, 100 less than 1,045 &amp; ordering!</p>
+              </div>
+              <div class="mt-3 text-xs font-extrabold text-blue-800">Play 8 Questions &rarr;</div>
+            </button>
+
+            <button onclick="startSingleArena(2)" id="arena-card-2" class="text-left rounded-2xl p-4 bg-emerald-50 hover:bg-emerald-100/80 border-2 border-emerald-300 transition shadow-sm active:scale-98 flex flex-col justify-between relative">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-2xl">&#128175;</span>
+                  <div class="flex items-center gap-1.5">
+                    <span id="pick-2" class="hidden text-[11px] font-black px-2 py-0.5 rounded-full bg-amber-400 text-slate-950">&#9733; Top Pick</span>
+                    <span id="best-2" class="text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-white text-emerald-800 border border-emerald-300">Best: —</span>
+                  </div>
+                </div>
+                <h4 class="font-game text-lg font-bold text-slate-900">2. Bonds to 100 &amp; Zero-Exchange</h4>
+                <p class="text-xs text-slate-600 mt-1 font-medium">Defeat 100 − 38 &amp; 100 − 45 traps, zero-exchange 502 − 147, and working backwards ([ ] − 25 = 60)!</p>
+              </div>
+              <div class="mt-3 text-xs font-extrabold text-emerald-800">Play 8 Questions &rarr;</div>
+            </button>
+
+            <button onclick="startSingleArena(3)" id="arena-card-3" class="text-left rounded-2xl p-4 bg-amber-50 hover:bg-amber-100/80 border-2 border-amber-300 transition shadow-sm active:scale-98 flex flex-col justify-between relative">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-2xl">&#127968;</span>
+                  <div class="flex items-center gap-1.5">
+                    <span id="pick-3" class="hidden text-[11px] font-black px-2 py-0.5 rounded-full bg-amber-400 text-slate-950">&#9733; Top Pick</span>
+                    <span id="best-3" class="text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-white text-amber-800 border border-amber-300">Best: —</span>
+                  </div>
+                </div>
+                <h4 class="font-game text-lg font-bold text-slate-900">3. Times Tables, Factors &amp; &divide;</h4>
+                <p class="text-xs text-slate-600 mt-1 font-medium">7 &times; 8, 54 &divide; 6, Fact Family Roofs (6 &times; 9 = 54), multiples of 6, and factor pairs of 12!</p>
+              </div>
+              <div class="mt-3 text-xs font-extrabold text-amber-800">Play 8 Questions &rarr;</div>
+            </button>
+
+            <button onclick="startSingleArena(4)" id="arena-card-4" class="text-left rounded-2xl p-4 bg-rose-50 hover:bg-rose-100/80 border-2 border-rose-300 transition shadow-sm active:scale-98 flex flex-col justify-between relative">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-2xl">&#128207;</span>
+                  <div class="flex items-center gap-1.5">
+                    <span id="pick-4" class="hidden text-[11px] font-black px-2 py-0.5 rounded-full bg-amber-400 text-slate-950">&#9733; Top Pick</span>
+                    <span id="best-4" class="text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-white text-rose-800 border border-rose-300">Best: —</span>
+                  </div>
+                </div>
+                <h4 class="font-game text-lg font-bold text-slate-900">4. Perimeter, Area &amp; kg &rarr; g</h4>
+                <p class="text-xs text-slate-600 mt-1 font-medium">Walk all 4 sides for Perimeter vs. Area inside, plus converting 2.5 kg into 2,500 g!</p>
+              </div>
+              <div class="mt-3 text-xs font-extrabold text-rose-800">Play 8 Questions &rarr;</div>
+            </button>
+
+            <button onclick="startSingleArena(5)" id="arena-card-5" class="text-left rounded-2xl p-4 bg-purple-50 hover:bg-purple-100/80 border-2 border-purple-300 transition shadow-sm active:scale-98 flex flex-col justify-between relative">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-2xl">&#127829;</span>
+                  <div class="flex items-center gap-1.5">
+                    <span id="pick-5" class="hidden text-[11px] font-black px-2 py-0.5 rounded-full bg-amber-400 text-slate-950">&#9733; Top Pick</span>
+                    <span id="best-5" class="text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-white text-purple-800 border border-purple-300">Best: —</span>
+                  </div>
+                </div>
+                <h4 class="font-game text-lg font-bold text-slate-900">5. Fractions, Decimals &amp; Scales</h4>
+                <p class="text-xs text-slate-600 mt-1 font-medium">Find 3/4 of 24, equivalent fractions (1/2 = 4/8), comparing 0.4 vs 0.35, and 4-step number lines!</p>
+              </div>
+              <div class="mt-3 text-xs font-extrabold text-purple-800">Play 8 Questions &rarr;</div>
+            </button>
+
+            <button onclick="startSingleArena(6)" id="arena-card-6" class="text-left rounded-2xl p-4 bg-indigo-50 hover:bg-indigo-100/80 border-2 border-indigo-300 transition shadow-sm active:scale-98 flex flex-col justify-between relative">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-2xl">&#9200;</span>
+                  <div class="flex items-center gap-1.5">
+                    <span id="pick-6" class="hidden text-[11px] font-black px-2 py-0.5 rounded-full bg-amber-400 text-slate-950">&#9733; Top Pick</span>
+                    <span id="best-6" class="text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-white text-indigo-800 border border-indigo-300">Best: —</span>
+                  </div>
+                </div>
+                <h4 class="font-game text-lg font-bold text-slate-900">6. Time, Money &amp; 2-Step Stories</h4>
+                <p class="text-xs text-slate-600 mt-1 font-medium">Bridge the hour (2:35 pm + 40m, 10:45 to 11:20), Difference (82 vs 47), and £10.00 change!</p>
+              </div>
+              <div class="mt-3 text-xs font-extrabold text-indigo-800">Play 8 Questions &rarr;</div>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- SCREEN 2: ACTIVE GAME ARENA                                           -->
+    <!-- ===================================================================== -->
+    <section id="screen-game" class="hidden space-y-4">
+      <!-- Progress Bar & Question Counter -->
+      <div class="bg-white rounded-2xl p-3.5 sm:p-4 shadow-sm border-2 border-indigo-100 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div class="flex items-center gap-2.5 w-full sm:w-auto justify-between sm:justify-start">
+          <span id="game-arena-badge" class="px-3 py-1 rounded-xl bg-indigo-100 text-indigo-900 font-extrabold text-xs sm:text-sm">
+            Arena 1: Place Value &amp; Rounding
+          </span>
+          <span id="game-q-counter" class="font-extrabold text-xs sm:text-sm text-slate-600">
+            Question 1 of 15
+          </span>
+        </div>
+
+        <div class="w-full sm:w-64 bg-slate-200 h-3.5 rounded-full overflow-hidden border border-slate-300">
+          <div id="game-progress-bar" class="bg-gradient-to-r from-emerald-500 to-teal-400 h-full transition-all duration-300" style="width: 5%"></div>
+        </div>
+
+        <div class="hidden sm:flex items-center gap-1.5 font-extrabold text-sm text-emerald-700 bg-emerald-50 px-3 py-1 rounded-xl border border-emerald-200">
+          <span>Score:</span>
+          <span id="game-live-score">0</span>
+        </div>
+      </div>
+
+      <!-- Main Question Stage Card -->
+      <div id="question-stage-card" class="bg-white rounded-3xl p-5 sm:p-8 shadow-lg border-4 border-indigo-100 space-y-6">
+        <!-- Prompt Row + Read Aloud Button -->
+        <div class="flex items-start justify-between gap-3">
+          <div class="space-y-1.5">
+            <span id="q-instruction-tag" class="inline-block px-3 py-0.5 rounded-full bg-slate-100 text-slate-600 font-extrabold text-xs uppercase tracking-wider">
+              Read &amp; Solve
+            </span>
+            <h2 id="q-prompt-text" class="font-game text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 leading-snug">
+              <!-- Populated by JS -->
+            </h2>
+          </div>
+
+          <button onclick="speakCurrentQuestion()" class="shrink-0 flex items-center gap-1.5 px-3.5 py-2.5 rounded-2xl bg-amber-100 hover:bg-amber-200 active:scale-95 text-amber-950 font-extrabold text-xs sm:text-sm border-2 border-amber-300 shadow-sm transition" title="Read Question Aloud">
+            <span class="text-lg">&#128264;</span>
+            <span class="hidden sm:inline">Read Aloud</span>
+          </button>
+        </div>
+
+        <!-- Visual Stage -->
+        <div id="q-visual-stage" class="flex justify-center">
+          <!-- Populated dynamically -->
+        </div>
+
+        <!-- Interactive Input / Choice Area -->
+        <div id="q-interaction-area" class="pt-2">
+          <!-- Populated dynamically: Multiple Choice Buttons OR On-Screen Keypad -->
+        </div>
+
+        <!-- Feedback & Visual Scaffold Box (Hidden until Attempt 1 or 2) -->
+        <div id="q-feedback-box" class="hidden rounded-2xl p-4 sm:p-5 border-2 space-y-3 animate-bounce-pop">
+          <div class="flex items-center justify-between gap-2">
+            <div class="flex items-center gap-2">
+              <span id="q-feedback-icon" class="text-2xl">&#127881;</span>
+              <h3 id="q-feedback-title" class="font-game text-xl font-bold">Awesome Job!</h3>
+            </div>
+            <button id="btn-next-question" onclick="advanceQuestion()" class="hidden px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-game text-base sm:text-lg font-bold shadow-md transition">
+              Next Question &rarr;
+            </button>
+          </div>
+          <p id="q-feedback-message" class="text-sm sm:text-base font-semibold leading-relaxed"></p>
+          <div id="q-feedback-visual" class="pt-1"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- SCREEN 3: END-OF-GAME CELEBRATION & SCORE CERTIFICATE                 -->
+    <!-- ===================================================================== -->
+    <section id="screen-results" class="hidden animate-bounce-pop">
+      <div class="bg-white rounded-3xl p-6 sm:p-9 shadow-xl border-4 border-amber-300 max-w-4xl mx-auto space-y-6 text-center">
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-100 text-amber-900 font-extrabold text-xs sm:text-sm uppercase tracking-wider border border-amber-300">
+          <span>&#127942;</span>
+          <span id="res-mode-label">Quest Complete!</span>
+        </div>
+
+        <div>
+          <div id="res-avatar" class="text-6xl sm:text-7xl mb-2">&#129418;</div>
+          <h2 class="font-game text-3xl sm:text-5xl font-bold text-slate-900">
+            Well done, <span id="res-player-name" class="text-indigo-600">Che</span>!
+          </h2>
+          <p id="res-encouragement" class="text-slate-600 text-base sm:text-lg font-semibold mt-1">
+            You completed your P7B Number Quest challenge!
+          </p>
+        </div>
+
+        <!-- Big Star Rating -->
+        <div id="res-stars-row" class="flex items-center justify-center gap-3 text-5xl sm:text-6xl py-1">
+          <span>&#11088;</span><span>&#11088;</span><span>&#11088;</span>
+        </div>
+
+        <!-- Score Summary Cards -->
+        <div class="grid grid-cols-3 gap-3 sm:gap-5 max-w-xl mx-auto">
+          <div class="rounded-2xl bg-indigo-50 border-2 border-indigo-200 p-4">
+            <span class="text-xs font-extrabold uppercase text-indigo-700 block">Final Score</span>
+            <span id="res-score-fraction" class="font-game text-2xl sm:text-4xl font-bold text-indigo-950">15 / 15</span>
+          </div>
+          <div class="rounded-2xl bg-emerald-50 border-2 border-emerald-200 p-4">
+            <span class="text-xs font-extrabold uppercase text-emerald-700 block">Accuracy</span>
+            <span id="res-accuracy" class="font-game text-2xl sm:text-4xl font-bold text-emerald-950">100%</span>
+          </div>
+          <div class="rounded-2xl bg-amber-50 border-2 border-amber-200 p-4">
+            <span class="text-xs font-extrabold uppercase text-amber-700 block">Stars Earned</span>
+            <span id="res-stars-earned" class="font-game text-2xl sm:text-4xl font-bold text-amber-950">+3 &#11088;</span>
+          </div>
+        </div>
+
+        <!-- Skill-by-Skill Breakdown -->
+        <div class="text-left bg-slate-50 rounded-2xl p-4 sm:p-5 border-2 border-slate-200 space-y-3">
+          <h3 class="font-game text-lg font-bold text-slate-900 flex items-center gap-2">
+            <span>&#128202;</span>
+            <span>Your P7B Skill Report</span>
+          </h3>
+          <div id="res-skill-breakdown" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex flex-wrap items-center justify-center gap-3 pt-2">
+          <button onclick="replaySameMode()" class="px-6 py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-game text-lg font-bold shadow-md transition">
+            &#128260; Play Again
+          </button>
+          <button id="btn-practice-weakest" onclick="practiceWeakestArena()" class="hidden px-6 py-3.5 rounded-2xl bg-amber-500 hover:bg-amber-600 active:scale-95 text-slate-950 font-game text-lg font-bold shadow-md transition">
+            &#127919; Practise Tricky Skill
+          </button>
+          <button onclick="showScreen('profiles')" class="px-6 py-3.5 rounded-2xl bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-game text-lg font-bold shadow-md transition">
+            &#127968; Back to Menu
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    // =========================================================================
+    // 1. P7B GROUP A PUPIL PROFILES, AVATAR CUSTOMISER & DIAGNOSTIC BLUEPRINTS
+    // =========================================================================
+    const CHARACTER_POOL = ['🦊', '🦄', '🐢', '🦋', '🦁', '🐼', '🚀', '🐸', '🦖', '🐧', '🦉', '🐬'];
+
+    const DEFAULT_AVATARS = {
+      'Che': '🦊',
+      'Lillie': '🦄',
+      'Eireann': '🐢',
+      'Ellie': '🦋',
+      'Leah': '🦁',
+      'Aaliyah': '🐼',
+      'Guest': '🚀'
+    };
+
+    const AVATARS = { ...DEFAULT_AVATARS };
+
+    const ARENA_NAMES = {
+      1: 'Place Value & Rounding',
+      2: 'Bonds to 100 & Zero-Exchange',
+      3: 'Times Tables, Factors & ÷',
+      4: 'Perimeter, Area & kg → g',
+      5: 'Fractions, Decimals & Scales',
+      6: 'Time, Money & 2-Step Stories'
+    };
+
+    const PUPIL_MISSIONS = {
+      'Che': {
+        subtitle: "Built from Che's Check-Up (15/30)",
+        description: "Che nailed rounding, column addition, and 2:35 pm + 40m! His custom mission locks in kg → g conversions (2.5 kg = 2,500 g), core tables & division fact families (7×8, 54÷6), zero-exchange subtraction, and 2-step journey/change problems.",
+        badges: ['kg → g & Perimeter/Area', 'Times Tables & Fact Roof', 'Zero-Exchange & 2-Step Stories'],
+        topPicks: [4, 3, 2, 6],
+        blueprint: [
+          { arena: 4, count: 4 },
+          { arena: 3, count: 4 },
+          { arena: 2, count: 3 },
+          { arena: 6, count: 2 },
+          { arena: 5, count: 2 }
+        ]
+      },
+      'Lillie': {
+        subtitle: "Built from Lillie's Check-Up (13/30)",
+        description: "Lillie is strong on 4-digit numbers, 3/4 of 24, and Spot the Mistake! Her custom mission targets all-4-side Perimeter vs. Area, kg → g conversions, Bonds to 100 (100 − 38), comparing decimals (0.4 vs 0.35), and bridging the hour!",
+        badges: ['4-Side Perimeter & kg → g', 'Bonds to 100 & Subtraction', 'Decimals & Time Bridging'],
+        topPicks: [4, 2, 5, 6],
+        blueprint: [
+          { arena: 4, count: 4 },
+          { arena: 2, count: 4 },
+          { arena: 5, count: 3 },
+          { arena: 6, count: 3 },
+          { arena: 3, count: 1 }
+        ]
+      },
+      'Eireann': {
+        subtitle: "Built from Eireann's Check-Up (4/30)",
+        description: "Eireann nailed 35-minute train duration and multiples of 6! Her custom mission builds step-by-step confidence on 4-digit Place Value & Rounding, Bonds to 100, Fact Family Triangles, and Perimeter/Area with Read-Aloud clues.",
+        badges: ['Place Value & Rounding', 'Bonds to 100 & Inverse', 'Fact Families & Measures'],
+        topPicks: [1, 2, 3, 4],
+        blueprint: [
+          { arena: 1, count: 4 },
+          { arena: 2, count: 4 },
+          { arena: 3, count: 3 },
+          { arena: 4, count: 2 },
+          { arena: 5, count: 2 }
+        ]
+      },
+      'Ellie': {
+        subtitle: "Built from Ellie's Check-Up (14/30)",
+        description: "Ellie nailed 502 − 147 = 355 and all-4-side Perimeter (22 cm)! Her custom mission unlocks bridging time past the hour (2:35 + 40m = 3:15 pm, not 2:75 pm!), Area vs. Perimeter, comparing decimals (0.4 vs 0.35), and 3/4 of 24.",
+        badges: ['Time Bridging (Not :75!)', 'Area & kg → g Conversions', '3/4 of 24 & Decimals'],
+        topPicks: [6, 4, 5, 3],
+        blueprint: [
+          { arena: 6, count: 4 },
+          { arena: 4, count: 4 },
+          { arena: 5, count: 4 },
+          { arena: 3, count: 2 },
+          { arena: 1, count: 1 }
+        ]
+      },
+      'Leah': {
+        subtitle: "P7B Full Diagnostic Mastery Quest",
+        description: "A complete 15-question P7B challenge covering all 6 core diagnostic areas: Place Value, Zero-Exchange & Bonds to 100, Tables & Factors, Perimeter/Area & kg → g, Fractions/Decimals, and Time/Money.",
+        badges: ['All 6 P7B Arenas', 'Reasoning & Fluency'],
+        topPicks: [2, 4, 5, 6],
+        blueprint: [
+          { arena: 1, count: 2 },
+          { arena: 2, count: 3 },
+          { arena: 3, count: 3 },
+          { arena: 4, count: 3 },
+          { arena: 5, count: 2 },
+          { arena: 6, count: 2 }
+        ]
+      },
+      'Aaliyah': {
+        subtitle: "P7B Full Diagnostic Mastery Quest",
+        description: "A complete 15-question P7B challenge covering all 6 core diagnostic areas: Place Value, Zero-Exchange & Bonds to 100, Tables & Factors, Perimeter/Area & kg → g, Fractions/Decimals, and Time/Money.",
+        badges: ['All 6 P7B Arenas', 'Reasoning & Fluency'],
+        topPicks: [2, 4, 5, 6],
+        blueprint: [
+          { arena: 1, count: 2 },
+          { arena: 2, count: 3 },
+          { arena: 3, count: 3 },
+          { arena: 4, count: 3 },
+          { arena: 5, count: 2 },
+          { arena: 6, count: 2 }
+        ]
+      },
+      'Guest': {
+        subtitle: "Balanced P7B Practice Mission",
+        description: "An all-round 15-question P7B mission spanning Place Value, Bonds to 100, Times Tables & Factors, Perimeter/Area & kg → g, Fractions/Decimals, and Time & Money.",
+        badges: ['All 6 P7B Arenas', 'Balanced Challenge'],
+        topPicks: [2, 4, 6],
+        blueprint: [
+          { arena: 1, count: 2 },
+          { arena: 2, count: 3 },
+          { arena: 3, count: 2 },
+          { arena: 4, count: 3 },
+          { arena: 5, count: 3 },
+          { arena: 6, count: 2 }
+        ]
+      }
+    };
+
+    const ALL_PLAYERS = ['Che', 'Lillie', 'Eireann', 'Ellie', 'Leah', 'Aaliyah', 'Guest'];
+
+    let profilesData = {};
+    ALL_PLAYERS.forEach(p => {
+      profilesData[p] = { stars: 0, best: {}, avatar: DEFAULT_AVATARS[p] };
+    });
+
+    let currentPlayer = 'Che';
+    let soundEnabled = true;
+
+    function selectPlayer(name) {
+      currentPlayer = name;
+      playTone('pop');
+      refreshProfileCards();
+    }
+
+    function selectCharacterAvatar(emoji) {
+      AVATARS[currentPlayer] = emoji;
+      if (!profilesData[currentPlayer]) profilesData[currentPlayer] = { stars: 0, best: {} };
+      profilesData[currentPlayer].avatar = emoji;
+      saveProfiles();
+      playTone('pop');
+      refreshProfileCards();
+    }
+
+    function renderCharacterPicker() {
+      const grid = document.getElementById('character-picker-grid');
+      if (!grid) return;
+      const activeEmoji = AVATARS[currentPlayer] || '🚀';
+      const labelEl = document.getElementById('picker-player-label');
+      if (labelEl) labelEl.textContent = currentPlayer === 'Guest' ? 'Class / Guest' : currentPlayer;
+
+      grid.innerHTML = CHARACTER_POOL.map(emoji => {
+        const isSelected = emoji === activeEmoji;
+        return `
+          <button type="button" onclick="selectCharacterAvatar('${emoji}')" class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl text-2xl flex items-center justify-center transition active:scale-90 ${
+            isSelected
+              ? 'bg-indigo-600 ring-4 ring-amber-400 scale-110 shadow-md'
+              : 'bg-white hover:bg-indigo-50 border-2 border-slate-200'
+          }" title="Choose ${emoji}">
+            ${emoji}
+          </button>
+        `;
+      }).join('');
+    }
+
+    function loadProfiles() {
+      try {
+        const saved = localStorage.getItem('p7b_number_quest_v1');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          profilesData = { ...profilesData, ...parsed };
+          ALL_PLAYERS.forEach(name => {
+            if (profilesData[name] && profilesData[name].avatar) {
+              AVATARS[name] = profilesData[name].avatar;
+            }
+          });
+        }
+      } catch (e) {}
+      refreshProfileCards();
+    }
+
+    function saveProfiles() {
+      try {
+        localStorage.setItem('p7b_number_quest_v1', JSON.stringify(profilesData));
+      } catch (e) {}
+    }
+
+    function refreshProfileCards() {
+      ALL_PLAYERS.forEach(name => {
+        const p = profilesData[name] || { stars: 0, best: {} };
+        const starEl = document.getElementById(`stars-${name}`);
+        if (starEl) starEl.textContent = p.stars || 0;
+
+        const card = document.querySelector(`.player-card[data-player="${name}"]`);
+        if (card) {
+          const avatarDiv = card.querySelector('div');
+          if (avatarDiv && AVATARS[name]) avatarDiv.textContent = AVATARS[name];
+          const isGuest = name === 'Guest';
+          const spanClass = isGuest ? 'col-span-2 sm:col-span-1 lg:col-span-2 ' : '';
+          if (name === currentPlayer) {
+            card.className = `${spanClass}player-card group rounded-2xl p-4 border-4 border-indigo-600 bg-indigo-50/70 transition flex flex-col items-center text-center shadow-md scale-[1.02]`;
+          } else {
+            card.className = `${spanClass}player-card group rounded-2xl p-4 border-4 border-slate-200 bg-white hover:border-indigo-300 transition flex flex-col items-center text-center shadow-sm active:scale-95`;
+          }
+        }
+      });
+
+      renderCharacterPicker();
+
+      const mission = PUPIL_MISSIONS[currentPlayer] || PUPIL_MISSIONS['Guest'];
+      const displayTitleName = currentPlayer === 'Guest' ? 'Class' : currentPlayer;
+
+      document.getElementById('welcome-player-name').textContent = displayTitleName;
+      document.getElementById('arenas-player-name').textContent = currentPlayer === 'Guest' ? 'the class' : currentPlayer;
+      document.getElementById('mission-subtitle-pill').textContent = mission.subtitle;
+      document.getElementById('mission-description').textContent = mission.description;
+      document.getElementById('btn-start-quest-label').textContent = `Start ${displayTitleName}'s Quest (15 Qs)`;
+
+      document.getElementById('mission-focus-badges').innerHTML = mission.badges.map(b =>
+        `<span class="px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-800 border border-indigo-200 text-xs font-extrabold">&#127919; ${b}</span>`
+      ).join('');
+
+      for (let a = 1; a <= 6; a++) {
+        const pickBadge = document.getElementById(`pick-${a}`);
+        if (pickBadge) {
+          if (mission.topPicks.includes(a)) pickBadge.classList.remove('hidden');
+          else pickBadge.classList.add('hidden');
+        }
+      }
+
+      document.getElementById('hud-avatar').textContent = AVATARS[currentPlayer] || '🚀';
+      document.getElementById('hud-name').textContent = currentPlayer;
+      document.getElementById('hud-stars').textContent = (profilesData[currentPlayer] && profilesData[currentPlayer].stars) || 0;
+
+      const bestMap = (profilesData[currentPlayer] && profilesData[currentPlayer].best) || {};
+      for (let a = 1; a <= 6; a++) {
+        const bestEl = document.getElementById(`best-${a}`);
+        if (bestEl) {
+          bestEl.textContent = bestMap[a] !== undefined ? `Best: ${bestMap[a]}/8` : 'Best: —';
+        }
+      }
+    }
+
+    // =========================================================================
+    // 2. GENTLE WEB AUDIO & READ-ALOUD SPEECH
+    // =========================================================================
+    let audioCtx = null;
+
+    function toggleSound() {
+      soundEnabled = !soundEnabled;
+      document.getElementById('btn-sound').innerHTML = soundEnabled ? '&#128266;' : '&#128263;';
+    }
+
+    function playTone(type) {
+      if (!soundEnabled) return;
+      try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        if (type === 'pop') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(520, now);
+          osc.frequency.exponentialRampToValueAtTime(680, now + 0.08);
+          gain.gain.setValueAtTime(0.08, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.09);
+          osc.start(now);
+          osc.stop(now + 0.09);
+        } else if (type === 'correct') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(523.25, now);
+          osc.frequency.setValueAtTime(659.25, now + 0.09);
+          osc.frequency.setValueAtTime(783.99, now + 0.18);
+          gain.gain.setValueAtTime(0.12, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+          osc.start(now);
+          osc.stop(now + 0.36);
+        } else if (type === 'retry') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(340, now);
+          osc.frequency.linearRampToValueAtTime(280, now + 0.18);
+          gain.gain.setValueAtTime(0.09, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+          osc.start(now);
+          osc.stop(now + 0.21);
+        } else if (type === 'fanfare') {
+          const notes = [523.25, 659.25, 783.99, 1046.5];
+          notes.forEach((freq, idx) => {
+            const o = audioCtx.createOscillator();
+            const g = audioCtx.createGain();
+            o.type = 'triangle';
+            o.connect(g);
+            g.connect(audioCtx.destination);
+            o.frequency.setValueAtTime(freq, now + idx * 0.11);
+            g.gain.setValueAtTime(0.12, now + idx * 0.11);
+            g.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.11 + 0.35);
+            o.start(now + idx * 0.11);
+            o.stop(now + idx * 0.11 + 0.36);
+          });
+        }
+      } catch (e) {}
+    }
+
+    function speakCurrentQuestion() {
+      if (!('speechSynthesis' in window)) return;
+      const q = gameState.questions[gameState.index];
+      if (!q) return;
+      window.speechSynthesis.cancel();
+      const cleanText = q.speech || q.prompt
+        .replace(/\[ \? \]/g, 'blank')
+        .replace(/−/g, 'minus')
+        .replace(/×/g, 'times')
+        .replace(/÷/g, 'divided by');
+      const utter = new SpeechSynthesisUtterance(cleanText);
+      utter.rate = 0.92;
+      window.speechSynthesis.speak(utter);
+    }
+
+    // =========================================================================
+    // 3. QUESTION BANKS FOR ALL 6 P7B DIAGNOSTIC ARENAS
+    // =========================================================================
+    function shuffle(arr) {
+      const copy = [...arr];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function buildArenaQuestions(arenaId) {
+      // ARENA 1: Place Value & Rounding (Q1 - Q5 on P7B paper)
+      if (arenaId === 1) {
+        return shuffle([
+          {
+            arena: 1,
+            tag: 'Zero Placeholders (4-Digit)',
+            prompt: 'Write the number three thousand, four hundred and six in digits.',
+            speech: 'Write the number three thousand, four hundred and six in digits.',
+            inputType: 'keypad',
+            answer: '3406',
+            stageVisual: () => buildThHTOVisual('3', '4', '?', '6'),
+            retryHint: '3 thousands, 4 hundreds, NO tens (put a 0 in the Tens box!), and 6 ones—do not write 34016!',
+            explainVisual: () => buildThHTOVisual('3', '4', '0', '6'),
+            explainText: '3 thousands + 4 hundreds + 0 tens + 6 ones = 3,406!'
+          },
+          {
+            arena: 1,
+            tag: 'Digit Value (4-Digit)',
+            prompt: 'What is the VALUE of the underlined digit 7 in 4,729?',
+            speech: 'What is the value of the digit 7 in 4,729?',
+            inputType: 'keypad',
+            answer: '700',
+            stageVisual: () => `
+              <div class="px-7 py-3 rounded-2xl bg-blue-100 border-4 border-blue-400 font-game text-4xl sm:text-5xl font-bold text-slate-900">
+                4,<span class="underline decoration-4 decoration-rose-600 text-rose-700">7</span>29
+              </div>
+            `,
+            retryHint: 'Look at the column: 4 is Thousands, 7 is in the HUNDREDS column, 2 is Tens, 9 is Ones.',
+            explainVisual: () => buildThHTOVisual('4', '7', '2', '9'),
+            explainText: 'In 4,729, the 7 sits in the Hundreds column, so its value is 700!'
+          },
+          {
+            arena: 1,
+            tag: 'Rounding to Nearest 10',
+            prompt: 'Round 368 to the nearest 10.',
+            speech: 'Round 368 to the nearest 10.',
+            inputType: 'keypad',
+            answer: '370',
+            stageVisual: () => buildNumberLineVisual('360', '368', '370', 'Look at the ones digit (8): 5 or more rounds UP!'),
+            retryHint: '368 sits between 360 and 370. Because the ones digit is 8 (5 or more), round UP to the next ten!',
+            explainVisual: () => buildNumberLineVisual('360', '368', '370', '8 rounds up to 370!'),
+            explainText: '368 rounds up to 370 because 8 is 5 or more!'
+          },
+          {
+            arena: 1,
+            tag: '100 Less Across 1,000',
+            prompt: 'What is 100 LESS than 1,045?',
+            speech: 'What is 100 less than 1,045?',
+            inputType: 'keypad',
+            answer: '945',
+            stageVisual: () => buildNumberLineVisual('?', '1,000', '1,045', 'Jump back 45 to 1,000, then 55 more! (Keep the 45 ones!)'),
+            retryHint: 'Watch out for the 955 and 1,000 traps! Subtracting 100 from 1,045 keeps the 45 tens & ones the same: 10 hundreds − 1 hundred = 9 hundreds -> 945!',
+            explainVisual: () => buildNumberLineVisual('945', '1,000', '1,045', '−55 then −45 = −100 total!'),
+            explainText: '1,045 − 100 = 945 (10 hundreds take away 1 hundred leaves 9 hundreds and 45)!'
+          },
+          {
+            arena: 1,
+            tag: 'Ordering 4-Digit Numbers',
+            prompt: 'Put these numbers in order from SMALLEST to LARGEST: 3,450 | 3,054 | 3,540 | 3,405',
+            speech: 'Put these numbers in order from smallest to largest: 3,450, 3,054, 3,540, 3,405.',
+            inputType: 'choice',
+            choices: [
+              '3,054 , 3,405 , 3,450 , 3,540',
+              '3,540 , 3,450 , 3,405 , 3,054',
+              '3,054 , 3,450 , 3,405 , 3,540',
+              '3,405 , 3,054 , 3,450 , 3,540'
+            ],
+            answer: '3,054 , 3,405 , 3,450 , 3,540',
+            stageVisual: () => `
+              <div class="px-5 py-2.5 rounded-2xl bg-blue-100 border-2 border-blue-300 font-extrabold text-blue-950 text-sm">
+                Compare HUNDREDS first (0 hundreds &lt; 4 hundreds &lt; 5 hundreds), then compare TENS!
+              </div>
+            `,
+            retryHint: '3,054 has 0 hundreds (smallest!). Next compare 3,405 (0 tens) vs 3,450 (5 tens).',
+            explainVisual: () => buildThHTOVisual('3', '0', '5', '4'),
+            explainText: '3,054 is smallest (0 hundreds), followed by 3,405, 3,450, and 3,540!'
+          },
+          {
+            arena: 1,
+            tag: 'Zero Placeholders (4-Digit)',
+            prompt: 'Write the number five thousand and eighty-two in digits.',
+            speech: 'Write the number five thousand and eighty-two in digits.',
+            inputType: 'keypad',
+            answer: '5082',
+            stageVisual: () => buildThHTOVisual('5', '?', '8', '2'),
+            retryHint: '5 thousands, NO hundreds (put a 0 in the Hundreds box!), 8 tens, and 2 ones.',
+            explainVisual: () => buildThHTOVisual('5', '0', '8', '2'),
+            explainText: '5,082 has a 0 placeholder in the hundreds column!'
+          },
+          {
+            arena: 1,
+            tag: 'Rounding to Nearest 10 (5 Rule)',
+            prompt: 'Round 485 to the nearest 10.',
+            speech: 'Round 485 to the nearest 10.',
+            inputType: 'keypad',
+            answer: '490',
+            stageVisual: () => buildNumberLineVisual('480', '485', '490', 'Ones digit is 5: 5 or more rounds UP!'),
+            retryHint: '485 is right in the middle between 480 and 490. When the ones digit is 5, always round UP!',
+            explainVisual: () => buildNumberLineVisual('480', '485', '490', '5 rounds up to 490!'),
+            explainText: '485 rounds up to 490!'
+          },
+          {
+            arena: 1,
+            tag: '100 Less Across 1,000',
+            prompt: 'What is 100 LESS than 1,072?',
+            speech: 'What is 100 less than 1,072?',
+            inputType: 'keypad',
+            answer: '972',
+            stageVisual: () => buildNumberLineVisual('?', '1,000', '1,072', '10 hundreds − 1 hundred = 9 hundreds!'),
+            retryHint: 'Keep the 72 ones & tens the same: 1,072 − 100 = 972!',
+            explainVisual: () => buildNumberLineVisual('972', '1,000', '1,072', '1,072 − 100 = 972'),
+            explainText: '1,072 − 100 = 972!'
+          }
+        ]);
+      }
+
+      // ARENA 2: Bonds to 100 & Zero-Exchange Subtraction (Q6 - Q10 & Q25)
+      if (arenaId === 2) {
+        return shuffle([
+          {
+            arena: 2,
+            tag: 'Complement to 100 (No 110 Trap!)',
+            prompt: 'Find the missing number to make 100: 64 + [ ? ] = 100',
+            speech: 'Find the missing number to make 100: 64 plus blank equals 100.',
+            inputType: 'keypad',
+            answer: '36',
+            stageVisual: () => buildMini100Square(64, 'add', false),
+            retryHint: 'Watch out for 46 (64 + 46 = 110!). Jump from 64 to 70 (+6), then from 70 to 100 (+30).',
+            explainVisual: () => buildMini100Square(64, 'add', true),
+            explainText: '64 + 36 = 100! (When the ones make 10, the tens only add to 90).'
+          },
+          {
+            arena: 2,
+            tag: 'Subtracting Down from 100',
+            prompt: 'Work out: 100 − 38 = [ ? ]',
+            speech: 'Work out 100 minus 38.',
+            inputType: 'keypad',
+            answer: '62',
+            stageVisual: () => buildMini100Square(62, 'sub', false),
+            retryHint: 'Watch out for the 72 trap! Subtract 30 from 100 first (= 70), then subtract 8 more!',
+            explainVisual: () => buildMini100Square(62, 'sub', true),
+            explainText: '100 − 30 = 70, then 70 − 8 = 62! (Check: 62 + 38 = 100).'
+          },
+          {
+            arena: 2,
+            tag: 'Spot the Mistake (100 − 45)',
+            prompt: 'Spot the Mistake: Aaliyah worked out 100 − 45 and wrote 65. What is the CORRECT answer?',
+            speech: 'Spot the mistake: Aaliyah worked out 100 minus 45 and wrote 65. What is the correct answer?',
+            inputType: 'keypad',
+            answer: '55',
+            stageVisual: () => buildNumberLineVisual('?', '60', '100', '65 + 45 = 110 (too big!). Jump back 40 to 60, then 5 more!'),
+            retryHint: '100 take away 40 lands on 60. Now take away 5 more from 60!',
+            explainVisual: () => buildNumberLineVisual('55', '60', '100', '100 − 40 = 60, then − 5 = 55!'),
+            explainText: '100 − 45 = 55! (65 + 45 = 110 because she forgot to drop a ten).'
+          },
+          {
+            arena: 2,
+            tag: 'Zero-Exchange Column Subtraction',
+            prompt: 'Work out: 502 − 147 = [ ? ]',
+            speech: 'Work out 502 minus 147.',
+            inputType: 'keypad',
+            answer: '355',
+            stageVisual: () => `
+              <div class="px-5 py-2.5 rounded-2xl bg-emerald-100 border-2 border-emerald-400 font-extrabold text-emerald-950 text-sm">
+                Decompose 502 across the zero: <span class="underline">400 + 90 + 12</span>, then subtract 100 + 40 + 7!
+              </div>
+            `,
+            retryHint: 'Do NOT flip 7 − 2 = 5! Exchange 1 hundred into 9 tens and 12 ones: 12 − 7 = 5, 9 − 4 = 5, 4 − 1 = 3.',
+            explainVisual: () => `<div class="px-4 py-2 rounded-xl bg-white border border-emerald-300 font-extrabold text-emerald-950">400+90+12 − (100+40+7) = 300 + 50 + 5 = 355</div>`,
+            explainText: '502 − 147 = 355! (Inverse check: 355 + 147 = 502).'
+          },
+          {
+            arena: 2,
+            tag: 'Working Backwards (Missing Whole)',
+            prompt: 'Find the missing starting number: [ ? ] − 25 = 60',
+            speech: 'Find the missing starting number: blank minus 25 equals 60.',
+            inputType: 'keypad',
+            answer: '85',
+            stageVisual: () => buildCherryVisual('?', '60', '25', 'Missing Whole = Part + Part'),
+            retryHint: 'The starting number is the BIGGEST number at the front! Add 60 + 25 (do not subtract!).',
+            explainVisual: () => buildCherryVisual('85', '60', '25', '85 − 25 = 60!'),
+            explainText: '60 + 25 = 85! (Check: 85 − 25 = 60).'
+          },
+          {
+            arena: 2,
+            tag: 'Mental Compensation (+29)',
+            prompt: 'Work out mentally: 346 + 29 = [ ? ]',
+            speech: 'Work out mentally: 346 plus 29.',
+            inputType: 'keypad',
+            answer: '375',
+            stageVisual: () => buildNumberLineVisual('346', '376', '?', 'Add 30 first (+30), then step back 1 (−1)!'),
+            retryHint: '29 is 1 less than 30! Add 346 + 30 = 376, then subtract 1.',
+            explainVisual: () => buildNumberLineVisual('346', '376', '375', '346 + 30 − 1 = 375'),
+            explainText: '346 + 30 = 376, minus 1 = 375!'
+          },
+          {
+            arena: 2,
+            tag: 'Zero-Exchange Column Subtraction',
+            prompt: 'Work out: 604 − 238 = [ ? ]',
+            speech: 'Work out 604 minus 238.',
+            inputType: 'keypad',
+            answer: '366',
+            stageVisual: () => `
+              <div class="px-5 py-2.5 rounded-2xl bg-emerald-100 border-2 border-emerald-400 font-extrabold text-emerald-950 text-sm">
+                Decompose 604 into <span class="underline">500 + 90 + 14</span>!
+              </div>
+            `,
+            retryHint: 'Ones: 14 − 8 = 6 | Tens: 9 − 3 = 6 | Hundreds: 5 − 2 = 3.',
+            explainVisual: () => `<div class="px-4 py-2 rounded-xl bg-white border border-emerald-300 font-extrabold text-emerald-950">366 + 238 = 604</div>`,
+            explainText: '604 − 238 = 366!'
+          },
+          {
+            arena: 2,
+            tag: 'Working Backwards (Missing Whole)',
+            prompt: 'Find the missing starting number: [ ? ] − 35 = 48',
+            speech: 'Find the missing starting number: blank minus 35 equals 48.',
+            inputType: 'keypad',
+            answer: '83',
+            stageVisual: () => buildCherryVisual('?', '48', '35', 'Add 48 + 35!'),
+            retryHint: 'Use the inverse of subtraction (addition): 48 + 35 = ?',
+            explainVisual: () => buildCherryVisual('83', '48', '35', '83 − 35 = 48!'),
+            explainText: '48 + 35 = 83!'
+          }
+        ]);
+      }
+
+      // ARENA 3: Times Tables, Factors & Division (Q11 - Q15, Q22, Q23)
+      if (arenaId === 3) {
+        return shuffle([
+          {
+            arena: 3,
+            tag: 'Core Times Tables (7×8)',
+            prompt: 'Work out: 7 × 8 = [ ? ]',
+            speech: 'Work out 7 times 8.',
+            inputType: 'keypad',
+            answer: '56',
+            stageVisual: () => buildFactRoofVisual('?', '7', '8', '5, 6, 7, 8 -> 56 = 7 × 8!'),
+            retryHint: 'Remember the rhyme: 5, 6, 7, 8 — 56 is 7 times 8! (Or double 7×4 = 28 -> 56).',
+            explainVisual: () => buildFactRoofVisual('56', '7', '8', '7 × 8 = 56'),
+            explainText: '7 × 8 = 56!'
+          },
+          {
+            arena: 3,
+            tag: 'Core Division (54 ÷ 6)',
+            prompt: 'Work out: 54 ÷ 6 = [ ? ]',
+            speech: 'Work out 54 divided by 6.',
+            inputType: 'keypad',
+            answer: '9',
+            stageVisual: () => buildFactRoofVisual('54', '6', '?', '10 × 6 = 60, minus one 6 = 54!'),
+            retryHint: '10 × 6 = 60, and 54 is just one 6 less than 60! So 9 × 6 = 54.',
+            explainVisual: () => buildFactRoofVisual('54', '6', '9', '54 ÷ 6 = 9'),
+            explainText: '54 ÷ 6 = 9 (because 6 × 9 = 54)!'
+          },
+          {
+            arena: 3,
+            tag: 'Fact Family Division',
+            prompt: 'Use the fact 6 × 9 = 54 to pick ONE division fact in the same fact family:',
+            speech: 'Use the fact 6 times 9 equals 54 to pick one division fact in the same fact family.',
+            inputType: 'choice',
+            choices: ['54 ÷ 6 = 9', '9 × 6 = 54', '54 − 6 = 48', '6 ÷ 9 = 54'],
+            answer: '54 ÷ 6 = 9',
+            stageVisual: () => buildFactRoofVisual('54', '6', '9', 'Boss Number 54 goes first in division!'),
+            retryHint: 'A DIVISION fact must use the ÷ sign and start with the biggest number (54) at the front!',
+            explainVisual: () => buildFactRoofVisual('54', '6', '9', '54 ÷ 6 = 9 and 54 ÷ 9 = 6'),
+            explainText: '54 ÷ 6 = 9 (or 54 ÷ 9 = 6) belongs in the 6 × 9 = 54 fact family!'
+          },
+          {
+            arena: 3,
+            tag: 'Multiplying by 10',
+            prompt: 'Work out: 34 × 10 = [ ? ]',
+            speech: 'Work out 34 times 10.',
+            inputType: 'keypad',
+            answer: '340',
+            stageVisual: () => buildThHTOVisual('0', '3', '4', '0'),
+            retryHint: 'Shift every digit ONE place left: 3 tens become 3 hundreds (300), and 4 ones become 4 tens (40) -> 340!',
+            explainVisual: () => buildThHTOVisual('0', '3', '4', '0'),
+            explainText: '34 × 10 = 340!'
+          },
+          {
+            arena: 3,
+            tag: 'Equal Sharing (45 ÷ 5)',
+            prompt: 'Share 45 sweets equally between 5 friends. How many sweets does each friend get?',
+            speech: 'Share 45 sweets equally between 5 friends. How many sweets does each friend get?',
+            inputType: 'keypad',
+            answer: '9',
+            stageVisual: () => buildFactRoofVisual('45', '5', '?', 'Count in 5s up to 45!'),
+            retryHint: '45 ÷ 5: count in 5s (5, 10, 15, 20, 25, 30, 35, 40, 45) — 9 groups of 5!',
+            explainVisual: () => buildFactRoofVisual('45', '5', '9', '45 ÷ 5 = 9'),
+            explainText: 'Each friend gets 9 sweets (45 ÷ 5 = 9)!'
+          },
+          {
+            arena: 3,
+            tag: 'Multiples of 6',
+            prompt: 'Which number below is a MULTIPLE of 6?   15  |  22  |  30  |  40',
+            speech: 'Which number below is a multiple of 6? 15, 22, 30, or 40?',
+            inputType: 'choice',
+            choices: ['30', '15', '22', '40'],
+            answer: '30',
+            stageVisual: () => `
+              <div class="px-5 py-2 rounded-xl bg-amber-100 border border-amber-300 font-extrabold text-amber-950 text-sm">
+                Count in 6s: 6, 12, 18, 24, [ ? ], 36...
+              </div>
+            `,
+            retryHint: 'A multiple of 6 is in the 6 times table! What is 5 × 6?',
+            explainVisual: () => `<div class="px-4 py-2 rounded-xl bg-white border border-amber-300 font-extrabold text-amber-950">5 × 6 = 30</div>`,
+            explainText: '30 is a multiple of 6 (5 × 6 = 30)!'
+          },
+          {
+            arena: 3,
+            tag: 'All Factors of 12',
+            prompt: 'Which list shows ALL 6 FACTORS of 12?',
+            speech: 'Which list shows all 6 factors of 12?',
+            inputType: 'choice',
+            choices: [
+              '1, 2, 3, 4, 6, 12',
+              '2, 6, 8, 12',
+              '1, 2, 5, 6, 12',
+              '12, 24, 36, 48'
+            ],
+            answer: '1, 2, 3, 4, 6, 12',
+            stageVisual: () => `
+              <div class="px-5 py-2 rounded-xl bg-amber-100 border border-amber-300 font-extrabold text-amber-950 text-sm">
+                Factor pairs of 12: 1 &times; 12,  2 &times; 6,  3 &times; 4
+              </div>
+            `,
+            retryHint: '8 is NOT a factor of 12! Match the three factor pairs: 1×12, 2×6, and 3×4.',
+            explainVisual: () => `<div class="px-4 py-2 rounded-xl bg-white border border-amber-300 font-extrabold text-amber-950">1×12 = 12 | 2×6 = 12 | 3×4 = 12</div>`,
+            explainText: 'The 6 factors of 12 are 1, 2, 3, 4, 6, and 12!'
+          },
+          {
+            arena: 3,
+            tag: 'All Factors of 18',
+            prompt: 'Which list shows ALL 6 FACTORS of 18?',
+            speech: 'Which list shows all 6 factors of 18?',
+            inputType: 'choice',
+            choices: [
+              '1, 2, 3, 6, 9, 18',
+              '1, 2, 3, 4, 6, 12, 18',
+              '2, 4, 6, 9, 18',
+              '18, 36, 54'
+            ],
+            answer: '1, 2, 3, 6, 9, 18',
+            stageVisual: () => `
+              <div class="px-5 py-2 rounded-xl bg-amber-100 border border-amber-300 font-extrabold text-amber-950 text-sm">
+                Factor pairs of 18: 1 &times; 18,  2 &times; 9,  3 &times; 6
+              </div>
+            `,
+            retryHint: '4 and 12 do NOT divide evenly into 18! Use 1×18, 2×9, and 3×6.',
+            explainVisual: () => `<div class="px-4 py-2 rounded-xl bg-white border border-amber-300 font-extrabold text-amber-950">1, 2, 3, 6, 9, 18</div>`,
+            explainText: 'The factors of 18 are 1, 2, 3, 6, 9, and 18!'
+          }
+        ]);
+      }
+
+      // ARENA 4: Perimeter, Area & Metric Conversions kg -> g (Q17 - Q19)
+      if (arenaId === 4) {
+        return shuffle([
+          {
+            arena: 4,
+            tag: 'All-4-Side Perimeter (7 cm × 4 cm)',
+            prompt: 'A rectangle has a length of 7 cm and a width of 4 cm. What is its PERIMETER (total distance around the outside)?',
+            speech: 'A rectangle has a length of 7 centimetres and a width of 4 centimetres. What is its perimeter, total distance around the outside?',
+            inputType: 'keypad',
+            answer: '22',
+            stageVisual: () => buildRectangleVisual(7, 4, 'Walk ALL FOUR sides: 7 + 4 + 7 + 4!'),
+            retryHint: 'Do NOT stop at 7 + 4 = 11 cm! A rectangle has FOUR sides: 7 + 4 + 7 + 4 = ?',
+            explainVisual: () => buildRectangleVisual(7, 4, '7 + 4 + 7 + 4 = 22 cm!'),
+            explainText: 'Perimeter = 7 + 4 + 7 + 4 = 22 cm!'
+          },
+          {
+            arena: 4,
+            tag: 'Rectangle Area (7 cm × 4 cm)',
+            prompt: 'Using the same rectangle (length 7 cm, width 4 cm): What is its AREA (the space inside in cm²)?',
+            speech: 'Using the same rectangle, length 7 centimetres and width 4 centimetres: what is its area, the space inside?',
+            inputType: 'keypad',
+            answer: '28',
+            stageVisual: () => buildRectangleVisual(7, 4, 'Area = Length × Width (7 rows of 4 squares)'),
+            retryHint: 'Area is the space INSIDE the rectangle: multiply Length × Width (7 × 4)!',
+            explainVisual: () => buildRectangleVisual(7, 4, '7 × 4 = 28 cm²!'),
+            explainText: 'Area = 7 cm × 4 cm = 28 cm²!'
+          },
+          {
+            arena: 4,
+            tag: 'Converting kg to g (1 kg = 1,000 g)',
+            prompt: 'Convert 2.5 kilograms (kg) into grams (g).',
+            speech: 'Convert 2.5 kilograms into grams.',
+            inputType: 'keypad',
+            answer: '2500',
+            stageVisual: () => `
+              <div class="px-5 py-2.5 rounded-2xl bg-rose-100 border-2 border-rose-400 font-extrabold text-rose-950 text-sm">
+                1 kg = <span class="underline">1,000 g</span> &nbsp;|&nbsp; 0.5 kg (half a kg) = <span class="underline">500 g</span>
+              </div>
+            `,
+            retryHint: 'Watch out for 25 g! Multiply by 1,000: 2 kg = 2,000 g, and 0.5 kg = 500 g. Put them together!',
+            explainVisual: () => `<div class="px-4 py-2 rounded-xl bg-white border border-rose-300 font-extrabold text-rose-950">2,000 g + 500 g = 2,500 g</div>`,
+            explainText: '2.5 kg × 1,000 = 2,500 g!'
+          },
+          {
+            arena: 4,
+            tag: 'All-4-Side Perimeter (8 cm × 3 cm)',
+            prompt: 'A rectangle has a length of 8 cm and a width of 3 cm. What is its PERIMETER (in cm)?',
+            speech: 'A rectangle has a length of 8 centimetres and a width of 3 centimetres. What is its perimeter?',
+            inputType: 'keypad',
+            answer: '22',
+            stageVisual: () => buildRectangleVisual(8, 3, 'Walk all 4 sides: 8 + 3 + 8 + 3'),
+            retryHint: 'Add all 4 sides: 8 + 3 + 8 + 3 (double 11 = 22)!',
+            explainVisual: () => buildRectangleVisual(8, 3, '8 + 3 + 8 + 3 = 22 cm'),
+            explainText: 'Perimeter = 8 + 3 + 8 + 3 = 22 cm!'
+          },
+          {
+            arena: 4,
+            tag: 'Converting kg to g',
+            prompt: 'Convert 3.5 kilograms (kg) into grams (g).',
+            speech: 'Convert 3.5 kilograms into grams.',
+            inputType: 'keypad',
+            answer: '3500',
+            stageVisual: () => `
+              <div class="px-5 py-2 rounded-xl bg-rose-100 border border-rose-300 font-extrabold text-rose-950 text-sm">
+                Multiply by 1,000: 3 kg = 3,000 g + 0.5 kg = 500 g
+              </div>
+            `,
+            retryHint: '3.5 × 1,000 = 3,500 g!',
+            explainVisual: () => `<div class="px-4 py-2 rounded-xl bg-white border border-rose-300 font-extrabold text-rose-950">3,500 g</div>`,
+            explainText: '3.5 kg = 3,500 g!'
+          },
+          {
+            arena: 4,
+            tag: 'Rectangle Area (9 cm × 4 cm)',
+            prompt: 'A rectangle has a length of 9 cm and a width of 4 cm. What is its AREA (in cm²)?',
+            speech: 'A rectangle has a length of 9 centimetres and a width of 4 centimetres. What is its area?',
+            inputType: 'keypad',
+            answer: '36',
+            stageVisual: () => buildRectangleVisual(9, 4, 'Area = Length × Width'),
+            retryHint: 'Multiply Length × Width: 9 × 4 = ?',
+            explainVisual: () => buildRectangleVisual(9, 4, '9 × 4 = 36 cm²'),
+            explainText: 'Area = 9 × 4 = 36 cm²!'
+          },
+          {
+            arena: 4,
+            tag: 'Converting Grams to kg',
+            prompt: 'How many grams (g) are in 1.25 kilograms (kg)?',
+            speech: 'How many grams are in 1.25 kilograms?',
+            inputType: 'keypad',
+            answer: '1250',
+            stageVisual: () => `
+              <div class="px-5 py-2 rounded-xl bg-rose-100 border border-rose-300 font-extrabold text-rose-950 text-sm">
+                1 kg = 1,000 g and 0.25 kg (1/4 kg) = 250 g
+              </div>
+            `,
+            retryHint: '1,000 g + 250 g = ?',
+            explainVisual: () => `<div class="px-4 py-2 rounded-xl bg-white border border-rose-300 font-extrabold text-rose-950">1,250 g</div>`,
+            explainText: '1.25 kg = 1,250 g!'
+          },
+          {
+            arena: 4,
+            tag: 'Square Perimeter',
+            prompt: 'A square has sides of 6 cm. What is its PERIMETER (in cm)?',
+            speech: 'A square has sides of 6 centimetres. What is its perimeter?',
+            inputType: 'keypad',
+            answer: '24',
+            stageVisual: () => buildRectangleVisual(6, 6, 'All 4 sides of a square are 6 cm!'),
+            retryHint: '6 + 6 + 6 + 6 (or 4 × 6) = ?',
+            explainVisual: () => buildRectangleVisual(6, 6, '4 × 6 = 24 cm'),
+            explainText: 'Perimeter of the square = 24 cm!'
+          }
+        ]);
+      }
+
+      // ARENA 5: Fractions, Decimals & Number Line Scales (Q24, Q26, Q27, Q30)
+      if (arenaId === 5) {
+        return shuffle([
+          {
+            arena: 5,
+            tag: 'Equivalent Fractions (1/2 = ? / 8)',
+            prompt: 'Find the missing number to make these fractions EQUIVALENT: 1/2 = [ ? ] / 8',
+            speech: 'Find the missing number to make these fractions equivalent: one half equals blank eighths.',
+            inputType: 'keypad',
+            answer: '4',
+            stageVisual: () => buildFractionEquivVisual(1, 2, 4, 8, false),
+            retryHint: '1/2 means the top number is HALF of the bottom number! What is half of 8? (Not 3 or 14!).',
+            explainVisual: () => buildFractionEquivVisual(1, 2, 4, 8, true),
+            explainText: '1/2 = 4/8 because 4 is half of 8 (2 × 4 = 8 and 1 × 4 = 4)!'
+          },
+          {
+            arena: 5,
+            tag: 'Non-Unit Fraction (3/4 of 24)',
+            prompt: 'Find 3/4 of 24.',
+            speech: 'Find three quarters of 24.',
+            inputType: 'keypad',
+            answer: '18',
+            stageVisual: () => buildFractionBarVisual(24, 4, 3, false),
+            retryHint: 'Step 1: Divide 24 by 4 (= 6 for 1/4). Step 2: Multiply 6 × 3 to get 3/4!',
+            explainVisual: () => buildFractionBarVisual(24, 4, 3, true),
+            explainText: '24 ÷ 4 = 6 (1/4), then 6 × 3 = 18 (3/4)!'
+          },
+          {
+            arena: 5,
+            tag: 'Comparing Decimals (Tenths vs Hundredths)',
+            prompt: 'Pick the LARGEST decimal number:   0.4  |  0.35  |  0.09  |  0.28',
+            speech: 'Pick the largest decimal number: 0.4, 0.35, 0.09, or 0.28.',
+            inputType: 'choice',
+            choices: ['0.4', '0.35', '0.28', '0.09'],
+            answer: '0.4',
+            stageVisual: () => `
+              <div class="px-5 py-2.5 rounded-2xl bg-purple-100 border-2 border-purple-400 font-extrabold text-purple-950 text-sm">
+                Tip: Add a zero to compare hundredths! <span class="underline">0.4 = 0.40</span> vs 0.35
+              </div>
+            `,
+            retryHint: '0.35 is NOT bigger than 0.4! 0.4 means 4 tenths (0.40), whereas 0.35 only has 3 tenths!',
+            explainVisual: () => `<div class="px-4 py-2 rounded-xl bg-white border border-purple-300 font-extrabold text-purple-950">0.40 (4 tenths) &gt; 0.35 (3 tenths 5 hundredths)</div>`,
+            explainText: '0.4 (0.40) is the largest because 4 tenths is greater than 3 tenths!'
+          },
+          {
+            arena: 5,
+            tag: '4-Interval Number Line (0 to 100)',
+            prompt: 'A number line goes from 0 to 100 in 4 equal steps (0, [ ? ], 50, 75, 100). What number belongs on the first mark after 0?',
+            speech: 'A number line goes from 0 to 100 in 4 equal steps. What number belongs on the first mark after 0?',
+            inputType: 'keypad',
+            answer: '25',
+            stageVisual: () => buildFourStepScaleVisual(false),
+            retryHint: '4 equal steps from 0 to 100 splits 100 into quarters! What is 100 ÷ 4?',
+            explainVisual: () => buildFourStepScaleVisual(true),
+            explainText: '100 ÷ 4 = 25! The 4 equal steps are 0, 25, 50, 75, 100.'
+          },
+          {
+            arena: 5,
+            tag: 'Non-Unit Fraction (3/4 of 20)',
+            prompt: 'Find 3/4 of 20.',
+            speech: 'Find three quarters of 20.',
+            inputType: 'keypad',
+            answer: '15',
+            stageVisual: () => buildFractionBarVisual(20, 4, 3, false),
+            retryHint: '20 ÷ 4 = 5 (for 1/4), then 5 × 3 = ?',
+            explainVisual: () => buildFractionBarVisual(20, 4, 3, true),
+            explainText: '20 ÷ 4 = 5, then 5 × 3 = 15!'
+          },
+          {
+            arena: 5,
+            tag: 'Comparing Decimals',
+            prompt: 'Pick the LARGEST decimal number:   0.6  |  0.59  |  0.08  |  0.47',
+            speech: 'Pick the largest decimal number: 0.6, 0.59, 0.08, or 0.47.',
+            inputType: 'choice',
+            choices: ['0.6', '0.59', '0.47', '0.08'],
+            answer: '0.6',
+            stageVisual: () => `
+              <div class="px-5 py-2 rounded-xl bg-purple-100 border border-purple-300 font-extrabold text-purple-950 text-sm">
+                Compare tenths first: 0.6 = 0.60 vs 0.59
+              </div>
+            `,
+            retryHint: '0.6 is 0.60 (6 tenths), which is larger than 0.59 (5 tenths)!',
+            explainVisual: () => `<div class="px-4 py-2 rounded-xl bg-white border border-purple-300 font-extrabold text-purple-950">0.60 &gt; 0.59</div>`,
+            explainText: '0.6 is the largest decimal!'
+          },
+          {
+            arena: 5,
+            tag: 'Equivalent Fractions (3/4 = ? / 8)',
+            prompt: 'Find the missing numerator: 3/4 = [ ? ] / 8',
+            speech: 'Find the missing numerator: three quarters equals blank eighths.',
+            inputType: 'keypad',
+            answer: '6',
+            stageVisual: () => buildFractionEquivVisual(3, 4, 6, 8, false),
+            retryHint: '4 × 2 = 8 on the bottom, so multiply 3 × 2 on the top!',
+            explainVisual: () => buildFractionEquivVisual(3, 4, 6, 8, true),
+            explainText: '3/4 = 6/8!'
+          },
+          {
+            arena: 5,
+            tag: '4-Interval Number Line (0 to 200)',
+            prompt: 'A number line goes from 0 to 200 in 4 equal steps. What number belongs on the first mark after 0?',
+            speech: 'A number line goes from 0 to 200 in 4 equal steps. What number belongs on the first mark after 0?',
+            inputType: 'keypad',
+            answer: '50',
+            stageVisual: () => `
+              <div class="px-5 py-2 rounded-xl bg-purple-100 border border-purple-300 font-extrabold text-purple-950 text-sm">
+                Divide 200 into 4 equal quarters (200 ÷ 4)
+              </div>
+            `,
+            retryHint: 'Half of 200 is 100; half of 100 is 50!',
+            explainVisual: () => `<div class="px-4 py-2 rounded-xl bg-white border border-purple-300 font-extrabold text-purple-950">0, 50, 100, 150, 200</div>`,
+            explainText: '200 ÷ 4 = 50!'
+          }
+        ]);
+      }
+
+      // ARENA 6: Time Bridging, Money & 2-Step Word Problems (Q16, Q20, Q21, Q28, Q29)
+      if (arenaId === 6) {
+        return shuffle([
+          {
+            arena: 6,
+            tag: 'Bridging Time Past the Hour',
+            prompt: 'A movie starts at 2:35 pm and lasts for 40 minutes. What time does it finish?',
+            speech: 'A movie starts at 2:35 pm and lasts for 40 minutes. What time does it finish?',
+            inputType: 'choice',
+            choices: ['3:15 pm', '2:75 pm', '3:05 pm', '3:25 pm'],
+            answer: '3:15 pm',
+            stageVisual: () => buildNumberLineVisual('2:35 pm', '3:00 pm', '?', '60 minutes = 1 hour! Never write 2:75 pm!'),
+            retryHint: 'There are only 60 minutes in an hour! Jump 25 mins from 2:35 pm to 3:00 pm, then add the remaining 15 mins.',
+            explainVisual: () => buildNumberLineVisual('2:35 pm', '3:00 pm', '3:15 pm', '+25 mins to 3:00 pm, +15 mins = 3:15 pm!'),
+            explainText: '2:35 pm + 25 mins = 3:00 pm, plus 15 mins = 3:15 pm!'
+          },
+          {
+            arena: 6,
+            tag: 'Elapsed Train Journey (10:45 to 11:20)',
+            prompt: 'A train leaves Lurgan at 10:45 am and arrives in Belfast at 11:20 am. How many MINUTES does the journey take?',
+            speech: 'A train leaves Lurgan at 10:45 am and arrives in Belfast at 11:20 am. How many minutes does the journey take?',
+            inputType: 'keypad',
+            answer: '35',
+            stageVisual: () => buildNumberLineVisual('10:45 am', '11:00 am', '11:20 am', 'Jump to 11:00 am first, then to 11:20 am!'),
+            retryHint: 'From 10:45 to 11:00 is 15 minutes. From 11:00 to 11:20 is 20 minutes. Add 15 + 20!',
+            explainVisual: () => buildNumberLineVisual('10:45 am', '11:00 am', '11:20 am', '15 mins + 20 mins = 35 mins!'),
+            explainText: '15 + 20 = 35 minutes!'
+          },
+          {
+            arena: 6,
+            tag: 'Difference Between 2-Digit Numbers',
+            prompt: 'What is the DIFFERENCE between 82 and 47?',
+            speech: 'What is the difference between 82 and 47?',
+            inputType: 'keypad',
+            answer: '35',
+            stageVisual: () => buildNumberLineVisual('47', '50', '82', 'Jump from 47 to 50 (+3), then 50 to 82 (+32)!'),
+            retryHint: 'DIFFERENCE means subtract (82 − 47)! Count up from 47 to 50 (+3), then 50 to 82 (+32).',
+            explainVisual: () => buildNumberLineVisual('47', '50', '82', '3 + 32 = 35!'),
+            explainText: 'The difference between 82 and 47 is 35!'
+          },
+          {
+            arena: 6,
+            tag: 'Change from £5.00 (£2.65)',
+            prompt: 'Che buys a sandwich for £2.65 and pays with a £5.00 note. How much change should he get?',
+            speech: 'Che buys a sandwich for 2 pounds 65 and pays with a 5 pound note. How much change should he get?',
+            inputType: 'choice',
+            choices: ['£2.35', '£3.35', '£2.45', '£1.35'],
+            answer: '£2.35',
+            stageVisual: () => buildNumberLineVisual('£2.65', '£3.00', '£5.00', 'Watch out for the £3.35 extra-pound trap!'),
+            retryHint: 'Count up from £2.65 to £3.00 (+35p), then from £3.00 to £5.00 (+£2.00) = £2.35!',
+            explainVisual: () => buildNumberLineVisual('£2.65', '£3.00', '£5.00', '35p + £2.00 = £2.35'),
+            explainText: '£5.00 − £2.65 = £2.35 change!'
+          },
+          {
+            arena: 6,
+            tag: 'Two-Step Money Change (£10.00)',
+            prompt: 'Ellie buys 3 notebooks at £2.50 each. She pays with a £10.00 note. How much change should she get?',
+            speech: 'Ellie buys 3 notebooks at 2 pounds 50 each. She pays with a 10 pound note. How much change should she get?',
+            inputType: 'choice',
+            choices: ['£2.50', '£7.50', '£3.50', '£5.00'],
+            answer: '£2.50',
+            stageVisual: () => `
+              <div class="px-5 py-2.5 rounded-2xl bg-indigo-100 border-2 border-indigo-400 font-extrabold text-indigo-950 text-sm">
+                Step 1: 3 &times; £2.50 = £7.50 &nbsp;|&nbsp; Step 2: Change from £10.00 = ?
+              </div>
+            `,
+            retryHint: '£7.50 is the total cost—do not stop there! Subtract £10.00 − £7.50 to find the change.',
+            explainVisual: () => buildNumberLineVisual('£7.50', '£8.00', '£10.00', '50p + £2.00 = £2.50 change!'),
+            explainText: '3 × £2.50 = £7.50, and £10.00 − £7.50 = £2.50 change!'
+          },
+          {
+            arena: 6,
+            tag: 'Two-Step "Twice + Altogether"',
+            prompt: 'Oisin has 18 marbles. Nevaeh has TWICE as many marbles as Oisin. How many marbles do they have ALTOGETHER?',
+            speech: 'Oisin has 18 marbles. Nevaeh has twice as many marbles as Oisin. How many marbles do they have altogether?',
+            inputType: 'keypad',
+            answer: '54',
+            stageVisual: () => `
+              <div class="px-5 py-2 rounded-xl bg-indigo-100 border border-indigo-300 font-extrabold text-indigo-950 text-sm">
+                Step 1: Twice 18 = 36 &nbsp;|&nbsp; Step 2: Altogether = 18 + 36
+              </div>
+            `,
+            retryHint: 'Do not stop at 36! Add Oisin (18) + Nevaeh (36) = ?',
+            explainVisual: () => `<div class="px-4 py-2 rounded-xl bg-white border border-indigo-300 font-extrabold text-indigo-950">18 + 36 = 54 marbles</div>`,
+            explainText: '18 + 36 = 54 marbles altogether!'
+          },
+          {
+            arena: 6,
+            tag: 'Bridging Time Past the Hour',
+            prompt: 'A lesson starts at 1:45 pm and lasts for 35 minutes. What time does it finish?',
+            speech: 'A lesson starts at 1:45 pm and lasts for 35 minutes. What time does it finish?',
+            inputType: 'choice',
+            choices: ['2:20 pm', '1:80 pm', '2:10 pm', '2:30 pm'],
+            answer: '2:20 pm',
+            stageVisual: () => buildNumberLineVisual('1:45 pm', '2:00 pm', '?', '+15 mins to 2:00 pm, then +20 mins!'),
+            retryHint: '1:45 pm + 15 mins = 2:00 pm, plus 20 mins = 2:20 pm.',
+            explainVisual: () => buildNumberLineVisual('1:45 pm', '2:00 pm', '2:20 pm', '2:20 pm'),
+            explainText: '1:45 pm + 35 minutes = 2:20 pm!'
+          },
+          {
+            arena: 6,
+            tag: 'Difference Across 100',
+            prompt: 'What is the DIFFERENCE between 124 and 89?',
+            speech: 'What is the difference between 124 and 89?',
+            inputType: 'keypad',
+            answer: '35',
+            stageVisual: () => buildNumberLineVisual('89', '100', '124', '89 + 11 = 100, + 24 = 124'),
+            retryHint: 'Add both jumps: 11 + 24 = ?',
+            explainVisual: () => buildNumberLineVisual('89', '100', '124', '11 + 24 = 35'),
+            explainText: 'The difference is 35!'
+          }
+        ]);
+      }
+      return [];
+    }
+
+    // =========================================================================
+    // 4. VISUAL MANIPULATIVE HTML HELPERS
+    // =========================================================================
+    function buildThHTOVisual(th, h, t, o) {
+      return `
+        <div class="grid grid-cols-4 gap-2 max-w-md bg-white p-3 rounded-2xl border-2 border-blue-200 text-center shadow-sm">
+          <div class="bg-purple-50 rounded-xl p-2 border border-purple-200">
+            <span class="text-[11px] font-extrabold text-purple-800 block">Thousands</span>
+            <span class="font-game text-2xl font-bold text-purple-950">${th}</span>
+          </div>
+          <div class="bg-blue-50 rounded-xl p-2 border border-blue-200">
+            <span class="text-[11px] font-extrabold text-blue-800 block">Hundreds</span>
+            <span class="font-game text-2xl font-bold text-blue-950">${h}</span>
+          </div>
+          <div class="bg-emerald-50 rounded-xl p-2 border border-emerald-200">
+            <span class="text-[11px] font-extrabold text-emerald-800 block">Tens</span>
+            <span class="font-game text-2xl font-bold text-emerald-950">${t}</span>
+          </div>
+          <div class="bg-amber-50 rounded-xl p-2 border border-amber-200">
+            <span class="text-[11px] font-extrabold text-amber-800 block">Ones</span>
+            <span class="font-game text-2xl font-bold text-amber-950">${o}</span>
+          </div>
+        </div>
+      `;
+    }
+
+    function buildNumberLineVisual(left, mid, right, caption) {
+      return `
+        <div class="bg-white px-5 py-3 rounded-2xl border-2 border-indigo-200 inline-flex flex-col items-center gap-2 shadow-sm">
+          <div class="flex items-center gap-3 font-game text-lg sm:text-xl font-bold">
+            <span class="px-3 py-1 rounded-xl bg-slate-100 border border-slate-300 text-slate-900">${left}</span>
+            <span class="text-indigo-500 font-black">&rarr;</span>
+            <span class="px-3 py-1 rounded-xl bg-emerald-100 border-2 border-emerald-500 text-emerald-950">${mid}</span>
+            <span class="text-indigo-500 font-black">&rarr;</span>
+            <span class="px-3 py-1 rounded-xl bg-amber-100 border-2 border-amber-500 text-amber-950">${right}</span>
+          </div>
+          <span class="text-xs font-extrabold text-slate-600">${caption}</span>
+        </div>
+      `;
+    }
+
+    function buildCherryVisual(top, left, right, caption) {
+      return `
+        <div class="inline-flex flex-col items-center bg-white px-6 py-3 rounded-2xl border-2 border-emerald-300 shadow-sm">
+          <div class="w-14 h-12 rounded-full bg-indigo-600 text-white font-game text-xl font-bold flex items-center justify-center shadow">${top}</div>
+          <svg class="w-28 h-7" viewBox="0 0 120 30">
+            <line x1="60" y1="0" x2="25" y2="30" stroke="#64748b" stroke-width="3" stroke-linecap="round"></line>
+            <line x1="60" y1="0" x2="95" y2="30" stroke="#64748b" stroke-width="3" stroke-linecap="round"></line>
+          </svg>
+          <div class="flex gap-8">
+            <div class="w-12 h-11 rounded-full bg-emerald-100 border-2 border-emerald-500 font-game text-lg font-bold text-emerald-950 flex items-center justify-center">${left}</div>
+            <div class="w-12 h-11 rounded-full bg-amber-100 border-2 border-amber-500 font-game text-lg font-bold text-amber-950 flex items-center justify-center">${right}</div>
+          </div>
+          <span class="text-[11px] font-extrabold text-slate-600 mt-1.5">${caption}</span>
+        </div>
+      `;
+    }
+
+    function buildFactRoofVisual(boss, left, right, caption) {
+      return `
+        <div class="inline-flex flex-col items-center bg-white px-6 py-3 rounded-2xl border-2 border-amber-300 shadow-sm">
+          <div class="px-5 py-1 rounded-xl bg-rose-500 text-white font-game text-2xl font-bold shadow">${boss}</div>
+          <div class="text-xs font-black text-slate-400 my-1">&times; / &divide;</div>
+          <div class="flex gap-6">
+            <div class="px-4 py-1 rounded-xl bg-indigo-100 border-2 border-indigo-400 font-game text-xl font-bold text-indigo-950">${left}</div>
+            <div class="px-4 py-1 rounded-xl bg-indigo-100 border-2 border-indigo-400 font-game text-xl font-bold text-indigo-950">${right}</div>
+          </div>
+          <span class="text-[11px] font-extrabold text-slate-600 mt-1.5">${caption}</span>
+        </div>
+      `;
+    }
+
+    function buildRectangleVisual(l, w, caption) {
+      return `
+        <div class="inline-flex flex-col items-center bg-white px-7 py-3 rounded-2xl border-2 border-rose-300 shadow-sm">
+          <span class="text-xs font-black text-rose-700 mb-1">${l} cm</span>
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-black text-blue-700">${w} cm</span>
+            <div class="w-32 h-14 border-4 border-slate-800 bg-amber-50 flex items-center justify-center text-xs font-extrabold text-slate-600">Rectangle</div>
+            <span class="text-xs font-black text-blue-700">${w} cm</span>
+          </div>
+          <span class="text-xs font-black text-rose-700 mt-1">${l} cm</span>
+          <span class="text-[11px] font-extrabold text-slate-600 mt-1">${caption}</span>
+        </div>
+      `;
+    }
+
+    function buildFractionBarVisual(tot, den, num, reveal) {
+      const unitVal = tot / den;
+      let cells = '';
+      for (let i = 0; i < den; i++) {
+        const active = i < num;
+        cells += `<div class="flex-1 py-2 px-3 text-center font-game font-bold text-base border ${active ? 'bg-purple-600 text-white border-purple-800' : 'bg-purple-50 text-purple-900 border-purple-300'}">${reveal ? unitVal : '?'}</div>`;
+      }
+      return `
+        <div class="max-w-sm bg-white p-3 rounded-2xl border-2 border-purple-200 space-y-1.5 shadow-sm">
+          <div class="text-center font-extrabold text-xs bg-slate-900 text-white py-1 rounded-lg">Whole = ${tot} (Split into ${den} equal parts, shade ${num})</div>
+          <div class="flex gap-1">${cells}</div>
+        </div>
+      `;
+    }
+
+    function buildFractionEquivVisual(n1, d1, n2, d2, reveal) {
+      const makeRow = (n, d, cls) => {
+        let row = '';
+        for (let i = 0; i < d; i++) {
+          row += `<div class="flex-1 h-5 border border-slate-400 ${i < n ? cls : 'bg-white'}"></div>`;
+        }
+        return `<div class="flex gap-0.5 w-48">${row}</div>`;
+      };
+      return `
+        <div class="inline-flex flex-col gap-2 bg-white p-3 rounded-2xl border-2 border-purple-200 shadow-sm text-left">
+          <div><span class="text-xs font-extrabold">${n1}/${d1}:</span>${makeRow(n1, d1, 'bg-indigo-500')}</div>
+          <div><span class="text-xs font-extrabold">${reveal ? n2 : '?'}/${d2}:</span>${makeRow(reveal ? n2 : 0, d2, 'bg-emerald-500')}</div>
+        </div>
+      `;
+    }
+
+    function buildFourStepScaleVisual(reveal) {
+      const marks = ['0', reveal ? '25' : '?', '50', '75', '100'];
+      return `
+        <div class="bg-white px-5 py-3 rounded-2xl border-2 border-purple-200 inline-flex items-center gap-2 sm:gap-4 font-game text-base sm:text-xl font-bold shadow-sm">
+          ${marks.map((m, idx) => `<span class="px-2.5 py-1 rounded-xl ${idx === 1 ? 'bg-amber-200 border-2 border-amber-500 text-slate-950' : 'bg-slate-100 border border-slate-300 text-slate-800'}">${m}</span>`).join('<span class="text-slate-400">&mdash;</span>')}
+        </div>
+      `;
+    }
+
+    function buildMini100Square(shaded, mode = 'add', revealAnswer = false) {
+      let cells = '';
+      for (let i = 1; i <= 100; i++) {
+        cells += `<div class="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-[2px] ${i <= shaded ? 'bg-indigo-500' : 'bg-amber-300'}"></div>`;
+      }
+      const unshaded = 100 - shaded;
+      const caption = mode === 'sub'
+        ? `<span class="text-indigo-700">&#9632; Remaining: ${revealAnswer ? shaded : '?'}</span>
+           <span class="text-amber-700">&#9632; Taken Away: ${unshaded}</span>`
+        : `<span class="text-indigo-700">&#9632; Shaded: ${shaded}</span>
+           <span class="text-amber-700">&#9632; Unshaded: ${revealAnswer ? unshaded : '?'}</span>`;
+
+      return `
+        <div class="inline-flex flex-col items-center bg-white p-2.5 rounded-xl border-2 border-indigo-200">
+          <div class="grid grid-cols-10 gap-0.5">${cells}</div>
+          <div class="flex gap-3 mt-1.5 text-[11px] font-extrabold">
+            ${caption}
+          </div>
+        </div>
+      `;
+    }
+
+    // =========================================================================
+    // 5. GAME ENGINE & PERSONALISED QUEST FLOW
+    // =========================================================================
+    let gameState = {
+      mode: 'personalised',
+      arenaId: null,
+      questions: [],
+      index: 0,
+      score: 0,
+      streak: 0,
+      attempt: 1,
+      typedValue: '',
+      answered: false,
+      skillStats: {}
+    };
+
+    function showScreen(screenName) {
+      document.getElementById('screen-profiles').classList.add('hidden');
+      document.getElementById('screen-game').classList.add('hidden');
+      document.getElementById('screen-results').classList.add('hidden');
+
+      const btnHome = document.getElementById('btn-home');
+      const hudPlayer = document.getElementById('hud-player-badge');
+      const hudStreak = document.getElementById('hud-streak-badge');
+
+      if (screenName === 'profiles') {
+        document.getElementById('screen-profiles').classList.remove('hidden');
+        btnHome.classList.add('hidden');
+        btnHome.classList.remove('flex');
+        hudPlayer.classList.add('hidden');
+        hudPlayer.classList.remove('flex');
+        hudStreak.classList.add('hidden');
+        hudStreak.classList.remove('flex');
+        stopConfetti();
+        refreshProfileCards();
+      } else {
+        document.getElementById(`screen-${screenName}`).classList.remove('hidden');
+        btnHome.classList.remove('hidden');
+        btnHome.classList.add('flex');
+        hudPlayer.classList.remove('hidden');
+        hudPlayer.classList.add('flex');
+        hudStreak.classList.remove('hidden');
+        hudStreak.classList.add('flex');
+      }
+    }
+
+    function startPersonalisedQuest() {
+      playTone('pop');
+      const mission = PUPIL_MISSIONS[currentPlayer] || PUPIL_MISSIONS['Guest'];
+      const buckets = mission.blueprint.map(entry => ({
+        arena: entry.arena,
+        items: buildArenaQuestions(entry.arena).slice(0, entry.count)
+      }));
+
+      const interleaved = [];
+      let added = true;
+      let round = 0;
+      while (added) {
+        added = false;
+        for (const b of buckets) {
+          if (b.items[round]) {
+            interleaved.push(b.items[round]);
+            added = true;
+          }
+        }
+        round++;
+      }
+
+      launchGame('personalised', null, interleaved);
+    }
+
+    function startSingleArena(arenaId) {
+      playTone('pop');
+      const arenaQs = buildArenaQuestions(arenaId).slice(0, 8);
+      launchGame('single', arenaId, arenaQs);
+    }
+
+    function launchGame(mode, arenaId, questions) {
+      gameState = {
+        mode,
+        arenaId,
+        questions,
+        index: 0,
+        score: 0,
+        streak: 0,
+        attempt: 1,
+        typedValue: '',
+        answered: false,
+        skillStats: {}
+      };
+      questions.forEach(q => {
+        if (!gameState.skillStats[q.arena]) {
+          gameState.skillStats[q.arena] = { correct: 0, total: 0 };
+        }
+        gameState.skillStats[q.arena].total += 1;
+      });
+
+      document.getElementById('hud-streak').textContent = '0';
+      document.getElementById('game-live-score').textContent = '0';
+      renderCurrentQuestion();
+    }
+
+    function renderCurrentQuestion() {
+      const q = gameState.questions[gameState.index];
+      showScreen('game');
+      gameState.attempt = 1;
+      gameState.typedValue = '';
+      gameState.answered = false;
+
+      document.getElementById('game-arena-badge').textContent = `Arena ${q.arena}: ${ARENA_NAMES[q.arena]}`;
+      document.getElementById('game-q-counter').textContent = `Question ${gameState.index + 1} of ${gameState.questions.length}`;
+      const pct = Math.round((gameState.index / gameState.questions.length) * 100);
+      document.getElementById('game-progress-bar').style.width = `${Math.max(6, pct)}%`;
+
+      document.getElementById('q-instruction-tag').textContent = q.tag;
+      document.getElementById('q-prompt-text').textContent = q.prompt;
+      document.getElementById('q-visual-stage').innerHTML = q.stageVisual ? q.stageVisual() : '';
+
+      const fbBox = document.getElementById('q-feedback-box');
+      fbBox.classList.add('hidden');
+      document.getElementById('btn-next-question').classList.add('hidden');
+
+      const area = document.getElementById('q-interaction-area');
+      if (q.inputType === 'choice') {
+        const shuffledChoices = shuffle(q.choices);
+        area.innerHTML = `
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-2xl mx-auto">
+            ${shuffledChoices.map(choice => `
+              <button onclick="submitChoice('${choice.replace(/'/g, "\\'")}')" class="choice-btn py-4 px-5 rounded-2xl bg-indigo-50 hover:bg-indigo-100 active:scale-95 border-3 border-indigo-300 hover:border-indigo-500 font-game text-lg sm:text-xl font-bold text-indigo-950 shadow-sm transition">
+                ${choice}
+              </button>
+            `).join('')}
+          </div>
+        `;
+      } else {
+        area.innerHTML = `
+          <div class="max-w-md mx-auto space-y-3">
+            <div class="flex items-center justify-center gap-3">
+              <div id="keypad-display" class="w-44 h-14 rounded-2xl bg-slate-100 border-4 border-indigo-400 flex items-center justify-center font-game text-3xl sm:text-4xl font-bold text-slate-900 shadow-inner">
+                ?
+              </div>
+              <button onclick="submitKeypad()" class="px-6 h-14 rounded-2xl bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-game text-xl font-bold shadow-md border-b-4 border-emerald-800 transition">
+                Check &#10003;
+              </button>
+            </div>
+            <div class="grid grid-cols-3 gap-2 pt-1">
+              ${[1, 2, 3, 4, 5, 6, 7, 8, 9, 'Clear', 0, '⌫'].map(key => {
+                if (key === 'Clear') {
+                  return `<button onclick="pressKey('clear')" class="py-3 rounded-xl bg-rose-100 hover:bg-rose-200 active:scale-95 text-rose-900 font-extrabold text-sm sm:text-base border border-rose-300 transition">Clear</button>`;
+                }
+                if (key === '⌫') {
+                  return `<button onclick="pressKey('back')" class="py-3 rounded-xl bg-amber-100 hover:bg-amber-200 active:scale-95 text-amber-950 font-extrabold text-lg border border-amber-300 transition">&#9003;</button>`;
+                }
+                return `<button onclick="pressKey('${key}')" class="py-3 rounded-xl bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-900 font-game text-2xl font-bold border border-slate-300 shadow-sm transition">${key}</button>`;
+              }).join('')}
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    function pressKey(k) {
+      if (gameState.answered) return;
+      playTone('pop');
+      if (k === 'clear') {
+        gameState.typedValue = '';
+      } else if (k === 'back') {
+        gameState.typedValue = gameState.typedValue.slice(0, -1);
+      } else if (gameState.typedValue.length < 5) {
+        gameState.typedValue += String(k);
+      }
+      const disp = document.getElementById('keypad-display');
+      if (disp) disp.textContent = gameState.typedValue || '?';
+    }
+
+    function submitKeypad() {
+      if (gameState.answered || !gameState.typedValue) return;
+      evaluateAnswer(gameState.typedValue);
+    }
+
+    function submitChoice(val) {
+      if (gameState.answered) return;
+      evaluateAnswer(val);
+    }
+
+    function evaluateAnswer(userVal) {
+      const q = gameState.questions[gameState.index];
+      const normUser = String(userVal).replace(/,/g, '').trim().toUpperCase();
+      const normAns = String(q.answer).replace(/,/g, '').trim().toUpperCase();
+      const isCorrect = normUser === normAns;
+
+      const fbBox = document.getElementById('q-feedback-box');
+      const fbIcon = document.getElementById('q-feedback-icon');
+      const fbTitle = document.getElementById('q-feedback-title');
+      const fbMsg = document.getElementById('q-feedback-message');
+      const fbVis = document.getElementById('q-feedback-visual');
+      const btnNext = document.getElementById('btn-next-question');
+      const stageCard = document.getElementById('question-stage-card');
+
+      fbBox.classList.remove('hidden');
+
+      if (isCorrect) {
+        gameState.answered = true;
+        gameState.score += 1;
+        gameState.streak += 1;
+        gameState.skillStats[q.arena].correct += 1;
+
+        document.getElementById('game-live-score').textContent = gameState.score;
+        document.getElementById('hud-streak').textContent = gameState.streak;
+
+        playTone('correct');
+        fbBox.className = 'rounded-2xl p-4 sm:p-5 border-2 border-emerald-400 bg-emerald-50 text-emerald-950 space-y-2 animate-bounce-pop';
+        fbIcon.textContent = '🌟';
+        fbTitle.textContent = gameState.streak >= 3 ? `Brilliant! ${gameState.streak} in a row!` : `Spot on, ${currentPlayer}!`;
+        fbMsg.textContent = q.explainText;
+        fbVis.innerHTML = q.explainVisual ? q.explainVisual() : '';
+        btnNext.classList.remove('hidden');
+        btnNext.textContent = gameState.index === gameState.questions.length - 1 ? 'See My Final Score 🏆' : 'Next Question →';
+      } else if (gameState.attempt === 1) {
+        gameState.attempt = 2;
+        gameState.streak = 0;
+        document.getElementById('hud-streak').textContent = '0';
+        gameState.typedValue = '';
+        const disp = document.getElementById('keypad-display');
+        if (disp) disp.textContent = '?';
+
+        playTone('retry');
+        stageCard.classList.remove('animate-shake');
+        void stageCard.offsetWidth;
+        stageCard.classList.add('animate-shake');
+
+        fbBox.className = 'rounded-2xl p-4 sm:p-5 border-2 border-amber-400 bg-amber-50 text-amber-950 space-y-2 animate-bounce-pop';
+        fbIcon.textContent = '💡';
+        fbTitle.textContent = 'Almost! Have another go with this clue:';
+        fbMsg.textContent = q.retryHint;
+        fbVis.innerHTML = '';
+        btnNext.classList.add('hidden');
+      } else {
+        gameState.answered = true;
+        playTone('retry');
+        fbBox.className = 'rounded-2xl p-4 sm:p-5 border-2 border-rose-300 bg-rose-50 text-rose-950 space-y-2 animate-bounce-pop';
+        fbIcon.textContent = '🧩';
+        fbTitle.textContent = `Good try! The answer is ${q.answer}`;
+        fbMsg.textContent = q.explainText;
+        fbVis.innerHTML = q.explainVisual ? q.explainVisual() : '';
+        btnNext.classList.remove('hidden');
+        btnNext.textContent = gameState.index === gameState.questions.length - 1 ? 'See My Final Score 🏆' : 'Next Question →';
+      }
+    }
+
+    function advanceQuestion() {
+      playTone('pop');
+      if (gameState.index < gameState.questions.length - 1) {
+        gameState.index += 1;
+        renderCurrentQuestion();
+      } else {
+        finishGame();
+      }
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (document.getElementById('screen-game').classList.contains('hidden')) return;
+      const q = gameState.questions[gameState.index];
+      if (!q || q.inputType !== 'keypad') return;
+
+      if (e.key >= '0' && e.key <= '9') {
+        pressKey(e.key);
+      } else if (e.key === 'Backspace') {
+        pressKey('back');
+      } else if (e.key === 'Enter') {
+        if (gameState.answered) advanceQuestion();
+        else submitKeypad();
+      }
+    });
+
+    // =========================================================================
+    // 6. END-OF-GAME CERTIFICATE & CONFETTI
+    // =========================================================================
+    let weakestArenaId = null;
+
+    function finishGame() {
+      playTone('fanfare');
+      const total = gameState.questions.length;
+      const score = gameState.score;
+      const pct = Math.round((score / total) * 100);
+
+      let starsEarned = 1;
+      if (pct >= 80) starsEarned = 3;
+      else if (pct >= 50) starsEarned = 2;
+
+      if (!profilesData[currentPlayer]) profilesData[currentPlayer] = { stars: 0, best: {} };
+      profilesData[currentPlayer].stars = (profilesData[currentPlayer].stars || 0) + starsEarned;
+      if (gameState.mode === 'single' && gameState.arenaId) {
+        const prevBest = profilesData[currentPlayer].best[gameState.arenaId] || 0;
+        if (score > prevBest) profilesData[currentPlayer].best[gameState.arenaId] = score;
+      }
+      saveProfiles();
+
+      document.getElementById('res-mode-label').textContent =
+        gameState.mode === 'personalised' ? `${currentPlayer}'s Personalised Quest Complete!` : `${ARENA_NAMES[gameState.arenaId]} Complete!`;
+      document.getElementById('res-avatar').textContent = AVATARS[currentPlayer] || '🚀';
+      document.getElementById('res-player-name').textContent = currentPlayer;
+      document.getElementById('res-score-fraction').textContent = `${score} / ${total}`;
+      document.getElementById('res-accuracy').textContent = `${pct}%`;
+      document.getElementById('res-stars-earned').textContent = `+${starsEarned} ⭐`;
+
+      document.getElementById('res-encouragement').textContent =
+        pct >= 80
+          ? 'Superstar P7B reasoning! You unlocked your personal targets!'
+          : pct >= 50
+            ? 'Great effort! Look at your skill report below to see what you mastered.'
+            : 'Nice warming up! Tap Practise Tricky Skill below to power up your score.';
+
+      let starIcons = '';
+      for (let i = 1; i <= 3; i++) {
+        starIcons += i <= starsEarned ? '<span class="drop-shadow">⭐</span>' : '<span class="opacity-25">⭐</span>';
+      }
+      document.getElementById('res-stars-row').innerHTML = starIcons;
+
+      const breakdownEl = document.getElementById('res-skill-breakdown');
+      let lowestRatio = 2;
+      weakestArenaId = null;
+
+      breakdownEl.innerHTML = Object.keys(gameState.skillStats).map(aKey => {
+        const aId = Number(aKey);
+        const st = gameState.skillStats[aId];
+        const ratio = st.correct / st.total;
+        if (ratio < 1 && ratio < lowestRatio) {
+          lowestRatio = ratio;
+          weakestArenaId = aId;
+        }
+        const mastered = ratio >= 0.66;
+        return `
+          <div class="flex items-center justify-between bg-white px-3.5 py-2.5 rounded-xl border ${mastered ? 'border-emerald-300' : 'border-amber-300'}">
+            <div>
+              <span class="font-extrabold text-xs sm:text-sm text-slate-900 block">${ARENA_NAMES[aId]}</span>
+              <span class="text-[11px] font-bold ${mastered ? 'text-emerald-700' : 'text-amber-700'}">
+                ${mastered ? '✓ Mastered!' : '★ Keep Practising'}
+              </span>
+            </div>
+            <span class="px-2.5 py-1 rounded-lg font-black text-sm ${mastered ? 'bg-emerald-100 text-emerald-900' : 'bg-amber-100 text-amber-900'}">
+              ${st.correct} / ${st.total}
+            </span>
+          </div>
+        `;
+      }).join('');
+
+      const btnWeak = document.getElementById('btn-practice-weakest');
+      if (weakestArenaId) {
+        btnWeak.classList.remove('hidden');
+        btnWeak.textContent = `🎯 Practise ${ARENA_NAMES[weakestArenaId]}`;
+      } else {
+        btnWeak.classList.add('hidden');
+      }
+
+      showScreen('results');
+      launchConfetti();
+    }
+
+    function replaySameMode() {
+      stopConfetti();
+      if (gameState.mode === 'personalised') startPersonalisedQuest();
+      else startSingleArena(gameState.arenaId);
+    }
+
+    function practiceWeakestArena() {
+      stopConfetti();
+      if (weakestArenaId) startSingleArena(weakestArenaId);
+    }
+
+    let confettiAnim = null;
+    function launchConfetti() {
+      const canvas = document.getElementById('confetti-canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      canvas.classList.remove('hidden');
+
+      const colors = ['#f59e0b', '#10b981', '#6366f1', '#ec4899', '#3b82f6'];
+      const pieces = Array.from({ length: 85 }, () => ({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height - canvas.height,
+        w: Math.random() * 10 + 6,
+        h: Math.random() * 6 + 4,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        vy: Math.random() * 3 + 2,
+        vx: Math.random() * 2 - 1,
+        rot: Math.random() * 360
+      }));
+
+      let frames = 0;
+      function loop() {
+        frames++;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        pieces.forEach(p => {
+          p.y += p.vy;
+          p.x += p.vx;
+          p.rot += 4;
+          if (p.y > canvas.height) p.y = -10;
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate((p.rot * Math.PI) / 180);
+          ctx.fillStyle = p.color;
+          ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+          ctx.restore();
+        });
+        if (frames < 240) {
+          confettiAnim = requestAnimationFrame(loop);
+        } else {
+          stopConfetti();
+        }
+      }
+      confettiAnim = requestAnimationFrame(loop);
+    }
+
+    function stopConfetti() {
+      if (confettiAnim) cancelAnimationFrame(confettiAnim);
+      const canvas = document.getElementById('confetti-canvas');
+      canvas.classList.add('hidden');
+    }
+
+    window.onload = function () {
+      loadProfiles();
+      showScreen('profiles');
+    };
+  </script>
+</body>
+</html>
