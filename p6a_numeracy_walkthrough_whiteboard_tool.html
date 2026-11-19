@@ -1,0 +1,2367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P6A Numeracy Walkthrough & Interactive Whiteboard</title>
+  <!-- Load Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Load Google Font: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    /* Base typography & full-height layout */
+    html, body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background-color: #f1f5f9;
+      color: #0f172a;
+      height: 100%;
+      overflow-x: hidden;
+    }
+
+    /* Smooth custom scrollbar for question pills and left panel */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #e2e8f0;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #94a3b8;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #64748b;
+    }
+
+    /* Whiteboard canvas touch handling to prevent page scroll while drawing */
+    #whiteboardCanvas {
+      touch-action: none;
+      cursor: crosshair;
+      display: block;
+    }
+
+    /* Subtle pulse highlight for active interactive manipulative elements */
+    .pop-in {
+      animation: popIn 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes popIn {
+      from { opacity: 0; transform: translateY(4px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+  </style>
+</head>
+<body class="flex flex-col h-screen select-none">
+
+  <!-- TOP NAVIGATION BAR -->
+  <header class="bg-slate-900 text-white px-4 py-2.5 shadow-md flex flex-wrap items-center justify-between gap-2 z-20 shrink-0">
+    <!-- Brand & Title -->
+    <div class="flex items-center gap-3">
+      <div class="bg-teal-600 text-white font-extrabold text-sm px-2.5 py-1.5 rounded-lg tracking-wide shadow-inner">
+        P6A
+      </div>
+      <div>
+        <h1 class="text-base sm:text-lg font-bold leading-tight tracking-tight">P6A Numeracy Test Walkthrough</h1>
+        <p class="text-xs text-slate-400 hidden sm:block">20-Question Diagnostic Review • Zero-Spoiler Interactive Board</p>
+      </div>
+    </div>
+
+    <!-- Question Selector Pills (Q1 - Q20) -->
+    <div id="questionPills" class="flex items-center gap-1.5 overflow-x-auto py-1 max-w-full lg:max-w-2xl">
+      <!-- Populated dynamically by JS -->
+    </div>
+
+    <!-- Prev / Next Navigation -->
+    <div class="flex items-center gap-2">
+      <button id="prevBtn" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 active:bg-slate-600 text-slate-200 rounded-lg text-sm font-semibold border border-slate-700 transition flex items-center gap-1" title="Previous Question">
+        <span>←</span><span class="hidden md:inline">Prev</span>
+      </button>
+      <button id="nextBtn" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 active:bg-slate-600 text-slate-200 rounded-lg text-sm font-semibold border border-slate-700 transition flex items-center gap-1" title="Next Question">
+        <span class="hidden md:inline">Next</span><span>→</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN SPLIT-SCREEN WORKSTATION -->
+  <main class="flex-1 flex flex-col lg:flex-row overflow-hidden">
+
+    <!-- LEFT PANEL: QUESTION, 3-STAGE FLOW, VISUAL MANIPULATIVE & STEP-BY-STEP REVEAL -->
+    <section id="leftPanel" class="w-full lg:w-[48%] xl:w-[46%] flex flex-col bg-slate-100 border-b lg:border-b-0 lg:border-r border-slate-300 overflow-y-auto p-4 sm:p-5 gap-4 transition-all duration-200">
+
+      <!-- Question Header Metadata & Twin Practice Toggle -->
+      <div class="flex flex-wrap items-center justify-between gap-2 bg-white px-4 py-3 rounded-xl shadow-sm border border-slate-200">
+        <div class="flex items-center gap-2 flex-wrap">
+          <span id="qBadge" class="bg-teal-600 text-white font-extrabold text-sm sm:text-base px-3 py-1 rounded-lg">Q1</span>
+          <span id="qSectionBadge" class="text-xs font-bold text-teal-800 bg-teal-50 border border-teal-200 px-2.5 py-1 rounded-md">Section A</span>
+          <span id="qTopic" class="text-xs sm:text-sm font-semibold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-md border border-slate-200">Place Value</span>
+        </div>
+
+        <!-- Twin Practice Question Controls -->
+        <div class="flex items-center gap-1.5">
+          <button id="toggleModeBtn" class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200 transition flex items-center gap-1.5">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+            <span id="toggleModeLabel">Try Similar Practice Q</span>
+          </button>
+          <button id="rerollTwinBtn" class="hidden px-2.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold bg-emerald-600 text-white hover:bg-emerald-700 transition" title="Generate Another Similar Question">
+            New Twin ↻
+          </button>
+        </div>
+      </div>
+
+      <!-- Main Question Prompt Card -->
+      <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+        <div class="flex items-center justify-between mb-2">
+          <span id="modeBanner" class="text-xs font-bold uppercase tracking-wider text-slate-400">Diagnostic Test Question</span>
+          <button id="copyToBoardBtn" class="text-xs font-semibold text-indigo-600 hover:text-indigo-800 bg-indigo-50 hover:bg-indigo-100 px-2.5 py-1 rounded-md transition">
+            + Stamp Question on Board
+          </button>
+        </div>
+        <div id="questionPrompt" class="text-xl sm:text-2xl font-bold text-slate-900 leading-snug">
+          <!-- Question text injected here -->
+        </div>
+      </div>
+
+      <!-- 3-STAGE TEACHER-CONTROLLED TEACHING FLOW BAR (STRICT ZERO-SPOILERS) -->
+      <div class="bg-white p-3 rounded-xl shadow-sm border border-slate-200">
+        <div class="flex items-center justify-between mb-2 px-1">
+          <span class="text-[11px] font-extrabold uppercase tracking-wider text-slate-500">Teacher Control Stages (Zero Spoilers)</span>
+          <span id="stageStatusLabel" class="text-xs font-bold text-slate-800 bg-slate-100 px-2 py-0.5 rounded">Stage 1: Pupil Try</span>
+        </div>
+        <div class="grid grid-cols-3 gap-2">
+          <button id="stage1Btn" class="stage-btn py-2.5 px-2 rounded-lg text-xs sm:text-sm font-extrabold border-2 transition flex flex-col items-center justify-center text-center leading-tight">
+            <span>1. Pupil Try</span>
+            <span class="text-[10px] font-semibold opacity-80 mt-0.5">Blank / Unsolved</span>
+          </button>
+          <button id="stage2Btn" class="stage-btn py-2.5 px-2 rounded-lg text-xs sm:text-sm font-extrabold border-2 transition flex flex-col items-center justify-center text-center leading-tight">
+            <span>2. Visual Hint</span>
+            <span class="text-[10px] font-semibold opacity-80 mt-0.5">Show Visual Model</span>
+          </button>
+          <button id="stage3Btn" class="stage-btn py-2.5 px-2 rounded-lg text-xs sm:text-sm font-extrabold border-2 transition flex flex-col items-center justify-center text-center leading-tight">
+            <span>3. Reveal Answer</span>
+            <span class="text-[10px] font-semibold opacity-80 mt-0.5">Model &amp; Steps</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Stage-Controlled Workspace / Visual Model Container -->
+      <div id="visualSectionCard" class="bg-white p-4 sm:p-5 rounded-xl shadow-sm border border-slate-200">
+        <div class="flex items-center justify-between mb-3">
+          <h2 id="visualCardTitle" class="text-xs sm:text-sm font-extrabold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-slate-700"></span>
+            Stage 1: Pupil Try Workspace
+          </h2>
+          <span id="visualCardHint" class="text-xs text-slate-400 font-medium">Answers hidden until Stage 3</span>
+        </div>
+        <div id="visualAidContainer" class="min-h-[120px] flex flex-col justify-center">
+          <!-- Stage-specific workspace / visual aid rendered per question -->
+        </div>
+      </div>
+
+      <!-- Spot the Common Trap Accordion (Always collapsed until teacher clicks) -->
+      <div id="trapCard" class="bg-amber-50/90 border border-amber-300 rounded-xl overflow-hidden shadow-sm">
+        <button id="trapToggleBtn" class="w-full px-4 py-3 flex items-center justify-between text-left hover:bg-amber-100/70 transition">
+          <div class="flex items-center gap-2">
+            <span class="bg-amber-500 text-white w-6 h-6 rounded-full flex items-center justify-center font-extrabold text-sm">!</span>
+            <span class="font-bold text-amber-950 text-sm sm:text-base">Spot the Target Trap &amp; Key Teaching Point</span>
+          </div>
+          <span id="trapChevron" class="text-amber-800 font-bold text-xs sm:text-sm bg-amber-200/80 px-2.5 py-0.5 rounded-md">Show Trap</span>
+        </button>
+        <div id="trapContent" class="hidden px-4 pb-4 pt-2 text-amber-950 text-sm sm:text-base border-t border-amber-200/80 bg-white/70 leading-relaxed">
+          <!-- Misconception text injected here -->
+        </div>
+      </div>
+
+      <!-- Step-by-Step Solution & Final Answer Reveal -->
+      <div id="solutionCard" class="bg-white p-4 sm:p-5 rounded-xl shadow-sm border border-slate-200 mb-2">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+          <h2 class="text-xs sm:text-sm font-extrabold uppercase tracking-wider text-slate-600">Step-by-Step Solution</h2>
+          <div class="flex items-center gap-2">
+            <button id="revealStepBtn" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-bold text-xs sm:text-sm rounded-lg shadow-sm transition">
+              Reveal Step 1
+            </button>
+            <button id="revealAllBtn" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold text-xs sm:text-sm rounded-lg shadow-sm transition">
+              Reveal Answer
+            </button>
+            <button id="resetStepsBtn" class="px-2.5 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold text-xs sm:text-sm rounded-lg transition" title="Hide All">
+              Hide
+            </button>
+          </div>
+        </div>
+
+        <!-- Steps List -->
+        <div id="stepsContainer" class="space-y-2.5">
+          <!-- Steps dynamically shown here -->
+        </div>
+
+        <!-- Final Answer Banner -->
+        <div id="finalAnswerBox" class="hidden mt-4 p-4 bg-emerald-50 border-2 border-emerald-500 rounded-xl flex items-center justify-between pop-in">
+          <span class="text-sm font-extrabold uppercase tracking-wider text-emerald-800">Correct Answer:</span>
+          <span id="finalAnswerText" class="text-2xl sm:text-3xl font-extrabold text-emerald-900">4,068</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- RIGHT PANEL: FULL-FEATURED INTERACTIVE TEACHING WHITEBOARD -->
+    <section id="rightPanel" class="flex-1 flex flex-col bg-white overflow-hidden relative">
+
+      <!-- Whiteboard Toolbar -->
+      <div class="bg-slate-50 border-b border-slate-200 px-3 py-2 flex flex-wrap items-center justify-between gap-2 z-10 shrink-0">
+
+        <!-- Drawing Tools -->
+        <div class="flex items-center gap-1 bg-slate-200/80 p-1 rounded-xl">
+          <button data-tool="pen" class="wb-tool active px-2.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold bg-white text-indigo-700 shadow-sm flex items-center gap-1" title="Pen">
+            ✏️ <span class="hidden xl:inline">Pen</span>
+          </button>
+          <button data-tool="highlighter" class="wb-tool px-2.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold text-slate-700 hover:bg-white/60 flex items-center gap-1" title="Highlighter">
+            🖍️ <span class="hidden xl:inline">Highlight</span>
+          </button>
+          <button data-tool="line" class="wb-tool px-2.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold text-slate-700 hover:bg-white/60 flex items-center gap-1" title="Straight Line / Number Line">
+            📏 <span class="hidden xl:inline">Line</span>
+          </button>
+          <button data-tool="rect" class="wb-tool px-2.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold text-slate-700 hover:bg-white/60 flex items-center gap-1" title="Box / Bar Model">
+            ▭ <span class="hidden xl:inline">Box</span>
+          </button>
+          <button data-tool="text" class="wb-tool px-2.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold text-slate-700 hover:bg-white/60 flex items-center gap-1" title="Click anywhere to type text">
+            🔤 <span class="hidden xl:inline">Text</span>
+          </button>
+          <button data-tool="eraser" class="wb-tool px-2.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold text-slate-700 hover:bg-white/60 flex items-center gap-1" title="Eraser">
+            🧽 <span class="hidden xl:inline">Erase</span>
+          </button>
+        </div>
+
+        <!-- Colors & Thickness -->
+        <div class="flex items-center gap-2">
+          <div class="flex items-center gap-1.5 bg-slate-100 px-2 py-1.5 rounded-xl border border-slate-200">
+            <button data-color="#0f172a" class="wb-color w-5 h-5 rounded-full bg-slate-900 ring-2 ring-offset-1 ring-indigo-500" title="Black"></button>
+            <button data-color="#2563eb" class="wb-color w-5 h-5 rounded-full bg-blue-600" title="Blue"></button>
+            <button data-color="#dc2626" class="wb-color w-5 h-5 rounded-full bg-red-600" title="Red"></button>
+            <button data-color="#059669" class="wb-color w-5 h-5 rounded-full bg-emerald-600" title="Green"></button>
+            <button data-color="#7c3aed" class="wb-color w-5 h-5 rounded-full bg-violet-600" title="Purple"></button>
+            <button data-color="#ea580c" class="wb-color w-5 h-5 rounded-full bg-orange-600" title="Orange"></button>
+          </div>
+
+          <!-- Stroke Size Selector -->
+          <div class="hidden sm:flex items-center gap-1 bg-slate-100 px-2 py-1 rounded-xl border border-slate-200">
+            <button data-size="2" class="wb-size p-1.5 rounded hover:bg-white" title="Fine"><span class="block w-1.5 h-1.5 rounded-full bg-slate-800"></span></button>
+            <button data-size="4" class="wb-size p-1.5 rounded bg-white shadow-sm" title="Medium"><span class="block w-2.5 h-2.5 rounded-full bg-slate-800"></span></button>
+            <button data-size="7" class="wb-size p-1.5 rounded hover:bg-white" title="Thick"><span class="block w-3.5 h-3.5 rounded-full bg-slate-800"></span></button>
+            <button data-size="12" class="wb-size p-1.5 rounded hover:bg-white" title="Marker"><span class="block w-4 h-4 rounded-full bg-slate-800"></span></button>
+          </div>
+        </div>
+
+        <!-- Background Grid & Expand Toggle -->
+        <div class="flex items-center gap-1.5">
+          <select id="bgGridSelect" class="text-xs sm:text-sm font-semibold bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            <option value="grid">Squared Maths Grid</option>
+            <option value="plain">Plain White</option>
+            <option value="lined">Ruled Lines</option>
+            <option value="placevalue">Place Value Columns</option>
+          </select>
+
+          <button id="expandBoardBtn" class="hidden lg:flex items-center gap-1 px-2.5 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-800 rounded-lg text-xs sm:text-sm font-bold transition" title="Expand or Restore Whiteboard Width">
+            <span id="expandBoardIcon">⤢</span>
+            <span id="expandBoardText">Expand</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick-Stamp Manipulatives & Undo/Redo/Clear Sub-bar -->
+      <div class="bg-slate-100/90 border-b border-slate-200 px-3 py-1.5 flex flex-wrap items-center justify-between gap-2 text-xs shrink-0">
+        <div class="flex items-center gap-1.5 flex-wrap">
+          <span class="font-bold text-slate-500 uppercase tracking-wider mr-1">Quick Stamp:</span>
+          <button data-stamp="numberline" class="stamp-btn px-2.5 py-1 bg-white hover:bg-indigo-50 text-slate-700 hover:text-indigo-700 font-semibold rounded-md border border-slate-300 shadow-2xs transition">
+            + Number Line
+          </button>
+          <button data-stamp="barmodel" class="stamp-btn px-2.5 py-1 bg-white hover:bg-indigo-50 text-slate-700 hover:text-indigo-700 font-semibold rounded-md border border-slate-300 shadow-2xs transition">
+            + 4-Part Bar Model
+          </button>
+          <button data-stamp="triangle" class="stamp-btn px-2.5 py-1 bg-white hover:bg-indigo-50 text-slate-700 hover:text-indigo-700 font-semibold rounded-md border border-slate-300 shadow-2xs transition">
+            + Fact Triangle
+          </button>
+          <button data-stamp="pvtable" class="stamp-btn px-2.5 py-1 bg-white hover:bg-indigo-50 text-slate-700 hover:text-indigo-700 font-semibold rounded-md border border-slate-300 shadow-2xs transition">
+            + Place Value Grid
+          </button>
+        </div>
+
+        <div class="flex items-center gap-1.5">
+          <button id="undoBtn" class="px-2.5 py-1 bg-white hover:bg-slate-200 text-slate-700 font-semibold rounded-md border border-slate-300 transition disabled:opacity-40" title="Undo">
+            ↶ Undo
+          </button>
+          <button id="redoBtn" class="px-2.5 py-1 bg-white hover:bg-slate-200 text-slate-700 font-semibold rounded-md border border-slate-300 transition disabled:opacity-40" title="Redo">
+            ↷ Redo
+          </button>
+          <button id="clearBoardBtn" class="px-2.5 py-1 bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold rounded-md border border-rose-200 transition">
+            Clear Board
+          </button>
+        </div>
+      </div>
+
+      <!-- Interactive Canvas Area -->
+      <div id="canvasWrapper" class="flex-1 relative w-full h-full overflow-hidden bg-white">
+        <canvas id="whiteboardCanvas"></canvas>
+
+        <!-- Floating Inline Text Input for Text Tool -->
+        <div id="floatingTextBox" class="hidden absolute z-30 bg-white/95 p-1.5 rounded-lg shadow-lg border-2 border-indigo-500 flex items-center gap-1">
+          <input id="floatingTextInput" type="text" placeholder="Type maths note..." class="px-2 py-1 text-lg font-bold text-slate-900 focus:outline-none w-56" />
+          <button id="confirmTextBtn" class="px-2.5 py-1 bg-indigo-600 text-white text-xs font-bold rounded">Add</button>
+          <button id="cancelTextBtn" class="px-2 py-1 bg-slate-200 text-slate-700 text-xs font-bold rounded">✕</button>
+        </div>
+
+        <!-- Subtle Canvas Hint -->
+        <div class="pointer-events-none absolute bottom-3 right-3 bg-slate-900/5 text-slate-400 text-xs font-medium px-2.5 py-1 rounded-full">
+          P6A Interactive Board • Touch &amp; Mouse Ready
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    /*************************************************************************
+     * 1. P6A 20-QUESTION DIAGNOSTIC BANK & TWIN GENERATORS
+     *************************************************************************/
+    const QUESTIONS = [
+      // --- SECTION A: NUMBER & PLACE VALUE ---
+      {
+        id: 'Q1',
+        section: 'Section A',
+        topic: 'Place Value: Writing Numbers in Digits',
+        original: {
+          prompt: 'Write the number <strong>four thousand, and sixty-eight</strong> in figures.',
+          answer: '4,068',
+          trap: '<strong>Missing Zero Placeholder:</strong> Writing <strong>468</strong> or <strong>4,680</strong> because there are no hundreds mentioned. Always put a <strong>0</strong> in the hundreds column to hold its place!',
+          steps: [
+            'Identify each place-value part: <strong>4 thousands</strong>, <strong>0 hundreds</strong>, <strong>6 tens</strong>, and <strong>8 ones</strong>.',
+            'Place <strong>0</strong> in the hundreds column so the 4 stays in the thousands column.',
+            'Write in digits: <strong>4,068</strong>.'
+          ],
+          visualType: 'pv_digits',
+          visualData: { th: 4, h: 0, t: 6, o: 8, words: 'four thousand, and sixty-eight' }
+        },
+        generateTwin() {
+          const cases = [
+            { th: 6, h: 0, t: 4, o: 2, words: 'six thousand, and forty-two' },
+            { th: 5, h: 0, t: 1, o: 9, words: 'five thousand, and nineteen' },
+            { th: 8, h: 0, t: 7, o: 5, words: 'eight thousand, and seventy-five' },
+            { th: 3, h: 0, t: 9, o: 4, words: 'three thousand, and ninety-four' }
+          ];
+          const c = cases[Math.floor(Math.random() * cases.length)];
+          const numStr = `${c.th},0${c.t}${c.o}`;
+          return {
+            prompt: `Write the number <strong>${c.words}</strong> in figures.`,
+            answer: numStr,
+            trap: `Watch out for the empty hundreds column! Use a <strong>0</strong> placeholder so the ${c.th} stays worth ${c.th},000.`,
+            steps: [
+              `Break into columns: <strong>${c.th} thousands</strong>, <strong>0 hundreds</strong>, <strong>${c.t} tens</strong>, <strong>${c.o} ones</strong>.`,
+              `Write <strong>0</strong> in the hundreds column.`,
+              `In digits: <strong>${numStr}</strong>.`
+            ],
+            visualType: 'pv_digits',
+            visualData: c
+          };
+        }
+      },
+      {
+        id: 'Q2',
+        section: 'Section A',
+        topic: 'Place Value: Value of a Digit',
+        original: {
+          prompt: 'What is the value of the underlined digit in <strong>3,<span class="underline decoration-4 decoration-indigo-600 text-indigo-800">7</span>42</strong>?<br><span class="inline-block mt-2 px-3 py-1 bg-slate-100 rounded-lg font-extrabold text-lg">7 &nbsp;&nbsp; | &nbsp;&nbsp; 70 &nbsp;&nbsp; | &nbsp;&nbsp; 700 &nbsp;&nbsp; | &nbsp;&nbsp; 7,000</span>',
+          answer: '700',
+          trap: 'Writing <strong>7</strong> (the face value of the digit) instead of <strong>700</strong> (its place value in the hundreds column).',
+          steps: [
+            'Check the column of each digit in 3,742: 3 Thousands, <strong>7 Hundreds</strong>, 4 Tens, 2 Ones.',
+            '7 in the hundreds column represents <strong>7 × 100</strong>.',
+            'The value is <strong>700</strong>.'
+          ],
+          visualType: 'pv_value',
+          visualData: { digits: [3, 7, 4, 2], highlightIdx: 1 }
+        },
+        generateTwin() {
+          const cases = [
+            { digits: [6, 4, 8, 5], highlightIdx: 1 },
+            { digits: [5, 2, 9, 3], highlightIdx: 2 },
+            { digits: [8, 3, 1, 7], highlightIdx: 0 },
+            { digits: [4, 6, 5, 9], highlightIdx: 1 }
+          ];
+          const c = cases[Math.floor(Math.random() * cases.length)];
+          const mults = [1000, 100, 10, 1];
+          const val = (c.digits[c.highlightIdx] * mults[c.highlightIdx]).toLocaleString();
+          const formatted = `${c.digits[0]},${c.digits.slice(1).map((d, idx) => (idx + 1 === c.highlightIdx) ? `<span class="underline decoration-4 decoration-indigo-600 text-indigo-800">${d}</span>` : d).join('')}`;
+          const numDisplay = c.highlightIdx === 0
+            ? `<span class="underline decoration-4 decoration-indigo-600 text-indigo-800">${c.digits[0]}</span>,${c.digits.slice(1).join('')}`
+            : formatted;
+          return {
+            prompt: `What is the value of the underlined digit in <strong>${numDisplay}</strong>?`,
+            answer: val,
+            trap: `Don't just write the digit <strong>${c.digits[c.highlightIdx]}</strong>—check which column (Th, H, T, O) it sits in!`,
+            steps: [
+              `Line up the digits in a Thousands, Hundreds, Tens, Ones grid.`,
+              `Identify the column of the underlined digit <strong>${c.digits[c.highlightIdx]}</strong>.`,
+              `Its value is <strong>${val}</strong>.`
+            ],
+            visualType: 'pv_value',
+            visualData: c
+          };
+        }
+      },
+      {
+        id: 'Q3',
+        section: 'Section A',
+        topic: 'Place Value: Multiplying & Dividing by 10 and 100',
+        original: {
+          prompt: 'Complete the missing numbers:<br>a) <strong>48 × 10 = [ ? ]</strong><br>b) <strong>6,300 ÷ 100 = [ ? ]</strong>',
+          answer: 'a) 480    b) 63',
+          trap: 'Simply "adding or crossing off zeros" without understanding place value shifting—which later causes errors with decimals. Multiplying by 10 shifts digits <strong>1 place left</strong>; dividing by 100 shifts digits <strong>2 places right</strong>.',
+          steps: [
+            '<strong>Part a:</strong> 48 × 10 shifts every digit 1 place to the left into the hundreds and tens columns → <strong>480</strong>.',
+            '<strong>Part b:</strong> 6,300 ÷ 100 shifts every digit 2 places to the right → <strong>63</strong>.',
+            'Final answers: <strong>a) 480</strong> and <strong>b) 63</strong>.'
+          ],
+          visualType: 'pv_shift_10_100',
+          visualData: { a: 48, b: 6300 }
+        },
+        generateTwin() {
+          const pairs = [
+            { a: 36, b: 4500 },
+            { a: 72, b: 8100 },
+            { a: 54, b: 2900 },
+            { a: 85, b: 7400 }
+          ];
+          const p = pairs[Math.floor(Math.random() * pairs.length)];
+          return {
+            prompt: `Complete the missing numbers:<br>a) <strong>${p.a} × 10 = [ ? ]</strong><br>b) <strong>${p.b.toLocaleString()} ÷ 100 = [ ? ]</strong>`,
+            answer: `a) ${p.a * 10}    b) ${p.b / 100}`,
+            trap: `Remember: <strong>× 10</strong> moves digits 1 place left; <strong>÷ 100</strong> moves digits 2 places right.`,
+            steps: [
+              `<strong>Part a:</strong> Shift ${p.a} one place left → <strong>${p.a * 10}</strong>.`,
+              `<strong>Part b:</strong> Shift ${p.b.toLocaleString()} two places right → <strong>${p.b / 100}</strong>.`,
+              `Answers: <strong>a) ${p.a * 10}</strong> and <strong>b) ${p.b / 100}</strong>.`
+            ],
+            visualType: 'pv_shift_10_100',
+            visualData: p
+          };
+        }
+      },
+      {
+        id: 'Q4',
+        section: 'Section A',
+        topic: 'Place Value: Ordering 4-Digit Numbers',
+        original: {
+          prompt: 'Order these numbers from <strong>smallest to largest</strong>:<br><span class="inline-block mt-2 px-3 py-1 bg-slate-100 rounded-lg font-extrabold">4,109 &nbsp; | &nbsp; 4,091 &nbsp; | &nbsp; 4,901 &nbsp; | &nbsp; 4,190</span>',
+          answer: '4,091,  4,109,  4,190,  4,901',
+          trap: 'All four numbers start with <strong>4,000</strong> and use the exact same digits (0, 1, 4, 9)! Compare from <strong>left to right</strong>: check the <strong>Hundreds</strong> column first, then the <strong>Tens</strong> column.',
+          steps: [
+            'All four numbers have <strong>4 Thousands</strong>, so compare the <strong>Hundreds</strong> digit next.',
+            '<strong>4,091</strong> has 0 hundreds (smallest). <strong>4,901</strong> has 9 hundreds (largest).',
+            'Compare the two numbers with 1 hundred (4,109 and 4,190): 0 tens is smaller than 9 tens → <strong>4,091, 4,109, 4,190, 4,901</strong>.'
+          ],
+          visualType: 'order_4digit',
+          visualData: { nums: [4109, 4091, 4901, 4190] }
+        },
+        generateTwin() {
+          const sets = [
+            [5208, 5082, 5802, 5280],
+            [3107, 3071, 3701, 3170],
+            [6409, 6094, 6904, 6490],
+            [7305, 7053, 7503, 7350]
+          ];
+          const nums = sets[Math.floor(Math.random() * sets.length)];
+          const sorted = [...nums].sort((a, b) => a - b).map(n => n.toLocaleString()).join(',  ');
+          return {
+            prompt: `Order these numbers from <strong>smallest to largest</strong>:<br><span class="inline-block mt-2 px-3 py-1 bg-slate-100 rounded-lg font-extrabold">${nums.map(n => n.toLocaleString()).join(' &nbsp; | &nbsp; ')}</span>`,
+            answer: sorted,
+            trap: `Every number has the same thousands digit—line them up vertically and compare <strong>Hundreds</strong>, then <strong>Tens</strong>!`,
+            steps: [
+              'Line up the Thousands, Hundreds, Tens, and Ones columns vertically.',
+              'Compare the Hundreds column first to find the smallest and largest.',
+              `Correct order: <strong>${sorted}</strong>.`
+            ],
+            visualType: 'order_4digit',
+            visualData: { nums }
+          };
+        }
+      },
+
+      // --- SECTION B: CALCULATION FLUENCY & INVERSE OPERATIONS ---
+      {
+        id: 'Q5',
+        section: 'Section B',
+        topic: 'Calculation Fluency: Complements to 100',
+        original: {
+          prompt: 'Fill in the missing number to make the calculation correct:<br><span class="inline-block mt-2 text-2xl sm:text-3xl font-extrabold text-indigo-900">64 + [ ? ] = 100</span>',
+          answer: '36',
+          trap: '<strong>The "110 Complement Trap":</strong> Writing <strong>46</strong> because 60 + 40 = 100 and 4 + 6 = 10 (64 + 46 = 110!). The tens digits in a complement to 100 must sum to <strong>90</strong> (not 100) because the ones already make 10!',
+          steps: [
+            'First bridge from <strong>64</strong> to the next ten (70): <strong>64 + 6 = 70</strong>.',
+            'Next jump from <strong>70</strong> up to <strong>100</strong>: <strong>70 + 30 = 100</strong>.',
+            'Combine both jumps: <strong>6 + 30 = 36</strong> (Check: 64 + 36 = 100).'
+          ],
+          visualType: 'comp_100',
+          visualData: { start: 64 }
+        },
+        generateTwin() {
+          const starts = [28, 37, 43, 52, 73, 46, 58];
+          const start = starts[Math.floor(Math.random() * starts.length)];
+          const nextTen = Math.ceil(start / 10) * 10;
+          const j1 = nextTen - start;
+          const j2 = 100 - nextTen;
+          const ans = 100 - start;
+          return {
+            prompt: `Fill in the missing number to make the calculation correct:<br><span class="inline-block mt-2 text-2xl sm:text-3xl font-extrabold text-indigo-900">${start} + [ ? ] = 100</span>`,
+            answer: `${ans}`,
+            trap: `Watch out for the <strong>110 trap</strong>! Make sure your tens digits add up to 90, plus 10 from the ones.`,
+            steps: [
+              `Bridge from <strong>${start}</strong> to <strong>${nextTen}</strong>: <strong>+${j1}</strong>.`,
+              `Jump from <strong>${nextTen}</strong> to <strong>100</strong>: <strong>+${j2}</strong>.`,
+              `Total needed: ${j1} + ${j2} = <strong>${ans}</strong>.`
+            ],
+            visualType: 'comp_100',
+            visualData: { start }
+          };
+        }
+      },
+      {
+        id: 'Q6',
+        section: 'Section B',
+        topic: 'Calculation: Difference / Subtraction Across Zero',
+        original: {
+          prompt: 'Calculate the <strong>difference</strong> between <strong>503</strong> and <strong>268</strong>.',
+          answer: '235',
+          trap: '<strong>Subtraction Reversal & Zero Exchange:</strong> Reversing 3 − 8 to get 5 in the ones without exchanging across the zero in 503. Counting up on a number line from 268 to 503 prevents zero-exchange mistakes!',
+          steps: [
+            '<strong>Difference</strong> means subtract (or find the distance between 268 and 503).',
+            'Bridge up on a number line: <strong>268 + 2 = 270</strong>, then <strong>270 + 30 = 300</strong>, then <strong>300 + 203 = 503</strong>.',
+            'Add the jumps: <strong>2 + 30 + 203 = 235</strong>.'
+          ],
+          visualType: 'sub_bridge',
+          visualData: { a: 503, b: 268 }
+        },
+        generateTwin() {
+          const pairs = [[402, 157], [605, 248], [504, 179], [701, 346]];
+          const [a, b] = pairs[Math.floor(Math.random() * pairs.length)];
+          const diff = a - b;
+          return {
+            prompt: `Calculate the <strong>difference</strong> between <strong>${a}</strong> and <strong>${b}</strong>.`,
+            answer: `${diff}`,
+            trap: `Never subtract the top digit from the bottom digit! Use a counting-up number line from <strong>${b}</strong> to <strong>${a}</strong>.`,
+            steps: [
+              `<strong>Difference</strong> means find the gap between <strong>${b}</strong> and <strong>${a}</strong>.`,
+              `Bridge to the next ten, then the next hundred, then jump to <strong>${a}</strong>.`,
+              `Combine the jumps to get <strong>${diff}</strong>.`
+            ],
+            visualType: 'sub_bridge',
+            visualData: { a, b }
+          };
+        }
+      },
+      {
+        id: 'Q7',
+        section: 'Section B',
+        topic: 'Calculation: Fact Families & Scaling by 10',
+        original: {
+          prompt: 'Use the fact <strong>7 × 8 = 56</strong> to complete this fact family:<br>a) <strong>8 × 7 = [ ? ]</strong><br>b) <strong>56 ÷ 8 = [ ? ]</strong><br>c) <strong>70 × 8 = [ ? ]</strong>',
+          answer: 'a) 56    b) 7    c) 560',
+          trap: 'Commutativity means 8 × 7 gives the exact same product (56). For part c, <strong>70</strong> is 10 times bigger than 7, so the answer is 10 times bigger than 56 (<strong>560</strong>)!',
+          steps: [
+            '<strong>a)</strong> Multiplication is commutative: <strong>8 × 7 = 56</strong>.',
+            '<strong>b)</strong> Use the inverse division fact: <strong>56 ÷ 8 = 7</strong>.',
+            '<strong>c)</strong> 70 is 7 × 10, so 70 × 8 is 10 times larger than 56 → <strong>560</strong>.'
+          ],
+          visualType: 'fact_scale',
+          visualData: { left: 7, right: 8, top: 56 }
+        },
+        generateTwin() {
+          const fams = [
+            { left: 6, right: 9, top: 54 },
+            { left: 6, right: 7, top: 42 },
+            { left: 8, right: 9, top: 72 },
+            { left: 4, right: 8, top: 32 }
+          ];
+          const f = fams[Math.floor(Math.random() * fams.length)];
+          return {
+            prompt: `Use the fact <strong>${f.left} × ${f.right} = ${f.top}</strong> to complete this fact family:<br>a) <strong>${f.right} × ${f.left} = [ ? ]</strong><br>b) <strong>${f.top} ÷ ${f.right} = [ ? ]</strong><br>c) <strong>${f.left * 10} × ${f.right} = [ ? ]</strong>`,
+            answer: `a) ${f.top}    b) ${f.left}    c) ${f.top * 10}`,
+            trap: `Use the known fact <strong>${f.left} × ${f.right} = ${f.top}</strong>—you don't need to count from zero!`,
+            steps: [
+              `<strong>a)</strong> Swap the factors: <strong>${f.right} × ${f.left} = ${f.top}</strong>.`,
+              `<strong>b)</strong> Divide the total by ${f.right}: <strong>${f.top} ÷ ${f.right} = ${f.left}</strong>.`,
+              `<strong>c)</strong> Scale by 10: <strong>${f.left * 10} × ${f.right} = ${f.top * 10}</strong>.`
+            ],
+            visualType: 'fact_scale',
+            visualData: f
+          };
+        }
+      },
+      {
+        id: 'Q8',
+        section: 'Section B',
+        topic: 'Inverse Operations: Working Backwards',
+        original: {
+          prompt: 'Eabha thinks of a number. She subtracts <strong>25</strong> from it and gets <strong>48</strong>.<br><span class="inline-block mt-2 text-2xl font-extrabold text-indigo-900">[ ? ] − 25 = 48</span><br>What number did Eabha start with?',
+          answer: '73',
+          trap: '<strong>Subtracting Instead of Using the Inverse:</strong> Computing 48 − 25 = 23! If you subtract 25 from 23, you cannot get 48—the starting whole must be <strong>larger</strong> than 48, so use the inverse (<strong>48 + 25</strong>)!',
+          steps: [
+            'Draw a part-whole bar model: the starting number is the <strong>whole</strong>; 25 and 48 are the two parts.',
+            'To find the missing whole, use the inverse of subtraction (addition): <strong>48 + 25</strong>.',
+            'Calculate <strong>48 + 20 = 68</strong>, then <strong>68 + 5 = 73</strong> (Check: 73 − 25 = 48).'
+          ],
+          visualType: 'inverse_bar',
+          visualData: { sub: 25, res: 48 }
+        },
+        generateTwin() {
+          const pairs = [
+            { sub: 18, res: 37 },
+            { sub: 24, res: 59 },
+            { sub: 35, res: 46 },
+            { sub: 29, res: 54 }
+          ];
+          const p = pairs[Math.floor(Math.random() * pairs.length)];
+          const whole = p.sub + p.res;
+          return {
+            prompt: `A pupil thinks of a number, subtracts <strong>${p.sub}</strong> from it, and gets <strong>${p.res}</strong>.<br><span class="inline-block mt-2 text-2xl font-extrabold text-indigo-900">[ ? ] − ${p.sub} = ${p.res}</span><br>What number did they start with?`,
+            answer: `${whole}`,
+            trap: `Check your answer at the end! If you subtract ${p.sub} from your answer, do you get ${p.res}? Use the <strong>inverse (+)</strong>!`,
+            steps: [
+              `The starting number is the whole before ${p.sub} was taken away.`,
+              `Use the inverse operation (add): <strong>${p.res} + ${p.sub}</strong>.`,
+              `Answer = <strong>${whole}</strong> (Check: ${whole} − ${p.sub} = ${p.res}).`
+            ],
+            visualType: 'inverse_bar',
+            visualData: p
+          };
+        }
+      },
+
+      // --- SECTION C: FRACTIONS ---
+      {
+        id: 'Q9',
+        section: 'Section C',
+        topic: 'Fractions: Simplifying Equivalent Fractions',
+        original: {
+          prompt: 'A rectangle is split into <strong>8 equal parts</strong>, and <strong>6 parts</strong> are shaded. What fraction of the shape is shaded? Write your answer in its <strong>simplest</strong> form.',
+          answer: '3/4   (6/8 simplified)',
+          trap: 'Stopping at <strong>6/8</strong> without simplifying! Divide both the numerator (6) and denominator (8) by 2 to find the simplest equivalent fraction (<strong>3/4</strong>).',
+          steps: [
+            'First write the fraction of shaded parts out of the total: <strong>6/8</strong>.',
+            'Divide both top and bottom by their common factor <strong>2</strong>: <strong>6 ÷ 2 = 3</strong> and <strong>8 ÷ 2 = 4</strong>.',
+            'In simplest form, <strong>3/4</strong> of the rectangle is shaded.'
+          ],
+          visualType: 'simplify_bar',
+          visualData: { shaded: 6, total: 8, simpNum: 3, simpDen: 4 }
+        },
+        generateTwin() {
+          const cases = [
+            { shaded: 4, total: 6, simpNum: 2, simpDen: 3 },
+            { shaded: 4, total: 8, simpNum: 1, simpDen: 2 },
+            { shaded: 6, total: 10, simpNum: 3, simpDen: 5 },
+            { shaded: 2, total: 8, simpNum: 1, simpDen: 4 }
+          ];
+          const c = cases[Math.floor(Math.random() * cases.length)];
+          return {
+            prompt: `A rectangle is split into <strong>${c.total} equal parts</strong>, and <strong>${c.shaded} parts</strong> are shaded. Write the shaded fraction in its <strong>simplest</strong> form.`,
+            answer: `${c.simpNum}/${c.simpDen}   (${c.shaded}/${c.total} simplified)`,
+            trap: `Don't stop at <strong>${c.shaded}/${c.total}</strong>—check if both top and bottom can be divided by the same number!`,
+            steps: [
+              `Write the initial fraction: <strong>${c.shaded}/${c.total}</strong>.`,
+              `Divide numerator and denominator by their common factor.`,
+              `Simplest form: <strong>${c.simpNum}/${c.simpDen}</strong>.`
+            ],
+            visualType: 'simplify_bar',
+            visualData: c
+          };
+        }
+      },
+      {
+        id: 'Q10',
+        section: 'Section C',
+        topic: 'Fractions: Complements to Make One Whole',
+        original: {
+          prompt: 'Complete the fraction to make <strong>one whole</strong>:<br><span class="inline-block mt-2 text-2xl sm:text-3xl font-extrabold text-indigo-900">3/8 + [ ? ] = 1</span>',
+          answer: '5/8',
+          trap: 'Writing <strong>5</strong> (a whole number instead of a fraction) or changing the denominator to 16! Remember: <strong>1 whole = 8/8</strong>, so 3 eighths + 5 eighths = 8 eighths.',
+          steps: [
+            'Rewrite <strong>1 whole</strong> using eighths: <strong>1 = 8/8</strong>.',
+            'Subtract the shaded parts from the whole: <strong>8/8 − 3/8 = 5/8</strong>.',
+            'The missing fraction is <strong>5/8</strong>.'
+          ],
+          visualType: 'frac_whole',
+          visualData: { num: 3, den: 8 }
+        },
+        generateTwin() {
+          const cases = [
+            { num: 2, den: 5 },
+            { num: 3, den: 10 },
+            { num: 1, den: 4 },
+            { num: 4, den: 7 },
+            { num: 5, den: 9 }
+          ];
+          const c = cases[Math.floor(Math.random() * cases.length)];
+          const rem = c.den - c.num;
+          return {
+            prompt: `Complete the fraction to make <strong>one whole</strong>:<br><span class="inline-block mt-2 text-2xl sm:text-3xl font-extrabold text-indigo-900">${c.num}/${c.den} + [ ? ] = 1</span>`,
+            answer: `${rem}/${c.den}`,
+            trap: `Keep the denominator <strong>${c.den}</strong> the same! 1 whole is equal to <strong>${c.den}/${c.den}</strong>.`,
+            steps: [
+              `Write 1 whole in ${c.den}ths: <strong>1 = ${c.den}/${c.den}</strong>.`,
+              `Find how many more ${c.den}ths are needed: <strong>${c.den} − ${c.num} = ${rem}</strong>.`,
+              `Missing fraction: <strong>${rem}/${c.den}</strong>.`
+            ],
+            visualType: 'frac_whole',
+            visualData: c
+          };
+        }
+      },
+      {
+        id: 'Q11',
+        section: 'Section C',
+        topic: 'Fractions: Finding a Non-Unit Fraction of an Amount',
+        original: {
+          prompt: 'Calculate <strong>3/4 of 36</strong>.',
+          answer: '27',
+          trap: 'Stopping after dividing by 4 (writing <strong>9</strong>, which is only 1/4) or combining digits to write <strong>34</strong>. Always <strong>divide by the denominator (4), then multiply by the numerator (3)</strong>!',
+          steps: [
+            '<strong>Step 1 (Find 1/4):</strong> Share 36 equally into 4 parts: <strong>36 ÷ 4 = 9</strong>.',
+            '<strong>Step 2 (Find 3/4):</strong> Take 3 of those equal parts: <strong>9 × 3 = 27</strong>.',
+            'So <strong>3/4 of 36 = 27</strong>.'
+          ],
+          visualType: 'frac_amount',
+          visualData: { num: 3, den: 4, whole: 36 }
+        },
+        generateTwin() {
+          const cases = [
+            { num: 3, den: 4, whole: 28 },
+            { num: 3, den: 4, whole: 32 },
+            { num: 2, den: 3, whole: 24 },
+            { num: 3, den: 5, whole: 30 },
+            { num: 2, den: 5, whole: 35 }
+          ];
+          const c = cases[Math.floor(Math.random() * cases.length)];
+          const unit = c.whole / c.den;
+          const ans = unit * c.num;
+          return {
+            prompt: `Calculate <strong>${c.num}/${c.den} of ${c.whole}</strong>.`,
+            answer: `${ans}`,
+            trap: `Two steps: 1) Divide by the bottom number (<strong>${c.whole} ÷ ${c.den}</strong>). 2) Multiply by the top number (<strong>× ${c.num}</strong>).`,
+            steps: [
+              `<strong>Step 1:</strong> Find 1/${c.den} of ${c.whole}: <strong>${c.whole} ÷ ${c.den} = ${unit}</strong>.`,
+              `<strong>Step 2:</strong> Multiply by ${c.num}: <strong>${unit} × ${c.num} = ${ans}</strong>.`,
+              `Answer: <strong>${ans}</strong>.`
+            ],
+            visualType: 'frac_amount',
+            visualData: c
+          };
+        }
+      },
+      {
+        id: 'Q12',
+        section: 'Section C',
+        topic: 'Fractions: Comparing & Ordering Fractions',
+        original: {
+          prompt: 'Which is the <strong>largest</strong> fraction in each pair?<br>a) <strong>1/3</strong> &nbsp; or &nbsp; <strong>1/5</strong><br>b) <strong>3/4</strong> &nbsp; or &nbsp; <strong>5/8</strong>',
+          answer: 'a) 1/3     b) 3/4',
+          trap: '<strong>Denominator Fallacy:</strong> Thinking 1/5 is bigger than 1/3 because 5 > 3! When sharing one pizza, cutting it into 3 slices gives bigger slices than cutting it into 5. For part b, convert <strong>3/4 = 6/8</strong> so both have the same denominator!',
+          steps: [
+            '<strong>Part a:</strong> Fewer equal pieces means larger pieces, so <strong>1/3 > 1/5</strong>.',
+            '<strong>Part b:</strong> Convert 3/4 into eighths by multiplying top and bottom by 2: <strong>3/4 = 6/8</strong>.',
+            'Compare <strong>6/8</strong> and <strong>5/8</strong> → <strong>3/4</strong> (6/8) is larger.'
+          ],
+          visualType: 'compare_fracs',
+          visualData: { a1: [1, 3], a2: [1, 5], b1: [3, 4], b2: [5, 8] }
+        },
+        generateTwin() {
+          const cases = [
+            { a1: [1, 4], a2: [1, 6], b1: [2, 3], b2: [5, 6] },
+            { a1: [1, 2], a2: [1, 4], b1: [3, 5], b2: [7, 10] },
+            { a1: [1, 3], a2: [1, 8], b1: [1, 2], b2: [3, 8] }
+          ];
+          const c = cases[Math.floor(Math.random() * cases.length)];
+          return {
+            prompt: `Which is the <strong>largest</strong> fraction in each pair?<br>a) <strong>${c.a1[0]}/${c.a1[1]}</strong> &nbsp; or &nbsp; <strong>${c.a2[0]}/${c.a2[1]}</strong><br>b) <strong>${c.b1[0]}/${c.b1[1]}</strong> &nbsp; or &nbsp; <strong>${c.b2[0]}/${c.b2[1]}</strong>`,
+            answer: `a) ${c.a1[0]}/${c.a1[1]}     b) ${c.b1[0]}/${c.b1[1]}`,
+            trap: `Larger denominator = smaller slices! In part b, turn both fractions into the <strong>same denominator</strong> first.`,
+            steps: [
+              `<strong>Part a:</strong> ${c.a1[1]} equal slices are bigger than ${c.a2[1]} equal slices → <strong>${c.a1[0]}/${c.a1[1]}</strong>.`,
+              `<strong>Part b:</strong> Convert <strong>${c.b1[0]}/${c.b1[1]}</strong> to have a denominator of ${c.b2[1]}.`,
+              `Largest in part b is <strong>${c.b1[0]}/${c.b1[1]}</strong>.`
+            ],
+            visualType: 'compare_fracs',
+            visualData: c
+          };
+        }
+      },
+
+      // --- SECTION D: MEASURES — TIME, MONEY & UNITS ---
+      {
+        id: 'Q13',
+        section: 'Section D',
+        topic: 'Measures: Multi-Step Money & Change',
+        original: {
+          prompt: 'Noah buys a sandwich for <strong>£2.45</strong> and a bottle of water for <strong>85p</strong>. How much <strong>change</strong> does he get from a <strong>£5.00</strong> note?',
+          answer: '£1.70',
+          trap: '<strong>Two Common Traps:</strong> 1) Mixing pounds and pence (£2.45 + £85!). 2) Stopping after finding the total cost (£3.30) or falling into the £2.70 "110 trap" when subtracting from £5.00.',
+          steps: [
+            '<strong>Step 1 (Total Cost):</strong> Convert 85p to £0.85 and add: <strong>£2.45 + £0.85 = £3.30</strong>.',
+            '<strong>Step 2 (Bridge to £5.00):</strong> Jump from <strong>£3.30</strong> to £4.00 (<strong>+70p</strong>), then £4.00 to £5.00 (<strong>+£1.00</strong>).',
+            'Total change = <strong>£1.70</strong>.'
+          ],
+          visualType: 'money_2step',
+          visualData: { item1: 245, item2: 85, paid: 500 }
+        },
+        generateTwin() {
+          const cases = [
+            { item1: 235, item2: 95, paid: 500 },
+            { item1: 165, item2: 75, paid: 500 },
+            { item1: 315, item2: 65, paid: 500 },
+            { item1: 275, item2: 85, paid: 500 }
+          ];
+          const c = cases[Math.floor(Math.random() * cases.length)];
+          const total = c.item1 + c.item2;
+          const change = c.paid - total;
+          return {
+            prompt: `A pupil buys a wrap for <strong>£${(c.item1/100).toFixed(2)}</strong> and juice for <strong>${c.item2}p</strong>. How much <strong>change</strong> from a <strong>£5.00</strong> note?`,
+            answer: `£${(change/100).toFixed(2)}`,
+            trap: `Convert <strong>${c.item2}p</strong> into pounds (<strong>£0.${c.item2}</strong>) before adding, then subtract the total from £5.00!`,
+            steps: [
+              `<strong>Step 1:</strong> Add total spent: £${(c.item1/100).toFixed(2)} + £0.${c.item2} = <strong>£${(total/100).toFixed(2)}</strong>.`,
+              `<strong>Step 2:</strong> Bridge from £${(total/100).toFixed(2)} up to £5.00.`,
+              `Change = <strong>£${(change/100).toFixed(2)}</strong>.`
+            ],
+            visualType: 'money_2step',
+            visualData: c
+          };
+        }
+      },
+      {
+        id: 'Q14',
+        section: 'Section D',
+        topic: 'Measures: Time & Bridging Through the Hour',
+        original: {
+          prompt: 'A swimming lesson starts at <strong>10:40 am</strong> and lasts for <strong>45 minutes</strong>. What time does the lesson finish?',
+          answer: '11:25 am',
+          trap: '<strong>Base-100 Time Trap:</strong> Adding 40 + 45 = 85 to write <strong>10:85 am</strong>! Remember there are <strong>60 minutes</strong> in an hour—split the 45 minutes into <strong>20 mins</strong> (to reach 11:00 am) + <strong>25 mins</strong>!',
+          steps: [
+            'Split 45 minutes into two friendly jumps using <strong>11:00 am</strong> as the bridge.',
+            '<strong>Jump 1:</strong> From 10:40 am to 11:00 am uses <strong>20 minutes</strong> (45 − 20 = 25 mins left).',
+            '<strong>Jump 2:</strong> Add the remaining 25 minutes after 11:00 am → <strong>11:25 am</strong>.'
+          ],
+          visualType: 'time_add',
+          visualData: { startH: 10, startM: 40, dur: 45 }
+        },
+        generateTwin() {
+          const cases = [
+            { startH: 9, startM: 45, dur: 35 },
+            { startH: 10, startM: 35, dur: 45 },
+            { startH: 11, startM: 50, dur: 30 },
+            { startH: 8, startM: 40, dur: 50 }
+          ];
+          const c = cases[Math.floor(Math.random() * cases.length)];
+          const toHour = 60 - c.startM;
+          const rem = c.dur - toHour;
+          const endH = c.startH + 1;
+          const pad = (m) => m < 10 ? '0' + m : m;
+          return {
+            prompt: `A music lesson starts at <strong>${c.startH}:${pad(c.startM)} am</strong> and lasts for <strong>${c.dur} minutes</strong>. What time does it finish?`,
+            answer: `${endH}:${pad(rem)} am`,
+            trap: `There are <strong>60 minutes</strong> in an hour—never go past :60! Bridge to <strong>${endH}:00 am</strong> first.`,
+            steps: [
+              `Jump from ${c.startH}:${pad(c.startM)} to <strong>${endH}:00 am</strong> = <strong>${toHour} mins</strong>.`,
+              `Remaining minutes to add: ${c.dur} − ${toHour} = <strong>${rem} mins</strong>.`,
+              `Finish time: <strong>${endH}:${pad(rem)} am</strong>.`
+            ],
+            visualType: 'time_add',
+            visualData: c
+          };
+        }
+      },
+      {
+        id: 'Q15',
+        section: 'Section D',
+        topic: 'Measures: Converting Metric Units (km/m & cm/m)',
+        original: {
+          prompt: 'Convert these measurements:<br>a) <strong>3.5 km = [ ? ] m</strong><br>b) <strong>450 cm = [ ? ] m</strong>',
+          answer: 'a) 3,500 m     b) 4.5 m',
+          trap: 'Dropping the decimal point blindly (writing <strong>35 m</strong> instead of <strong>3,500 m</strong>). Remember: <strong>1 km = 1,000 m</strong> (× 1,000) and <strong>1 m = 100 cm</strong> (÷ 100)!',
+          steps: [
+            '<strong>Part a (km → m):</strong> 1 km = 1,000 m, so multiply 3.5 × 1,000 (shift 3 places left) → <strong>3,500 m</strong>.',
+            '<strong>Part b (cm → m):</strong> 100 cm = 1 m, so divide 450 ÷ 100 (shift 2 places right) → <strong>4.5 m</strong>.',
+            'Answers: <strong>a) 3,500 m</strong> and <strong>b) 4.5 m</strong>.'
+          ],
+          visualType: 'metric_conv',
+          visualData: { km: 3.5, cm: 450 }
+        },
+        generateTwin() {
+          const cases = [
+            { km: 2.5, cm: 350 },
+            { km: 4.5, cm: 650 },
+            { km: 1.5, cm: 250 },
+            { km: 6.5, cm: 850 }
+          ];
+          const c = cases[Math.floor(Math.random() * cases.length)];
+          return {
+            prompt: `Convert these measurements:<br>a) <strong>${c.km} km = [ ? ] m</strong><br>b) <strong>${c.cm} cm = [ ? ] m</strong>`,
+            answer: `a) ${(c.km * 1000).toLocaleString()} m     b) ${c.cm / 100} m`,
+            trap: `<strong>1 km = 1,000 m</strong> and <strong>1 m = 100 cm</strong>—use place-value shifting rather than just removing dots!`,
+            steps: [
+              `<strong>Part a:</strong> ${c.km} × 1,000 = <strong>${(c.km * 1000).toLocaleString()} m</strong>.`,
+              `<strong>Part b:</strong> ${c.cm} ÷ 100 = <strong>${c.cm / 100} m</strong>.`,
+              `Answers: <strong>a) ${(c.km * 1000).toLocaleString()} m</strong> and <strong>b) ${c.cm / 100} m</strong>.`
+            ],
+            visualType: 'metric_conv',
+            visualData: c
+          };
+        }
+      },
+      {
+        id: 'Q16',
+        section: 'Section D',
+        topic: 'Measures: Selecting Appropriate Units',
+        original: {
+          prompt: 'Which is the most sensible unit to measure the <strong>mass of a schoolbag</strong> full of books?<br><span class="inline-block mt-2 px-3 py-1 bg-slate-100 rounded-lg font-extrabold text-lg">grams (g) &nbsp; | &nbsp; kilograms (kg) &nbsp; | &nbsp; litres (l) &nbsp; | &nbsp; metres (m)</span>',
+          answer: 'kilograms (kg)',
+          trap: 'Confusing capacity (litres) or length (metres) with <strong>mass</strong>, or choosing grams (used for light items like a pencil or crisp packet). A bag of books weighs about 3–5 <strong>kilograms (kg)</strong>.',
+          steps: [
+            'Rule out units that do not measure mass: <strong>litres</strong> measure capacity (liquid) and <strong>metres</strong> measure length.',
+            'Compare <strong>grams (g)</strong> (a paperclip ≈ 1 g) vs <strong>kilograms (kg)</strong> (a bag of sugar = 1 kg).',
+            'A schoolbag full of books is measured in <strong>kilograms (kg)</strong>.'
+          ],
+          visualType: 'unit_bench',
+          visualData: { object: 'Schoolbag full of books', targetUnit: 'kilograms (kg)' }
+        },
+        generateTwin() {
+          const cases = [
+            { object: 'Carton of milk', targetUnit: 'litres (l)' },
+            { object: 'Single pencil', targetUnit: 'grams (g)' },
+            { object: 'Length of the classroom', targetUnit: 'metres (m)' }
+          ];
+          const c = cases[Math.floor(Math.random() * cases.length)];
+          return {
+            prompt: `Which is the most sensible unit to measure a <strong>${c.object}</strong>?<br><span class="inline-block mt-2 px-3 py-1 bg-slate-100 rounded-lg font-extrabold text-lg">grams (g) &nbsp; | &nbsp; kilograms (kg) &nbsp; | &nbsp; litres (l) &nbsp; | &nbsp; metres (m)</span>`,
+            answer: c.targetUnit,
+            trap: `Match the attribute first: Mass (g / kg), Capacity/Liquid (ml / l), Length (cm / m)!`,
+            steps: [
+              'Identify whether we are measuring mass, liquid capacity, or length.',
+              'Compare everyday benchmarks (1 kg bag of sugar, 1 l bottle, 1 m ruler).',
+              `Best unit: <strong>${c.targetUnit}</strong>.`
+            ],
+            visualType: 'unit_bench',
+            visualData: c
+          };
+        }
+      },
+
+      // --- SECTION E: MATHEMATICAL LANGUAGE, REASONING & MULTI-STEP ---
+      {
+        id: 'Q17',
+        section: 'Section E',
+        topic: 'Mathematical Vocabulary: Product',
+        original: {
+          prompt: 'What is the <strong>product</strong> of <strong>9</strong> and <strong>6</strong>?',
+          answer: '54',
+          trap: '<strong>Vocabulary Confusion:</strong> Adding 9 + 6 = 15 (which is the <em>sum</em>) or subtracting 9 − 6 = 3 (the <em>difference</em>). In maths, <strong>PRODUCT</strong> always means <strong>MULTIPLY (×)</strong>!',
+          steps: [
+            'Recall the key vocabulary word: <strong>Product = Multiply (×)</strong>.',
+            'Set up the multiplication: <strong>9 × 6</strong>.',
+            'Calculate <strong>9 × 6 = 54</strong>.'
+          ],
+          visualType: 'vocab_card',
+          visualData: { word: 'PRODUCT', meaning: 'Multiply (×)', a: 9, b: 6, op: '×', res: 54 }
+        },
+        generateTwin() {
+          const cases = [
+            { a: 7, b: 8, res: 56 },
+            { a: 8, b: 6, res: 48 },
+            { a: 9, b: 7, res: 63 },
+            { a: 8, b: 4, res: 32 }
+          ];
+          const c = cases[Math.floor(Math.random() * cases.length)];
+          return {
+            prompt: `What is the <strong>product</strong> of <strong>${c.a}</strong> and <strong>${c.b}</strong>?`,
+            answer: `${c.res}`,
+            trap: `<strong>Sum</strong> means add (+), <strong>Difference</strong> means subtract (−), and <strong>Product</strong> means multiply (×)!`,
+            steps: [
+              `<strong>Product</strong> means multiply the two numbers together.`,
+              `Calculate <strong>${c.a} × ${c.b}</strong>.`,
+              `Answer = <strong>${c.res}</strong>.`
+            ],
+            visualType: 'vocab_card',
+            visualData: { word: 'PRODUCT', meaning: 'Multiply (×)', a: c.a, b: c.b, op: '×', res: c.res }
+          };
+        }
+      },
+      {
+        id: 'Q18',
+        section: 'Section E',
+        topic: 'Error Analysis: Subtraction Reversal Trap',
+        original: {
+          prompt: '<strong>Spot the Mistake:</strong> A pupil solved <strong>72 − 38</strong> and wrote the answer <strong>46</strong>.<br>Explain what mistake was made and find the correct answer.',
+          answer: '34   (Reversed 2 − 8 to do 8 − 2 = 6)',
+          trap: '<strong>Classic Subtraction Reversal Error:</strong> Doing 70 − 30 = 40 and flipping the ones digits (<strong>8 − 2 = 6</strong>) to get 46! You cannot swap digits upside-down in subtraction—you must regroup/bridge!',
+          steps: [
+            '<strong>Identify the Mistake:</strong> In the ones column, instead of exchanging a ten for 2 − 8, the digits were swapped backwards (<strong>8 − 2 = 6</strong>) and combined with 70 − 30 = 40.',
+            '<strong>Correct Method (Bridge / Exchange):</strong> 72 − 30 = 42, then 42 − 8 = <strong>34</strong>.',
+            'Correct Answer: <strong>34</strong>.'
+          ],
+          visualType: 'spot_mistake',
+          visualData: { a: 72, b: 38, wrong: 46, right: 34 }
+        },
+        generateTwin() {
+          const cases = [
+            { a: 63, b: 27, wrong: 44, right: 36 },
+            { a: 81, b: 46, wrong: 45, right: 35 },
+            { a: 54, b: 19, wrong: 45, right: 35 }
+          ];
+          const c = cases[Math.floor(Math.random() * cases.length)];
+          return {
+            prompt: `<strong>Spot the Mistake:</strong> A pupil solved <strong>${c.a} − ${c.b}</strong> and wrote <strong>${c.wrong}</strong>.<br>Explain what mistake was made and find the correct answer.`,
+            answer: `${c.right}`,
+            trap: `Look at the ones column! Did they subtract bottom-from-top instead of regrouping?`,
+            steps: [
+              `<strong>Mistake:</strong> Subtracted the ones digits backwards instead of regrouping a ten.`,
+              `<strong>Correct Method:</strong> Partition ${c.b} and subtract tens first, then ones.`,
+              `Correct Answer: <strong>${c.right}</strong>.`
+            ],
+            visualType: 'spot_mistake',
+            visualData: c
+          };
+        }
+      },
+      {
+        id: 'Q19',
+        section: 'Section E',
+        topic: 'Multi-Step Word Problem: Grouping & Remaining',
+        original: {
+          prompt: 'A baker makes <strong>48 buns</strong>. She puts them into <strong>boxes of 6</strong>. She sells <strong>5 boxes</strong>. How many <strong>buns</strong> are <strong>remaining</strong>?',
+          answer: '18 buns',
+          trap: '<strong>Unit Mismatch Trap:</strong> Stopping at <strong>3</strong> (the number of <em>boxes</em> remaining) instead of converting back into <strong>buns</strong> (3 boxes × 6 buns = 18 buns)! Always check the unit in the final question.',
+          steps: [
+            '<strong>Step 1 (Total Boxes):</strong> Divide 48 buns into boxes of 6: <strong>48 ÷ 6 = 8 boxes</strong>.',
+            '<strong>Step 2 (Boxes Remaining):</strong> Subtract the 5 boxes sold: <strong>8 − 5 = 3 boxes remaining</strong>.',
+            '<strong>Step 3 (Convert to Buns):</strong> 3 boxes × 6 buns in each box = <strong>18 buns</strong>.'
+          ],
+          visualType: 'multistep_boxes',
+          visualData: { total: 48, perBox: 6, soldBoxes: 5 }
+        },
+        generateTwin() {
+          const cases = [
+            { total: 40, perBox: 5, soldBoxes: 5 },
+            { total: 36, perBox: 6, soldBoxes: 4 },
+            { total: 56, perBox: 8, soldBoxes: 4 }
+          ];
+          const c = cases[Math.floor(Math.random() * cases.length)];
+          const totalBoxes = c.total / c.perBox;
+          const remBoxes = totalBoxes - c.soldBoxes;
+          const remItems = remBoxes * c.perBox;
+          return {
+            prompt: `A baker makes <strong>${c.total} cookies</strong>, puts them into <strong>packs of ${c.perBox}</strong>, and sells <strong>${c.soldBoxes} packs</strong>. How many <strong>cookies</strong> are <strong>remaining</strong>?`,
+            answer: `${remItems} cookies`,
+            trap: `Read the final word carefully: it asks how many <strong>cookies</strong> (not packs!) are remaining.`,
+            steps: [
+              `<strong>Step 1:</strong> ${c.total} ÷ ${c.perBox} = <strong>${totalBoxes} packs</strong> made.`,
+              `<strong>Step 2:</strong> ${totalBoxes} − ${c.soldBoxes} = <strong>${remBoxes} packs</strong> remaining.`,
+              `<strong>Step 3:</strong> ${remBoxes} × ${c.perBox} = <strong>${remItems} cookies</strong>.`
+            ],
+            visualType: 'multistep_boxes',
+            visualData: c
+          };
+        }
+      },
+      {
+        id: 'Q20',
+        section: 'Section E',
+        topic: 'Mathematical Reasoning: Always, Sometimes, or Never',
+        original: {
+          prompt: 'A pupil says: <em>"If you multiply an even number by 5, the answer always ends in 0."</em><br>Is this <strong>Always, Sometimes, or Never</strong> correct? Prove it with two examples.',
+          answer: 'Always   (e.g. 4 × 5 = 20,  12 × 5 = 60)',
+          trap: 'Guessing "Sometimes" without testing multiple even numbers! Any even number is a multiple of 2 (2 × something), and <strong>2 × 5 = 10</strong>, so multiplying any even number by 5 always makes a multiple of 10 (ending in 0)!',
+          steps: [
+            'Test several even numbers multiplied by 5: <strong>2 × 5 = 10</strong>, <strong>4 × 5 = 20</strong>, <strong>6 × 5 = 30</strong>, <strong>12 × 5 = 60</strong>.',
+            'Every product ends in <strong>0</strong> because every even number has a factor of 2, and <strong>2 × 5 = 10</strong>.',
+            'Conclusion: The statement is <strong>ALWAYS</strong> true.'
+          ],
+          visualType: 'asn_tester',
+          visualData: { mode: 'even_x_5' }
+        },
+        generateTwin() {
+          return {
+            prompt: 'A pupil says: <em>"If you add two odd numbers together, the answer is always an even number."</em><br>Is this <strong>Always, Sometimes, or Never</strong> correct? Prove it with two examples.',
+            answer: 'Always   (e.g. 3 + 5 = 8,  7 + 9 = 16)',
+            trap: `Test at least two or three pairs of odd numbers—the two "leftover ones" pair up to make an even total every time!`,
+            steps: [
+              'Test pairs of odd numbers: <strong>3 + 5 = 8</strong> (even), <strong>7 + 9 = 16</strong> (even), <strong>11 + 13 = 24</strong> (even).',
+              'Each odd number has 1 extra beyond a pair; 1 + 1 = 2, making an exact pair.',
+              'Conclusion: The statement is <strong>ALWAYS</strong> true.'
+            ],
+            visualType: 'asn_tester',
+            visualData: { mode: 'odd_plus_odd' }
+          };
+        }
+      }
+    ];
+
+    /*************************************************************************
+     * 2. APPLICATION STATE (STRICT ZERO-SPOILER DEFAULTS)
+     *************************************************************************/
+    let currentIndex = 0;
+    let isTwinMode = false;
+    let activeQuestionData = QUESTIONS[0].original;
+    let currentStage = 1; // 1 = Pupil Try, 2 = Visual Hint, 3 = Reveal Answer & Steps
+    let revealedStepCount = 0;
+    let isFinalRevealed = false;
+    let isBoardExpanded = false;
+
+    // DOM Elements
+    const questionPillsEl = document.getElementById('questionPills');
+    const qBadgeEl = document.getElementById('qBadge');
+    const qSectionBadgeEl = document.getElementById('qSectionBadge');
+    const qTopicEl = document.getElementById('qTopic');
+    const modeBannerEl = document.getElementById('modeBanner');
+    const questionPromptEl = document.getElementById('questionPrompt');
+    const stageStatusLabel = document.getElementById('stageStatusLabel');
+    const stage1Btn = document.getElementById('stage1Btn');
+    const stage2Btn = document.getElementById('stage2Btn');
+    const stage3Btn = document.getElementById('stage3Btn');
+    const visualCardTitle = document.getElementById('visualCardTitle');
+    const visualCardHint = document.getElementById('visualCardHint');
+    const trapToggleBtn = document.getElementById('trapToggleBtn');
+    const trapChevron = document.getElementById('trapChevron');
+    const trapContent = document.getElementById('trapContent');
+    const visualAidContainer = document.getElementById('visualAidContainer');
+    const stepsContainer = document.getElementById('stepsContainer');
+    const finalAnswerBox = document.getElementById('finalAnswerBox');
+    const finalAnswerText = document.getElementById('finalAnswerText');
+    const toggleModeBtn = document.getElementById('toggleModeBtn');
+    const toggleModeLabel = document.getElementById('toggleModeLabel');
+    const rerollTwinBtn = document.getElementById('rerollTwinBtn');
+
+    /*************************************************************************
+     * 3. RENDER NAVIGATION, STAGE CONTROLS & QUESTION PANEL
+     *************************************************************************/
+    function renderPills() {
+      questionPillsEl.innerHTML = '';
+      QUESTIONS.forEach((q, idx) => {
+        const btn = document.createElement('button');
+        const active = idx === currentIndex;
+        btn.textContent = q.id;
+        btn.className = active
+          ? 'px-2.5 py-1 rounded-lg text-xs sm:text-sm font-extrabold bg-teal-500 text-white shadow-sm ring-2 ring-teal-300 shrink-0 transition'
+          : 'px-2 py-1 rounded-lg text-xs sm:text-sm font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white shrink-0 transition';
+        btn.addEventListener('click', () => {
+          currentIndex = idx;
+          isTwinMode = false;
+          loadCurrentQuestion();
+        });
+        questionPillsEl.appendChild(btn);
+      });
+    }
+
+    function setTeachingStage(stageNum) {
+      currentStage = stageNum;
+
+      const stageButtons = [
+        { el: stage1Btn, num: 1, activeClass: 'bg-slate-900 text-white border-slate-900 shadow-sm', label: 'Stage 1: Pupil Try (Zero Spoilers)' },
+        { el: stage2Btn, num: 2, activeClass: 'bg-indigo-600 text-white border-indigo-700 shadow-sm', label: 'Stage 2: Visual Hint (Discovery)' },
+        { el: stage3Btn, num: 3, activeClass: 'bg-emerald-600 text-white border-emerald-700 shadow-sm', label: 'Stage 3: Answer & Worked Model' }
+      ];
+
+      stageButtons.forEach(item => {
+        if (item.num === currentStage) {
+          item.el.className = `stage-btn py-2.5 px-2 rounded-lg text-xs sm:text-sm font-extrabold border-2 transition flex flex-col items-center justify-center text-center leading-tight ${item.activeClass}`;
+          stageStatusLabel.textContent = item.label;
+        } else {
+          item.el.className = 'stage-btn py-2.5 px-2 rounded-lg text-xs sm:text-sm font-extrabold border-2 transition flex flex-col items-center justify-center text-center leading-tight bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100';
+        }
+      });
+
+      if (currentStage === 1) {
+        visualCardTitle.innerHTML = '<span class="w-2 h-2 rounded-full bg-slate-700"></span> Stage 1: Pupil Try Workspace';
+        visualCardHint.textContent = 'Have a go on whiteboards first!';
+        revealedStepCount = 0;
+        isFinalRevealed = false;
+      } else if (currentStage === 2) {
+        visualCardTitle.innerHTML = '<span class="w-2 h-2 rounded-full bg-indigo-600"></span> Stage 2: Visual Scaffold &amp; Hint';
+        visualCardHint.textContent = 'Explore the structure (answer still hidden)';
+        revealedStepCount = 0;
+        isFinalRevealed = false;
+      } else if (currentStage === 3) {
+        visualCardTitle.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-600"></span> Stage 3: Worked Model &amp; Solution';
+        visualCardHint.textContent = 'Full model revealed';
+        revealedStepCount = activeQuestionData.steps.length;
+        isFinalRevealed = true;
+      }
+
+      renderVisualAid(activeQuestionData.visualType, activeQuestionData.visualData, currentStage);
+      renderSteps();
+    }
+
+    function loadCurrentQuestion() {
+      const qMeta = QUESTIONS[currentIndex];
+      activeQuestionData = isTwinMode ? qMeta.generateTwin() : qMeta.original;
+
+      // Always reset to Stage 1 (Zero Spoilers) on question load or new Practice Twin!
+      currentStage = 1;
+      revealedStepCount = 0;
+      isFinalRevealed = false;
+
+      renderPills();
+
+      qBadgeEl.textContent = isTwinMode ? `${qMeta.id} (Twin)` : qMeta.id;
+      qSectionBadgeEl.textContent = qMeta.section;
+      qTopicEl.textContent = qMeta.topic;
+
+      if (isTwinMode) {
+        modeBannerEl.textContent = 'Practice Twin Question (Fresh Check-Up Example)';
+        modeBannerEl.className = 'text-xs font-extrabold uppercase tracking-wider text-emerald-700';
+        toggleModeLabel.textContent = 'Back to Test Q';
+        toggleModeBtn.className = 'px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold bg-slate-200 text-slate-800 hover:bg-slate-300 transition flex items-center gap-1.5';
+        rerollTwinBtn.classList.remove('hidden');
+      } else {
+        modeBannerEl.textContent = 'Diagnostic Test Question';
+        modeBannerEl.className = 'text-xs font-bold uppercase tracking-wider text-slate-400';
+        toggleModeLabel.textContent = 'Try Similar Practice Q';
+        toggleModeBtn.className = 'px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200 transition flex items-center gap-1.5';
+        rerollTwinBtn.classList.add('hidden');
+      }
+
+      questionPromptEl.innerHTML = activeQuestionData.prompt;
+
+      // Reset Trap Accordion
+      trapContent.classList.add('hidden');
+      trapChevron.textContent = 'Show Trap';
+      trapContent.innerHTML = activeQuestionData.trap;
+
+      setTeachingStage(1);
+    }
+
+    function renderSteps() {
+      stepsContainer.innerHTML = '';
+      const steps = activeQuestionData.steps;
+
+      if (revealedStepCount === 0 && !isFinalRevealed) {
+        stepsContainer.innerHTML = `<p class="text-sm text-slate-400 italic py-1">Hidden until you click <strong>"Reveal Step 1"</strong> or <strong>"3. Reveal Answer"</strong> above.</p>`;
+      } else {
+        for (let i = 0; i < revealedStepCount; i++) {
+          const stepDiv = document.createElement('div');
+          stepDiv.className = 'p-3 bg-slate-50 border-l-4 border-indigo-600 rounded-r-lg text-sm sm:text-base text-slate-800 pop-in';
+          stepDiv.innerHTML = `<span class="font-extrabold text-indigo-700 mr-1.5">Step ${i + 1}:</span> ${steps[i]}`;
+          stepsContainer.appendChild(stepDiv);
+        }
+      }
+
+      const revealStepBtn = document.getElementById('revealStepBtn');
+      if (revealedStepCount >= steps.length) {
+        revealStepBtn.textContent = 'All Steps Shown';
+        revealStepBtn.disabled = true;
+        revealStepBtn.classList.add('opacity-50', 'cursor-not-allowed');
+      } else {
+        revealStepBtn.textContent = `Reveal Step ${revealedStepCount + 1}`;
+        revealStepBtn.disabled = false;
+        revealStepBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+      }
+
+      if (isFinalRevealed) {
+        finalAnswerText.textContent = activeQuestionData.answer;
+        finalAnswerBox.classList.remove('hidden');
+      } else {
+        finalAnswerBox.classList.add('hidden');
+      }
+    }
+
+    /*************************************************************************
+     * 4. STRICT ZERO-SPOILER 3-STAGE VISUAL MANIPULATIVES (ALL 20 QUESTIONS)
+     *************************************************************************/
+    function renderVisualAid(type, data, stage) {
+      visualAidContainer.innerHTML = '';
+
+      // 1. Q1: Place Value Writing Digits
+      if (type === 'pv_digits') {
+        if (stage === 1) {
+          visualAidContainer.innerHTML = `
+            <div class="p-4 bg-slate-50 border-2 border-dashed border-slate-300 rounded-xl text-center space-y-1.5">
+              <div class="text-base font-extrabold text-slate-800">Pupil Turn: Write <strong>"${data.words}"</strong> in digits on your mini-whiteboard!</div>
+              <div class="text-xs sm:text-sm text-slate-500">Check all 4 columns: Thousands, Hundreds, Tens, Ones.</div>
+            </div>`;
+          return;
+        }
+        const cells = stage === 2 ? ['?', '?', '?', '?'] : [data.th, data.h, data.t, data.o];
+        visualAidContainer.innerHTML = `
+          <div class="space-y-3">
+            <div class="grid grid-cols-4 gap-1.5 text-center">
+              <div class="bg-slate-800 text-white text-xs font-bold py-1.5 rounded-t-lg">Thousands</div>
+              <div class="bg-amber-600 text-white text-xs font-bold py-1.5 rounded-t-lg">Hundreds</div>
+              <div class="bg-slate-800 text-white text-xs font-bold py-1.5 rounded-t-lg">Tens</div>
+              <div class="bg-slate-800 text-white text-xs font-bold py-1.5 rounded-t-lg">Ones</div>
+              ${cells.map((v, i) => `
+                <div class="py-3 text-2xl font-extrabold border-2 ${i === 1 ? 'border-amber-400 bg-amber-50 text-amber-900' : 'border-slate-300 bg-white text-slate-900'} rounded-b-lg">${v}</div>
+              `).join('')}
+            </div>
+            <div class="text-center text-xs sm:text-sm font-bold text-slate-600">
+              ${stage === 2 ? 'Visual Hint: Notice there are <strong>4 columns</strong>—what goes in the Hundreds column if none are named?' : `0 holds the empty hundreds place: <strong>${data.th},0${data.t}${data.o}</strong>`}
+            </div>
+          </div>`;
+      }
+
+      // 2. Q2: Place Value of Underlined Digit
+      else if (type === 'pv_value') {
+        const headers = ['Thousands', 'Hundreds', 'Tens', 'Ones'];
+        const mults = ['× 1,000', '× 100', '× 10', '× 1'];
+        const vals = [1000, 100, 10, 1];
+        if (stage === 1) {
+          visualAidContainer.innerHTML = `
+            <div class="p-4 bg-slate-50 border-2 border-dashed border-slate-300 rounded-xl text-center space-y-1.5">
+              <div class="text-base font-extrabold text-slate-800">Pupil Turn: Write the value of the underlined digit on your board!</div>
+              <div class="text-xs sm:text-sm text-slate-500">Ask: Which column (Th, H, T, O) is that digit sitting in?</div>
+            </div>`;
+          return;
+        }
+        visualAidContainer.innerHTML = `
+          <div class="space-y-3">
+            <div class="grid grid-cols-4 gap-1.5 text-center">
+              ${headers.map((h, i) => `<div class="${i === data.highlightIdx ? 'bg-indigo-700' : 'bg-slate-800'} text-white text-xs font-bold py-1.5 rounded-t-lg">${h}</div>`).join('')}
+              ${data.digits.map((d, i) => `
+                <div class="py-3 text-2xl font-extrabold border-2 ${i === data.highlightIdx ? 'border-indigo-500 bg-indigo-50 text-indigo-900 ring-2 ring-indigo-300' : 'border-slate-200 bg-white text-slate-700'} rounded-b-lg">${d}</div>
+              `).join('')}
+            </div>
+            <div class="text-center text-xs sm:text-sm font-bold ${stage === 3 ? 'text-emerald-800' : 'text-indigo-800'}">
+              ${stage === 2
+                ? `Visual Hint: The digit <strong>${data.digits[data.highlightIdx]}</strong> is in the <strong>${headers[data.highlightIdx]}</strong> column (${mults[data.highlightIdx]}).`
+                : `${data.digits[data.highlightIdx]} ${mults[data.highlightIdx]} = <strong>${(data.digits[data.highlightIdx] * vals[data.highlightIdx]).toLocaleString()}</strong>`}
+            </div>
+          </div>`;
+      }
+
+      // 3. Q3: Multiplying & Dividing by 10 & 100
+      else if (type === 'pv_shift_10_100') {
+        if (stage === 1) {
+          visualAidContainer.innerHTML = `
+            <div class="p-4 bg-slate-50 border-2 border-dashed border-slate-300 rounded-xl text-center space-y-1.5">
+              <div class="text-base font-extrabold text-slate-800">Pupil Turn: Solve both a) and b) on your mini-whiteboard!</div>
+              <div class="text-xs sm:text-sm text-slate-500">Think about how many place-value columns the digits shift for × 10 and ÷ 100.</div>
+            </div>`;
+          return;
+        }
+        const aDigits = String(data.a).split('');
+        const bDigits = String(data.b).split('');
+        visualAidContainer.innerHTML = `
+          <div class="space-y-3 text-xs sm:text-sm">
+            <div class="p-3 bg-indigo-50 border border-indigo-200 rounded-xl">
+              <div class="font-extrabold text-indigo-900 mb-1">a) ${data.a} × 10 → Shift digits 1 place LEFT</div>
+              <div class="grid grid-cols-4 gap-1 text-center font-extrabold">
+                <div class="bg-slate-700 text-white py-1 rounded">Th</div>
+                <div class="bg-slate-700 text-white py-1 rounded">H</div>
+                <div class="bg-slate-700 text-white py-1 rounded">T</div>
+                <div class="bg-slate-700 text-white py-1 rounded">O</div>
+                ${stage === 2
+                  ? `<div class="bg-white py-2 rounded border">—</div><div class="bg-white py-2 rounded border text-indigo-500">←</div><div class="bg-white py-2 rounded border">${aDigits[0]}</div><div class="bg-white py-2 rounded border">${aDigits[1]}</div>`
+                  : `<div class="bg-white py-2 rounded border">—</div><div class="bg-emerald-100 text-emerald-900 py-2 rounded border border-emerald-400">${aDigits[0]}</div><div class="bg-emerald-100 text-emerald-900 py-2 rounded border border-emerald-400">${aDigits[1]}</div><div class="bg-emerald-100 text-emerald-900 py-2 rounded border border-emerald-400">0</div>`}
+              </div>
+            </div>
+            <div class="p-3 bg-amber-50 border border-amber-200 rounded-xl">
+              <div class="font-extrabold text-amber-950 mb-1">b) ${data.b.toLocaleString()} ÷ 100 → Shift digits 2 places RIGHT</div>
+              <div class="grid grid-cols-4 gap-1 text-center font-extrabold">
+                <div class="bg-slate-700 text-white py-1 rounded">Th</div>
+                <div class="bg-slate-700 text-white py-1 rounded">H</div>
+                <div class="bg-slate-700 text-white py-1 rounded">T</div>
+                <div class="bg-slate-700 text-white py-1 rounded">O</div>
+                ${stage === 2
+                  ? `<div class="bg-white py-2 rounded border">${bDigits[0]}</div><div class="bg-white py-2 rounded border">${bDigits[1]}</div><div class="bg-white py-2 rounded border text-amber-600">→</div><div class="bg-white py-2 rounded border text-amber-600">→</div>`
+                  : `<div class="bg-white py-2 rounded border">—</div><div class="bg-white py-2 rounded border">—</div><div class="bg-emerald-100 text-emerald-900 py-2 rounded border border-emerald-400">${bDigits[0]}</div><div class="bg-emerald-100 text-emerald-900 py-2 rounded border border-emerald-400">${bDigits[1]}</div>`}
+              </div>
+            </div>
+          </div>`;
+      }
+
+      // 4. Q4: Ordering 4-Digit Numbers
+      else if (type === 'order_4digit') {
+        if (stage === 1) {
+          visualAidContainer.innerHTML = `
+            <div class="p-4 bg-slate-50 border-2 border-dashed border-slate-300 rounded-xl text-center space-y-1.5">
+              <div class="text-base font-extrabold text-slate-800">Pupil Turn: Order all four numbers from SMALLEST to LARGEST!</div>
+              <div class="text-xs sm:text-sm text-slate-500">Tip: Stack them vertically one under another so the columns line up.</div>
+            </div>`;
+          return;
+        }
+        const displayNums = stage === 3 ? [...data.nums].sort((a, b) => a - b) : data.nums;
+        visualAidContainer.innerHTML = `
+          <div class="space-y-2">
+            <div class="overflow-hidden rounded-xl border border-slate-300">
+              <table class="w-full text-center font-extrabold text-base">
+                <thead class="bg-slate-800 text-white text-xs">
+                  <tr>
+                    <th class="py-1.5">Th</th>
+                    <th class="py-1.5 bg-indigo-700">H (Check 1st)</th>
+                    <th class="py-1.5 bg-amber-600">T (Check 2nd)</th>
+                    <th class="py-1.5">O</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-200">
+                  ${displayNums.map((n, idx) => {
+                    const [th, h, t, o] = String(n).split('');
+                    return `
+                      <tr class="${stage === 3 ? (idx === 0 ? 'bg-emerald-50' : 'bg-white') : 'bg-white'}">
+                        <td class="py-1.5">${th}</td>
+                        <td class="py-1.5 bg-indigo-50/60 text-indigo-900">${h}</td>
+                        <td class="py-1.5 bg-amber-50/60 text-amber-900">${t}</td>
+                        <td class="py-1.5">${o}</td>
+                      </tr>`;
+                  }).join('')}
+                </tbody>
+              </table>
+            </div>
+            <div class="text-center text-xs sm:text-sm font-bold text-slate-600">
+              ${stage === 2 ? 'Visual Hint: All Thousands are equal—compare the blue <strong>Hundreds</strong> column first!' : 'Sorted from smallest to largest!'}
+            </div>
+          </div>`;
+      }
+
+      // 5. Q5: Complements to 100
+      else if (type === 'comp_100') {
+        const nextTen = Math.ceil(data.start / 10) * 10;
+        const j1 = nextTen - data.start;
+        const j2 = 100 - nextTen;
+        if (stage === 1) {
+          visualAidContainer.innerHTML = `
+            <div class="p-4 bg-slate-50 border-2 border-dashed border-slate-300 rounded-xl text-center space-y-1.5">
+              <div class="text-base font-extrabold text-slate-800">Pupil Turn: Find the missing number to make 100!</div>
+              <div class="text-xs sm:text-sm text-slate-500">Double-check your answer by adding it back to ${data.start}—does it make 100 or 110?</div>
+            </div>`;
+          return;
+        }
+        visualAidContainer.innerHTML = `
+          <div class="space-y-3">
+            <div class="flex items-center justify-between bg-slate-50 p-4 rounded-xl border border-slate-200 font-extrabold">
+              <div class="text-center"><div class="text-xs text-slate-400">Start</div><div class="text-xl text-slate-900">${data.start}</div></div>
+              <div class="flex-1 flex flex-col items-center px-2">
+                <span class="text-xs px-2 py-0.5 rounded ${stage === 3 ? 'bg-emerald-100 text-emerald-800' : 'bg-indigo-100 text-indigo-800'}">${stage === 3 ? `+${j1}` : '+ ?'}</span>
+                <div class="w-full h-1.5 bg-indigo-400 my-1.5 rounded"></div>
+              </div>
+              <div class="text-center"><div class="text-xs text-indigo-600">Next Ten</div><div class="text-lg text-indigo-900 bg-indigo-100 px-2.5 py-0.5 rounded-lg">${nextTen}</div></div>
+              <div class="flex-1 flex flex-col items-center px-2">
+                <span class="text-xs px-2 py-0.5 rounded ${stage === 3 ? 'bg-emerald-100 text-emerald-800' : 'bg-indigo-100 text-indigo-800'}">${stage === 3 ? `+${j2}` : '+ ?'}</span>
+                <div class="w-full h-1.5 bg-indigo-400 my-1.5 rounded"></div>
+              </div>
+              <div class="text-center"><div class="text-xs text-slate-400">Target</div><div class="text-xl text-slate-900">100</div></div>
+            </div>
+            <div class="text-center text-xs sm:text-sm font-bold text-slate-700">
+              ${stage === 2 ? `Visual Hint: Jump from ${data.start} to ${nextTen} first, then from ${nextTen} to 100!` : `${j1} + ${j2} = <strong class="text-emerald-700">${100 - data.start}</strong>`}
+            </div>
+          </div>`;
+      }
+
+      // 6. Q6: Subtraction / Difference Across Zero
+      else if (type === 'sub_bridge') {
+        const { a, b } = data;
+        const diff = a - b;
+        const nextTen = Math.ceil(b / 10) * 10;
+        const j1 = nextTen - b;
+        const nextHundred = Math.ceil(nextTen / 100) * 100;
+        const j2 = nextHundred - nextTen;
+        const j3 = a - nextHundred;
+        if (stage === 1) {
+          visualAidContainer.innerHTML = `
+            <div class="p-4 bg-slate-50 border-2 border-dashed border-slate-300 rounded-xl text-center space-y-1.5">
+              <div class="text-base font-extrabold text-slate-800">Pupil Turn: Find the difference between <strong>${a}</strong> and <strong>${b}</strong>!</div>
+              <div class="text-xs sm:text-sm text-slate-500">Try counting up from ${b} to ${a} on an empty number line.</div>
+            </div>`;
+          return;
+        }
+        visualAidContainer.innerHTML = `
+          <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+            <div class="flex items-center justify-between text-center font-extrabold">
+              <div><div class="text-xs text-slate-400">Start</div><div class="text-lg text-slate-900">${b}</div></div>
+              <div class="flex-1 px-1"><span class="text-xs ${stage === 3 ? 'bg-emerald-100 text-emerald-800' : 'bg-indigo-100 text-indigo-800'} px-1.5 py-0.5 rounded">${stage === 3 ? `+${j1}` : '+ ?'}</span><div class="h-1 bg-indigo-400 my-1"></div></div>
+              <div><div class="text-xs text-slate-400">Next 10</div><div class="text-base text-slate-700">${nextTen}</div></div>
+              <div class="flex-1 px-1"><span class="text-xs ${stage === 3 ? 'bg-emerald-100 text-emerald-800' : 'bg-indigo-100 text-indigo-800'} px-1.5 py-0.5 rounded">${stage === 3 ? `+${j2}` : '+ ?'}</span><div class="h-1 bg-indigo-400 my-1"></div></div>
+              <div><div class="text-xs text-slate-400">Next 100</div><div class="text-base text-slate-700">${nextHundred}</div></div>
+              <div class="flex-1 px-1"><span class="text-xs ${stage === 3 ? 'bg-emerald-100 text-emerald-800' : 'bg-indigo-100 text-indigo-800'} px-1.5 py-0.5 rounded">${stage === 3 ? `+${j3}` : '+ ?'}</span><div class="h-1 bg-indigo-400 my-1"></div></div>
+              <div><div class="text-xs text-slate-400">Target</div><div class="text-lg text-slate-900">${a}</div></div>
+            </div>
+            <div class="text-center text-xs sm:text-sm font-bold ${stage === 3 ? 'text-emerald-800' : 'text-indigo-800'}">
+              ${stage === 2 ? `Visual Hint: Jump ${b} → ${nextTen} → ${nextHundred} → ${a}, then add the 3 jumps!` : `Total Difference: ${j1} + ${j2} + ${j3} = <strong>${diff}</strong>`}
+            </div>
+          </div>`;
+      }
+
+      // 7. Q7: Fact Families & Scaling by 10
+      else if (type === 'fact_scale') {
+        const { left, right, top } = data;
+        if (stage === 1) {
+          visualAidContainer.innerHTML = `
+            <div class="p-4 bg-slate-50 border-2 border-dashed border-slate-300 rounded-xl text-center space-y-1.5">
+              <div class="text-base font-extrabold text-slate-800">Pupil Turn: Complete a), b), and c) on your mini-whiteboard!</div>
+              <div class="text-xs sm:text-sm text-slate-500">Use the known fact <strong>${left} × ${right} = ${top}</strong> for all three parts.</div>
+            </div>`;
+          return;
+        }
+        visualAidContainer.innerHTML = `
+          <div class="flex flex-col sm:flex-row items-center justify-around gap-4">
+            <div class="w-36 h-32 flex flex-col items-center justify-between bg-indigo-50 border-2 border-indigo-400 rounded-2xl p-2.5">
+              <div class="bg-amber-400 text-slate-950 font-extrabold text-lg px-3 py-0.5 rounded-xl">${top}</div>
+              <div class="text-[11px] font-extrabold text-indigo-600 tracking-widest">×  |  ÷</div>
+              <div class="w-full flex justify-between px-1">
+                <span class="bg-white border-2 border-indigo-500 text-indigo-950 font-extrabold text-base px-2.5 py-0.5 rounded-xl">${left}</span>
+                <span class="bg-white border-2 border-indigo-500 text-indigo-950 font-extrabold text-base px-2.5 py-0.5 rounded-xl">${right}</span>
+              </div>
+            </div>
+            <div class="space-y-1.5 text-sm font-extrabold">
+              <div class="px-3 py-1.5 rounded-lg bg-slate-100 border border-slate-200">a) ${right} × ${left} = <span class="text-indigo-700">${stage === 3 ? top : '?'}</span></div>
+              <div class="px-3 py-1.5 rounded-lg bg-slate-100 border border-slate-200">b) ${top} ÷ ${right} = <span class="text-indigo-700">${stage === 3 ? left : '?'}</span></div>
+              <div class="px-3 py-1.5 rounded-lg bg-amber-50 border border-amber-300">c) ${left * 10} × ${right} = <span class="text-emerald-700">${stage === 3 ? top * 10 : '? (10× bigger)'}</span></div>
+            </div>
+          </div>`;
+      }
+
+      // 8. Q8: Inverse Operations Bar Model
+      else if (type === 'inverse_bar') {
+        const { sub, res } = data;
+        const whole = sub + res;
+        if (stage === 1) {
+          visualAidContainer.innerHTML = `
+            <div class="p-4 bg-slate-50 border-2 border-dashed border-slate-300 rounded-xl text-center space-y-1.5">
+              <div class="text-base font-extrabold text-slate-800">Pupil Turn: Find the missing starting number!</div>
+              <div class="text-xs sm:text-sm text-slate-500">Check: Is the starting number bigger or smaller than ${res}?</div>
+            </div>`;
+          return;
+        }
+        visualAidContainer.innerHTML = `
+          <div class="space-y-2 max-w-md mx-auto w-full">
+            <div class="py-3 px-4 rounded-t-xl border-2 ${stage === 3 ? 'bg-emerald-100 border-emerald-500 text-emerald-950' : 'bg-indigo-100 border-indigo-500 text-indigo-950'} text-center font-extrabold text-lg">
+              Starting Number (Whole) = ${stage === 3 ? whole : '?'}
+            </div>
+            <div class="grid grid-cols-2 gap-1">
+              <div class="py-2.5 bg-slate-100 border-2 border-slate-400 rounded-bl-xl text-center font-extrabold text-slate-800">Subtracted: ${sub}</div>
+              <div class="py-2.5 bg-slate-100 border-2 border-slate-400 rounded-br-xl text-center font-extrabold text-slate-800">Left over: ${res}</div>
+            </div>
+            <div class="text-center text-xs sm:text-sm font-bold text-slate-600 pt-1">
+              ${stage === 2 ? `Visual Hint: Put the two parts (${sub} and ${res}) back together using addition!` : `${res} + ${sub} = <strong>${whole}</strong>`}
+            </div>
+          </div>`;
+      }
+
+      // 9. Q9: Simplifying Equivalent Fractions
+      else if (type === 'simplify_bar') {
+        const { shaded, total, simpNum, simpDen } = data;
+        if (stage === 1) {
+          visualAidContainer.innerHTML = `
+            <div class="space-y-3">
+              <div class="grid grid-cols-${total} h-10 rounded-lg overflow-hidden border-2 border-slate-800">
+                ${Array.from({ length: total }, (_, i) => `<div class="${i < shaded ? 'bg-indigo-600' : 'bg-white'} border-r last:border-r-0 border-slate-800"></div>`).join('')}
+              </div>
+              <div class="text-center text-xs sm:text-sm font-bold text-slate-600">
+                Pupil Turn: Write the shaded fraction, then simplify it to its smallest equivalent form!
+              </div>
+            </div>`;
+          return;
+        }
+        visualAidContainer.innerHTML = `
+          <div class="space-y-3">
+            <div>
+              <div class="text-xs font-bold text-slate-500 mb-1">Original Rectangle: ${shaded}/${total}</div>
+              <div class="grid grid-cols-${total} h-9 rounded-lg overflow-hidden border-2 border-slate-800">
+                ${Array.from({ length: total }, (_, i) => `<div class="${i < shaded ? 'bg-indigo-600' : 'bg-white'} border-r last:border-r-0 border-slate-800"></div>`).join('')}
+              </div>
+            </div>
+            <div>
+              <div class="text-xs font-bold text-emerald-800 mb-1">${stage === 2 ? `Hint: Group the pieces into ${simpDen} equal chunks:` : `Simplified Equivalent Fraction: ${simpNum}/${simpDen}`}</div>
+              <div class="grid grid-cols-${simpDen} h-9 rounded-lg overflow-hidden border-2 border-emerald-700">
+                ${Array.from({ length: simpDen }, (_, i) => `<div class="${(stage === 3 && i < simpNum) ? 'bg-emerald-500 text-white' : 'bg-slate-50 text-slate-400'} flex items-center justify-center font-extrabold text-xs border-r last:border-r-0 border-emerald-700">${stage === 3 ? `1/${simpDen}` : '?'}</div>`).join('')}
+              </div>
+            </div>
+          </div>`;
+      }
+
+      // 10. Q10: Fraction Complements to 1 Whole
+      else if (type === 'frac_whole') {
+        const { num, den } = data;
+        const rem = den - num;
+        visualAidContainer.innerHTML = `
+          <div class="space-y-3">
+            <div class="text-center text-xs font-extrabold uppercase text-slate-500">1 Whole Bar (${den}/${den})</div>
+            <div class="grid grid-cols-${den} h-11 rounded-lg overflow-hidden border-2 border-slate-800">
+              ${Array.from({ length: den }, (_, i) => {
+                const isGiven = i < num;
+                return `<div class="${isGiven ? 'bg-indigo-600 text-white' : (stage === 3 ? 'bg-emerald-500 text-white' : 'bg-slate-100 text-slate-400')} flex items-center justify-center font-extrabold text-xs border-r last:border-r-0 border-slate-800">${isGiven ? `1/${den}` : (stage === 3 ? `1/${den}` : '?')}</div>`;
+              }).join('')}
+            </div>
+            <div class="text-center text-xs sm:text-sm font-bold text-slate-600">
+              ${stage === 1 ? 'Pupil Turn: What fraction is needed to complete the whole bar?' : (stage === 2 ? `Visual Hint: Count how many blank 1/${den} sections remain to fill 1 whole!` : `${num}/${den} + <strong>${rem}/${den}</strong> = ${den}/${den} (1 whole)`)}
+            </div>
+          </div>`;
+      }
+
+      // 11. Q11: Non-Unit Fraction of Amount
+      else if (type === 'frac_amount') {
+        const { num, den, whole } = data;
+        const unit = whole / den;
+        if (stage === 1) {
+          visualAidContainer.innerHTML = `
+            <div class="p-4 bg-slate-50 border-2 border-dashed border-slate-300 rounded-xl text-center space-y-1.5">
+              <div class="text-base font-extrabold text-slate-800">Pupil Turn: Find <strong>${num}/${den} of ${whole}</strong> on your mini-whiteboard!</div>
+              <div class="text-xs sm:text-sm text-slate-500">Step 1: Divide by the denominator. Step 2: Multiply by the numerator.</div>
+            </div>`;
+          return;
+        }
+        visualAidContainer.innerHTML = `
+          <div class="space-y-3">
+            <div class="text-center"><span class="text-xs font-extrabold uppercase bg-slate-800 text-white px-3 py-1 rounded-full">Whole Bar = ${whole} (Split into ${den} equal parts)</span></div>
+            <div class="grid grid-cols-${den} gap-2">
+              ${Array.from({ length: den }, (_, i) => `
+                <div class="py-4 rounded-xl border-2 font-extrabold text-xl flex flex-col items-center ${i < num ? 'bg-indigo-600 text-white border-indigo-800' : 'bg-slate-100 text-slate-500 border-slate-300'}">
+                  <span>${stage === 3 ? unit : '?'}</span>
+                  <span class="text-[11px] font-semibold mt-0.5 opacity-80">1/${den}</span>
+                </div>
+              `).join('')}
+            </div>
+            <div class="text-center text-xs sm:text-sm font-bold text-slate-700">
+              ${stage === 2 ? `Visual Hint: Share ${whole} into ${den} boxes (${whole} ÷ ${den}), then count ${num} shaded boxes!` : `Each box = ${unit} → ${num} × ${unit} = <strong class="text-emerald-700">${num * unit}</strong>`}
+            </div>
+          </div>`;
+      }
+
+      // 12. Q12: Comparing Fractions
+      else if (type === 'compare_fracs') {
+        const { a1, a2, b1, b2 } = data;
+        if (stage === 1) {
+          visualAidContainer.innerHTML = `
+            <div class="p-4 bg-slate-50 border-2 border-dashed border-slate-300 rounded-xl text-center space-y-1.5">
+              <div class="text-base font-extrabold text-slate-800">Pupil Turn: Write the largest fraction for a) and b) on your board!</div>
+              <div class="text-xs sm:text-sm text-slate-500">Think carefully: Does a bigger bottom number mean bigger slices or smaller slices?</div>
+            </div>`;
+          return;
+        }
+        visualAidContainer.innerHTML = `
+          <div class="space-y-3">
+            <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200 space-y-1.5">
+              <div class="text-xs font-extrabold text-slate-600">Part a) Compare 1/${a1[1]} vs 1/${a2[1]}</div>
+              <div class="grid grid-cols-${a1[1]} h-7 rounded overflow-hidden border border-slate-700">
+                ${Array.from({ length: a1[1] }, (_, i) => `<div class="${i === 0 ? 'bg-indigo-600 text-white' : 'bg-white'} text-[10px] font-bold flex items-center justify-center border-r last:border-r-0 border-slate-400">1/${a1[1]}</div>`).join('')}
+              </div>
+              <div class="grid grid-cols-${a2[1]} h-7 rounded overflow-hidden border border-slate-700">
+                ${Array.from({ length: a2[1] }, (_, i) => `<div class="${i === 0 ? 'bg-amber-500 text-white' : 'bg-white'} text-[10px] font-bold flex items-center justify-center border-r last:border-r-0 border-slate-400">1/${a2[1]}</div>`).join('')}
+              </div>
+            </div>
+            <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200 space-y-1.5">
+              <div class="text-xs font-extrabold text-slate-600">Part b) Compare ${b1[0]}/${b1[1]} vs ${b2[0]}/${b2[1]}</div>
+              <div class="grid grid-cols-${b1[1]} h-7 rounded overflow-hidden border border-slate-700">
+                ${Array.from({ length: b1[1] }, (_, i) => `<div class="${i < b1[0] ? 'bg-indigo-600 text-white' : 'bg-white'} text-[10px] font-bold flex items-center justify-center border-r last:border-r-0 border-slate-400">1/${b1[1]}</div>`).join('')}
+              </div>
+              <div class="grid grid-cols-${b2[1]} h-7 rounded overflow-hidden border border-slate-700">
+                ${Array.from({ length: b2[1] }, (_, i) => `<div class="${i < b2[0] ? 'bg-amber-500 text-white' : 'bg-white'} text-[10px] font-bold flex items-center justify-center border-r last:border-r-0 border-slate-400">1/${b2[1]}</div>`).join('')}
+              </div>
+            </div>
+          </div>`;
+      }
+
+      // 13. Q13: Two-Step Money & Change
+      else if (type === 'money_2step') {
+        const { item1, item2, paid } = data;
+        const total = item1 + item2;
+        const nextPound = Math.ceil(total / 100) * 100;
+        const j1 = nextPound - total;
+        const j2 = paid - nextPound;
+        const change = paid - total;
+        if (stage === 1) {
+          visualAidContainer.innerHTML = `
+            <div class="p-4 bg-slate-50 border-2 border-dashed border-slate-300 rounded-xl text-center space-y-1.5">
+              <div class="text-base font-extrabold text-slate-800">Pupil Turn: Solve both steps on your mini-whiteboard!</div>
+              <div class="text-xs sm:text-sm text-slate-500">Step 1: Find total cost. Step 2: Find change from £${(paid/100).toFixed(2)}.</div>
+            </div>`;
+          return;
+        }
+        visualAidContainer.innerHTML = `
+          <div class="space-y-3">
+            <div class="text-xs font-extrabold text-center px-3 py-1.5 rounded-lg border ${stage === 3 ? 'bg-emerald-50 text-emerald-900 border-emerald-300' : 'bg-indigo-50 text-indigo-900 border-indigo-200'}">
+              ${stage === 2 ? `Hint Step 1: £${(item1/100).toFixed(2)} + £0.${item2} = £ ?` : `Step 1 Total Cost: £${(item1/100).toFixed(2)} + £0.${item2} = <strong>£${(total/100).toFixed(2)}</strong>`}
+            </div>
+            <div class="flex items-center justify-between bg-slate-50 p-3.5 rounded-xl border border-slate-200 font-extrabold">
+              <div class="text-center"><div class="text-xs text-slate-400">Spent</div><div class="text-lg text-rose-700">${stage === 3 ? `£${(total/100).toFixed(2)}` : '£ ?'}</div></div>
+              <div class="flex-1 flex flex-col items-center px-2"><span class="text-xs px-2 py-0.5 rounded bg-indigo-100 text-indigo-800">${stage === 3 ? `+${j1}p` : '+ ? p'}</span><div class="w-full h-1 bg-indigo-400 my-1"></div></div>
+              <div class="text-center"><div class="text-xs text-slate-400">Next £</div><div class="text-base text-slate-700">${stage === 3 ? `£${(nextPound/100).toFixed(2)}` : '£ ?'}</div></div>
+              <div class="flex-1 flex flex-col items-center px-2"><span class="text-xs px-2 py-0.5 rounded bg-indigo-100 text-indigo-800">${stage === 3 ? `+£${(j2/100).toFixed(2)}` : '+ £ ?'}</span><div class="w-full h-1 bg-indigo-400 my-1"></div></div>
+              <div class="text-center"><div class="text-xs text-slate-400">Paid</div><div class="text-lg text-slate-900">£${(paid/100).toFixed(2)}</div></div>
+            </div>
+            ${stage === 3 ? `<div class="text-center text-sm font-extrabold text-emerald-800">Total Change = <strong>£${(change/100).toFixed(2)}</strong></div>` : ''}
+          </div>`;
+      }
+
+      // 14. Q14: Elapsed Time Bridging Forward
+      else if (type === 'time_add') {
+        const { startH, startM, dur } = data;
+        const toHour = 60 - startM;
+        const rem = dur - toHour;
+        const endH = startH + 1;
+        const pad = (m) => m < 10 ? '0' + m : m;
+        if (stage === 1) {
+          visualAidContainer.innerHTML = `
+            <div class="p-4 bg-slate-50 border-2 border-dashed border-slate-300 rounded-xl text-center space-y-1.5">
+              <div class="text-base font-extrabold text-slate-800">Pupil Turn: What time does it finish?</div>
+              <div class="text-xs sm:text-sm text-slate-500">Remember: <strong>60 minutes</strong> make 1 hour—bridge to <strong>${endH}:00 am</strong> first!</div>
+            </div>`;
+          return;
+        }
+        visualAidContainer.innerHTML = `
+          <div class="space-y-3">
+            <div class="flex items-center justify-between bg-slate-50 p-4 rounded-xl border border-slate-200 font-extrabold">
+              <div class="text-center"><div class="text-xs text-slate-400">Start</div><div class="text-lg text-slate-900">${startH}:${pad(startM)}</div></div>
+              <div class="flex-1 flex flex-col items-center px-2"><span class="text-xs px-2 py-0.5 rounded bg-amber-100 text-amber-900">${stage === 3 ? `+${toHour} mins` : '+ ? mins'}</span><div class="w-full h-1.5 bg-indigo-500 my-1.5 rounded"></div></div>
+              <div class="text-center"><div class="text-xs text-indigo-600">O'Clock Bridge</div><div class="text-base text-indigo-900 bg-indigo-100 px-2.5 py-0.5 rounded-lg">${endH}:00</div></div>
+              <div class="flex-1 flex flex-col items-center px-2"><span class="text-xs px-2 py-0.5 rounded bg-amber-100 text-amber-900">${stage === 3 ? `+${rem} mins` : '+ ? mins'}</span><div class="w-full h-1.5 bg-indigo-500 my-1.5 rounded"></div></div>
+              <div class="text-center"><div class="text-xs text-slate-400">Finish</div><div class="text-lg ${stage === 3 ? 'text-emerald-800 bg-emerald-100 px-2 rounded' : 'text-slate-400'}">${stage === 3 ? `${endH}:${pad(rem)} am` : '?'}</div></div>
+            </div>
+            <div class="text-center text-xs sm:text-sm font-bold text-slate-600">
+              ${stage === 2 ? `Visual Hint: Split ${dur} mins into the jump to ${endH}:00 and the remaining minutes after ${endH}:00!` : `${toHour} mins + ${rem} mins = ${dur} mins → <strong>${endH}:${pad(rem)} am</strong>`}
+            </div>
+          </div>`;
+      }
+
+      // 15. Q15: Metric Conversions (km->m and cm->m)
+      else if (type === 'metric_conv') {
+        if (stage === 1) {
+          visualAidContainer.innerHTML = `
+            <div class="p-4 bg-slate-50 border-2 border-dashed border-slate-300 rounded-xl text-center space-y-1.5">
+              <div class="text-base font-extrabold text-slate-800">Pupil Turn: Convert both a) and b) on your mini-whiteboard!</div>
+              <div class="text-xs sm:text-sm text-slate-500">Recall: How many metres in 1 km? How many centimetres in 1 m?</div>
+            </div>`;
+          return;
+        }
+        visualAidContainer.innerHTML = `
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-center">
+            <div class="p-3.5 bg-indigo-50 border border-indigo-200 rounded-xl space-y-1">
+              <div class="text-xs font-extrabold uppercase text-indigo-700">1 km = 1,000 m (× 1,000)</div>
+              <div class="text-lg font-extrabold text-slate-900">${data.km} km = <span class="text-emerald-700">${stage === 3 ? `${(data.km * 1000).toLocaleString()} m` : '? m'}</span></div>
+            </div>
+            <div class="p-3.5 bg-amber-50 border border-amber-200 rounded-xl space-y-1">
+              <div class="text-xs font-extrabold uppercase text-amber-800">100 cm = 1 m (÷ 100)</div>
+              <div class="text-lg font-extrabold text-slate-900">${data.cm} cm = <span class="text-emerald-700">${stage === 3 ? `${data.cm / 100} m` : '? m'}</span></div>
+            </div>
+          </div>`;
+      }
+
+      // 16. Q16: Selecting Appropriate Units
+      else if (type === 'unit_bench') {
+        if (stage === 1) {
+          visualAidContainer.innerHTML = `
+            <div class="p-4 bg-slate-50 border-2 border-dashed border-slate-300 rounded-xl text-center space-y-1.5">
+              <div class="text-base font-extrabold text-slate-800">Pupil Turn: Write the best unit on your mini-whiteboard!</div>
+              <div class="text-xs sm:text-sm text-slate-500">Think: Are we measuring weight/mass, liquid capacity, or length?</div>
+            </div>`;
+          return;
+        }
+        const benchmarks = [
+          { unit: 'grams (g)', type: 'Light Mass', ex: 'A paperclip (1 g) or pencil (10 g)' },
+          { unit: 'kilograms (kg)', type: 'Heavy Mass', ex: 'A bag of sugar (1 kg) or schoolbag (4 kg)' },
+          { unit: 'litres (l)', type: 'Liquid Capacity', ex: 'A large bottle of water or milk carton' },
+          { unit: 'metres (m)', type: 'Length / Distance', ex: 'A doorway height (2 m) or classroom' }
+        ];
+        visualAidContainer.innerHTML = `
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            ${benchmarks.map(b => {
+              const isMatch = (stage === 3 && b.unit === data.targetUnit);
+              return `
+                <div class="p-2.5 rounded-xl border-2 ${isMatch ? 'bg-emerald-50 border-emerald-500 ring-2 ring-emerald-200' : 'bg-slate-50 border-slate-200'}">
+                  <div class="font-extrabold text-sm ${isMatch ? 'text-emerald-900' : 'text-slate-800'}">${b.unit} • <span class="text-xs font-semibold text-slate-500">${b.type}</span></div>
+                  <div class="text-xs text-slate-600 mt-0.5">${b.ex}</div>
+                </div>`;
+            }).join('')}
+          </div>`;
+      }
+
+      // 17. Q17: Mathematical Vocabulary (Product)
+      else if (type === 'vocab_card') {
+        if (stage === 1) {
+          visualAidContainer.innerHTML = `
+            <div class="p-4 bg-slate-50 border-2 border-dashed border-slate-300 rounded-xl text-center space-y-1.5">
+              <div class="text-base font-extrabold text-slate-800">Pupil Turn: What does the word <strong>"${data.word}"</strong> tell you to do?</div>
+              <div class="text-xs sm:text-sm text-slate-500">Write the calculation and answer on your mini-whiteboard.</div>
+            </div>`;
+          return;
+        }
+        visualAidContainer.innerHTML = `
+          <div class="p-4 bg-indigo-50 border-2 border-indigo-300 rounded-xl text-center space-y-2">
+            <div class="inline-block bg-indigo-600 text-white text-xs font-extrabold uppercase px-3 py-1 rounded-full">Vocabulary Decoder</div>
+            <div class="text-xl font-extrabold text-indigo-950">${data.word} = ${data.meaning}</div>
+            <div class="text-lg font-extrabold text-slate-800">${data.a} ${data.op} ${data.b} = <span class="text-emerald-700">${stage === 3 ? data.res : '?'}</span></div>
+          </div>`;
+      }
+
+      // 18. Q18: Spot the Mistake (Subtraction Reversal)
+      else if (type === 'spot_mistake') {
+        if (stage === 1) {
+          visualAidContainer.innerHTML = `
+            <div class="p-4 bg-slate-50 border-2 border-dashed border-slate-300 rounded-xl text-center space-y-1.5">
+              <div class="text-base font-extrabold text-slate-800">Pupil Turn: Be a maths detective! Why is <strong>${data.wrong}</strong> wrong, and what is the real answer?</div>
+              <div class="text-xs sm:text-sm text-slate-500">Look closely at the tens and ones digits in <strong>${data.a} − ${data.b}</strong>.</div>
+            </div>`;
+          return;
+        }
+        const aT = Math.floor(data.a / 10) * 10, aO = data.a % 10;
+        const bT = Math.floor(data.b / 10) * 10, bO = data.b % 10;
+        visualAidContainer.innerHTML = `
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+            <div class="p-3 bg-rose-50 border-2 border-rose-300 rounded-xl">
+              <div class="font-extrabold text-rose-900 mb-1">❌ What Went Wrong (${data.wrong})</div>
+              <div class="text-rose-800 text-xs sm:text-sm">Tens: ${aT} − ${bT} = ${aT - bT}<br>Ones: Swapped digits (${bO} − ${aO} = ${bO - aO}) instead of regrouping!</div>
+            </div>
+            <div class="p-3 bg-emerald-50 border-2 border-emerald-400 rounded-xl">
+              <div class="font-extrabold text-emerald-900 mb-1">✓ Correct Strategy</div>
+              <div class="text-emerald-900 text-xs sm:text-sm">${stage === 2 ? `Subtract tens first (${data.a} − ${bT}), then subtract ${bO}!` : `${data.a} − ${bT} = ${data.a - bT}, then ${data.a - bT} − ${bO} = <strong>${data.right}</strong>`}</div>
+            </div>
+          </div>`;
+      }
+
+      // 19. Q19 (Section E): Multi-Step Grouping & Remaining
+      else if (type === 'multistep_boxes') {
+        const { total, perBox, soldBoxes } = data;
+        const totalBoxes = total / perBox;
+        const remBoxes = totalBoxes - soldBoxes;
+        const remItems = remBoxes * perBox;
+        if (stage === 1) {
+          visualAidContainer.innerHTML = `
+            <div class="p-4 bg-slate-50 border-2 border-dashed border-slate-300 rounded-xl text-center space-y-1.5">
+              <div class="text-base font-extrabold text-slate-800">Pupil Turn: Solve all 3 steps on your mini-whiteboard!</div>
+              <div class="text-xs sm:text-sm text-slate-500">Watch out for the final unit—does it ask for boxes/packs or individual items?</div>
+            </div>`;
+          return;
+        }
+        visualAidContainer.innerHTML = `
+          <div class="space-y-3">
+            <div class="flex flex-wrap justify-center gap-2">
+              ${Array.from({ length: totalBoxes }, (_, i) => {
+                const sold = i < soldBoxes;
+                return `
+                  <div class="px-3 py-2 rounded-xl border-2 text-center font-extrabold ${sold ? 'bg-slate-100 border-slate-300 text-slate-400 line-through' : 'bg-indigo-50 border-indigo-500 text-indigo-950'}">
+                    <div class="text-[10px] uppercase">${sold ? 'Sold' : 'Left'}</div>
+                    <div class="text-base">${perBox}</div>
+                  </div>`;
+              }).join('')}
+            </div>
+            <div class="text-center text-xs sm:text-sm font-bold text-slate-700">
+              ${stage === 2
+                ? `Visual Hint: ${totalBoxes} boxes total − ${soldBoxes} sold = ${remBoxes} boxes left. Multiply by ${perBox}!`
+                : `${remBoxes} boxes remaining × ${perBox} in each = <strong class="text-emerald-700">${remItems}</strong>`}
+            </div>
+          </div>`;
+      }
+
+      // 20. Q20: Always, Sometimes, or Never Tester
+      else if (type === 'asn_tester') {
+        const isEven5 = (data.mode === 'even_x_5');
+        const examples = isEven5
+          ? ['2 × 5 = 10', '4 × 5 = 20', '6 × 5 = 30', '8 × 5 = 40', '12 × 5 = 60']
+          : ['1 + 3 = 4', '3 + 5 = 8', '5 + 7 = 12', '7 + 9 = 16', '11 + 13 = 24'];
+        if (stage === 1) {
+          visualAidContainer.innerHTML = `
+            <div class="p-4 bg-slate-50 border-2 border-dashed border-slate-300 rounded-xl text-center space-y-1.5">
+              <div class="text-base font-extrabold text-slate-800">Pupil Turn: Test 2 or 3 examples on your mini-whiteboard!</div>
+              <div class="text-xs sm:text-sm text-slate-500">Decide: Is the statement <strong>Always</strong>, <strong>Sometimes</strong>, or <strong>Never</strong> true?</div>
+            </div>`;
+          return;
+        }
+        visualAidContainer.innerHTML = `
+          <div class="space-y-3 text-center">
+            <div class="flex flex-wrap justify-center gap-2">
+              ${examples.map(ex => {
+                const [lhs, rhs] = ex.split(' = ');
+                return `<span class="px-3 py-1.5 rounded-lg font-extrabold text-sm border-2 ${stage === 3 ? 'bg-emerald-50 border-emerald-400 text-emerald-950' : 'bg-indigo-50 border-indigo-300 text-indigo-900'}">${lhs} = ${stage === 3 ? rhs : '?'}</span>`;
+              }).join('')}
+            </div>
+            <div class="text-xs sm:text-sm font-bold text-slate-700">
+              ${stage === 2 ? 'Visual Hint: Work out each example above—do they all follow the rule?' : 'Every example works! Therefore, the statement is <strong>ALWAYS</strong> true.'}
+            </div>
+          </div>`;
+      }
+    }
+
+    /*************************************************************************
+     * 5. INTERACTIVE HTML5 WHITEBOARD ENGINE (TOUCH & MOUSE)
+     *************************************************************************/
+    const canvas = document.getElementById('whiteboardCanvas');
+    const ctx = canvas.getContext('2d');
+    const canvasWrapper = document.getElementById('canvasWrapper');
+
+    let wbState = {
+      tool: 'pen',
+      color: '#0f172a',
+      size: 4,
+      bgGrid: 'grid',
+      isDrawing: false,
+      startX: 0,
+      startY: 0,
+      snapshot: null,
+      history: [],
+      redoStack: []
+    };
+
+    function resizeCanvas() {
+      const tempCanvas = document.createElement('canvas');
+      tempCanvas.width = canvas.width;
+      tempCanvas.height = canvas.height;
+      if (canvas.width > 0 && canvas.height > 0) {
+        tempCanvas.getContext('2d').drawImage(canvas, 0, 0);
+      }
+
+      const rect = canvasWrapper.getBoundingClientRect();
+      canvas.width = rect.width;
+      canvas.height = rect.height;
+
+      drawBackgroundPattern();
+      if (tempCanvas.width > 0 && tempCanvas.height > 0) {
+        ctx.drawImage(tempCanvas, 0, 0);
+      }
+      if (wbState.history.length === 0) {
+        saveHistory();
+      }
+    }
+
+    function drawBackgroundPattern() {
+      const w = canvas.width;
+      const h = canvas.height;
+      ctx.save();
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, w, h);
+
+      if (wbState.bgGrid === 'grid') {
+        const step = 32;
+        ctx.strokeStyle = '#e2e8f0';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        for (let x = 0; x <= w; x += step) {
+          ctx.moveTo(x, 0);
+          ctx.lineTo(x, h);
+        }
+        for (let y = 0; y <= h; y += step) {
+          ctx.moveTo(0, y);
+          ctx.lineTo(w, y);
+        }
+        ctx.stroke();
+      } else if (wbState.bgGrid === 'lined') {
+        const step = 38;
+        ctx.strokeStyle = '#cbd5e1';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        for (let y = step; y <= h; y += step) {
+          ctx.moveTo(0, y);
+          ctx.lineTo(w, y);
+        }
+        ctx.stroke();
+      } else if (wbState.bgGrid === 'placevalue') {
+        const headers = ['Thousands', 'Hundreds', 'Tens', 'Ones', 'Tenths', 'Hundredths'];
+        const colW = w / headers.length;
+        ctx.fillStyle = '#f1f5f9';
+        ctx.fillRect(0, 0, w, 42);
+        ctx.strokeStyle = '#94a3b8';
+        ctx.lineWidth = 1.5;
+        ctx.font = 'bold 14px Inter, sans-serif';
+        ctx.textAlign = 'center';
+
+        headers.forEach((title, idx) => {
+          const x = idx * colW;
+          if (idx > 0) {
+            ctx.beginPath();
+            ctx.moveTo(x, 0);
+            ctx.lineTo(x, h);
+            ctx.stroke();
+          }
+          if (idx === 4) {
+            ctx.save();
+            ctx.strokeStyle = '#e11d48';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(x, 0);
+            ctx.lineTo(x, h);
+            ctx.stroke();
+            ctx.restore();
+          }
+          ctx.fillStyle = idx >= 4 ? '#b45309' : '#1e293b';
+          ctx.fillText(title, x + colW / 2, 26);
+        });
+        ctx.beginPath();
+        ctx.moveTo(0, 42);
+        ctx.lineTo(w, 42);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    function saveHistory() {
+      if (wbState.history.length > 25) wbState.history.shift();
+      wbState.history.push(canvas.toDataURL());
+      wbState.redoStack = [];
+      updateUndoRedoButtons();
+    }
+
+    function updateUndoRedoButtons() {
+      document.getElementById('undoBtn').disabled = wbState.history.length <= 1;
+      document.getElementById('redoBtn').disabled = wbState.redoStack.length === 0;
+    }
+
+    function restoreFromDataURL(url) {
+      const img = new Image();
+      img.onload = () => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0);
+      };
+      img.src = url;
+    }
+
+    function getPointerPos(e) {
+      const rect = canvas.getBoundingClientRect();
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      return {
+        x: clientX - rect.left,
+        y: clientY - rect.top
+      };
+    }
+
+    let pendingTextPos = { x: 50, y: 50 };
+    const floatingTextBox = document.getElementById('floatingTextBox');
+    const floatingTextInput = document.getElementById('floatingTextInput');
+
+    function startDraw(e) {
+      const pos = getPointerPos(e);
+
+      if (wbState.tool === 'text') {
+        pendingTextPos = pos;
+        floatingTextBox.style.left = `${Math.min(pos.x, canvas.width - 280)}px`;
+        floatingTextBox.style.top = `${Math.min(pos.y, canvas.height - 60)}px`;
+        floatingTextBox.classList.remove('hidden');
+        floatingTextInput.value = '';
+        setTimeout(() => floatingTextInput.focus(), 10);
+        return;
+      }
+
+      wbState.isDrawing = true;
+      wbState.startX = pos.x;
+      wbState.startY = pos.y;
+      wbState.snapshot = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+      ctx.beginPath();
+      ctx.moveTo(pos.x, pos.y);
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+
+      if (wbState.tool === 'eraser') {
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = wbState.size * 5;
+        ctx.globalAlpha = 1.0;
+      } else if (wbState.tool === 'highlighter') {
+        ctx.strokeStyle = wbState.color === '#0f172a' ? '#facc15' : wbState.color;
+        ctx.lineWidth = 22;
+        ctx.globalAlpha = 0.28;
+      } else {
+        ctx.strokeStyle = wbState.color;
+        ctx.lineWidth = wbState.size;
+        ctx.globalAlpha = 1.0;
+      }
+    }
+
+    function moveDraw(e) {
+      if (!wbState.isDrawing) return;
+      e.preventDefault();
+      const pos = getPointerPos(e);
+
+      if (wbState.tool === 'pen' || wbState.tool === 'eraser' || wbState.tool === 'highlighter') {
+        ctx.lineTo(pos.x, pos.y);
+        ctx.stroke();
+      } else if (wbState.tool === 'line') {
+        ctx.putImageData(wbState.snapshot, 0, 0);
+        ctx.beginPath();
+        ctx.moveTo(wbState.startX, wbState.startY);
+        ctx.lineTo(pos.x, pos.y);
+        ctx.stroke();
+      } else if (wbState.tool === 'rect') {
+        ctx.putImageData(wbState.snapshot, 0, 0);
+        ctx.strokeRect(wbState.startX, wbState.startY, pos.x - wbState.startX, pos.y - wbState.startY);
+      }
+    }
+
+    function endDraw() {
+      if (!wbState.isDrawing) return;
+      wbState.isDrawing = false;
+      ctx.globalAlpha = 1.0;
+      saveHistory();
+    }
+
+    canvas.addEventListener('mousedown', startDraw);
+    canvas.addEventListener('mousemove', moveDraw);
+    window.addEventListener('mouseup', endDraw);
+
+    canvas.addEventListener('touchstart', startDraw, { passive: false });
+    canvas.addEventListener('touchmove', moveDraw, { passive: false });
+    canvas.addEventListener('touchend', endDraw);
+
+    function commitFloatingText() {
+      const txt = floatingTextInput.value.trim();
+      if (txt) {
+        ctx.save();
+        ctx.fillStyle = wbState.color;
+        ctx.font = 'bold 22px Inter, sans-serif';
+        ctx.fillText(txt, pendingTextPos.x, pendingTextPos.y + 20);
+        ctx.restore();
+        saveHistory();
+      }
+      floatingTextBox.classList.add('hidden');
+    }
+    document.getElementById('confirmTextBtn').addEventListener('click', commitFloatingText);
+    document.getElementById('cancelTextBtn').addEventListener('click', () => floatingTextBox.classList.add('hidden'));
+    floatingTextInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') commitFloatingText();
+      if (e.key === 'Escape') floatingTextBox.classList.add('hidden');
+    });
+
+    function stampManipulative(type) {
+      const w = canvas.width;
+      const h = canvas.height;
+      const cx = w / 2;
+      const cy = h / 2;
+
+      ctx.save();
+      ctx.strokeStyle = '#1e293b';
+      ctx.fillStyle = '#1e293b';
+      ctx.lineWidth = 3;
+      ctx.lineCap = 'round';
+
+      if (type === 'numberline') {
+        const left = Math.max(40, cx - 220);
+        const right = Math.min(w - 40, cx + 220);
+        const y = cy + 30;
+        ctx.beginPath();
+        ctx.moveTo(left, y);
+        ctx.lineTo(right, y);
+        ctx.stroke();
+        const intervals = 4;
+        for (let i = 0; i <= intervals; i++) {
+          const tx = left + ((right - left) / intervals) * i;
+          ctx.beginPath();
+          ctx.moveTo(tx, y - 12);
+          ctx.lineTo(tx, y + 12);
+          ctx.stroke();
+        }
+      } else if (type === 'barmodel') {
+        const bw = Math.min(420, w - 80);
+        const bh = 64;
+        const bx = cx - bw / 2;
+        const by = cy - bh / 2;
+        ctx.strokeRect(bx, by, bw, bh);
+        for (let i = 1; i < 4; i++) {
+          const vx = bx + (bw / 4) * i;
+          ctx.beginPath();
+          ctx.moveTo(vx, by);
+          ctx.lineTo(vx, by + bh);
+          ctx.stroke();
+        }
+      } else if (type === 'triangle') {
+        const topY = cy - 90;
+        const botY = cy + 70;
+        const halfW = 105;
+        ctx.beginPath();
+        ctx.moveTo(cx, topY);
+        ctx.lineTo(cx - halfW, botY);
+        ctx.lineTo(cx + halfW, botY);
+        ctx.closePath();
+        ctx.stroke();
+        ctx.font = 'bold 16px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('× / ÷', cx, cy + 18);
+      } else if (type === 'pvtable') {
+        const cols = ['Th', 'H', 'T', 'O', '.', 't', 'h'];
+        const tw = Math.min(420, w - 60);
+        const th = 120;
+        const tx = cx - tw / 2;
+        const ty = cy - th / 2;
+        const cw = tw / cols.length;
+        ctx.strokeRect(tx, ty, tw, th);
+        ctx.beginPath();
+        ctx.moveTo(tx, ty + 36);
+        ctx.lineTo(tx + tw, ty + 36);
+        ctx.stroke();
+        ctx.font = 'bold 18px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        cols.forEach((c, i) => {
+          const x = tx + i * cw;
+          if (i > 0) {
+            ctx.beginPath();
+            ctx.moveTo(x, ty);
+            ctx.lineTo(x, ty + th);
+            ctx.stroke();
+          }
+          ctx.fillText(c, x + cw / 2, ty + 25);
+        });
+      }
+      ctx.restore();
+      saveHistory();
+    }
+
+    document.getElementById('copyToBoardBtn').addEventListener('click', () => {
+      const temp = document.createElement('div');
+      temp.innerHTML = activeQuestionData.prompt;
+      const cleanText = `${QUESTIONS[currentIndex].id}: ${temp.textContent.replace(/\s+/g, ' ').trim()}`;
+
+      ctx.save();
+      ctx.fillStyle = '#f0fdfa';
+      ctx.strokeStyle = '#0d9488';
+      ctx.lineWidth = 2;
+      const boxW = Math.min(canvas.width - 32, 680);
+      ctx.fillRect(16, 16, boxW, 46);
+      ctx.strokeRect(16, 16, boxW, 46);
+
+      ctx.fillStyle = '#134e4a';
+      ctx.font = 'bold 16px Inter, sans-serif';
+      const clipped = cleanText.length > 74 ? cleanText.slice(0, 71) + '...' : cleanText;
+      ctx.fillText(clipped, 28, 45);
+      ctx.restore();
+      saveHistory();
+    });
+
+    /*************************************************************************
+     * 6. UI CONTROL EVENT BINDINGS
+     *************************************************************************/
+    stage1Btn.addEventListener('click', () => setTeachingStage(1));
+    stage2Btn.addEventListener('click', () => setTeachingStage(2));
+    stage3Btn.addEventListener('click', () => setTeachingStage(3));
+
+    document.getElementById('prevBtn').addEventListener('click', () => {
+      currentIndex = (currentIndex - 1 + QUESTIONS.length) % QUESTIONS.length;
+      isTwinMode = false;
+      loadCurrentQuestion();
+    });
+
+    document.getElementById('nextBtn').addEventListener('click', () => {
+      currentIndex = (currentIndex + 1) % QUESTIONS.length;
+      isTwinMode = false;
+      loadCurrentQuestion();
+    });
+
+    toggleModeBtn.addEventListener('click', () => {
+      isTwinMode = !isTwinMode;
+      loadCurrentQuestion();
+    });
+
+    rerollTwinBtn.addEventListener('click', () => {
+      isTwinMode = true;
+      loadCurrentQuestion();
+    });
+
+    trapToggleBtn.addEventListener('click', () => {
+      const isHidden = trapContent.classList.contains('hidden');
+      if (isHidden) {
+        trapContent.classList.remove('hidden');
+        trapChevron.textContent = 'Hide Trap';
+      } else {
+        trapContent.classList.add('hidden');
+        trapChevron.textContent = 'Show Trap';
+      }
+    });
+
+    document.getElementById('revealStepBtn').addEventListener('click', () => {
+      if (revealedStepCount < activeQuestionData.steps.length) {
+        revealedStepCount++;
+        if (revealedStepCount === activeQuestionData.steps.length) {
+          isFinalRevealed = true;
+          setTeachingStage(3);
+        } else {
+          renderSteps();
+        }
+      }
+    });
+
+    document.getElementById('revealAllBtn').addEventListener('click', () => {
+      setTeachingStage(3);
+    });
+
+    document.getElementById('resetStepsBtn').addEventListener('click', () => {
+      setTeachingStage(1);
+    });
+
+    document.querySelectorAll('.wb-tool').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.wb-tool').forEach(b => {
+          b.classList.remove('active', 'bg-white', 'text-indigo-700', 'shadow-sm', 'font-bold');
+          b.classList.add('text-slate-700', 'font-semibold');
+        });
+        btn.classList.add('active', 'bg-white', 'text-indigo-700', 'shadow-sm', 'font-bold');
+        btn.classList.remove('text-slate-700', 'font-semibold');
+        wbState.tool = btn.dataset.tool;
+      });
+    });
+
+    document.querySelectorAll('.wb-color').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.wb-color').forEach(b => b.classList.remove('ring-2', 'ring-offset-1', 'ring-indigo-500'));
+        btn.classList.add('ring-2', 'ring-offset-1', 'ring-indigo-500');
+        wbState.color = btn.dataset.color;
+      });
+    });
+
+    document.querySelectorAll('.wb-size').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.wb-size').forEach(b => b.classList.remove('bg-white', 'shadow-sm'));
+        btn.classList.add('bg-white', 'shadow-sm');
+        wbState.size = parseInt(btn.dataset.size, 10);
+      });
+    });
+
+    document.getElementById('bgGridSelect').addEventListener('change', (e) => {
+      wbState.bgGrid = e.target.value;
+      drawBackgroundPattern();
+      saveHistory();
+    });
+
+    document.querySelectorAll('.stamp-btn').forEach(btn => {
+      btn.addEventListener('click', () => stampManipulative(btn.dataset.stamp));
+    });
+
+    document.getElementById('undoBtn').addEventListener('click', () => {
+      if (wbState.history.length > 1) {
+        const current = wbState.history.pop();
+        wbState.redoStack.push(current);
+        restoreFromDataURL(wbState.history[wbState.history.length - 1]);
+        updateUndoRedoButtons();
+      }
+    });
+
+    document.getElementById('redoBtn').addEventListener('click', () => {
+      if (wbState.redoStack.length > 0) {
+        const next = wbState.redoStack.pop();
+        wbState.history.push(next);
+        restoreFromDataURL(next);
+        updateUndoRedoButtons();
+      }
+    });
+
+    document.getElementById('clearBoardBtn').addEventListener('click', () => {
+      drawBackgroundPattern();
+      saveHistory();
+    });
+
+    document.getElementById('expandBoardBtn').addEventListener('click', () => {
+      const leftPanel = document.getElementById('leftPanel');
+      const expandIcon = document.getElementById('expandBoardIcon');
+      const expandText = document.getElementById('expandBoardText');
+      isBoardExpanded = !isBoardExpanded;
+
+      if (isBoardExpanded) {
+        leftPanel.classList.remove('lg:w-[48%]', 'xl:w-[46%]');
+        leftPanel.classList.add('lg:w-[34%]', 'xl:w-[33%]');
+        expandIcon.textContent = '⤡';
+        expandText.textContent = 'Restore';
+      } else {
+        leftPanel.classList.remove('lg:w-[34%]', 'xl:w-[33%]');
+        leftPanel.classList.add('lg:w-[48%]', 'xl:w-[46%]');
+        expandIcon.textContent = '⤢';
+        expandText.textContent = 'Expand';
+      }
+      setTimeout(resizeCanvas, 220);
+    });
+
+    window.addEventListener('resize', resizeCanvas);
+    window.onload = function () {
+      loadCurrentQuestion();
+      resizeCanvas();
+    };
+  </script>
+</body>
+</html>
