@@ -1,0 +1,1728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P7B Numeracy Walkthrough & Interactive Whiteboard</title>
+  <!-- Load Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Load Google Font: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    /* Base typography & full-height layout */
+    html, body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background-color: #f1f5f9;
+      color: #0f172a;
+      height: 100%;
+      overflow-x: hidden;
+    }
+
+    /* Smooth custom scrollbar for question pills and left panel */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #e2e8f0;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #94a3b8;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #64748b;
+    }
+
+    /* Whiteboard canvas touch handling to prevent page scroll while drawing */
+    #whiteboardCanvas {
+      touch-action: none;
+      cursor: crosshair;
+      display: block;
+    }
+
+    /* Subtle pulse highlight for active interactive manipulative elements */
+    .pop-in {
+      animation: popIn 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes popIn {
+      from { opacity: 0; transform: translateY(4px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+  </style>
+</head>
+<body class="flex flex-col h-screen select-none">
+
+  <!-- TOP NAVIGATION BAR -->
+  <header class="bg-slate-900 text-white px-4 py-2.5 shadow-md flex flex-wrap items-center justify-between gap-2 z-20 shrink-0">
+    <!-- Brand & Title -->
+    <div class="flex items-center gap-3">
+      <div class="bg-indigo-600 text-white font-extrabold text-sm px-2.5 py-1.5 rounded-lg tracking-wide shadow-inner">
+        P7B
+      </div>
+      <div>
+        <h1 class="text-base sm:text-lg font-bold leading-tight tracking-tight">Numeracy Diagnostic Walkthrough</h1>
+        <p class="text-xs text-slate-400 hidden sm:block">Anonymous Cohort Review • Common Misconceptions &amp; Visual Models</p>
+      </div>
+    </div>
+
+    <!-- Question Selector Pills -->
+    <div id="questionPills" class="flex items-center gap-1.5 overflow-x-auto py-1 max-w-full lg:max-w-2xl">
+      <!-- Populated dynamically by JS -->
+    </div>
+
+    <!-- Prev / Next & Twin Practice Toggle -->
+    <div class="flex items-center gap-2">
+      <button id="prevBtn" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 active:bg-slate-600 text-slate-200 rounded-lg text-sm font-semibold border border-slate-700 transition flex items-center gap-1" title="Previous Question">
+        <span>←</span><span class="hidden md:inline">Prev</span>
+      </button>
+      <button id="nextBtn" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 active:bg-slate-600 text-slate-200 rounded-lg text-sm font-semibold border border-slate-700 transition flex items-center gap-1" title="Next Question">
+        <span class="hidden md:inline">Next</span><span>→</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN SPLIT-SCREEN WORKSTATION -->
+  <main class="flex-1 flex flex-col lg:flex-row overflow-hidden">
+
+    <!-- LEFT PANEL: QUESTION, VISUAL MANIPULATIVE & STEP-BY-STEP REVEAL -->
+    <section id="leftPanel" class="w-full lg:w-[48%] xl:w-[46%] flex flex-col bg-slate-100 border-b lg:border-b-0 lg:border-r border-slate-300 overflow-y-auto p-4 sm:p-5 gap-4 transition-all duration-200">
+
+      <!-- Question Header Metadata & Twin Practice Toggle -->
+      <div class="flex flex-wrap items-center justify-between gap-2 bg-white px-4 py-3 rounded-xl shadow-sm border border-slate-200">
+        <div class="flex items-center gap-2.5 flex-wrap">
+          <span id="qBadge" class="bg-indigo-600 text-white font-extrabold text-sm sm:text-base px-3 py-1 rounded-lg">Q19</span>
+          <span id="qTopic" class="text-xs sm:text-sm font-semibold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-md border border-slate-200">Measures: Mass</span>
+          <span id="qMissBadge" class="text-xs sm:text-sm font-bold text-amber-800 bg-amber-100 border border-amber-300 px-2.5 py-1 rounded-md">Common Trap • 6/6 missed</span>
+        </div>
+
+        <!-- Twin Practice Question Controls -->
+        <div class="flex items-center gap-1.5">
+          <button id="toggleModeBtn" class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200 transition flex items-center gap-1.5">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+            <span id="toggleModeLabel">Try Similar Practice Q</span>
+          </button>
+          <button id="rerollTwinBtn" class="hidden px-2.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold bg-emerald-600 text-white hover:bg-emerald-700 transition" title="Generate Another Similar Question">
+            New Twin ↻
+          </button>
+        </div>
+      </div>
+
+      <!-- Main Question Prompt Card -->
+      <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+        <div class="flex items-center justify-between mb-2">
+          <span id="modeBanner" class="text-xs font-bold uppercase tracking-wider text-slate-400">Original Diagnostic Question</span>
+          <button id="copyToBoardBtn" class="text-xs font-semibold text-indigo-600 hover:text-indigo-800 bg-indigo-50 hover:bg-indigo-100 px-2.5 py-1 rounded-md transition">
+            + Stamp Question on Board
+          </button>
+        </div>
+        <div id="questionPrompt" class="text-xl sm:text-2xl font-bold text-slate-900 leading-snug">
+          <!-- Question text injected here -->
+        </div>
+      </div>
+
+      <!-- 3-STAGE TEACHER-CONTROLLED TEACHING FLOW BAR -->
+      <div class="bg-white p-3 rounded-xl shadow-sm border border-slate-200">
+        <div class="flex items-center justify-between mb-2 px-1">
+          <span class="text-[11px] font-extrabold uppercase tracking-wider text-slate-500">Teacher Control Stages (Zero Spoilers)</span>
+          <span id="stageStatusLabel" class="text-xs font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded">Stage 1: Pupil Try</span>
+        </div>
+        <div class="grid grid-cols-3 gap-2">
+          <button id="stage1Btn" class="stage-btn py-2.5 px-2 rounded-lg text-xs sm:text-sm font-extrabold border-2 transition flex flex-col items-center justify-center text-center leading-tight">
+            <span>1. Pupil Try</span>
+            <span class="text-[10px] font-semibold opacity-80 mt-0.5">Blank / Unsolved</span>
+          </button>
+          <button id="stage2Btn" class="stage-btn py-2.5 px-2 rounded-lg text-xs sm:text-sm font-extrabold border-2 transition flex flex-col items-center justify-center text-center leading-tight">
+            <span>2. Visual Hint</span>
+            <span class="text-[10px] font-semibold opacity-80 mt-0.5">Show Visual Model</span>
+          </button>
+          <button id="stage3Btn" class="stage-btn py-2.5 px-2 rounded-lg text-xs sm:text-sm font-extrabold border-2 transition flex flex-col items-center justify-center text-center leading-tight">
+            <span>3. Reveal Answer</span>
+            <span class="text-[10px] font-semibold opacity-80 mt-0.5">Model &amp; Steps</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Stage-Controlled Workspace / Visual Model Container -->
+      <div id="visualSectionCard" class="bg-white p-4 sm:p-5 rounded-xl shadow-sm border border-slate-200">
+        <div class="flex items-center justify-between mb-3">
+          <h2 id="visualCardTitle" class="text-xs sm:text-sm font-extrabold uppercase tracking-wider text-indigo-700 flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-indigo-600"></span>
+            Pupil Try Workspace
+          </h2>
+          <span id="visualCardHint" class="text-xs text-slate-400 font-medium">Answers hidden until Stage 3</span>
+        </div>
+        <div id="visualAidContainer" class="min-h-[120px] flex flex-col justify-center">
+          <!-- Stage-specific workspace / visual aid rendered per question -->
+        </div>
+      </div>
+
+      <!-- Spot the Common Trap Accordion (Only unlocked or expandable on teacher click, reset on every question) -->
+      <div id="trapCard" class="bg-amber-50/90 border border-amber-300 rounded-xl overflow-hidden shadow-sm">
+        <button id="trapToggleBtn" class="w-full px-4 py-3 flex items-center justify-between text-left hover:bg-amber-100/70 transition">
+          <div class="flex items-center gap-2">
+            <span class="bg-amber-500 text-white w-6 h-6 rounded-full flex items-center justify-center font-extrabold text-sm">!</span>
+            <span class="font-bold text-amber-950 text-sm sm:text-base">Spot the Common Trap (Anonymous Mistake)</span>
+          </div>
+          <span id="trapChevron" class="text-amber-800 font-bold text-xs sm:text-sm bg-amber-200/80 px-2.5 py-0.5 rounded-md">Show Trap</span>
+        </button>
+        <div id="trapContent" class="hidden px-4 pb-4 pt-2 text-amber-950 text-sm sm:text-base border-t border-amber-200/80 bg-white/70 leading-relaxed">
+          <!-- Misconception text injected here -->
+        </div>
+      </div>
+
+      <!-- Step-by-Step Solution & Final Answer Reveal (Strictly hidden until Stage 3 or explicit step click) -->
+      <div id="solutionCard" class="bg-white p-4 sm:p-5 rounded-xl shadow-sm border border-slate-200 mb-2">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+          <h2 class="text-xs sm:text-sm font-extrabold uppercase tracking-wider text-slate-600">Step-by-Step Solution</h2>
+          <div class="flex items-center gap-2">
+            <button id="revealStepBtn" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-bold text-xs sm:text-sm rounded-lg shadow-sm transition">
+              Reveal Step 1
+            </button>
+            <button id="revealAllBtn" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold text-xs sm:text-sm rounded-lg shadow-sm transition">
+              Reveal Answer
+            </button>
+            <button id="resetStepsBtn" class="px-2.5 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold text-xs sm:text-sm rounded-lg transition" title="Hide All">
+              Hide
+            </button>
+          </div>
+        </div>
+
+        <!-- Steps List -->
+        <div id="stepsContainer" class="space-y-2.5">
+          <!-- Steps dynamically shown here -->
+        </div>
+
+        <!-- Final Answer Banner -->
+        <div id="finalAnswerBox" class="hidden mt-4 p-4 bg-emerald-50 border-2 border-emerald-500 rounded-xl flex items-center justify-between pop-in">
+          <span class="text-sm font-extrabold uppercase tracking-wider text-emerald-800">Correct Answer:</span>
+          <span id="finalAnswerText" class="text-2xl sm:text-3xl font-extrabold text-emerald-900">2,500 g</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- RIGHT PANEL: FULL-FEATURED INTERACTIVE TEACHING WHITEBOARD -->
+    <section id="rightPanel" class="flex-1 flex flex-col bg-white overflow-hidden relative">
+
+      <!-- Whiteboard Toolbar -->
+      <div class="bg-slate-50 border-b border-slate-200 px-3 py-2 flex flex-wrap items-center justify-between gap-2 z-10 shrink-0">
+
+        <!-- Drawing Tools -->
+        <div class="flex items-center gap-1 bg-slate-200/80 p-1 rounded-xl">
+          <button data-tool="pen" class="wb-tool active px-2.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold bg-white text-indigo-700 shadow-sm flex items-center gap-1" title="Pen">
+            ✏️ <span class="hidden xl:inline">Pen</span>
+          </button>
+          <button data-tool="highlighter" class="wb-tool px-2.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold text-slate-700 hover:bg-white/60 flex items-center gap-1" title="Highlighter">
+            🖍️ <span class="hidden xl:inline">Highlight</span>
+          </button>
+          <button data-tool="line" class="wb-tool px-2.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold text-slate-700 hover:bg-white/60 flex items-center gap-1" title="Straight Line / Number Line">
+            📏 <span class="hidden xl:inline">Line</span>
+          </button>
+          <button data-tool="rect" class="wb-tool px-2.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold text-slate-700 hover:bg-white/60 flex items-center gap-1" title="Box / Bar Model">
+            ▭ <span class="hidden xl:inline">Box</span>
+          </button>
+          <button data-tool="text" class="wb-tool px-2.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold text-slate-700 hover:bg-white/60 flex items-center gap-1" title="Click anywhere to type text">
+            🔤 <span class="hidden xl:inline">Text</span>
+          </button>
+          <button data-tool="eraser" class="wb-tool px-2.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold text-slate-700 hover:bg-white/60 flex items-center gap-1" title="Eraser">
+            🧽 <span class="hidden xl:inline">Erase</span>
+          </button>
+        </div>
+
+        <!-- Colors & Thickness -->
+        <div class="flex items-center gap-2">
+          <div class="flex items-center gap-1.5 bg-slate-100 px-2 py-1.5 rounded-xl border border-slate-200">
+            <button data-color="#0f172a" class="wb-color w-5 h-5 rounded-full bg-slate-900 ring-2 ring-offset-1 ring-indigo-500" title="Black"></button>
+            <button data-color="#2563eb" class="wb-color w-5 h-5 rounded-full bg-blue-600" title="Blue"></button>
+            <button data-color="#dc2626" class="wb-color w-5 h-5 rounded-full bg-red-600" title="Red"></button>
+            <button data-color="#059669" class="wb-color w-5 h-5 rounded-full bg-emerald-600" title="Green"></button>
+            <button data-color="#7c3aed" class="wb-color w-5 h-5 rounded-full bg-violet-600" title="Purple"></button>
+            <button data-color="#ea580c" class="wb-color w-5 h-5 rounded-full bg-orange-600" title="Orange"></button>
+          </div>
+
+          <!-- Stroke Size Selector -->
+          <div class="hidden sm:flex items-center gap-1 bg-slate-100 px-2 py-1 rounded-xl border border-slate-200">
+            <button data-size="2" class="wb-size p-1.5 rounded hover:bg-white" title="Fine"><span class="block w-1.5 h-1.5 rounded-full bg-slate-800"></span></button>
+            <button data-size="4" class="wb-size p-1.5 rounded bg-white shadow-sm" title="Medium"><span class="block w-2.5 h-2.5 rounded-full bg-slate-800"></span></button>
+            <button data-size="7" class="wb-size p-1.5 rounded hover:bg-white" title="Thick"><span class="block w-3.5 h-3.5 rounded-full bg-slate-800"></span></button>
+            <button data-size="12" class="wb-size p-1.5 rounded hover:bg-white" title="Marker"><span class="block w-4 h-4 rounded-full bg-slate-800"></span></button>
+          </div>
+        </div>
+
+        <!-- Background Grid & Expand Toggle -->
+        <div class="flex items-center gap-1.5">
+          <select id="bgGridSelect" class="text-xs sm:text-sm font-semibold bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            <option value="grid">Squared Maths Grid</option>
+            <option value="plain">Plain White</option>
+            <option value="lined">Ruled Lines</option>
+            <option value="placevalue">Place Value Columns</option>
+          </select>
+
+          <button id="expandBoardBtn" class="hidden lg:flex items-center gap-1 px-2.5 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-800 rounded-lg text-xs sm:text-sm font-bold transition" title="Expand or Restore Whiteboard Width">
+            <span id="expandBoardIcon">⤢</span>
+            <span id="expandBoardText">Expand</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick-Stamp Manipulatives & Undo/Redo/Clear Sub-bar -->
+      <div class="bg-slate-100/90 border-b border-slate-200 px-3 py-1.5 flex flex-wrap items-center justify-between gap-2 text-xs shrink-0">
+        <div class="flex items-center gap-1.5 flex-wrap">
+          <span class="font-bold text-slate-500 uppercase tracking-wider mr-1">Quick Stamp:</span>
+          <button data-stamp="numberline" class="stamp-btn px-2.5 py-1 bg-white hover:bg-indigo-50 text-slate-700 hover:text-indigo-700 font-semibold rounded-md border border-slate-300 shadow-2xs transition">
+            + Number Line
+          </button>
+          <button data-stamp="barmodel" class="stamp-btn px-2.5 py-1 bg-white hover:bg-indigo-50 text-slate-700 hover:text-indigo-700 font-semibold rounded-md border border-slate-300 shadow-2xs transition">
+            + 4-Part Bar Model
+          </button>
+          <button data-stamp="triangle" class="stamp-btn px-2.5 py-1 bg-white hover:bg-indigo-50 text-slate-700 hover:text-indigo-700 font-semibold rounded-md border border-slate-300 shadow-2xs transition">
+            + Fact Triangle
+          </button>
+          <button data-stamp="pvtable" class="stamp-btn px-2.5 py-1 bg-white hover:bg-indigo-50 text-slate-700 hover:text-indigo-700 font-semibold rounded-md border border-slate-300 shadow-2xs transition">
+            + Place Value Grid
+          </button>
+        </div>
+
+        <div class="flex items-center gap-1.5">
+          <button id="undoBtn" class="px-2.5 py-1 bg-white hover:bg-slate-200 text-slate-700 font-semibold rounded-md border border-slate-300 transition disabled:opacity-40" title="Undo">
+            ↶ Undo
+          </button>
+          <button id="redoBtn" class="px-2.5 py-1 bg-white hover:bg-slate-200 text-slate-700 font-semibold rounded-md border border-slate-300 transition disabled:opacity-40" title="Redo">
+            ↷ Redo
+          </button>
+          <button id="clearBoardBtn" class="px-2.5 py-1 bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold rounded-md border border-rose-200 transition">
+            Clear Board
+          </button>
+        </div>
+      </div>
+
+      <!-- Interactive Canvas Area -->
+      <div id="canvasWrapper" class="flex-1 relative w-full h-full overflow-hidden bg-white">
+        <canvas id="whiteboardCanvas"></canvas>
+
+        <!-- Floating Inline Text Input for Text Tool -->
+        <div id="floatingTextBox" class="hidden absolute z-30 bg-white/95 p-1.5 rounded-lg shadow-lg border-2 border-indigo-500 flex items-center gap-1">
+          <input id="floatingTextInput" type="text" placeholder="Type maths note..." class="px-2 py-1 text-lg font-bold text-slate-900 focus:outline-none w-56" />
+          <button id="confirmTextBtn" class="px-2.5 py-1 bg-indigo-600 text-white text-xs font-bold rounded">Add</button>
+          <button id="cancelTextBtn" class="px-2 py-1 bg-slate-200 text-slate-700 text-xs font-bold rounded">✕</button>
+        </div>
+
+        <!-- Subtle Canvas Hint -->
+        <div class="pointer-events-none absolute bottom-3 right-3 bg-slate-900/5 text-slate-400 text-xs font-medium px-2.5 py-1 rounded-full">
+          Interactive Board • Touch &amp; Mouse Ready
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    /*************************************************************************
+     * 2. APPLICATION STATE (STRICT ZERO-SPOILER DEFAULTS)
+     *************************************************************************/
+    let currentIndex = 0;
+    let isTwinMode = false;
+    let activeQuestionData = QUESTIONS[0].original;
+    let currentStage = 1; // 1 = Pupil Try (Zero Spoilers), 2 = Visual Hint (No Final Answer), 3 = Model & Reveal Answer
+    let revealedStepCount = 0;
+    let isFinalRevealed = false;
+    let isBoardExpanded = false;
+
+    // DOM Elements
+    const questionPillsEl = document.getElementById('questionPills');
+    const qBadgeEl = document.getElementById('qBadge');
+    const qTopicEl = document.getElementById('qTopic');
+    const qMissBadgeEl = document.getElementById('qMissBadge');
+    const modeBannerEl = document.getElementById('modeBanner');
+    const questionPromptEl = document.getElementById('questionPrompt');
+    const stageStatusLabel = document.getElementById('stageStatusLabel');
+    const stage1Btn = document.getElementById('stage1Btn');
+    const stage2Btn = document.getElementById('stage2Btn');
+    const stage3Btn = document.getElementById('stage3Btn');
+    const visualCardTitle = document.getElementById('visualCardTitle');
+    const visualCardHint = document.getElementById('visualCardHint');
+    const trapToggleBtn = document.getElementById('trapToggleBtn');
+    const trapChevron = document.getElementById('trapChevron');
+    const trapContent = document.getElementById('trapContent');
+    const visualAidContainer = document.getElementById('visualAidContainer');
+    const stepsContainer = document.getElementById('stepsContainer');
+    const finalAnswerBox = document.getElementById('finalAnswerBox');
+    const finalAnswerText = document.getElementById('finalAnswerText');
+    const toggleModeBtn = document.getElementById('toggleModeBtn');
+    const toggleModeLabel = document.getElementById('toggleModeLabel');
+    const rerollTwinBtn = document.getElementById('rerollTwinBtn');
+
+    /*************************************************************************
+     * 3. RENDER NAVIGATION, STAGE CONTROLS & QUESTION PANEL
+     *************************************************************************/
+    function renderPills() {
+      questionPillsEl.innerHTML = '';
+      QUESTIONS.forEach((q, idx) => {
+        const btn = document.createElement('button');
+        const active = idx === currentIndex;
+        btn.textContent = q.id;
+        btn.className = active
+          ? 'px-3 py-1 rounded-lg text-xs sm:text-sm font-extrabold bg-indigo-500 text-white shadow-sm ring-2 ring-indigo-300 shrink-0 transition'
+          : 'px-2.5 py-1 rounded-lg text-xs sm:text-sm font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white shrink-0 transition';
+        btn.addEventListener('click', () => {
+          currentIndex = idx;
+          isTwinMode = false;
+          loadCurrentQuestion();
+        });
+        questionPillsEl.appendChild(btn);
+      });
+    }
+
+    function setTeachingStage(stageNum) {
+      currentStage = stageNum;
+
+      // Update Stage Button Styling
+      const stageButtons = [
+        { el: stage1Btn, num: 1, activeClass: 'bg-slate-900 text-white border-slate-900 shadow-sm', label: 'Stage 1: Pupil Try (Zero Spoilers)' },
+        { el: stage2Btn, num: 2, activeClass: 'bg-indigo-600 text-white border-indigo-700 shadow-sm', label: 'Stage 2: Visual Hint (Discovery)' },
+        { el: stage3Btn, num: 3, activeClass: 'bg-emerald-600 text-white border-emerald-700 shadow-sm', label: 'Stage 3: Answer & Worked Model' }
+      ];
+
+      stageButtons.forEach(item => {
+        if (item.num === currentStage) {
+          item.el.className = `stage-btn py-2.5 px-2 rounded-lg text-xs sm:text-sm font-extrabold border-2 transition flex flex-col items-center justify-center text-center leading-tight ${item.activeClass}`;
+          stageStatusLabel.textContent = item.label;
+        } else {
+          item.el.className = 'stage-btn py-2.5 px-2 rounded-lg text-xs sm:text-sm font-extrabold border-2 transition flex flex-col items-center justify-center text-center leading-tight bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100';
+        }
+      });
+
+      // Update Visual Workspace Header
+      if (currentStage === 1) {
+        visualCardTitle.innerHTML = '<span class="w-2 h-2 rounded-full bg-slate-700"></span> Stage 1: Pupil Try Workspace';
+        visualCardHint.textContent = 'Have a go on whiteboards first!';
+        revealedStepCount = 0;
+        isFinalRevealed = false;
+      } else if (currentStage === 2) {
+        visualCardTitle.innerHTML = '<span class="w-2 h-2 rounded-full bg-indigo-600"></span> Stage 2: Visual Scaffold &amp; Hint';
+        visualCardHint.textContent = 'Explore the structure (answer still hidden)';
+        revealedStepCount = 0;
+        isFinalRevealed = false;
+      } else if (currentStage === 3) {
+        visualCardTitle.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-600"></span> Stage 3: Worked Model &amp; Solution';
+        visualCardHint.textContent = 'Full model revealed';
+        revealedStepCount = activeQuestionData.steps.length;
+        isFinalRevealed = true;
+      }
+
+      renderVisualAid(QUESTIONS[currentIndex].id, activeQuestionData.visualData, currentStage);
+      renderSteps();
+    }
+
+    function loadCurrentQuestion() {
+      const qMeta = QUESTIONS[currentIndex];
+      activeQuestionData = isTwinMode ? qMeta.generateTwin() : qMeta.original;
+
+      // Always reset to Stage 1 (Zero Spoilers) on question load or new Practice Twin!
+      currentStage = 1;
+      revealedStepCount = 0;
+      isFinalRevealed = false;
+
+      // Update Top Pills
+      renderPills();
+
+      // Update Metadata Badges
+      qBadgeEl.textContent = isTwinMode ? `${qMeta.id} (Practice Twin)` : qMeta.id;
+      qTopicEl.textContent = qMeta.topic;
+      qMissBadgeEl.textContent = `Common Trap • ${qMeta.missRate}`;
+
+      // Update Mode Banner & Buttons
+      if (isTwinMode) {
+        modeBannerEl.textContent = 'Practice Twin Question (Fresh Class Example)';
+        modeBannerEl.className = 'text-xs font-extrabold uppercase tracking-wider text-emerald-700';
+        toggleModeLabel.textContent = 'Back to Original Q';
+        toggleModeBtn.className = 'px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold bg-slate-200 text-slate-800 hover:bg-slate-300 transition flex items-center gap-1.5';
+        rerollTwinBtn.classList.remove('hidden');
+      } else {
+        modeBannerEl.textContent = 'Original Diagnostic Question';
+        modeBannerEl.className = 'text-xs font-bold uppercase tracking-wider text-slate-400';
+        toggleModeLabel.textContent = 'Try Similar Practice Q';
+        toggleModeBtn.className = 'px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200 transition flex items-center gap-1.5';
+        rerollTwinBtn.classList.add('hidden');
+      }
+
+      // Update Question Prompt (Never contains answers)
+      questionPromptEl.innerHTML = activeQuestionData.prompt;
+
+      // Reset Trap Accordion (Always hidden until teacher clicks Show Trap)
+      trapContent.classList.add('hidden');
+      trapChevron.textContent = 'Show Trap';
+      trapContent.innerHTML = activeQuestionData.trap;
+
+      // Render Stage 1
+      setTeachingStage(1);
+    }
+
+    function renderSteps() {
+      stepsContainer.innerHTML = '';
+      const steps = activeQuestionData.steps;
+
+      if (revealedStepCount === 0 && !isFinalRevealed) {
+        stepsContainer.innerHTML = `<p class="text-sm text-slate-400 italic py-1">Hidden until you click <strong>"Reveal Step 1"</strong> or <strong>"3. Reveal Answer"</strong> above.</p>`;
+      } else {
+        for (let i = 0; i < revealedStepCount; i++) {
+          const stepDiv = document.createElement('div');
+          stepDiv.className = 'p-3 bg-slate-50 border-l-4 border-indigo-600 rounded-r-lg text-sm sm:text-base text-slate-800 pop-in';
+          stepDiv.innerHTML = `<span class="font-extrabold text-indigo-700 mr-1.5">Step ${i + 1}:</span> ${steps[i]}`;
+          stepsContainer.appendChild(stepDiv);
+        }
+      }
+
+      // Update Reveal Step button label
+      const revealStepBtn = document.getElementById('revealStepBtn');
+      if (revealedStepCount >= steps.length) {
+        revealStepBtn.textContent = 'All Steps Shown';
+        revealStepBtn.disabled = true;
+        revealStepBtn.classList.add('opacity-50', 'cursor-not-allowed');
+      } else {
+        revealStepBtn.textContent = `Reveal Step ${revealedStepCount + 1}`;
+        revealStepBtn.disabled = false;
+        revealStepBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+      }
+
+      // Show or Hide Final Answer
+      if (isFinalRevealed) {
+        finalAnswerText.textContent = activeQuestionData.answer;
+        finalAnswerBox.classList.remove('hidden');
+      } else {
+        finalAnswerBox.classList.add('hidden');
+      }
+    }
+
+    /*************************************************************************
+     * 4. STRICT ZERO-SPOILER 3-STAGE VISUAL MANIPULATIVES PER QUESTION
+     *    Stage 1: Unsolved pupil workspace / interactive builder (NO answers)
+     *    Stage 2: Structural visual hint / scaffold (NO final answer printed)
+     *    Stage 3: Completed worked model & verified answer
+     *************************************************************************/
+    function renderVisualAid(qId, data, stage) {
+      visualAidContainer.innerHTML = '';
+
+      // ---------------------------------------------------------------------
+      // Q19: Place Value Slider (kg -> g)
+      // ---------------------------------------------------------------------
+      if (qId === 'Q19') {
+        if (stage === 1) {
+          visualAidContainer.innerHTML = `
+            <div class="p-4 bg-slate-50 border-2 border-dashed border-slate-300 rounded-xl text-center space-y-2">
+              <div class="text-base font-extrabold text-slate-800">Pupil Turn: Write your answer in grams on your mini-whiteboard!</div>
+              <div class="text-xs sm:text-sm text-slate-500">Ask yourself: <em>How many grams are in 1 whole kilogram? What about 0.5 kg?</em></div>
+            </div>
+          `;
+          return;
+        }
+
+        // Stage 2 starts unshifted; Stage 3 starts shifted (and teacher can toggle in Stage 2/3)
+        let shifted = (stage === 3);
+        const renderPV = () => {
+          const strVal = data.kg.toString();
+          const parts = strVal.split('.');
+          const ones = parts[0] || '0';
+          const tenths = (parts[1] && parts[1][0]) || '0';
+          const hundredths = (parts[1] && parts[1][1]) || '0';
+
+          const cols = shifted
+            ? [ones, tenths, hundredths, '0', '—', '—']
+            : ['—', '—', '—', ones, tenths, hundredths];
+
+          visualAidContainer.innerHTML = `
+            <div class="space-y-3">
+              <div class="bg-indigo-50 border border-indigo-200 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold text-indigo-900 text-center">
+                Key Conversion Fact: <strong>1 kg = 1,000 g</strong> (Multiply by 1,000 → shift digits 3 places left)
+              </div>
+              <div class="grid grid-cols-6 gap-1 text-center">
+                <div class="bg-indigo-900 text-white text-xs font-bold py-1.5 rounded-t-lg">Thousands</div>
+                <div class="bg-indigo-800 text-white text-xs font-bold py-1.5 rounded-t-lg">Hundreds</div>
+                <div class="bg-indigo-700 text-white text-xs font-bold py-1.5 rounded-t-lg">Tens</div>
+                <div class="bg-indigo-600 text-white text-xs font-bold py-1.5 rounded-t-lg">Ones</div>
+                <div class="bg-amber-600 text-white text-xs font-bold py-1.5 rounded-t-lg">. Tenths</div>
+                <div class="bg-amber-500 text-white text-xs font-bold py-1.5 rounded-t-lg">Hundredths</div>
+
+                ${cols.map((val, i) => `
+                  <div class="py-3 text-xl sm:text-2xl font-extrabold border ${i === 3 ? 'border-r-4 border-r-rose-500' : 'border-slate-200'} ${val !== '—' ? 'bg-indigo-50 text-indigo-950' : 'bg-slate-50 text-slate-300'} rounded-b-lg transition-all">
+                    ${val}
+                  </div>
+                `).join('')}
+              </div>
+              <div class="flex items-center justify-between gap-2">
+                <span class="text-xs font-semibold text-slate-600">${shifted ? `Shifted 3 places left = <strong class="text-emerald-700">${(data.kg * 1000).toLocaleString()} g</strong>` : `Starting position: <strong>${data.kg} kg</strong>`}</span>
+                ${stage === 3 ? `
+                  <button id="pvShiftBtn" class="px-3.5 py-2 rounded-lg text-xs sm:text-sm font-bold ${shifted ? 'bg-slate-200 text-slate-800' : 'bg-indigo-600 text-white hover:bg-indigo-700'} transition">
+                    ${shifted ? '↺ Reset to kg' : 'Slide 3 Places Left →'}
+                  </button>
+                ` : `<span class="text-xs font-bold text-indigo-600">Click "3. Reveal Answer" to slide digits</span>`}
+              </div>
+            </div>
+          `;
+          const btn = document.getElementById('pvShiftBtn');
+          if (btn) {
+            btn.addEventListener('click', () => {
+              shifted = !shifted;
+              renderPV();
+            });
+          }
+        };
+        renderPV();
+      }
+
+      // ---------------------------------------------------------------------
+      // Q23: Factors of Target Number (Stage 1: Pupil Picker, Stage 2: Factor Pair Slots, Stage 3: Full Reveal)
+      // ---------------------------------------------------------------------
+      else if (qId === 'Q23') {
+        const pupilPicked = new Set();
+        const renderFactorStage = () => {
+          const target = data.target;
+          // Compute factor pairs up to sqrt(target)
+          const pairs = [];
+          for (let i = 1; i * i <= target; i++) {
+            if (target % i === 0) pairs.push([i, target / i]);
+          }
+
+          if (stage === 1) {
+            visualAidContainer.innerHTML = `
+              <div class="space-y-3 text-center">
+                <div class="text-xs sm:text-sm font-bold text-slate-600">Pupil Turn: Tap the numbers below that you think are factors of <strong>${target}</strong>:</div>
+                <div class="flex flex-wrap gap-2 justify-center">
+                  ${data.choices.map(num => {
+                    const isPicked = pupilPicked.has(num);
+                    return `
+                      <button data-pnum="${num}" class="pchoice-btn w-12 h-12 rounded-xl text-lg font-extrabold border-2 transition ${isPicked ? 'bg-indigo-600 text-white border-indigo-800 scale-105 shadow-sm' : 'bg-slate-50 text-slate-800 border-slate-300 hover:bg-indigo-50'}">
+                        ${num}
+                      </button>
+                    `;
+                  }).join('')}
+                </div>
+                <div class="text-xs text-slate-400">Selected: <strong>${pupilPicked.size ? Array.from(pupilPicked).sort((a,b)=>a-b).join(', ') : 'None yet'}</strong> (No answers shown until Stage 3)</div>
+              </div>
+            `;
+            visualAidContainer.querySelectorAll('.pchoice-btn').forEach(btn => {
+              btn.addEventListener('click', () => {
+                const n = parseInt(btn.dataset.pnum, 10);
+                if (pupilPicked.has(n)) pupilPicked.delete(n);
+                else pupilPicked.add(n);
+                renderFactorStage();
+              });
+            });
+          } else if (stage === 2) {
+            visualAidContainer.innerHTML = `
+              <div class="space-y-3">
+                <div class="text-xs sm:text-sm font-bold text-indigo-900 bg-indigo-50 border border-indigo-200 px-3 py-2 rounded-lg text-center">
+                  Visual Hint: Every factor has a partner that multiplies to make <strong>${target}</strong>! Complete the ${pairs.length} factor rainbows:
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-center">
+                  ${pairs.map(([a]) => `
+                    <div class="p-3 bg-slate-50 border-2 border-dashed border-indigo-300 rounded-xl font-extrabold text-lg text-slate-800">
+                      ${a} × <span class="inline-block px-2.5 py-0.5 bg-white border border-indigo-400 rounded text-indigo-600">?</span> = ${target}
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            `;
+          } else {
+            // Stage 3: Full Reveal
+            visualAidContainer.innerHTML = `
+              <div class="space-y-3">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-center">
+                  ${pairs.map(([a, b]) => `
+                    <div class="p-2.5 bg-emerald-50 border border-emerald-400 rounded-xl font-extrabold text-base text-emerald-900">
+                      ${a} × ${b} = ${target}
+                    </div>
+                  `).join('')}
+                </div>
+                <div class="flex flex-wrap gap-2 justify-center pt-1">
+                  ${data.choices.map(num => {
+                    const ok = target % num === 0;
+                    return `
+                      <span class="px-3 py-1.5 rounded-lg text-base font-extrabold border-2 ${ok ? 'bg-emerald-600 text-white border-emerald-800' : 'bg-slate-100 text-slate-400 border-slate-200 line-through'}">
+                        ${num}
+                      </span>
+                    `;
+                  }).join('')}
+                </div>
+              </div>
+            `;
+          }
+        };
+        renderFactorStage();
+      }
+
+      // ---------------------------------------------------------------------
+      // Q24: Equivalent Fractions (Stage 1: Blank Prompt, Stage 2: Unshaded Fraction Wall, Stage 3: Matched Wall)
+      // ---------------------------------------------------------------------
+      else if (qId === 'Q24') {
+        const needed = (data.num / data.den) * data.targetDen;
+        const shadedSet = stage === 3
+          ? new Set(Array.from({ length: needed }, (_, i) => i))
+          : new Set();
+
+        const renderFracWall = () => {
+          visualAidContainer.innerHTML = `
+            <div class="space-y-3">
+              <div>
+                <div class="text-xs font-bold text-slate-500 mb-1">Top Bar: ${data.num}/${data.den}</div>
+                <div class="grid grid-cols-${data.den} h-10 rounded-lg overflow-hidden border-2 border-slate-800">
+                  ${Array.from({ length: data.den }, (_, i) => `
+                    <div class="${i < data.num ? 'bg-indigo-600 text-white' : 'bg-white text-slate-400'} flex items-center justify-center font-extrabold text-sm border-r last:border-r-0 border-slate-800">
+                      1/${data.den}
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+
+              ${stage === 1 ? `
+                <div class="p-3 bg-slate-50 border-2 border-dashed border-slate-300 rounded-xl text-center text-xs sm:text-sm font-bold text-slate-600">
+                  Pupil Turn: How many <strong>1/${data.targetDen}</strong> pieces equal <strong>${data.num}/${data.den}</strong>? Write the missing numerator on your board!
+                </div>
+              ` : `
+                <div>
+                  <div class="flex justify-between text-xs font-bold mb-1">
+                    <span class="text-slate-600">${stage === 2 ? 'Hint: Tap slices below until the shaded length matches the top bar:' : 'Matched Equivalent Fraction Bar:'}</span>
+                    <span class="text-indigo-700 font-extrabold">${shadedSet.size}/${data.targetDen} shaded</span>
+                  </div>
+                  <div class="grid grid-cols-${data.targetDen} h-11 rounded-lg overflow-hidden border-2 border-slate-800">
+                    ${Array.from({ length: data.targetDen }, (_, i) => {
+                      const active = shadedSet.has(i);
+                      return `
+                        <button data-idx="${i}" class="fslice-btn ${active ? 'bg-emerald-500 text-white' : 'bg-slate-50 text-slate-500 hover:bg-emerald-50'} flex items-center justify-center font-bold text-xs sm:text-sm border-r last:border-r-0 border-slate-700 transition">
+                          1/${data.targetDen}
+                        </button>
+                      `;
+                    }).join('')}
+                  </div>
+                </div>
+              `}
+            </div>
+          `;
+          visualAidContainer.querySelectorAll('.fslice-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+              const idx = parseInt(btn.dataset.idx, 10);
+              if (shadedSet.has(idx)) shadedSet.delete(idx);
+              else shadedSet.add(idx);
+              renderFracWall();
+            });
+          });
+        };
+        renderFracWall();
+      }
+
+      // ---------------------------------------------------------------------
+      // Q30: Number Line Intervals (Stage 1: Blank Line, Stage 2: Jump Arcs with '?', Stage 3: Full Numbers)
+      // ---------------------------------------------------------------------
+      else if (qId === 'Q30') {
+        const step = data.max / data.intervals;
+        visualAidContainer.innerHTML = `
+          <div class="space-y-4">
+            <div class="relative pt-7 pb-2 px-3">
+              <div class="h-1.5 bg-slate-800 rounded-full w-full relative flex justify-between items-center">
+                ${Array.from({ length: data.intervals + 1 }, (_, i) => {
+                  const val = i * step;
+                  const isEnd = i === 0 || i === data.intervals;
+                  const showVal = isEnd || stage === 3;
+                  const showJumpHint = i > 0 && stage >= 2;
+                  return `
+                    <div class="relative flex flex-col items-center">
+                      ${showJumpHint ? `<span class="absolute -top-8 -left-9 text-xs font-extrabold ${stage === 3 ? 'text-emerald-800 bg-emerald-100' : 'text-indigo-800 bg-indigo-100'} px-2 py-0.5 rounded">${stage === 3 ? `+${step}` : '+ ?'}</span>` : ''}
+                      <div class="w-1 h-5 bg-slate-900"></div>
+                      <span class="mt-1.5 text-sm sm:text-base font-extrabold ${showVal ? (i === 1 && stage === 3 ? 'text-emerald-800 bg-emerald-100 px-2 rounded ring-2 ring-emerald-400' : 'text-slate-900') : (i === 1 ? 'text-indigo-700 bg-indigo-100 px-2 rounded' : 'text-slate-400')}">
+                        ${showVal ? val : '?'}
+                      </span>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+            <div class="text-center text-xs sm:text-sm font-semibold text-slate-600">
+              ${stage === 1
+                ? `Pupil Turn: Find the value of the <strong>first mark after 0</strong>.`
+                : (stage === 2
+                  ? `Visual Hint: Count the <strong>${data.intervals} equal jumps</strong> from 0 to ${data.max}. Divide ${data.max} ÷ ${data.intervals}!`
+                  : `Each of the ${data.intervals} jumps adds <strong>+${step}</strong>, so the first mark is <strong>${step}</strong>.`)}
+            </div>
+          </div>
+        `;
+      }
+
+      // ---------------------------------------------------------------------
+      // Q18 & Q17: Area vs Perimeter Grid (Stage 1: Plain Outline, Stage 2: Grid Squares / Side Labels, Stage 3: Full Calculation)
+      // ---------------------------------------------------------------------
+      else if (qId === 'Q18' || qId === 'Q17') {
+        const { length, width } = data;
+        const area = length * width;
+        const perim = 2 * (length + width);
+        const isAreaQ = (qId === 'Q18');
+
+        let cells = '';
+        for (let r = 0; r < width; r++) {
+          for (let c = 0; c < length; c++) {
+            const cellStyle = stage === 1
+              ? 'bg-slate-50 border-transparent text-transparent'
+              : (stage === 2
+                ? 'bg-indigo-50/60 border-indigo-300 text-transparent'
+                : (isAreaQ ? 'bg-emerald-400/80 border-emerald-700 text-emerald-950' : 'bg-amber-100/50 border-slate-300 text-transparent'));
+            cells += `<div class="aspect-square border ${cellStyle} flex items-center justify-center text-[10px] sm:text-xs font-bold">${(stage === 3 && isAreaQ) ? (r * length + c + 1) : ''}</div>`;
+          }
+        }
+
+        visualAidContainer.innerHTML = `
+          <div class="space-y-3">
+            <div class="flex flex-col items-center py-1">
+              <div class="text-xs sm:text-sm font-extrabold text-slate-800 mb-1">${length} cm</div>
+              <div class="flex items-center gap-2">
+                <div class="text-xs sm:text-sm font-extrabold text-slate-800">${width} cm</div>
+                <div class="grid border-4 ${(!isAreaQ && stage >= 2) ? 'border-amber-500' : 'border-slate-800'}" style="grid-template-columns: repeat(${length}, minmax(22px, 32px));">
+                  ${cells}
+                </div>
+                <div class="text-xs sm:text-sm font-extrabold ${stage >= 2 ? 'text-indigo-700' : 'text-transparent'}">${width} cm</div>
+              </div>
+              <div class="text-xs sm:text-sm font-extrabold ${stage >= 2 ? 'text-indigo-700' : 'text-transparent'} mt-1">${length} cm</div>
+            </div>
+
+            <div class="text-center text-xs sm:text-sm font-bold p-2.5 rounded-lg ${stage === 3 ? 'bg-emerald-50 text-emerald-900 border border-emerald-300' : 'bg-slate-50 text-slate-700 border border-slate-200'}">
+              ${stage === 1
+                ? `Pupil Turn: Work out the <strong>${isAreaQ ? 'AREA (inside)' : 'PERIMETER (all 4 sides)'}</strong> on your mini-whiteboard.`
+                : (stage === 2
+                  ? (isAreaQ
+                    ? `Visual Hint: Count the rows and columns inside — <strong>${width} rows of ${length} squares</strong>.`
+                    : `Visual Hint: Notice all <strong>4 sides</strong> are now labelled around the outside edge!`)
+                  : (isAreaQ
+                    ? `Area = ${length} cm × ${width} cm = <strong>${area} cm²</strong>`
+                    : `Perimeter = ${length} + ${width} + ${length} + ${width} = <strong>${perim} cm</strong>`))}
+            </div>
+          </div>
+        `;
+      }
+
+      // ---------------------------------------------------------------------
+      // Q20 & Q29: Money Bridging Number Line (Stage 1: Blank Prompt, Stage 2: Bridge Line with '?', Stage 3: Full Values)
+      // ---------------------------------------------------------------------
+      else if (qId === 'Q20' || qId === 'Q29') {
+        const { costPence, paidPence } = data;
+        const nextPound = Math.ceil(costPence / 100) * 100;
+        const jump1 = nextPound - costPence;
+        const jump2 = paidPence - nextPound;
+        const totalChange = paidPence - costPence;
+
+        if (stage === 1) {
+          visualAidContainer.innerHTML = `
+            <div class="p-4 bg-slate-50 border-2 border-dashed border-slate-300 rounded-xl text-center space-y-1.5">
+              <div class="text-base font-extrabold text-slate-800">Pupil Turn: Work out the change on your mini-whiteboard!</div>
+              <div class="text-xs sm:text-sm text-slate-500">Tip: Check how many steps the question asks you to do, and watch out for the pounds &amp; pence trap!</div>
+            </div>
+          `;
+          return;
+        }
+
+        visualAidContainer.innerHTML = `
+          <div class="space-y-3">
+            ${qId === 'Q29' ? `
+              <div class="text-xs font-extrabold ${stage === 3 ? 'text-emerald-900 bg-emerald-50 border-emerald-300' : 'text-indigo-900 bg-indigo-50 border-indigo-200'} px-3 py-1.5 rounded-lg border text-center">
+                ${stage === 2 ? 'Hint Step 1: First find the total cost of the items before finding change from £10.00!' : `Step 1 Total Spent: <strong>£${(costPence / 100).toFixed(2)}</strong>`}
+              </div>
+            ` : ''}
+
+            <div class="flex items-center justify-between bg-slate-50 p-4 rounded-xl border border-slate-200">
+              <div class="text-center">
+                <div class="text-xs font-bold text-slate-400">Spent</div>
+                <div class="text-lg sm:text-xl font-extrabold text-rose-700">${(qId === 'Q29' && stage === 2) ? '£ ?' : `£${(costPence / 100).toFixed(2)}`}</div>
+              </div>
+
+              <div class="flex-1 flex flex-col items-center px-2">
+                <span class="text-xs sm:text-sm font-extrabold px-2 py-0.5 rounded ${stage === 3 ? 'bg-emerald-100 text-emerald-800' : 'bg-indigo-100 text-indigo-800'}">
+                  ${stage === 3 ? `+${jump1}p` : '+ ? p'}
+                </span>
+                <div class="w-full h-1 bg-indigo-400 my-1.5 rounded"></div>
+              </div>
+
+              <div class="text-center">
+                <div class="text-xs font-bold text-slate-400">Next Pound</div>
+                <div class="text-base sm:text-lg font-extrabold text-slate-700">${(qId === 'Q29' && stage === 2) ? '£ ?' : `£${(nextPound / 100).toFixed(2)}`}</div>
+              </div>
+
+              <div class="flex-1 flex flex-col items-center px-2">
+                <span class="text-xs sm:text-sm font-extrabold px-2 py-0.5 rounded ${stage === 3 ? 'bg-emerald-100 text-emerald-800' : 'bg-indigo-100 text-indigo-800'}">
+                  ${stage === 3 ? `+£${(jump2 / 100).toFixed(2)}` : '+ £ ?'}
+                </span>
+                <div class="w-full h-1 bg-indigo-400 my-1.5 rounded"></div>
+              </div>
+
+              <div class="text-center">
+                <div class="text-xs font-bold text-slate-400">Paid</div>
+                <div class="text-lg sm:text-xl font-extrabold text-slate-900">£${(paidPence / 100).toFixed(2)}</div>
+              </div>
+            </div>
+
+            <div class="text-center text-xs sm:text-sm font-bold text-slate-600">
+              ${stage === 2
+                ? 'Bridge to the next whole pound first, then jump up to the note paid!'
+                : `Total Change = ${jump1}p + £${(jump2 / 100).toFixed(2)} = <strong class="text-emerald-700">£${(totalChange / 100).toFixed(2)}</strong>`}
+            </div>
+          </div>
+        `;
+      }
+
+      // ---------------------------------------------------------------------
+      // Q27: Comparing Decimals (Stage 1: Blank Prompt, Stage 2: Un-padded PV Grid, Stage 3: Padded & Highlighted)
+      // ---------------------------------------------------------------------
+      else if (qId === 'Q27') {
+        if (stage === 1) {
+          visualAidContainer.innerHTML = `
+            <div class="p-4 bg-slate-50 border-2 border-dashed border-slate-300 rounded-xl text-center space-y-1.5">
+              <div class="text-base font-extrabold text-slate-800">Pupil Turn: Which decimal is the LARGEST?</div>
+              <div class="text-xs sm:text-sm text-slate-500">Be careful—don't judge a decimal just by how many digits it has!</div>
+            </div>
+          `;
+          return;
+        }
+
+        const padded = (stage === 3);
+        visualAidContainer.innerHTML = `
+          <div class="space-y-3">
+            <div class="overflow-hidden rounded-xl border border-slate-300">
+              <table class="w-full text-center border-collapse">
+                <thead>
+                  <tr class="bg-slate-800 text-white text-xs sm:text-sm">
+                    <th class="py-1.5 px-2">Decimal</th>
+                    <th class="py-1.5 px-2 border-l border-slate-600">Ones</th>
+                    <th class="py-1.5 px-2 border-l border-slate-600 bg-indigo-700">Tenths</th>
+                    <th class="py-1.5 px-2 border-l border-slate-600">Hundredths</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-200 text-base sm:text-lg font-extrabold">
+                  ${data.decimals.map((dec, idx) => {
+                    const [o, frac = ''] = dec.split('.');
+                    const t = frac[0] || '0';
+                    const h = frac[1] || (padded ? '0' : '?');
+                    const isWinner = idx === 0;
+                    return `
+                      <tr class="${isWinner && padded ? 'bg-emerald-50' : 'bg-white'}">
+                        <td class="py-1.5 px-2 text-indigo-900">${dec}${padded && frac.length === 1 ? '<span class="text-emerald-600">0</span>' : ''}</td>
+                        <td class="py-1.5 px-2 border-l border-slate-200">${o}</td>
+                        <td class="py-1.5 px-2 border-l border-slate-200 ${isWinner && padded ? 'bg-emerald-200 text-emerald-950' : 'bg-indigo-50/50'}">${t}</td>
+                        <td class="py-1.5 px-2 border-l border-slate-200 ${h === '?' ? 'text-indigo-500' : (padded && frac.length === 1 ? 'text-emerald-600' : 'text-slate-700')}">${h}</td>
+                      </tr>
+                    `;
+                  }).join('')}
+                </tbody>
+              </table>
+            </div>
+            <div class="text-center text-xs sm:text-sm font-bold text-slate-600">
+              ${stage === 2
+                ? 'Visual Hint: Look at the <strong>Tenths</strong> column first, and think what digit belongs in the empty Hundredths box!'
+                : `With trailing zeros added, <strong>${data.decimals[0]}0</strong> has the largest tenths digit, so <strong>${data.decimals[0]}</strong> is largest!`}
+            </div>
+          </div>
+        `;
+      }
+
+      // ---------------------------------------------------------------------
+      // Q9: Subtraction Across Zero (Stage 1: Blank Prompt, Stage 2: Number Line with '?', Stage 3: Full Jump & Column Reveal)
+      // ---------------------------------------------------------------------
+      else if (qId === 'Q9') {
+        const { a, b } = data;
+        const diff = a - b;
+        const nextTen = Math.ceil(b / 10) * 10;
+        const j1 = nextTen - b;
+        const nextHundred = Math.ceil(nextTen / 100) * 100;
+        const j2 = nextHundred - nextTen;
+        const j3 = a - nextHundred;
+
+        if (stage === 1) {
+          visualAidContainer.innerHTML = `
+            <div class="p-4 bg-slate-50 border-2 border-dashed border-slate-300 rounded-xl text-center space-y-1.5">
+              <div class="text-base font-extrabold text-slate-800">Pupil Turn: Calculate <strong>${a} − ${b}</strong> on your mini-whiteboard!</div>
+              <div class="text-xs sm:text-sm text-slate-500">Choose your favourite method (counting up on a number line or column subtraction with exchanging).</div>
+            </div>
+          `;
+          return;
+        }
+
+        visualAidContainer.innerHTML = `
+          <div class="space-y-3">
+            <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+              <div class="flex items-center justify-between text-center font-extrabold">
+                <div><div class="text-xs text-slate-400">Start</div><div class="text-lg text-slate-900">${b}</div></div>
+                <div class="flex-1 px-1"><span class="text-xs ${stage === 3 ? 'bg-emerald-100 text-emerald-800' : 'bg-indigo-100 text-indigo-800'} px-1.5 py-0.5 rounded">${stage === 3 ? `+${j1}` : '+ ?'}</span><div class="h-1 bg-indigo-400 my-1"></div></div>
+                <div><div class="text-xs text-slate-400">Next 10</div><div class="text-base text-slate-700">${nextTen}</div></div>
+                <div class="flex-1 px-1"><span class="text-xs ${stage === 3 ? 'bg-emerald-100 text-emerald-800' : 'bg-indigo-100 text-indigo-800'} px-1.5 py-0.5 rounded">${stage === 3 ? `+${j2}` : '+ ?'}</span><div class="h-1 bg-indigo-400 my-1"></div></div>
+                <div><div class="text-xs text-slate-400">Next 100</div><div class="text-base text-slate-700">${nextHundred}</div></div>
+                <div class="flex-1 px-1"><span class="text-xs ${stage === 3 ? 'bg-emerald-100 text-emerald-800' : 'bg-indigo-100 text-indigo-800'} px-1.5 py-0.5 rounded">${stage === 3 ? `+${j3}` : '+ ?'}</span><div class="h-1 bg-indigo-400 my-1"></div></div>
+                <div><div class="text-xs text-slate-400">Target</div><div class="text-lg text-slate-900">${a}</div></div>
+              </div>
+              <div class="text-center text-xs sm:text-sm font-bold mt-2 ${stage === 3 ? 'text-emerald-800' : 'text-indigo-800'}">
+                ${stage === 2
+                  ? `Visual Hint: Jump from ${b} → ${nextTen} → ${nextHundred} → ${a}, then add your three jumps together!`
+                  : `Total Jumps: ${j1} + ${j2} + ${j3} = <strong>${diff}</strong>`}
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      // ---------------------------------------------------------------------
+      // Q13: Fact Families (STRICT ANTI-SPOILER INTERACTIVE EQUATION BUILDER!)
+      // Stage 1: Triangle + Blank Slots [ ___ ] ÷ [ ___ ] = [ ___ ] & Number Tiles
+      // Stage 2: Same Builder + Structural Hint ("Division starts with the TOP total!")
+      // Stage 3: Full Reveal of all 4 facts in the family
+      // ---------------------------------------------------------------------
+      else if (qId === 'Q13') {
+        const { top, left, right } = data;
+        let slots = [null, null, null];
+        let feedbackMsg = '';
+        let feedbackTone = 'neutral';
+
+        const renderFactBuilder = () => {
+          if (stage === 3) {
+            // Stage 3: Full Reveal ONLY after teacher clicks Stage 3!
+            visualAidContainer.innerHTML = `
+              <div class="flex flex-col sm:flex-row items-center justify-around gap-4 pop-in">
+                <div class="relative w-40 h-36 flex flex-col items-center justify-between bg-emerald-50 border-2 border-emerald-500 rounded-2xl p-3">
+                  <div class="bg-amber-400 text-slate-950 font-extrabold text-xl px-3.5 py-1 rounded-xl shadow-sm">${top}</div>
+                  <div class="text-xs font-extrabold text-emerald-700 tracking-widest">×  |  ÷</div>
+                  <div class="w-full flex justify-between px-1">
+                    <span class="bg-white border-2 border-emerald-600 text-emerald-950 font-extrabold text-lg px-3 py-0.5 rounded-xl">${left}</span>
+                    <span class="bg-white border-2 border-emerald-600 text-emerald-950 font-extrabold text-lg px-3 py-0.5 rounded-xl">${right}</span>
+                  </div>
+                </div>
+
+                <div class="flex flex-col gap-1.5 w-full sm:w-auto">
+                  <span class="text-xs font-extrabold text-emerald-800 uppercase">Complete Fact Family:</span>
+                  <div class="px-3 py-1.5 rounded-lg text-sm font-bold bg-slate-100 text-slate-600 border border-slate-200">${left} × ${right} = ${top}</div>
+                  <div class="px-3 py-1.5 rounded-lg text-sm font-bold bg-slate-100 text-slate-600 border border-slate-200">${right} × ${left} = ${top}</div>
+                  <div class="px-3 py-1.5 rounded-lg text-sm font-extrabold bg-emerald-600 text-white border border-emerald-700 shadow-xs">✓ ${top} ÷ ${right} = ${left}</div>
+                  <div class="px-3 py-1.5 rounded-lg text-sm font-extrabold bg-emerald-600 text-white border border-emerald-700 shadow-xs">✓ ${top} ÷ ${left} = ${right}</div>
+                </div>
+              </div>
+            `;
+            return;
+          }
+
+          // Stage 1 & Stage 2: Interactive Equation Builder (Zero Spoilers!)
+          const usedNumbers = new Set(slots.filter(v => v !== null));
+          const allFilled = slots.every(v => v !== null);
+
+          visualAidContainer.innerHTML = `
+            <div class="space-y-3">
+              ${stage === 2 ? `
+                <div class="bg-indigo-50 border border-indigo-200 px-3 py-2 rounded-lg text-xs sm:text-sm font-bold text-indigo-900 text-center">
+                  Visual Hint: In a fact family triangle, multiplication combines the bottom parts, while <strong>division ALWAYS starts with the largest number at the top</strong>!
+                </div>
+              ` : ''}
+
+              <div class="flex flex-col sm:flex-row items-center justify-around gap-4">
+                <!-- Fact Triangle -->
+                <div class="relative w-36 h-32 flex flex-col items-center justify-between bg-slate-50 border-2 ${stage === 2 ? 'border-indigo-400' : 'border-slate-300'} rounded-2xl p-2.5">
+                  <div class="${stage === 2 ? 'bg-amber-400 ring-2 ring-amber-600' : 'bg-slate-200'} text-slate-950 font-extrabold text-lg px-3 py-0.5 rounded-xl">${top}</div>
+                  <div class="text-[11px] font-extrabold text-slate-500 tracking-widest">×  |  ÷</div>
+                  <div class="w-full flex justify-between px-1">
+                    <span class="bg-white border-2 border-slate-400 text-slate-900 font-extrabold text-base px-2.5 py-0.5 rounded-xl">${left}</span>
+                    <span class="bg-white border-2 border-slate-400 text-slate-900 font-extrabold text-base px-2.5 py-0.5 rounded-xl">${right}</span>
+                  </div>
+                </div>
+
+                <!-- Interactive Division Slot Builder -->
+                <div class="flex flex-col items-center gap-2.5">
+                  <div class="text-xs font-bold text-slate-500 uppercase">Tap tiles to build a division fact:</div>
+
+                  <!-- 3 Equation Slots -->
+                  <div class="flex items-center gap-2 text-2xl font-extrabold">
+                    <button data-slot="0" class="ff-slot w-14 h-12 rounded-xl border-2 ${slots[0] !== null ? 'bg-indigo-600 text-white border-indigo-800' : 'bg-slate-50 border-dashed border-slate-400 text-slate-400'} flex items-center justify-center">
+                      ${slots[0] !== null ? slots[0] : '?'}
+                    </button>
+                    <span class="text-slate-800">÷</span>
+                    <button data-slot="1" class="ff-slot w-14 h-12 rounded-xl border-2 ${slots[1] !== null ? 'bg-indigo-600 text-white border-indigo-800' : 'bg-slate-50 border-dashed border-slate-400 text-slate-400'} flex items-center justify-center">
+                      ${slots[1] !== null ? slots[1] : '?'}
+                    </button>
+                    <span class="text-slate-800">=</span>
+                    <button data-slot="2" class="ff-slot w-14 h-12 rounded-xl border-2 ${slots[2] !== null ? 'bg-indigo-600 text-white border-indigo-800' : 'bg-slate-50 border-dashed border-slate-400 text-slate-400'} flex items-center justify-center">
+                      ${slots[2] !== null ? slots[2] : '?'}
+                    </button>
+                  </div>
+
+                  <!-- Number Tiles -->
+                  <div class="flex items-center gap-2">
+                    ${[top, left, right].map(num => {
+                      const disabled = usedNumbers.has(num);
+                      return `
+                        <button data-tile="${num}" ${disabled ? 'disabled' : ''} class="ff-tile px-3.5 py-1.5 rounded-lg text-base font-extrabold border-2 transition ${disabled ? 'bg-slate-100 text-slate-300 border-slate-200 cursor-not-allowed' : 'bg-white hover:bg-indigo-50 text-indigo-900 border-indigo-400 shadow-2xs'}">
+                          ${num}
+                        </button>
+                      `;
+                    }).join('')}
+                    <button id="ffClearBtn" class="px-2.5 py-1.5 rounded-lg text-xs font-bold bg-slate-200 hover:bg-slate-300 text-slate-700">Clear</button>
+                  </div>
+
+                  <!-- Check Attempt Button (Gives non-spoiling feedback!) -->
+                  <div class="flex items-center gap-2">
+                    <button id="ffCheckBtn" ${!allFilled ? 'disabled' : ''} class="px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-extrabold transition ${allFilled ? 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm' : 'bg-slate-200 text-slate-400 cursor-not-allowed'}">
+                      Check Pupil Attempt
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              ${feedbackMsg ? `
+                <div class="p-2.5 rounded-lg text-xs sm:text-sm font-bold text-center border ${feedbackTone === 'good' ? 'bg-emerald-50 text-emerald-900 border-emerald-400' : 'bg-rose-50 text-rose-900 border-rose-300'}">
+                  ${feedbackMsg}
+                </div>
+              ` : ''}
+            </div>
+          `;
+
+          // Tile click fills next empty slot
+          visualAidContainer.querySelectorAll('.ff-tile').forEach(btn => {
+            btn.addEventListener('click', () => {
+              const val = parseInt(btn.dataset.tile, 10);
+              const emptyIdx = slots.indexOf(null);
+              if (emptyIdx !== -1) {
+                slots[emptyIdx] = val;
+                feedbackMsg = '';
+                renderFactBuilder();
+              }
+            });
+          });
+
+          // Clicking a filled slot clears that slot
+          visualAidContainer.querySelectorAll('.ff-slot').forEach(btn => {
+            btn.addEventListener('click', () => {
+              const idx = parseInt(btn.dataset.slot, 10);
+              slots[idx] = null;
+              feedbackMsg = '';
+              renderFactBuilder();
+            });
+          });
+
+          document.getElementById('ffClearBtn').addEventListener('click', () => {
+            slots = [null, null, null];
+            feedbackMsg = '';
+            renderFactBuilder();
+          });
+
+          document.getElementById('ffCheckBtn').addEventListener('click', () => {
+            const [a, b, c] = slots;
+            if (a === top && ((b === left && c === right) || (b === right && c === left))) {
+              feedbackTone = 'good';
+              feedbackMsg = `✓ Spot on! ${a} ÷ ${b} = ${c} is a valid division fact in this family!`;
+            } else {
+              feedbackTone = 'bad';
+              feedbackMsg = `Not quite! Check the order: ${a} ÷ ${b} does not equal ${c}. Remember to start division with the largest total!`;
+            }
+            renderFactBuilder();
+          });
+        };
+        renderFactBuilder();
+      }
+
+      // ---------------------------------------------------------------------
+      // Q26: Fractions of Amounts (Stage 1: Blank Prompt, Stage 2: Empty 4-Part Bar Model, Stage 3: Filled Bar Model)
+      // ---------------------------------------------------------------------
+      else if (qId === 'Q26') {
+        const { num, den, whole } = data;
+        const unit = whole / den;
+
+        if (stage === 1) {
+          visualAidContainer.innerHTML = `
+            <div class="p-4 bg-slate-50 border-2 border-dashed border-slate-300 rounded-xl text-center space-y-1.5">
+              <div class="text-base font-extrabold text-slate-800">Pupil Turn: Find <strong>${num}/${den} of ${whole}</strong> on your mini-whiteboard!</div>
+              <div class="text-xs sm:text-sm text-slate-500">Hint: Use the denominator (${den}) first, then the numerator (${num}).</div>
+            </div>
+          `;
+          return;
+        }
+
+        visualAidContainer.innerHTML = `
+          <div class="space-y-3">
+            <div class="text-center">
+              <span class="text-xs font-extrabold uppercase tracking-wider bg-slate-800 text-white px-3 py-1 rounded-full">
+                Whole Bar = ${whole} (Split into ${den} equal parts)
+              </span>
+            </div>
+            <div class="grid grid-cols-${den} gap-2">
+              ${Array.from({ length: den }, (_, i) => {
+                const highlighted = i < num;
+                return `
+                  <div class="py-4 rounded-xl border-2 font-extrabold text-xl flex flex-col items-center ${highlighted ? 'bg-indigo-600 text-white border-indigo-800 shadow-sm' : 'bg-slate-100 text-slate-500 border-slate-300'}">
+                    <span>${stage === 3 ? unit : '?'}</span>
+                    <span class="text-[11px] font-semibold mt-0.5 opacity-80">1/${den}</span>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+            <div class="text-center text-xs sm:text-sm font-bold text-slate-700">
+              ${stage === 2
+                ? `Visual Hint: Share <strong>${whole}</strong> equally into the <strong>${den}</strong> boxes first (${whole} ÷ ${den}), then add the <strong>${num}</strong> shaded boxes!`
+                : `Each box = ${unit}, so ${num} shaded boxes = ${num} × ${unit} = <strong class="text-emerald-700 text-base">${num * unit}</strong>`}
+            </div>
+          </div>
+        `;
+      }
+
+      // ---------------------------------------------------------------------
+      // Q28: Elapsed Time (Stage 1: Blank Prompt, Stage 2: O'Clock Bridge Line with '?', Stage 3: Full Minutes)
+      // ---------------------------------------------------------------------
+      else if (qId === 'Q28') {
+        const { startH, startM, endH, endM } = data;
+        const toHour = 60 - startM;
+        const total = toHour + endM;
+        const pad = (m) => m < 10 ? '0' + m : m;
+
+        if (stage === 1) {
+          visualAidContainer.innerHTML = `
+            <div class="p-4 bg-slate-50 border-2 border-dashed border-slate-300 rounded-xl text-center space-y-1.5">
+              <div class="text-base font-extrabold text-slate-800">Pupil Turn: How many minutes from <strong>${startH}:${pad(startM)}</strong> to <strong>${endH}:${pad(endM)}</strong>?</div>
+              <div class="text-xs sm:text-sm text-slate-500">Remember: There are <strong>60 minutes</strong> in an hour—try jumping to the next o'clock time first!</div>
+            </div>
+          `;
+          return;
+        }
+
+        visualAidContainer.innerHTML = `
+          <div class="space-y-3">
+            <div class="flex items-center justify-between bg-slate-50 p-4 rounded-xl border border-slate-200">
+              <div class="text-center">
+                <div class="text-xs font-bold text-slate-400">Depart</div>
+                <div class="text-lg sm:text-xl font-extrabold text-slate-900">${startH}:${pad(startM)}</div>
+              </div>
+
+              <div class="flex-1 flex flex-col items-center px-2">
+                <span class="text-xs sm:text-sm font-extrabold px-2 py-0.5 rounded ${stage === 3 ? 'bg-emerald-100 text-emerald-900' : 'bg-amber-100 text-amber-900'}">
+                  ${stage === 3 ? `+${toHour} mins` : '+ ? mins'}
+                </span>
+                <div class="w-full h-1.5 bg-indigo-500 my-1.5 rounded"></div>
+              </div>
+
+              <div class="text-center">
+                <div class="text-xs font-bold text-indigo-600">O'Clock Bridge</div>
+                <div class="text-base sm:text-lg font-extrabold text-indigo-900 bg-indigo-100 px-2.5 py-0.5 rounded-lg">${endH}:00</div>
+              </div>
+
+              <div class="flex-1 flex flex-col items-center px-2">
+                <span class="text-xs sm:text-sm font-extrabold px-2 py-0.5 rounded ${stage === 3 ? 'bg-emerald-100 text-emerald-900' : 'bg-amber-100 text-amber-900'}">
+                  ${stage === 3 ? `+${endM} mins` : '+ ? mins'}
+                </span>
+                <div class="w-full h-1.5 bg-indigo-500 my-1.5 rounded"></div>
+              </div>
+
+              <div class="text-center">
+                <div class="text-xs font-bold text-slate-400">Arrive</div>
+                <div class="text-lg sm:text-xl font-extrabold text-slate-900">${endH}:${pad(endM)}</div>
+              </div>
+            </div>
+            <div class="text-center text-xs sm:text-sm font-bold text-slate-700">
+              ${stage === 2
+                ? `Visual Hint: First find how many minutes from <strong>${startH}:${pad(startM)}</strong> to <strong>${endH}:00</strong>, then add the minutes after <strong>${endH}:00</strong>!`
+                : `Total Time = ${toHour} mins + ${endM} mins = <strong class="text-emerald-700">${total} mins</strong>`}
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    /*************************************************************************
+     * 5. INTERACTIVE HTML5 WHITEBOARD ENGINE (TOUCH & MOUSE)
+     *************************************************************************/
+    const canvas = document.getElementById('whiteboardCanvas');
+    const ctx = canvas.getContext('2d');
+    const canvasWrapper = document.getElementById('canvasWrapper');
+
+    let wbState = {
+      tool: 'pen',
+      color: '#0f172a',
+      size: 4,
+      bgGrid: 'grid',
+      isDrawing: false,
+      startX: 0,
+      startY: 0,
+      snapshot: null,
+      history: [],
+      redoStack: []
+    };
+
+    function resizeCanvas() {
+      // Save current drawing before resize
+      const tempCanvas = document.createElement('canvas');
+      tempCanvas.width = canvas.width;
+      tempCanvas.height = canvas.height;
+      if (canvas.width > 0 && canvas.height > 0) {
+        tempCanvas.getContext('2d').drawImage(canvas, 0, 0);
+      }
+
+      const rect = canvasWrapper.getBoundingClientRect();
+      canvas.width = rect.width;
+      canvas.height = rect.height;
+
+      drawBackgroundPattern();
+      if (tempCanvas.width > 0 && tempCanvas.height > 0) {
+        ctx.drawImage(tempCanvas, 0, 0);
+      }
+      if (wbState.history.length === 0) {
+        saveHistory();
+      }
+    }
+
+    function drawBackgroundPattern() {
+      const w = canvas.width;
+      const h = canvas.height;
+      ctx.save();
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, w, h);
+
+      if (wbState.bgGrid === 'grid') {
+        const step = 32;
+        ctx.strokeStyle = '#e2e8f0';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        for (let x = 0; x <= w; x += step) {
+          ctx.moveTo(x, 0);
+          ctx.lineTo(x, h);
+        }
+        for (let y = 0; y <= h; y += step) {
+          ctx.moveTo(0, y);
+          ctx.lineTo(w, y);
+        }
+        ctx.stroke();
+      } else if (wbState.bgGrid === 'lined') {
+        const step = 38;
+        ctx.strokeStyle = '#cbd5e1';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        for (let y = step; y <= h; y += step) {
+          ctx.moveTo(0, y);
+          ctx.lineTo(w, y);
+        }
+        ctx.stroke();
+      } else if (wbState.bgGrid === 'placevalue') {
+        const headers = ['Thousands', 'Hundreds', 'Tens', 'Ones', 'Tenths', 'Hundredths'];
+        const colW = w / headers.length;
+        ctx.fillStyle = '#f1f5f9';
+        ctx.fillRect(0, 0, w, 42);
+        ctx.strokeStyle = '#94a3b8';
+        ctx.lineWidth = 1.5;
+        ctx.font = 'bold 14px Inter, sans-serif';
+        ctx.textAlign = 'center';
+
+        headers.forEach((title, idx) => {
+          const x = idx * colW;
+          if (idx > 0) {
+            ctx.beginPath();
+            ctx.moveTo(x, 0);
+            ctx.lineTo(x, h);
+            ctx.stroke();
+          }
+          // Decimal point line between Ones (3) and Tenths (4)
+          if (idx === 4) {
+            ctx.save();
+            ctx.strokeStyle = '#e11d48';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(x, 0);
+            ctx.lineTo(x, h);
+            ctx.stroke();
+            ctx.restore();
+          }
+          ctx.fillStyle = idx >= 4 ? '#b45309' : '#1e293b';
+          ctx.fillText(title, x + colW / 2, 26);
+        });
+        ctx.beginPath();
+        ctx.moveTo(0, 42);
+        ctx.lineTo(w, 42);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    function saveHistory() {
+      if (wbState.history.length > 25) wbState.history.shift();
+      wbState.history.push(canvas.toDataURL());
+      wbState.redoStack = [];
+      updateUndoRedoButtons();
+    }
+
+    function updateUndoRedoButtons() {
+      document.getElementById('undoBtn').disabled = wbState.history.length <= 1;
+      document.getElementById('redoBtn').disabled = wbState.redoStack.length === 0;
+    }
+
+    function restoreFromDataURL(url) {
+      const img = new Image();
+      img.onload = () => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0);
+      };
+      img.src = url;
+    }
+
+    function getPointerPos(e) {
+      const rect = canvas.getBoundingClientRect();
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      return {
+        x: clientX - rect.left,
+        y: clientY - rect.top
+      };
+    }
+
+    // Floating Text Tool State
+    let pendingTextPos = { x: 50, y: 50 };
+    const floatingTextBox = document.getElementById('floatingTextBox');
+    const floatingTextInput = document.getElementById('floatingTextInput');
+
+    function startDraw(e) {
+      const pos = getPointerPos(e);
+
+      if (wbState.tool === 'text') {
+        pendingTextPos = pos;
+        floatingTextBox.style.left = `${Math.min(pos.x, canvas.width - 280)}px`;
+        floatingTextBox.style.top = `${Math.min(pos.y, canvas.height - 60)}px`;
+        floatingTextBox.classList.remove('hidden');
+        floatingTextInput.value = '';
+        setTimeout(() => floatingTextInput.focus(), 10);
+        return;
+      }
+
+      wbState.isDrawing = true;
+      wbState.startX = pos.x;
+      wbState.startY = pos.y;
+      wbState.snapshot = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+      ctx.beginPath();
+      ctx.moveTo(pos.x, pos.y);
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+
+      if (wbState.tool === 'eraser') {
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = wbState.size * 5;
+        ctx.globalAlpha = 1.0;
+      } else if (wbState.tool === 'highlighter') {
+        ctx.strokeStyle = wbState.color === '#0f172a' ? '#facc15' : wbState.color;
+        ctx.lineWidth = 22;
+        ctx.globalAlpha = 0.28;
+      } else {
+        ctx.strokeStyle = wbState.color;
+        ctx.lineWidth = wbState.size;
+        ctx.globalAlpha = 1.0;
+      }
+    }
+
+    function moveDraw(e) {
+      if (!wbState.isDrawing) return;
+      e.preventDefault();
+      const pos = getPointerPos(e);
+
+      if (wbState.tool === 'pen' || wbState.tool === 'eraser' || wbState.tool === 'highlighter') {
+        ctx.lineTo(pos.x, pos.y);
+        ctx.stroke();
+      } else if (wbState.tool === 'line') {
+        ctx.putImageData(wbState.snapshot, 0, 0);
+        ctx.beginPath();
+        ctx.moveTo(wbState.startX, wbState.startY);
+        ctx.lineTo(pos.x, pos.y);
+        ctx.stroke();
+      } else if (wbState.tool === 'rect') {
+        ctx.putImageData(wbState.snapshot, 0, 0);
+        ctx.strokeRect(wbState.startX, wbState.startY, pos.x - wbState.startX, pos.y - wbState.startY);
+      }
+    }
+
+    function endDraw() {
+      if (!wbState.isDrawing) return;
+      wbState.isDrawing = false;
+      ctx.globalAlpha = 1.0;
+      saveHistory();
+    }
+
+    // Canvas Event Listeners
+    canvas.addEventListener('mousedown', startDraw);
+    canvas.addEventListener('mousemove', moveDraw);
+    window.addEventListener('mouseup', endDraw);
+
+    canvas.addEventListener('touchstart', startDraw, { passive: false });
+    canvas.addEventListener('touchmove', moveDraw, { passive: false });
+    canvas.addEventListener('touchend', endDraw);
+
+    // Confirm Text Tool Input
+    function commitFloatingText() {
+      const txt = floatingTextInput.value.trim();
+      if (txt) {
+        ctx.save();
+        ctx.fillStyle = wbState.color;
+        ctx.font = 'bold 22px Inter, sans-serif';
+        ctx.fillText(txt, pendingTextPos.x, pendingTextPos.y + 20);
+        ctx.restore();
+        saveHistory();
+      }
+      floatingTextBox.classList.add('hidden');
+    }
+    document.getElementById('confirmTextBtn').addEventListener('click', commitFloatingText);
+    document.getElementById('cancelTextBtn').addEventListener('click', () => floatingTextBox.classList.add('hidden'));
+    floatingTextInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') commitFloatingText();
+      if (e.key === 'Escape') floatingTextBox.classList.add('hidden');
+    });
+
+    // Quick-Stamp Manipulatives onto Canvas
+    function stampManipulative(type) {
+      const w = canvas.width;
+      const h = canvas.height;
+      const cx = w / 2;
+      const cy = h / 2;
+
+      ctx.save();
+      ctx.strokeStyle = '#1e293b';
+      ctx.fillStyle = '#1e293b';
+      ctx.lineWidth = 3;
+      ctx.lineCap = 'round';
+
+      if (type === 'numberline') {
+        const left = Math.max(40, cx - 220);
+        const right = Math.min(w - 40, cx + 220);
+        const y = cy + 30;
+        ctx.beginPath();
+        ctx.moveTo(left, y);
+        ctx.lineTo(right, y);
+        ctx.stroke();
+        // 5 tick marks (4 intervals)
+        const intervals = 4;
+        for (let i = 0; i <= intervals; i++) {
+          const tx = left + ((right - left) / intervals) * i;
+          ctx.beginPath();
+          ctx.moveTo(tx, y - 12);
+          ctx.lineTo(tx, y + 12);
+          ctx.stroke();
+        }
+      } else if (type === 'barmodel') {
+        const bw = Math.min(420, w - 80);
+        const bh = 64;
+        const bx = cx - bw / 2;
+        const by = cy - bh / 2;
+        ctx.strokeRect(bx, by, bw, bh);
+        for (let i = 1; i < 4; i++) {
+          const vx = bx + (bw / 4) * i;
+          ctx.beginPath();
+          ctx.moveTo(vx, by);
+          ctx.lineTo(vx, by + bh);
+          ctx.stroke();
+        }
+      } else if (type === 'triangle') {
+        const topY = cy - 90;
+        const botY = cy + 70;
+        const halfW = 105;
+        ctx.beginPath();
+        ctx.moveTo(cx, topY);
+        ctx.lineTo(cx - halfW, botY);
+        ctx.lineTo(cx + halfW, botY);
+        ctx.closePath();
+        ctx.stroke();
+        ctx.font = 'bold 16px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('× / ÷', cx, cy + 18);
+      } else if (type === 'pvtable') {
+        const cols = ['Th', 'H', 'T', 'O', '.', 't', 'h'];
+        const tw = Math.min(420, w - 60);
+        const th = 120;
+        const tx = cx - tw / 2;
+        const ty = cy - th / 2;
+        const cw = tw / cols.length;
+        ctx.strokeRect(tx, ty, tw, th);
+        ctx.beginPath();
+        ctx.moveTo(tx, ty + 36);
+        ctx.lineTo(tx + tw, ty + 36);
+        ctx.stroke();
+        ctx.font = 'bold 18px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        cols.forEach((c, i) => {
+          const x = tx + i * cw;
+          if (i > 0) {
+            ctx.beginPath();
+            ctx.moveTo(x, ty);
+            ctx.lineTo(x, ty + th);
+            ctx.stroke();
+          }
+          ctx.fillText(c, x + cw / 2, ty + 25);
+        });
+    // Stamp Question Prompt Text onto Top of Whiteboard (STRICTLY QUESTION TEXT ONLY — NEVER ANSWERS)
+    document.getElementById('copyToBoardBtn').addEventListener('click', () => {
+      const temp = document.createElement('div');
+      temp.innerHTML = activeQuestionData.prompt;
+      const cleanText = `${QUESTIONS[currentIndex].id}: ${temp.textContent.replace(/\s+/g, ' ').trim()}`;
+
+      ctx.save();
+      ctx.fillStyle = '#eef2ff';
+      ctx.strokeStyle = '#6366f1';
+      ctx.lineWidth = 2;
+      const boxW = Math.min(canvas.width - 32, 680);
+      ctx.fillRect(16, 16, boxW, 46);
+      ctx.strokeRect(16, 16, boxW, 46);
+
+      ctx.fillStyle = '#1e1b4b';
+      ctx.font = 'bold 16px Inter, sans-serif';
+      const clipped = cleanText.length > 74 ? cleanText.slice(0, 71) + '...' : cleanText;
+      ctx.fillText(clipped, 28, 45);
+      ctx.restore();
+      saveHistory();
+    });
+
+    /*************************************************************************
+     * 6. UI CONTROL EVENT BINDINGS
+     *************************************************************************/
+    stage1Btn.addEventListener('click', () => setTeachingStage(1));
+    stage2Btn.addEventListener('click', () => setTeachingStage(2));
+    stage3Btn.addEventListener('click', () => setTeachingStage(3));
+
+    document.getElementById('prevBtn').addEventListener('click', () => {
+      currentIndex = (currentIndex - 1 + QUESTIONS.length) % QUESTIONS.length;
+      isTwinMode = false;
+      loadCurrentQuestion();
+    });
+
+    document.getElementById('nextBtn').addEventListener('click', () => {
+      currentIndex = (currentIndex + 1) % QUESTIONS.length;
+      isTwinMode = false;
+      loadCurrentQuestion();
+    });
+
+    toggleModeBtn.addEventListener('click', () => {
+      isTwinMode = !isTwinMode;
+      loadCurrentQuestion();
+    });
+
+    rerollTwinBtn.addEventListener('click', () => {
+      isTwinMode = true;
+      loadCurrentQuestion();
+    });
+
+    trapToggleBtn.addEventListener('click', () => {
+      const isHidden = trapContent.classList.contains('hidden');
+      if (isHidden) {
+        trapContent.classList.remove('hidden');
+        trapChevron.textContent = 'Hide Trap';
+      } else {
+        trapContent.classList.add('hidden');
+        trapChevron.textContent = 'Show Trap';
+      }
+    });
+
+    document.getElementById('revealStepBtn').addEventListener('click', () => {
+      if (revealedStepCount < activeQuestionData.steps.length) {
+        revealedStepCount++;
+        if (revealedStepCount === activeQuestionData.steps.length) {
+          isFinalRevealed = true;
+          setTeachingStage(3);
+        } else {
+          renderSteps();
+        }
+      }
+    });
+
+    document.getElementById('revealAllBtn').addEventListener('click', () => {
+      setTeachingStage(3);
+    });
+
+    document.getElementById('resetStepsBtn').addEventListener('click', () => {
+      setTeachingStage(1);
+    });
+
+    // Whiteboard Tool Selection
+    document.querySelectorAll('.wb-tool').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.wb-tool').forEach(b => {
+          b.classList.remove('active', 'bg-white', 'text-indigo-700', 'shadow-sm', 'font-bold');
+          b.classList.add('text-slate-700', 'font-semibold');
+        });
+        btn.classList.add('active', 'bg-white', 'text-indigo-700', 'shadow-sm', 'font-bold');
+        btn.classList.remove('text-slate-700', 'font-semibold');
+        wbState.tool = btn.dataset.tool;
+      });
+    });
+
+    // Color Selection
+    document.querySelectorAll('.wb-color').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.wb-color').forEach(b => b.classList.remove('ring-2', 'ring-offset-1', 'ring-indigo-500'));
+        btn.classList.add('ring-2', 'ring-offset-1', 'ring-indigo-500');
+        wbState.color = btn.dataset.color;
+      });
+    });
+
+    // Thickness Selection
+    document.querySelectorAll('.wb-size').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.wb-size').forEach(b => b.classList.remove('bg-white', 'shadow-sm'));
+        btn.classList.add('bg-white', 'shadow-sm');
+        wbState.size = parseInt(btn.dataset.size, 10);
+      });
+    });
+
+    // Background Grid Switcher
+    document.getElementById('bgGridSelect').addEventListener('change', (e) => {
+      wbState.bgGrid = e.target.value;
+      drawBackgroundPattern();
+      saveHistory();
+    });
+
+    // Stamp Buttons
+    document.querySelectorAll('.stamp-btn').forEach(btn => {
+      btn.addEventListener('click', () => stampManipulative(btn.dataset.stamp));
+    });
+
+    // Undo / Redo / Clear
+    document.getElementById('undoBtn').addEventListener('click', () => {
+      if (wbState.history.length > 1) {
+        const current = wbState.history.pop();
+        wbState.redoStack.push(current);
+        restoreFromDataURL(wbState.history[wbState.history.length - 1]);
+        updateUndoRedoButtons();
+      }
+    });
+
+    document.getElementById('redoBtn').addEventListener('click', () => {
+      if (wbState.redoStack.length > 0) {
+        const next = wbState.redoStack.pop();
+        wbState.history.push(next);
+        restoreFromDataURL(next);
+        updateUndoRedoButtons();
+      }
+    });
+
+    document.getElementById('clearBoardBtn').addEventListener('click', () => {
+      drawBackgroundPattern();
+      saveHistory();
+    });
+
+    // Expand / Collapse Whiteboard Panel on Desktop
+    document.getElementById('expandBoardBtn').addEventListener('click', () => {
+      const leftPanel = document.getElementById('leftPanel');
+      const expandIcon = document.getElementById('expandBoardIcon');
+      const expandText = document.getElementById('expandBoardText');
+      isBoardExpanded = !isBoardExpanded;
+
+      if (isBoardExpanded) {
+        leftPanel.classList.remove('lg:w-[48%]', 'xl:w-[46%]');
+        leftPanel.classList.add('lg:w-[34%]', 'xl:w-[33%]');
+        expandIcon.textContent = '⤡';
+        expandText.textContent = 'Restore';
+      } else {
+        leftPanel.classList.remove('lg:w-[34%]', 'xl:w-[33%]');
+        leftPanel.classList.add('lg:w-[48%]', 'xl:w-[46%]');
+        expandIcon.textContent = '⤢';
+        expandText.textContent = 'Expand';
+      }
+      setTimeout(resizeCanvas, 220);
+    });
+
+    // Initialize on Window Load
+    window.addEventListener('resize', resizeCanvas);
+    window.onload = function () {
+      loadCurrentQuestion();
+      resizeCanvas();
+    };
+  </script>
+</body>
+</html>
