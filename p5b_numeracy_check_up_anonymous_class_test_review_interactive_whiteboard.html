@@ -1,0 +1,1479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P5B Numeracy Check-Up: Anonymous Class Test Review &amp; Interactive Whiteboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f1f5f9;
+      color: #0f172a;
+      overflow-x: hidden;
+    }
+    .font-display {
+      font-family: 'Fredoka', 'Inter', sans-serif;
+    }
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #e2e8f0;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #94a3b8;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #64748b;
+    }
+    #wb-canvas {
+      touch-action: none;
+      cursor: crosshair;
+    }
+    @keyframes revealPop {
+      0% { opacity: 0; transform: translateY(6px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    .animate-reveal {
+      animation: revealPop 0.2s ease-out forwards;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col select-none">
+
+  <!-- TOP PERSISTENT CLASSROOM HEADER -->
+  <header class="bg-slate-900 text-white shadow-lg border-b-4 border-emerald-500 sticky top-0 z-40">
+    <div class="max-w-[1680px] mx-auto px-3 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-2.5">
+      <!-- Left: St Kieran's Brand & Title -->
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-600 text-slate-950 font-display font-bold text-base flex items-center justify-center shadow-md shrink-0">
+          P5B
+        </div>
+        <div>
+          <h1 class="font-display text-base sm:text-xl font-bold tracking-wide leading-tight text-white">
+            P5B Numeracy Check-Up: Class Test Review
+          </h1>
+          <p class="text-[11px] sm:text-xs text-slate-300 font-medium">
+            St Kieran's Primary School &bull; Anonymous Error Analysis, CPA Models &amp; Live Whiteboard
+          </p>
+        </div>
+      </div>
+
+      <!-- Right: Safe-Space Badge, Read Aloud & Whiteboard Toggle -->
+      <div class="flex flex-wrap items-center gap-2">
+        <span class="hidden xl:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 border border-slate-700 text-xs font-bold text-emerald-300">
+          <span>&#128737;&#65039;</span>
+          <span>100% Anonymous Class Traps &bull; Manual Teacher Reveals</span>
+        </span>
+
+        <button onclick="speakCurrentQuestion()" class="flex items-center gap-1.5 bg-amber-500 hover:bg-amber-400 active:scale-95 text-slate-950 font-extrabold px-3.5 py-2 rounded-xl shadow-sm transition text-xs sm:text-sm" title="Read Question Aloud">
+          <span>&#128264;</span>
+          <span class="hidden sm:inline">Read Aloud</span>
+        </button>
+
+        <button id="btn-toggle-wb" onclick="toggleWhiteboard()" class="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-extrabold px-4 py-2 rounded-xl shadow-md border border-emerald-400 transition text-xs sm:text-sm">
+          <span>&#128394;&#65039;</span>
+          <span id="wb-toggle-label">Open Whiteboard (Split / Full)</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN SPLIT-SCREEN WORKSPACE -->
+  <div id="workspace-wrapper" class="flex-1 flex flex-col lg:flex-row max-w-[1680px] w-full mx-auto">
+
+    <!-- LEFT / PRIMARY TEST REVIEW STAGE -->
+    <main id="main-review-pane" class="flex-1 p-3 sm:p-5 space-y-4 overflow-y-auto">
+
+      <!-- FILTER TABS & QUICK-JUMP 1-20 QUESTION BAR -->
+      <section class="bg-white rounded-2xl p-3.5 sm:p-4 shadow-sm border border-slate-200 space-y-3">
+        <!-- Category Filter Buttons -->
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div class="flex flex-wrap items-center gap-1.5" id="filter-tabs-row">
+            <button onclick="setQuestionFilter('all')" data-filter="all" class="filter-tab-btn px-3 py-1.5 rounded-xl text-xs font-extrabold transition">
+              All 20 Questions
+            </button>
+            <button onclick="setQuestionFilter('priority')" data-filter="priority" class="filter-tab-btn px-3 py-1.5 rounded-xl text-xs font-extrabold transition">
+              &#11088; Priority Tricky Questions (14)
+            </button>
+            <button onclick="setQuestionFilter('part1')" data-filter="part1" class="filter-tab-btn px-3 py-1.5 rounded-xl text-xs font-extrabold transition">
+              Part 1: Bonds &amp; Bridging (Q1–5)
+            </button>
+            <button onclick="setQuestionFilter('part2')" data-filter="part2" class="filter-tab-btn px-3 py-1.5 rounded-xl text-xs font-extrabold transition">
+              Part 2: Place Value (Q6–10)
+            </button>
+            <button onclick="setQuestionFilter('part3')" data-filter="part3" class="filter-tab-btn px-3 py-1.5 rounded-xl text-xs font-extrabold transition">
+              Part 3: Equal Groups &amp; Doubles (Q11–15)
+            </button>
+            <button onclick="setQuestionFilter('part4')" data-filter="part4" class="filter-tab-btn px-3 py-1.5 rounded-xl text-xs font-extrabold transition">
+              Part 4: Maths Words &amp; Stories (Q16–20)
+            </button>
+          </div>
+        </div>
+
+        <!-- Quick-Jump 1–20 Number Pill Bar -->
+        <div class="pt-2 border-t border-slate-100 flex items-center gap-2">
+          <span class="text-[11px] font-extrabold uppercase tracking-wider text-slate-400 shrink-0">Jump:</span>
+          <div id="question-pill-bar" class="flex flex-wrap items-center gap-1.5">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+      </section>
+
+      <!-- MAIN QUESTION REVIEW CARD -->
+      <section class="bg-white rounded-3xl p-5 sm:p-7 shadow-md border-2 border-slate-200 space-y-5">
+
+        <!-- Card Top Navigation Header -->
+        <div class="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-slate-100">
+          <div class="flex flex-wrap items-center gap-2">
+            <span id="q-number-badge" class="px-3.5 py-1.5 rounded-xl bg-slate-900 text-white font-display font-bold text-sm sm:text-base">
+              Question 1 of 20
+            </span>
+            <span id="q-part-badge" class="px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 font-extrabold text-xs uppercase tracking-wide">
+              Part 1: Number Bonds &amp; Bridging
+            </span>
+            <span id="q-priority-badge" class="hidden px-3 py-1 rounded-full bg-amber-100 text-amber-900 border border-amber-300 font-extrabold text-xs">
+              &#11088; Priority Class Focus
+            </span>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button onclick="prevQuestion()" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-800 font-extrabold text-xs sm:text-sm transition">
+              &larr; Previous
+            </button>
+            <button onclick="resetAllReveals()" class="px-3.5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-700 font-extrabold text-xs sm:text-sm border border-slate-300 transition" title="Hide all hints, traps, and answers">
+              &#128260; Reset All Reveals
+            </button>
+            <button onclick="nextQuestion()" class="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-extrabold text-xs sm:text-sm shadow-sm transition">
+              Next Question &rarr;
+            </button>
+          </div>
+        </div>
+
+        <!-- Question Text + Live Class Answer Check Box -->
+        <div class="grid grid-cols-1 xl:grid-cols-12 gap-5 items-center py-1">
+          <div class="xl:col-span-8 space-y-2">
+            <span class="text-xs font-extrabold uppercase tracking-wider text-slate-400 block">
+              Check-Up Question &bull; Discuss &amp; Model Before Revealing
+            </span>
+            <h2 id="q-prompt-text" class="font-display text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 leading-snug">
+              <!-- Populated by JS -->
+            </h2>
+          </div>
+
+          <!-- Interactive Retry / Class Check Box (Unlimited Retries Without Spoiling Answer) -->
+          <div class="xl:col-span-4 bg-slate-50 rounded-2xl p-4 border-2 border-dashed border-slate-300 space-y-2">
+            <label for="class-check-input" class="text-xs font-extrabold uppercase tracking-wider text-slate-600 flex items-center justify-between">
+              <span>Interactive Class Check</span>
+              <span class="text-[11px] font-bold text-emerald-700">Unlimited Tries</span>
+            </label>
+            <div class="flex items-center gap-2">
+              <input id="class-check-input" type="text" placeholder="Type class answer..." class="w-full bg-white border-2 border-slate-300 focus:border-emerald-500 rounded-xl px-3.5 py-2.5 text-lg sm:text-xl font-extrabold text-slate-900 outline-none" onkeydown="if(event.key==='Enter') checkClassInput()" />
+              <button onclick="checkClassInput()" class="px-4 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 active:scale-95 text-white font-extrabold text-sm transition shrink-0">
+                Check
+              </button>
+            </div>
+            <p id="class-check-feedback" class="text-xs font-extrabold min-h-[1.25rem] leading-snug"></p>
+          </div>
+        </div>
+
+        <!-- STRICT MANUAL TEACHER REVEAL CONTROLS (ALL HIDDEN INITIALLY) -->
+        <div class="pt-4 border-t border-slate-100 flex flex-wrap items-center gap-2.5 sm:gap-3">
+          <button id="btn-reveal-trap" onclick="toggleReveal('trap')" class="px-4 py-3 rounded-xl font-extrabold text-xs sm:text-sm border-2 border-rose-400 bg-rose-50 hover:bg-rose-100 active:scale-95 text-rose-950 transition flex items-center gap-2 shadow-sm">
+            <span>&#128269; Reveal Common Class Trap(s)</span>
+          </button>
+
+          <button id="btn-reveal-hint" onclick="toggleReveal('hint')" class="px-4 py-3 rounded-xl font-extrabold text-xs sm:text-sm border-2 border-amber-400 bg-amber-50 hover:bg-amber-100 active:scale-95 text-amber-950 transition flex items-center gap-2 shadow-sm">
+            <span>&#128161; Reveal Visual CPA Model / Hint</span>
+          </button>
+
+          <button id="btn-reveal-working" onclick="toggleReveal('working')" class="px-4 py-3 rounded-xl font-extrabold text-xs sm:text-sm border-2 border-blue-400 bg-blue-50 hover:bg-blue-100 active:scale-95 text-blue-950 transition flex items-center gap-2 shadow-sm">
+            <span>&#129692; Reveal Step-by-Step Working</span>
+          </button>
+
+          <button id="btn-reveal-answer" onclick="toggleReveal('answer')" class="px-4 py-3 rounded-xl font-extrabold text-xs sm:text-sm border-2 border-emerald-600 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white transition flex items-center gap-2 shadow-sm">
+            <span>&#9989; Reveal Final Answer</span>
+          </button>
+        </div>
+
+        <!-- REVEAL PANELS (HIDDEN BY DEFAULT UNTIL TEACHER CLICKS) -->
+        <div class="space-y-4">
+
+          <!-- 1. ANONYMOUS CLASS TRAP SPOTLIGHT -->
+          <div id="panel-trap" class="hidden animate-reveal rounded-2xl bg-rose-50/95 border-2 border-rose-300 p-5 space-y-2.5">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <span class="text-xs font-black uppercase tracking-wider text-rose-900 flex items-center gap-1.5">
+                <span>&#128269; Anonymous Class Error Spotlight</span>
+              </span>
+              <span class="px-2.5 py-0.5 rounded-full bg-rose-200/80 text-rose-950 font-extrabold text-xs">
+                Spot the Mistake: Why did this happen?
+              </span>
+            </div>
+            <div id="content-trap" class="space-y-2 text-sm sm:text-base font-semibold text-slate-800">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+
+          <!-- 2. INTERACTIVE VISUAL CPA MODEL / HINT -->
+          <div id="panel-hint" class="hidden animate-reveal rounded-2xl bg-amber-50/95 border-2 border-amber-300 p-5 space-y-3">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <span class="text-xs font-black uppercase tracking-wider text-amber-950">
+                &#128161; Visual CPA Representation &amp; Teacher Prompt
+              </span>
+              <span class="px-2.5 py-0.5 rounded-full bg-amber-200/80 text-amber-950 font-extrabold text-xs">
+                Model Together Before Showing Answer
+              </span>
+            </div>
+            <p id="content-hint-text" class="text-sm sm:text-base font-bold text-slate-800"></p>
+            <div id="content-hint-visual" class="pt-1 flex justify-center">
+              <!-- Interactive CPA Visual Diagram -->
+            </div>
+          </div>
+
+          <!-- 3. STEP-BY-STEP WORKING -->
+          <div id="panel-working" class="hidden animate-reveal rounded-2xl bg-blue-50/95 border-2 border-blue-300 p-5 space-y-2">
+            <span class="text-xs font-black uppercase tracking-wider text-blue-950 block">
+              &#129692; Step-by-Step Worked Strategy
+            </span>
+            <div id="content-working" class="space-y-1.5 text-sm sm:text-base font-semibold text-slate-800">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+
+          <!-- 4. FINAL ANSWER -->
+          <div id="panel-answer" class="hidden animate-reveal rounded-2xl bg-emerald-50 border-2 border-emerald-500 p-5 flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <span class="text-xs font-black uppercase tracking-wider text-emerald-800 block">
+                &#9989; Correct Check-Up Answer
+              </span>
+              <span id="content-answer" class="font-display text-2xl sm:text-4xl font-bold text-emerald-950">
+                <!-- Populated by JS -->
+              </span>
+            </div>
+            <button onclick="nextQuestion()" class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm shadow-sm transition">
+              Move to Next Question &rarr;
+            </button>
+          </div>
+
+        </div>
+      </section>
+    </main>
+
+    <!-- RIGHT / FULLSCREEN INTERACTIVE SURFACE PEN & TOUCH WHITEBOARD -->
+    <aside id="whiteboard-pane" class="hidden lg:w-[46%] xl:w-[48%] bg-white border-t-4 lg:border-t-0 lg:border-l-4 border-slate-300 flex flex-col shadow-2xl z-30">
+      <!-- Whiteboard Toolbar -->
+      <div class="bg-slate-800 text-white p-2.5 sm:p-3 flex flex-wrap items-center justify-between gap-2 border-b border-slate-700">
+        <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
+          <span class="font-display font-bold text-xs sm:text-sm tracking-wide text-emerald-400 mr-1">WHITEBOARD</span>
+
+          <!-- Pen Colours -->
+          <div class="flex items-center gap-1.5 bg-slate-900 px-2 py-1 rounded-xl border border-slate-700">
+            <button onclick="setWbPen('#0f172a')" data-wb-pen="#0f172a" class="wb-pen-btn w-6 h-6 rounded-full bg-slate-900 border-2 border-white ring-2 ring-emerald-400" title="Black Pen"></button>
+            <button onclick="setWbPen('#2563eb')" data-wb-pen="#2563eb" class="wb-pen-btn w-6 h-6 rounded-full bg-blue-600 border-2 border-white/60" title="Blue Pen"></button>
+            <button onclick="setWbPen('#dc2626')" data-wb-pen="#dc2626" class="wb-pen-btn w-6 h-6 rounded-full bg-red-600 border-2 border-white/60" title="Red Pen"></button>
+            <button onclick="setWbPen('#059669')" data-wb-pen="#059669" class="wb-pen-btn w-6 h-6 rounded-full bg-emerald-600 border-2 border-white/60" title="Emerald Pen"></button>
+            <button onclick="setWbPen('#ea580c')" data-wb-pen="#ea580c" class="wb-pen-btn w-6 h-6 rounded-full bg-orange-600 border-2 border-white/60" title="Orange Pen"></button>
+          </div>
+
+          <!-- Highlighter & Eraser -->
+          <div class="flex items-center gap-1 bg-slate-900 px-2 py-1 rounded-xl border border-slate-700">
+            <button onclick="setWbTool('highlighter')" id="btn-wb-highlighter" class="px-2 py-1 rounded-lg text-xs font-extrabold text-yellow-300 hover:bg-slate-700 transition" title="Yellow Highlighter">
+              Highlighter
+            </button>
+            <button onclick="setWbTool('eraser')" id="btn-wb-eraser" class="px-2 py-1 rounded-lg text-xs font-extrabold text-amber-200 hover:bg-slate-700 transition" title="Eraser">
+              Eraser
+            </button>
+          </div>
+        </div>
+
+        <!-- Maths Backgrounds & Board Controls -->
+        <div class="flex flex-wrap items-center gap-1.5">
+          <select id="wb-bg-select" onchange="setWbBackground(this.value)" class="bg-slate-900 text-white text-xs font-bold px-2.5 py-1.5 rounded-lg border border-slate-600 outline-none">
+            <option value="blank">Blank</option>
+            <option value="grid">Squared Grid</option>
+            <option value="numberline">Empty Number Line</option>
+            <option value="hto">H | T | O Columns</option>
+          </select>
+
+          <button onclick="undoWbStroke()" class="px-2.5 py-1.5 rounded-lg bg-slate-700 hover:bg-slate-600 text-xs font-bold text-white transition">
+            Undo
+          </button>
+          <button onclick="toggleWbFullscreen()" id="btn-wb-fullscreen" class="px-2.5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-xs font-bold text-white transition">
+            Fullscreen
+          </button>
+          <button onclick="clearWhiteboard()" class="px-2.5 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-xs font-bold text-white transition">
+            Clear Board
+          </button>
+          <button onclick="toggleWhiteboard()" class="px-2.5 py-1.5 rounded-lg bg-slate-700 hover:bg-slate-600 text-xs font-bold text-slate-200 transition" title="Close Whiteboard">
+            &times;
+          </button>
+        </div>
+      </div>
+
+      <!-- Canvas Surface -->
+      <div id="wb-canvas-wrapper" class="relative flex-1 min-h-[420px] lg:min-h-[calc(100vh-96px)] bg-white overflow-hidden">
+        <canvas id="wb-canvas" class="block w-full h-full"></canvas>
+      </div>
+    </aside>
+  </div>
+
+  <script>
+    // =========================================================================
+    // 1. COMPLETE 20-QUESTION P5B CHECK-UP BANK (100% ANONYMOUS CLASS TRAPS)
+    // =========================================================================
+    const CHECKUP_QUESTIONS = [
+      // --- PART 1: NUMBER BONDS & BRIDGING (Q1–Q5) ---
+      {
+        num: 1,
+        part: 'part1',
+        partTitle: 'Part 1: Number Bonds & Bridging',
+        priority: false,
+        prompt: 'Find the missing number to make 20:   13 + [   ] = 20',
+        speech: 'Question 1. Find the missing number to make 20: 13 plus blank equals 20.',
+        traps: [
+          { label: 'Common Class Trap A', detail: 'Writing 6 instead of 7 (an off-by-one finger counting slip when counting up from 13).' }
+        ],
+        hintText: 'Use your number bond to 10! Look at the two ten-frames below: 1 full ten-frame (10) plus 3 blue counters = 13. How many empty white spaces remain to fill the second ten-frame up to 20?',
+        visualCode: 'tenframe20:13',
+        working: [
+          '1. Recall your pair to 10: 3 + 7 = 10.',
+          '2. Because 13 already has 1 ten, add 7 ones to reach the next ten (20): 13 + 7 = 20.'
+        ],
+        answer: '7',
+        acceptedAnswers: ['7']
+      },
+      {
+        num: 2,
+        part: 'part1',
+        partTitle: 'Part 1: Number Bonds & Bridging',
+        priority: false,
+        prompt: 'Find the missing number to make 100:   64 + [   ] = 100',
+        speech: 'Question 2. Find the missing number to make 100: 64 plus blank equals 100.',
+        traps: [
+          { label: 'Common Class Trap A', detail: 'Writing 46 (the "110 Trap": adding 60 + 40 = 100 AND 4 + 6 = 10, which makes 110 instead of 100!).' },
+          { label: 'Common Class Trap B', detail: 'Writing 18 (miscounting the tens jump from 70 to 100).' }
+        ],
+        hintText: 'Jump in two friendly hops on the open number line: first jump from 64 to the next friendly ten (70), then jump from 70 to 100! Remember: when the ones make 10, the tens only make 90.',
+        visualCode: 'jumps:64,+6 -> 70,+30 -> 100|Add both jumps: 6 + 30 = ?',
+        working: [
+          '1. Jump from 64 to the next ten: 64 + 6 = 70.',
+          '2. Jump from 70 to 100: 70 + 30 = 100.',
+          '3. Combine both jumps: 6 + 30 = 36 (Check: 64 + 36 = 100).'
+        ],
+        answer: '36',
+        acceptedAnswers: ['36']
+      },
+      {
+        num: 3,
+        part: 'part1',
+        partTitle: 'Part 1: Number Bonds & Bridging',
+        priority: true,
+        prompt: 'Work out:   100 − 35 = [   ]',
+        speech: 'Question 3. Work out 100 minus 35.',
+        traps: [
+          { label: 'Common Class Trap A (Most Frequent!)', detail: 'Writing 75 — falling into the 110 complement trap! Check with addition: 75 + 35 = 110 (10 too big!).' },
+          { label: 'Common Class Trap B', detail: 'Writing 70 — subtracting the 30 tens (100 − 30 = 70) but forgetting to subtract the 5 ones.' }
+        ],
+        hintText: 'Explore the 100-square and 2-hop line below! Count up from 35 to 40 (+5), then from 40 to 100 (+60) — or subtract 30 first (100 − 30 = 70) and then subtract 5 more!',
+        visualCode: 'sq100_35',
+        working: [
+          '1. Method A (Subtract in two steps): 100 − 30 = 70, then 70 − 5 = 65.',
+          '2. Method B (Count up from 35): 35 + 5 = 40, then 40 + 60 = 100 -> 5 + 60 = 65.',
+          '3. Inverse proof: 65 + 35 = 100 (whereas 75 + 35 = 110).'
+        ],
+        answer: '65',
+        acceptedAnswers: ['65']
+      },
+      {
+        num: 4,
+        part: 'part1',
+        partTitle: 'Part 1: Number Bonds & Bridging',
+        priority: true,
+        prompt: 'Use bridging through 10 to solve:   38 + 7 = [   ]',
+        speech: 'Question 4. Use bridging through 10 to solve 38 plus 7.',
+        traps: [
+          { label: 'Common Class Trap A', detail: 'Writing 41 or 3 (losing track when counting on by ones past the decade boundary 40).' }
+        ],
+        hintText: 'Use the Cherry Partition to split 7 into two helpful parts: how many ones does 38 need to reach the friendly decade 40? Put that on the left arm, and put the leftover ones on the right arm!',
+        visualCode: 'cherry38',
+        working: [
+          '1. 38 needs 2 more to reach 40 (38 + 2 = 40).',
+          '2. Partition 7 into 2 and 5.',
+          '3. Add the remaining 5: 40 + 5 = 45.'
+        ],
+        answer: '45',
+        acceptedAnswers: ['45']
+      },
+      {
+        num: 5,
+        part: 'part1',
+        partTitle: 'Part 1: Number Bonds & Bridging',
+        priority: true,
+        prompt: 'Write one subtraction fact that belongs in the same fact family as   8 + 6 = 14.',
+        speech: 'Question 5. Write one subtraction fact that belongs in the same fact family as 8 plus 6 equals 14.',
+        traps: [
+          { label: 'Common Class Trap A', detail: 'Writing 6 + 8 = 14 or 6 + 6 = 14 — writing another ADDITION fact instead of a SUBTRACTION (−) fact!' },
+          { label: 'Common Class Trap B', detail: 'Leaving the box blank when unsure where the numbers go.' }
+        ],
+        hintText: 'Look at the Fact Family Roof Triangle! 14 is the "Boss Number" (the whole) at the top, and 8 and 6 are the two parts at the base. A subtraction fact MUST use − and start with the Boss Number (14) at the front!',
+        visualCode: 'triangle:14,8,6|Start with the Boss Number (14) at the front!',
+        working: [
+          '1. Identify the whole (14) and the two parts (8 and 6).',
+          '2. Place 14 at the start of the subtraction equation: 14 − 6 = 8  OR  14 − 8 = 6.'
+        ],
+        answer: '14 − 6 = 8  (or  14 − 8 = 6)',
+        acceptedAnswers: ['14-6=8', '14-8=6', '14−6=8', '14−8=6']
+      },
+
+      // --- PART 2: PLACE VALUE & NUMBER SENSE (Q6–Q10) ---
+      {
+        num: 6,
+        part: 'part2',
+        partTitle: 'Part 2: Place Value & Number Sense',
+        priority: true,
+        prompt: 'Partition the number 74:   74 = [   ] + 4',
+        speech: 'Question 6. Partition the number 74: 74 equals blank plus 4.',
+        traps: [
+          { label: 'Common Class Trap A', detail: 'Writing 10 (confusing 7 tens with 1 ten, making 10 + 4 = 14 instead of 74).' },
+          { label: 'Common Class Trap B', detail: 'Writing 78 (adding 4 onto 74 instead of splitting 74 into tens and ones).' }
+        ],
+        hintText: 'Use the interactive Place Value Arrow Cards below! Slide the 70 card and the 4 card apart to see the true value of the digit 7 in the Tens column.',
+        visualCode: 'arrow74',
+        working: [
+          '1. In 74, the digit 7 is in the Tens column, which equals 70.',
+          '2. The digit 4 is in the Ones column, which equals 4.',
+          '3. Therefore, 74 = 70 + 4.'
+        ],
+        answer: '70',
+        acceptedAnswers: ['70']
+      },
+      {
+        num: 7,
+        part: 'part2',
+        partTitle: 'Part 2: Place Value & Number Sense',
+        priority: false,
+        prompt: 'What number is made of 3 hundreds, 4 tens and 2 ones?',
+        speech: 'Question 7. What number is made of 3 hundreds, 4 tens and 2 ones?',
+        traps: [
+          { label: 'Class Success Spotlight', detail: 'Every pupil in the group got this one right! Watch out for swapping digits (like 324) on future questions.' }
+        ],
+        hintText: 'Place each digit into its H | T | O column: 3 hundreds (300), 4 tens (40), and 2 ones (2).',
+        visualCode: 'hto:3,4,2|300 + 40 + 2 = 342',
+        working: [
+          '1. 3 hundreds = 300; 4 tens = 40; 2 ones = 2.',
+          '2. Combine the columns: 300 + 40 + 2 = 342.'
+        ],
+        answer: '342',
+        acceptedAnswers: ['342']
+      },
+      {
+        num: 8,
+        part: 'part2',
+        partTitle: 'Part 2: Place Value & Number Sense',
+        priority: true,
+        prompt: 'What is 10 MORE than 68?',
+        speech: 'Question 8. What is 10 more than 68?',
+        traps: [
+          { label: 'Common Class Trap A', detail: 'Writing 18 (misreading the tens digit or subtracting instead of adding 10).' }
+        ],
+        hintText: 'Adding 10 increases the TENS digit by 1 ten (from 6 tens to 7 tens), while the 8 ones stay the same! Look at the vertical column jump on the 100-square.',
+        visualCode: 'jumps:68,+10 (1 ten more / 1 row down) -> 78|Ones digit (8) stays the same!',
+        working: [
+          '1. 68 has 6 tens and 8 ones.',
+          '2. Add 1 more ten: 6 tens + 1 ten = 7 tens (70).',
+          '3. 70 + 8 = 78.'
+        ],
+        answer: '78',
+        acceptedAnswers: ['78']
+      },
+      {
+        num: 9,
+        part: 'part2',
+        partTitle: 'Part 2: Place Value & Number Sense',
+        priority: false,
+        prompt: 'What is 10 LESS than 52?',
+        speech: 'Question 9. What is 10 less than 52?',
+        traps: [
+          { label: 'Class Success Spotlight', detail: 'All three pupils answered 42 accurately! Remember: 10 less drops the TENS digit by 1, never the ones digit.' }
+        ],
+        hintText: 'Subtracting 10 reduces the TENS digit by 1 ten (5 tens -> 4 tens), while the 2 ones stay unchanged.',
+        visualCode: 'jumps:42,<-10 (1 ten less / 1 row up) - 52|5 tens − 1 ten = 4 tens',
+        working: [
+          '1. 52 has 5 tens and 2 ones.',
+          '2. Take away 1 ten: 50 − 10 = 40.',
+          '3. 40 + 2 = 42.'
+        ],
+        answer: '42',
+        acceptedAnswers: ['42']
+      },
+      {
+        num: 10,
+        part: 'part2',
+        partTitle: 'Part 2: Place Value & Number Sense',
+        priority: false,
+        prompt: 'Write the number that is GREATEST:   89,  98,  102,  91',
+        speech: 'Question 10. Write the number that is greatest: 89, 98, 102, 91.',
+        traps: [
+          { label: 'Watch-Out Trap', detail: 'Picking 98 because 9 is bigger than 1 — forgetting that 102 is a 3-digit number with 1 hundred!' }
+        ],
+        hintText: 'Line the numbers up in Hundreds, Tens, and Ones columns! Any 3-digit number (100 or more) is greater than every 2-digit number.',
+        visualCode: 'compare102',
+        working: [
+          '1. 102 has 1 hundred (3 digits), whereas 89, 98, and 91 have 0 hundreds (2 digits).',
+          '2. Therefore, 102 is the greatest number.'
+        ],
+        answer: '102',
+        acceptedAnswers: ['102']
+      },
+
+      // --- PART 3: EQUAL GROUPS, ARRAYS & DOUBLES (Q11–Q15) ---
+      {
+        num: 11,
+        part: 'part3',
+        partTitle: 'Part 3: Equal Groups, Arrays & Doubles',
+        priority: true,
+        prompt: 'What is DOUBLE 16?',
+        speech: 'Question 11. What is double 16?',
+        traps: [
+          { label: 'Common Class Trap A', detail: 'Writing 26 — doubling the ones (6 + 6 = 12) to get 2, but forgetting to carry the extra ten into 10 + 10 = 20!' },
+          { label: 'Common Class Trap B', detail: 'Writing 62 — reversing the digits of 26!' }
+        ],
+        hintText: 'Use the Partition-and-Double Diamond! Split 16 into 10 + 6. Double the tens (10 + 10 = 20), double the ones (6 + 6 = 12), and then combine both answers!',
+        visualCode: 'double16',
+        working: [
+          '1. Partition 16 into 10 and 6.',
+          '2. Double 10 = 20.',
+          '3. Double 6 = 12.',
+          '4. Add both parts together: 20 + 12 = 32.'
+        ],
+        answer: '32',
+        acceptedAnswers: ['32']
+      },
+      {
+        num: 12,
+        part: 'part3',
+        partTitle: 'Part 3: Equal Groups, Arrays & Doubles',
+        priority: true,
+        prompt: 'What is HALF of 30?',
+        speech: 'Question 12. What is half of 30?',
+        traps: [
+          { label: 'Common Class Trap A', detail: 'Writing 60 or 120 — DOUBLING 30 instead of halving it! Halving always splits into 2 equal smaller parts.' },
+          { label: 'Common Class Trap B', detail: 'Writing 10 or 20 — finding half of 20 (10) and forgetting to also halve the remaining 10 (5).' }
+        ],
+        hintText: 'Halving makes a number SMALLER! Split 30 into two friendly tens: 20 + 10. Find Half of 20 (= 10) and Half of 10 (= 5), then add them together!',
+        visualCode: 'half30',
+        working: [
+          '1. Partition 30 into 20 + 10.',
+          '2. Half of 20 = 10; Half of 10 = 5.',
+          '3. Add both halves: 10 + 5 = 15 (Check: 15 + 15 = 30).'
+        ],
+        answer: '15',
+        acceptedAnswers: ['15']
+      },
+      {
+        num: 13,
+        part: 'part3',
+        partTitle: 'Part 3: Equal Groups, Arrays & Doubles',
+        priority: false,
+        prompt: 'There are 4 equal groups with 5 counters in each group. How many counters are there ALTOGETHER?',
+        speech: 'Question 13. There are 4 equal groups with 5 counters in each group. How many counters are there altogether?',
+        traps: [
+          { label: 'Common Class Trap A', detail: 'Writing 120 or adding 4 + 5 = 9 instead of counting 4 equal groups of 5.' }
+        ],
+        hintText: 'Look at the 4 rows of 5 counters below and skip-count in 5s four times: 5, 10, 15, ...!',
+        visualCode: 'array:4,5|Skip-count in 5s: 5, 10, 15, 20',
+        working: [
+          '1. 4 equal groups of 5 = 5 + 5 + 5 + 5.',
+          '2. 4 × 5 = 20 counters altogether.'
+        ],
+        answer: '20',
+        acceptedAnswers: ['20']
+      },
+      {
+        num: 14,
+        part: 'part3',
+        partTitle: 'Part 3: Equal Groups, Arrays & Doubles',
+        priority: true,
+        prompt: 'Write   3 + 3 + 3 + 3   as a multiplication calculation:',
+        speech: 'Question 14. Write 3 plus 3 plus 3 plus 3 as a multiplication calculation.',
+        traps: [
+          { label: 'Common Class Trap A', detail: 'Writing 3 × 3 × 3 × 3 — replacing every + sign with a × sign instead of counting HOW MANY groups of 3 there are!' },
+          { label: 'Common Class Trap B', detail: 'Writing 6 + 6 = 12 or 3 + 3 + 3 = 12 — leaving it as addition instead of using the multiplication (×) sign.' }
+        ],
+        hintText: 'Count how many 3s are in the line: there are 4 groups of 3! In maths, "4 groups of 3" is written with ONE multiplication sign: 4 × 3 = 12.',
+        visualCode: 'array:4,3|4 groups of 3 = 4 × 3 = 12',
+        working: [
+          '1. Count the equal groups: there are 4 threes.',
+          '2. Write with the multiplication sign: 4 × 3 = 12 (or 3 × 4 = 12).'
+        ],
+        answer: '4 × 3 = 12  (or  3 × 4 = 12)',
+        acceptedAnswers: ['4x3=12', '4×3=12', '3x4=12', '3×4=12', '4x3', '4×3', '3x4', '3×4']
+      },
+      {
+        num: 15,
+        part: 'part3',
+        partTitle: 'Part 3: Equal Groups, Arrays & Doubles',
+        priority: false,
+        prompt: 'Share 18 sweets equally between 3 friends. How many sweets does each friend get?',
+        speech: 'Question 15. Share 18 sweets equally between 3 friends. How many sweets does each friend get?',
+        traps: [
+          { label: 'Watch-Out Trap', detail: 'Writing 66 (repeating the digit) or subtracting 18 − 3 = 15 instead of sharing into 3 equal groups.' }
+        ],
+        hintText: 'Share the 18 sweets equally into the 3 friend circles below (or count in 3s up to 18: 3, 6, 9, 12, 15, 18).',
+        visualCode: 'share18',
+        working: [
+          '1. 18 shared equally into 3 groups = 18 ÷ 3.',
+          '2. 3 × 6 = 18, so each friend gets 6 sweets.'
+        ],
+        answer: '6',
+        acceptedAnswers: ['6', '6 sweets']
+      },
+
+      // --- PART 4: MATHS WORDS & STORY PROBLEMS (Q16–Q20) ---
+      {
+        num: 16,
+        part: 'part4',
+        partTitle: 'Part 4: Maths Words & Story Problems',
+        priority: true,
+        prompt: 'Georgia has 24 stickers and Paisley has 19 stickers. What is the DIFFERENCE between their sticker totals?',
+        speech: 'Question 16. Georgia has 24 stickers and Paisley has 19 stickers. What is the difference between their sticker totals?',
+        traps: [
+          { label: 'Common Class Trap A', detail: 'Writing 43 or 33 — ADDING 24 + 19 together instead of finding the gap (difference) between them!' },
+          { label: 'Common Class Trap B', detail: 'Writing 66 or leaving blank when unsure what the maths word DIFFERENCE means.' }
+        ],
+        hintText: 'DIFFERENCE means compare the two bars and find the GAP between 19 and 24 (subtract: 24 − 19)! Count up from 19 to 20 (+1), then from 20 to 24 (+4).',
+        visualCode: 'diffbars:24,19',
+        working: [
+          '1. Difference means subtract (find the gap): 24 − 19.',
+          '2. Count up from 19 to 20 (+1), then from 20 to 24 (+4).',
+          '3. 1 + 4 = 5 stickers difference.'
+        ],
+        answer: '5',
+        acceptedAnswers: ['5', '5 stickers']
+      },
+      {
+        num: 17,
+        part: 'part4',
+        partTitle: 'Part 4: Maths Words & Story Problems',
+        priority: true,
+        prompt: 'Ava has 40 grapes. She eats 12 of them. How many grapes are REMAINING?',
+        speech: 'Question 17. Ava has 40 grapes. She eats 12 of them. How many grapes are remaining?',
+        traps: [
+          { label: 'Common Class Trap A', detail: 'Writing 38 — subtracting ONLY the 2 ones (40 − 2 = 38) and forgetting to subtract the 10!' },
+          { label: 'Common Class Trap B', detail: 'Writing 37 (miscounting back across 30) or 43.' }
+        ],
+        hintText: 'REMAINING means what is LEFT OVER after taking away (40 − 12)! Subtract 10 first (40 − 10 = 30), then subtract 2 more from 30!',
+        visualCode: 'jumps:?,<-2 - 30,<-10 - 40|40 − 10 = 30, then 30 − 2 = ?',
+        working: [
+          '1. Start with 40 and take away 10: 40 − 10 = 30.',
+          '2. Take away the remaining 2: 30 − 2 = 28.',
+          '3. Check with addition: 28 + 12 = 40.'
+        ],
+        answer: '28',
+        acceptedAnswers: ['28', '28 grapes']
+      },
+      {
+        num: 18,
+        part: 'part4',
+        partTitle: 'Part 4: Maths Words & Story Problems',
+        priority: true,
+        prompt: 'A notebook costs 65p. You pay with a £1.00 (100p) coin. How much CHANGE do you get?',
+        speech: 'Question 18. A notebook costs 65 pence. You pay with a 1 pound, 100 pence coin. How much change do you get?',
+        traps: [
+          { label: 'Common Class Trap A', detail: 'Writing £1.65p — ADDING £1.00 + 65p instead of subtracting!' },
+          { label: 'Common Class Trap B', detail: 'Writing 50p (guessing a friendly coin instead of counting up from 65p to 100p).' }
+        ],
+        hintText: '£1.00 is 100p! Count UP from 65p to the next ten (70p = +5p), then jump from 70p to 100p (+30p)!',
+        visualCode: 'jumps:65p,+5p -> 70p,+30p -> 100p (£1.00)|Add both jumps: 5p + 30p = ?',
+        working: [
+          '1. Convert £1.00 to 100p.',
+          '2. Count up from 65p to 70p (+5p), then 70p to 100p (+30p).',
+          '3. 5p + 30p = 35p change (Check: 65p + 35p = 100p).'
+        ],
+        answer: '35p  (or  £0.35)',
+        acceptedAnswers: ['35p', '35', '£0.35', '0.35']
+      },
+      {
+        num: 19,
+        part: 'part4',
+        partTitle: 'Part 4: Maths Words & Story Problems',
+        priority: true,
+        prompt: 'What is the PRODUCT of 4 and 6?',
+        speech: 'Question 19. What is the product of 4 and 6?',
+        traps: [
+          { label: 'Common Class Trap A', detail: 'Writing 11 or 9 — confusing the maths word PRODUCT with addition (4 + 6) or subtraction!' }
+        ],
+        hintText: 'Vocabulary Alert: PRODUCT always means MULTIPLY (4 × 6)! Look at the 4 rows of 6 array below and skip-count in 6s: 6, 12, 18, ...!',
+        visualCode: 'array:4,6|PRODUCT = Multiply (×) -> 4 × 6 = 24',
+        working: [
+          '1. Product means multiply: 4 × 6.',
+          '2. 6 + 6 = 12, double 12 = 24 -> 4 × 6 = 24.'
+        ],
+        answer: '24',
+        acceptedAnswers: ['24']
+      },
+      {
+        num: 20,
+        part: 'part4',
+        partTitle: 'Part 4: Maths Words & Story Problems',
+        priority: true,
+        prompt: 'A cartoon starts at 3:45 and lasts for 30 minutes. What time does the cartoon finish?',
+        speech: 'Question 20. A cartoon starts at 3:45 and lasts for 30 minutes. What time does the cartoon finish?',
+        traps: [
+          { label: 'Common Class Trap A', detail: 'Writing 3:59 — stopping before 4:00 because of fear of crossing into the next hour!' },
+          { label: 'Common Class Trap B', detail: 'Writing 4:30 — adding 45 minutes instead of 30 minutes (close, right hour!).' }
+        ],
+        hintText: 'There are 60 minutes in 1 hour! Split the 30 minutes into two 15-minute halves: jump 15 minutes from 3:45 to reach 4:00 (o\'clock), then add the remaining 15 minutes!',
+        visualCode: 'clock345',
+        working: [
+          '1. Split 30 minutes into 15 minutes + 15 minutes.',
+          '2. 3:45 + 15 minutes = 4:00 (o\'clock).',
+          '3. 4:00 + 15 minutes = 4:15.'
+        ],
+        answer: '4:15',
+        acceptedAnswers: ['4:15', '4.15', '4 15']
+      }
+    ];
+
+    // =========================================================================
+    // 2. APPLICATION STATE, FILTERING & STRICT TEACHER REVEAL CONTROLS
+    // =========================================================================
+    let activeFilter = 'all';
+    let visibleQuestions = [...CHECKUP_QUESTIONS];
+    let currentIndex = 0;
+
+    // Reveal states (ALWAYS false on load and reset on navigation)
+    let reveals = {
+      trap: false,
+      hint: false,
+      working: false,
+      answer: false
+    };
+
+    // Interactive Arrow Card toggle state for Q6
+    let arrow6Joined = false;
+
+    function setQuestionFilter(filterKey) {
+      activeFilter = filterKey;
+      if (filterKey === 'all') {
+        visibleQuestions = [...CHECKUP_QUESTIONS];
+      } else if (filterKey === 'priority') {
+        visibleQuestions = CHECKUP_QUESTIONS.filter(q => q.priority);
+      } else {
+        visibleQuestions = CHECKUP_QUESTIONS.filter(q => q.part === filterKey);
+      }
+      currentIndex = 0;
+      renderFilterTabs();
+      renderQuestionPillBar();
+      renderQuestion();
+    }
+
+    function renderFilterTabs() {
+      document.querySelectorAll('.filter-tab-btn').forEach(btn => {
+        const key = btn.getAttribute('data-filter');
+        if (key === activeFilter) {
+          btn.className = 'filter-tab-btn px-3 py-1.5 rounded-xl text-xs font-extrabold bg-slate-900 text-white shadow-sm transition';
+        } else {
+          btn.className = 'filter-tab-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 transition';
+        }
+      });
+    }
+
+    function renderQuestionPillBar() {
+      const bar = document.getElementById('question-pill-bar');
+      const currentQ = visibleQuestions[currentIndex];
+      bar.innerHTML = visibleQuestions.map((qObj, idx) => {
+        const isCurrent = currentQ && qObj.num === currentQ.num;
+        let cls = 'w-8 h-8 rounded-lg font-extrabold text-xs flex items-center justify-center transition cursor-pointer ';
+        if (isCurrent) {
+          cls += 'bg-emerald-600 text-white ring-2 ring-emerald-300 scale-105 shadow-sm';
+        } else if (qObj.priority) {
+          cls += 'bg-amber-50 hover:bg-amber-100 text-amber-950 border border-amber-300';
+        } else {
+          cls += 'bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200';
+        }
+        return `<button type="button" onclick="jumpToIndex(${idx})" class="${cls}" title="Question ${qObj.num}${qObj.priority ? ' (Priority)' : ''}">${qObj.num}</button>`;
+      }).join('');
+    }
+
+    function jumpToIndex(idx) {
+      currentIndex = idx;
+      renderQuestionPillBar();
+      renderQuestion();
+    }
+
+    function prevQuestion() {
+      currentIndex = (currentIndex - 1 + visibleQuestions.length) % visibleQuestions.length;
+      renderQuestionPillBar();
+      renderQuestion();
+    }
+
+    function nextQuestion() {
+      currentIndex = (currentIndex + 1) % visibleQuestions.length;
+      renderQuestionPillBar();
+      renderQuestion();
+    }
+
+    function resetAllReveals() {
+      reveals = { trap: false, hint: false, working: false, answer: false };
+
+      document.getElementById('panel-trap').classList.add('hidden');
+      document.getElementById('panel-hint').classList.add('hidden');
+      document.getElementById('panel-working').classList.add('hidden');
+      document.getElementById('panel-answer').classList.add('hidden');
+
+      document.getElementById('btn-reveal-trap').innerHTML = '<span>&#128269; Reveal Common Class Trap(s)</span>';
+      document.getElementById('btn-reveal-hint').innerHTML = '<span>&#128161; Reveal Visual CPA Model / Hint</span>';
+      document.getElementById('btn-reveal-working').innerHTML = '<span>&#129692; Reveal Step-by-Step Working</span>';
+      document.getElementById('btn-reveal-answer').innerHTML = '<span>&#9989; Reveal Final Answer</span>';
+
+      document.getElementById('class-check-input').value = '';
+      document.getElementById('class-check-feedback').textContent = '';
+    }
+
+    function toggleReveal(key) {
+      reveals[key] = !reveals[key];
+      const panel = document.getElementById(`panel-${key}`);
+      const btn = document.getElementById(`btn-reveal-${key}`);
+
+      if (reveals[key]) {
+        panel.classList.remove('hidden');
+        if (key === 'trap') btn.innerHTML = '<span>&#128269; Hide Common Class Trap(s)</span>';
+        if (key === 'hint') btn.innerHTML = '<span>&#128161; Hide Visual CPA Model / Hint</span>';
+        if (key === 'working') btn.innerHTML = '<span>&#129692; Hide Step-by-Step Working</span>';
+        if (key === 'answer') btn.innerHTML = '<span>&#9989; Hide Final Answer</span>';
+      } else {
+        panel.classList.add('hidden');
+        if (key === 'trap') btn.innerHTML = '<span>&#128269; Reveal Common Class Trap(s)</span>';
+        if (key === 'hint') btn.innerHTML = '<span>&#128161; Reveal Visual CPA Model / Hint</span>';
+        if (key === 'working') btn.innerHTML = '<span>&#129692; Reveal Step-by-Step Working</span>';
+        if (key === 'answer') btn.innerHTML = '<span>&#9989; Reveal Final Answer</span>';
+      }
+    }
+
+    function renderQuestion() {
+      resetAllReveals();
+      arrow6Joined = false;
+      const q = visibleQuestions[currentIndex];
+      if (!q) return;
+
+      document.getElementById('q-number-badge').textContent = `Question ${q.num} of 20`;
+      document.getElementById('q-part-badge').textContent = q.partTitle;
+      const prioBadge = document.getElementById('q-priority-badge');
+      if (q.priority) prioBadge.classList.remove('hidden');
+      else prioBadge.classList.add('hidden');
+
+      document.getElementById('q-prompt-text').textContent = q.prompt;
+
+      // Populate Anonymous Traps
+      document.getElementById('content-trap').innerHTML = q.traps.map(t => `
+        <div class="bg-white rounded-xl p-3 border border-rose-200 flex items-start gap-2.5">
+          <span class="px-2.5 py-0.5 rounded-lg bg-rose-100 text-rose-900 font-extrabold text-xs shrink-0 mt-0.5">${t.label}</span>
+          <span>${t.detail}</span>
+        </div>
+      `).join('');
+
+      // Populate Hint & Visual CPA Model
+      document.getElementById('content-hint-text').textContent = q.hintText;
+      document.getElementById('content-hint-visual').innerHTML = buildCpaVisualHTML(q.visualCode);
+
+      // Populate Working Steps
+      document.getElementById('content-working').innerHTML = q.working.map(step => `
+        <div class="flex items-start gap-2">
+          <span class="text-blue-600 font-black">&bull;</span>
+          <span>${step}</span>
+        </div>
+      `).join('');
+
+      // Populate Final Answer
+      document.getElementById('content-answer').textContent = q.answer;
+    }
+
+    function checkClassInput() {
+      const q = visibleQuestions[currentIndex];
+      const raw = document.getElementById('class-check-input').value.trim().toLowerCase().replace(/\s+/g, '');
+      const fb = document.getElementById('class-check-feedback');
+
+      if (!raw) {
+        fb.textContent = 'Type an answer first, then click Check!';
+        fb.className = 'text-xs font-extrabold min-h-[1.25rem] text-amber-700';
+        return;
+      }
+
+      const normalizedAccepted = q.acceptedAnswers.map(a => a.toLowerCase().replace(/\s+/g, ''));
+      if (normalizedAccepted.includes(raw)) {
+        fb.textContent = 'Spot on! Brilliant reasoning — click Reveal Final Answer to celebrate!';
+        fb.className = 'text-xs font-extrabold min-h-[1.25rem] text-emerald-700';
+      } else {
+        fb.textContent = 'Not quite — try again, or click Reveal Visual CPA Model / Hint for a clue!';
+        fb.className = 'text-xs font-extrabold min-h-[1.25rem] text-rose-600';
+      }
+    }
+
+    function speakCurrentQuestion() {
+      if (!('speechSynthesis' in window)) return;
+      const q = visibleQuestions[currentIndex];
+      if (!q) return;
+      window.speechSynthesis.cancel();
+      const utter = new SpeechSynthesisUtterance(q.speech || q.prompt);
+      utter.rate = 0.92;
+      window.speechSynthesis.speak(utter);
+    }
+
+    // =========================================================================
+    // 3. VISUAL CPA DIAGRAM BUILDERS (NO SPOILERS BEFORE REVEAL)
+    // =========================================================================
+    function buildCpaVisualHTML(code) {
+      if (!code) return '';
+
+      if (code === 'tenframe20:13') {
+        const fullFrame = Array(10).fill('<div class="w-6 h-6 rounded-md bg-blue-600 border border-blue-800"></div>').join('');
+        const secondFrame = Array.from({ length: 10 }, (_, i) =>
+          i < 3
+            ? '<div class="w-6 h-6 rounded-md bg-blue-600 border border-blue-800"></div>'
+            : '<div class="w-6 h-6 rounded-md bg-white border-2 border-dashed border-amber-400 flex items-center justify-center text-[10px] font-black text-amber-600">?</div>'
+        ).join('');
+        return `
+          <div class="bg-white p-4 rounded-2xl border-2 border-amber-200 inline-flex flex-col items-center gap-2.5 shadow-sm">
+            <div class="flex flex-wrap items-center justify-center gap-3">
+              <div class="grid grid-cols-5 gap-1.5 p-2.5 rounded-xl bg-blue-50 border-2 border-blue-400">${fullFrame}</div>
+              <div class="grid grid-cols-5 gap-1.5 p-2.5 rounded-xl bg-blue-50 border-2 border-blue-400">${secondFrame}</div>
+            </div>
+            <span class="text-xs font-extrabold text-slate-600">10 blue + 3 blue = 13. Count the empty [ ? ] spaces to reach 20!</span>
+          </div>
+        `;
+      }
+
+      if (code === 'sq100_35') {
+        let cells = '';
+        for (let i = 1; i <= 100; i++) {
+          const isTaken = i > 65;
+          cells += `<div class="w-5 h-5 sm:w-6 sm:h-6 rounded-[3px] flex items-center justify-center text-[9px] font-bold ${
+            isTaken ? 'bg-rose-200 text-rose-900 line-through' : 'bg-emerald-500 text-white'
+          }">${i}</div>`;
+        }
+        return `
+          <div class="bg-white p-4 rounded-2xl border-2 border-amber-200 inline-flex flex-col items-center gap-3 shadow-sm">
+            <div class="grid grid-cols-10 gap-0.5 bg-slate-100 p-2 rounded-xl border border-slate-300">${cells}</div>
+            <div class="flex flex-wrap items-center justify-center gap-2 text-xs font-extrabold">
+              <span class="px-2.5 py-1 rounded-lg bg-rose-100 text-rose-900">35 Taken Away (3 rows of 10 + 5 ones)</span>
+              <span class="px-2.5 py-1 rounded-lg bg-emerald-100 text-emerald-900">Count the Green Squares Left!</span>
+            </div>
+          </div>
+        `;
+      }
+
+      if (code === 'cherry38') {
+        return `
+          <div class="bg-white p-4 rounded-2xl border-2 border-amber-200 inline-flex flex-col items-center gap-3 shadow-sm">
+            <div class="flex flex-wrap items-center justify-center gap-6">
+              <!-- Cherry Split -->
+              <div class="flex flex-col items-center">
+                <div class="w-11 h-10 rounded-full bg-amber-400 text-slate-950 font-display font-bold text-lg flex items-center justify-center shadow-sm">7</div>
+                <svg class="w-24 h-6" viewBox="0 0 120 26">
+                  <line x1="60" y1="0" x2="26" y2="26" stroke="#64748b" stroke-width="2.5" stroke-linecap="round"></line>
+                  <line x1="60" y1="0" x2="94" y2="26" stroke="#64748b" stroke-width="2.5" stroke-linecap="round"></line>
+                </svg>
+                <div class="flex items-center gap-6">
+                  <div class="text-center">
+                    <div class="w-10 h-9 rounded-full bg-emerald-100 border-2 border-emerald-500 font-display font-bold text-emerald-950 flex items-center justify-center">2</div>
+                    <span class="text-[10px] font-extrabold text-emerald-700">Fills 40</span>
+                  </div>
+                  <div class="text-center">
+                    <div class="w-10 h-9 rounded-full bg-indigo-100 border-2 border-indigo-500 font-display font-bold text-indigo-950 flex items-center justify-center">5</div>
+                    <span class="text-[10px] font-extrabold text-indigo-700">Left Over</span>
+                  </div>
+                </div>
+              </div>
+              <!-- Open Number Line -->
+              <div class="flex items-center gap-2 font-display font-bold text-base sm:text-lg">
+                <span class="px-3 py-1 rounded-xl bg-blue-100 border-2 border-blue-400 text-blue-950">38</span>
+                <span class="text-emerald-600 text-xs font-extrabold">+2 &rarr;</span>
+                <span class="px-3 py-1 rounded-xl bg-emerald-100 border-2 border-emerald-500 text-emerald-950">40</span>
+                <span class="text-indigo-600 text-xs font-extrabold">+5 &rarr;</span>
+                <span class="px-3.5 py-1 rounded-xl bg-amber-200 border-2 border-amber-500 text-slate-950">?</span>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      if (code === 'arrow74') {
+        return `
+          <div class="bg-white p-4 rounded-2xl border-2 border-amber-200 inline-flex flex-col items-center gap-2.5 shadow-sm">
+            <div class="flex items-center gap-3 font-display font-bold text-2xl">
+              <span class="px-4 py-2 rounded-xl bg-blue-600 text-white shadow-sm">70</span>
+              <span class="text-slate-500">+</span>
+              <span class="px-4 py-2 rounded-xl bg-amber-400 text-slate-950 shadow-sm">4</span>
+              <span class="text-slate-500">=</span>
+              <span class="px-4 py-2 rounded-xl bg-slate-900 text-white shadow">74</span>
+            </div>
+            <span class="text-xs font-extrabold text-slate-600">7 Tens = 70 &nbsp;|&nbsp; 4 Ones = 4</span>
+          </div>
+        `;
+      }
+
+      if (code === 'compare102') {
+        const rows = [
+          { n: '89', h: '0', t: '8', o: '9', hi: false },
+          { n: '98', h: '0', t: '9', o: '8', hi: false },
+          { n: '102', h: '1', t: '0', o: '2', hi: true },
+          { n: '91', h: '0', t: '9', o: '1', hi: false }
+        ];
+        return `
+          <div class="bg-white p-3.5 rounded-2xl border-2 border-amber-200 inline-block shadow-sm">
+            <table class="text-center font-extrabold text-xs sm:text-sm border-collapse">
+              <thead>
+                <tr class="bg-slate-100 text-slate-700">
+                  <th class="px-3 py-1.5 border border-slate-300">Number</th>
+                  <th class="px-3 py-1.5 border border-slate-300 text-blue-800">Hundreds</th>
+                  <th class="px-3 py-1.5 border border-slate-300 text-emerald-800">Tens</th>
+                  <th class="px-3 py-1.5 border border-slate-300 text-amber-800">Ones</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${rows.map(r => `
+                  <tr class="${r.hi ? 'bg-emerald-50 text-emerald-950' : ''}">
+                    <td class="px-3 py-1.5 border border-slate-300">${r.n}</td>
+                    <td class="px-3 py-1.5 border border-slate-300">${r.h}</td>
+                    <td class="px-3 py-1.5 border border-slate-300">${r.t}</td>
+                    <td class="px-3 py-1.5 border border-slate-300">${r.o}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        `;
+      }
+
+      if (code === 'double16') {
+        return `
+          <div class="bg-white p-4 rounded-2xl border-2 border-amber-200 inline-flex flex-col items-center gap-2 shadow-sm text-xs sm:text-sm font-extrabold">
+            <div class="px-4 py-1.5 rounded-xl bg-slate-900 text-white">Double 16 (Partition: 10 + 6)</div>
+            <div class="flex flex-wrap items-center justify-center gap-3">
+              <div class="px-3.5 py-2 rounded-xl bg-blue-50 border-2 border-blue-300 text-blue-950">Double 10 = <strong>20</strong></div>
+              <span class="text-lg">+</span>
+              <div class="px-3.5 py-2 rounded-xl bg-amber-50 border-2 border-amber-300 text-amber-950">Double 6 = <strong>12</strong></div>
+              <span class="text-lg">=</span>
+              <div class="px-3.5 py-2 rounded-xl bg-emerald-100 border-2 border-emerald-500 text-emerald-950">20 + 12 = <strong>?</strong></div>
+            </div>
+          </div>
+        `;
+      }
+
+      if (code === 'half30') {
+        return `
+          <div class="bg-white p-4 rounded-2xl border-2 border-amber-200 inline-flex flex-col items-center gap-2 shadow-sm text-xs sm:text-sm font-extrabold">
+            <div class="px-4 py-1.5 rounded-xl bg-slate-900 text-white">Half of 30 (Partition: 20 + 10)</div>
+            <div class="flex flex-wrap items-center justify-center gap-3">
+              <div class="px-3.5 py-2 rounded-xl bg-blue-50 border-2 border-blue-300 text-blue-950">Half of 20 = <strong>10</strong></div>
+              <span class="text-lg">+</span>
+              <div class="px-3.5 py-2 rounded-xl bg-amber-50 border-2 border-amber-300 text-amber-950">Half of 10 = <strong>5</strong></div>
+              <span class="text-lg">=</span>
+              <div class="px-3.5 py-2 rounded-xl bg-emerald-100 border-2 border-emerald-500 text-emerald-950">10 + 5 = <strong>?</strong></div>
+            </div>
+          </div>
+        `;
+      }
+
+      if (code === 'share18') {
+        const circle = (idx) => `
+          <div class="bg-purple-50 border-2 border-purple-400 rounded-2xl p-2.5 text-center">
+            <div class="text-[11px] font-extrabold text-purple-900 mb-1.5">Friend ${idx}</div>
+            <div class="grid grid-cols-3 gap-1">${Array(6).fill('<div class="w-4 h-4 rounded-full bg-purple-600"></div>').join('')}</div>
+          </div>
+        `;
+        return `
+          <div class="bg-white p-4 rounded-2xl border-2 border-amber-200 inline-flex flex-col items-center gap-2 shadow-sm">
+            <div class="flex gap-3">${circle(1)}${circle(2)}${circle(3)}</div>
+            <span class="text-xs font-extrabold text-slate-600">18 sweets shared equally into 3 groups</span>
+          </div>
+        `;
+      }
+
+      if (code === 'clock345') {
+        return `
+          <div class="bg-white p-4 rounded-2xl border-2 border-amber-200 inline-flex flex-wrap items-center justify-center gap-5 shadow-sm">
+            <svg class="w-24 h-24 shrink-0" viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="45" fill="#ffffff" stroke="#0f172a" stroke-width="4" />
+              <text x="50" y="16" text-anchor="middle" font-size="10" font-weight="900">12</text>
+              <text x="86" y="54" text-anchor="middle" font-size="10" font-weight="900">3</text>
+              <text x="50" y="91" text-anchor="middle" font-size="10" font-weight="900">6</text>
+              <text x="14" y="54" text-anchor="middle" font-size="10" font-weight="900">9</text>
+              <!-- 3:45 hands -->
+              <line x1="50" y1="50" x2="72" y2="56" stroke="#0f172a" stroke-width="4" stroke-linecap="round" />
+              <line x1="50" y1="50" x2="18" y2="50" stroke="#dc2626" stroke-width="3" stroke-linecap="round" />
+              <circle cx="50" cy="50" r="3" fill="#0f172a" />
+            </svg>
+            <div class="flex flex-col gap-1.5 text-xs sm:text-sm font-extrabold">
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="px-3 py-1 rounded-xl bg-blue-100 border border-blue-400 text-blue-950">3:45</span>
+                <span class="text-emerald-700">+15 mins &rarr;</span>
+                <span class="px-3 py-1 rounded-xl bg-emerald-100 border border-emerald-500 text-emerald-950">4:00 (o'clock)</span>
+                <span class="text-indigo-700">+15 mins &rarr;</span>
+                <span class="px-3 py-1 rounded-xl bg-amber-200 border border-amber-500 text-slate-950">?</span>
+              </div>
+              <span class="text-xs text-slate-500">30 minutes = 15 minutes + 15 minutes</span>
+            </div>
+          </div>
+        `;
+      }
+
+      const idx = code.indexOf(':');
+      const type = code.slice(0, idx);
+      const payload = code.slice(idx + 1);
+
+      if (type === 'jumps') {
+        const [nodesPart, caption] = payload.split('|');
+        const nodes = nodesPart.split(',');
+        return `
+          <div class="bg-white p-4 rounded-2xl border-2 border-amber-200 inline-flex flex-col items-center gap-2 shadow-sm">
+            <div class="flex flex-wrap items-center justify-center gap-2 font-display font-bold text-base sm:text-lg">
+              ${nodes.map((n, i) => {
+                const cls = i === 0
+                  ? 'bg-slate-100 border-slate-300 text-slate-900'
+                  : i === nodes.length - 1
+                    ? 'bg-amber-100 border-amber-400 text-amber-950'
+                    : 'bg-emerald-100 border-emerald-400 text-emerald-950';
+                return `<span class="px-3 py-1 rounded-xl border-2 ${cls}">${n}</span>`;
+              }).join('<span class="text-slate-400 font-black">&rarr;</span>')}
+            </div>
+            ${caption ? `<span class="text-xs font-extrabold text-slate-600">${caption}</span>` : ''}
+          </div>
+        `;
+      }
+
+      if (type === 'triangle') {
+        const [numsPart, caption] = payload.split('|');
+        const [top, left, right] = numsPart.split(',');
+        return `
+          <div class="bg-white p-4 rounded-2xl border-2 border-amber-200 inline-flex flex-col items-center gap-1.5 shadow-sm">
+            <div class="px-5 py-1 rounded-xl bg-indigo-600 text-white font-display font-bold text-2xl shadow">${top}</div>
+            <div class="text-xs font-black text-slate-400">+ / −</div>
+            <div class="flex gap-8">
+              <div class="px-4 py-1 rounded-xl bg-emerald-100 border-2 border-emerald-500 font-display font-bold text-xl text-emerald-950">${left}</div>
+              <div class="px-4 py-1 rounded-xl bg-amber-100 border-2 border-amber-500 font-display font-bold text-xl text-amber-950">${right}</div>
+            </div>
+            ${caption ? `<span class="text-xs font-extrabold text-slate-600 mt-1">${caption}</span>` : ''}
+          </div>
+        `;
+      }
+
+      if (type === 'hto') {
+        const [numsPart, caption] = payload.split('|');
+        const [h, t, o] = numsPart.split(',');
+        return `
+          <div class="bg-white p-4 rounded-2xl border-2 border-amber-200 inline-flex flex-col items-center gap-2 shadow-sm">
+            <div class="grid grid-cols-3 gap-2.5 text-center">
+              <div class="bg-blue-50 border-2 border-blue-300 px-4 py-2 rounded-xl"><div class="text-[11px] font-extrabold text-blue-900">H</div><div class="font-display text-2xl font-bold">${h}</div></div>
+              <div class="bg-emerald-50 border-2 border-emerald-300 px-4 py-2 rounded-xl"><div class="text-[11px] font-extrabold text-emerald-900">T</div><div class="font-display text-2xl font-bold">${t}</div></div>
+              <div class="bg-amber-50 border-2 border-amber-300 px-4 py-2 rounded-xl"><div class="text-[11px] font-extrabold text-amber-900">O</div><div class="font-display text-2xl font-bold">${o}</div></div>
+            </div>
+            ${caption ? `<span class="text-xs font-extrabold text-slate-600">${caption}</span>` : ''}
+          </div>
+        `;
+      }
+
+      if (type === 'array') {
+        const [dimsPart, caption] = payload.split('|');
+        const [rows, cols] = dimsPart.split(',').map(Number);
+        let gridHtml = '';
+        for (let r = 0; r < rows; r++) {
+          gridHtml += `<div class="flex gap-2 justify-center">${Array(cols).fill('<div class="w-5 h-5 rounded-full bg-purple-600 border border-purple-900"></div>').join('')}</div>`;
+        }
+        return `
+          <div class="bg-white p-4 rounded-2xl border-2 border-amber-200 inline-flex flex-col items-center gap-2.5 shadow-sm">
+            <div class="space-y-1.5">${gridHtml}</div>
+            ${caption ? `<span class="text-xs font-extrabold text-slate-700">${caption}</span>` : ''}
+          </div>
+        `;
+      }
+
+      if (type === 'diffbars') {
+        const [a, b] = payload.split(',').map(Number);
+        return `
+          <div class="bg-white p-4 rounded-2xl border-2 border-amber-200 w-full max-w-md space-y-2 text-xs font-extrabold shadow-sm">
+            <div class="flex items-center gap-2">
+              <span class="w-24 shrink-0">Tower 1 (24):</span>
+              <div class="bg-indigo-600 text-white py-1.5 px-3 rounded-lg" style="width:${a * 9}px">${a}</div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="w-24 shrink-0">Tower 2 (19):</span>
+              <div class="bg-emerald-500 text-white py-1.5 px-3 rounded-lg" style="width:${b * 9}px">${b}</div>
+              <span class="text-amber-700 font-black">&larr; Gap = ?</span>
+            </div>
+            <div class="text-center text-slate-500 pt-1">Count up from 19 to 20 (+1), then 20 to 24 (+4)!</div>
+          </div>
+        `;
+      }
+
+      return '';
+    }
+
+    // =========================================================================
+    // 4. INTERACTIVE SPLIT-SCREEN / FULLSCREEN SURFACE PEN & TOUCH WHITEBOARD
+    // =========================================================================
+    let wbOpen = false;
+    let wbFullscreen = false;
+    let wbPenColor = '#0f172a';
+    let wbTool = 'pen'; // 'pen' | 'highlighter' | 'eraser'
+    let wbBg = 'blank';
+    let isDrawing = false;
+    let lastX = 0;
+    let lastY = 0;
+    let wbHistory = [];
+
+    const canvas = document.getElementById('wb-canvas');
+    const ctx = canvas.getContext('2d');
+
+    function saveWbSnapshot() {
+      try {
+        if (wbHistory.length > 18) wbHistory.shift();
+        wbHistory.push(canvas.toDataURL());
+      } catch (e) {}
+    }
+
+    function undoWbStroke() {
+      if (wbHistory.length === 0) return;
+      const last = wbHistory.pop();
+      const img = new Image();
+      img.onload = function () {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0);
+      };
+      img.src = last;
+    }
+
+    function toggleWhiteboard() {
+      wbOpen = !wbOpen;
+      const wbPane = document.getElementById('whiteboard-pane');
+      const mainPane = document.getElementById('main-review-pane');
+      const label = document.getElementById('wb-toggle-label');
+
+      if (wbOpen) {
+        wbPane.classList.remove('hidden');
+        label.textContent = 'Close Whiteboard';
+        setTimeout(resizeCanvasPreserveInk, 40);
+      } else {
+        wbPane.classList.add('hidden');
+        mainPane.classList.remove('hidden');
+        wbFullscreen = false;
+        document.getElementById('btn-wb-fullscreen').textContent = 'Fullscreen';
+        wbPane.className = 'hidden lg:w-[46%] xl:w-[48%] bg-white border-t-4 lg:border-t-0 lg:border-l-4 border-slate-300 flex flex-col shadow-2xl z-30';
+        label.textContent = 'Open Whiteboard (Split / Full)';
+      }
+    }
+
+    function toggleWbFullscreen() {
+      wbFullscreen = !wbFullscreen;
+      const wbPane = document.getElementById('whiteboard-pane');
+      const mainPane = document.getElementById('main-review-pane');
+      const btn = document.getElementById('btn-wb-fullscreen');
+
+      if (wbFullscreen) {
+        mainPane.classList.add('hidden');
+        wbPane.className = 'w-full bg-white flex flex-col shadow-2xl z-30';
+        btn.textContent = 'Split Screen';
+      } else {
+        mainPane.classList.remove('hidden');
+        wbPane.className = 'lg:w-[46%] xl:w-[48%] bg-white border-t-4 lg:border-t-0 lg:border-l-4 border-slate-300 flex flex-col shadow-2xl z-30';
+        btn.textContent = 'Fullscreen';
+      }
+      setTimeout(resizeCanvasPreserveInk, 40);
+    }
+
+    function setWbPen(color) {
+      wbTool = 'pen';
+      wbPenColor = color;
+      document.getElementById('btn-wb-highlighter').classList.remove('bg-yellow-400', 'text-slate-950');
+      document.getElementById('btn-wb-eraser').classList.remove('bg-amber-400', 'text-slate-950');
+
+      document.querySelectorAll('.wb-pen-btn').forEach(btn => {
+        if (btn.getAttribute('data-wb-pen') === color) {
+          btn.classList.add('ring-2', 'ring-emerald-400');
+        } else {
+          btn.classList.remove('ring-2', 'ring-emerald-400');
+        }
+      });
+    }
+
+    function setWbTool(tool) {
+      wbTool = tool;
+      const hiBtn = document.getElementById('btn-wb-highlighter');
+      const erBtn = document.getElementById('btn-wb-eraser');
+      hiBtn.classList.remove('bg-yellow-400', 'text-slate-950');
+      erBtn.classList.remove('bg-amber-400', 'text-slate-950');
+      document.querySelectorAll('.wb-pen-btn').forEach(b => b.classList.remove('ring-2', 'ring-emerald-400'));
+
+      if (tool === 'highlighter') {
+        hiBtn.classList.add('bg-yellow-400', 'text-slate-950');
+      } else if (tool === 'eraser') {
+        erBtn.classList.add('bg-amber-400', 'text-slate-950');
+      }
+    }
+
+    function setWbBackground(bgType) {
+      wbBg = bgType;
+      clearWhiteboard();
+    }
+
+    function drawWbTemplate() {
+      const w = canvas.width;
+      const h = canvas.height;
+      ctx.save();
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, w, h);
+
+      if (wbBg === 'grid') {
+        ctx.strokeStyle = '#e2e8f0';
+        ctx.lineWidth = 1;
+        const step = 28;
+        for (let x = 0; x < w; x += step) {
+          ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+        }
+        for (let y = 0; y < h; y += step) {
+          ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+        }
+      } else if (wbBg === 'numberline') {
+        const y = Math.round(h * 0.55);
+        const pad = 36;
+        ctx.strokeStyle = '#334155';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(pad, y);
+        ctx.lineTo(w - pad, y);
+        ctx.stroke();
+
+        for (let i = 0; i <= 10; i++) {
+          const x = pad + ((w - pad * 2) * i) / 10;
+          ctx.beginPath();
+          ctx.moveTo(x, y - 10);
+          ctx.lineTo(x, y + 10);
+          ctx.stroke();
+        }
+      } else if (wbBg === 'hto') {
+        const colW = w / 3;
+        ctx.strokeStyle = '#94a3b8';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(colW, 20); ctx.lineTo(colW, h - 20);
+        ctx.moveTo(colW * 2, 20); ctx.lineTo(colW * 2, h - 20);
+        ctx.moveTo(20, 64); ctx.lineTo(w - 20, 64);
+        ctx.stroke();
+
+        ctx.font = '800 18px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#1d4ed8'; ctx.fillText('H (Hundreds)', colW * 0.5, 48);
+        ctx.fillStyle = '#047857'; ctx.fillText('T (Tens)', colW * 1.5, 48);
+        ctx.fillStyle = '#b45309'; ctx.fillText('O (Ones)', colW * 2.5, 48);
+      }
+      ctx.restore();
+    }
+
+    function clearWhiteboard() {
+      saveWbSnapshot();
+      const wrapper = document.getElementById('wb-canvas-wrapper');
+      canvas.width = wrapper.clientWidth || 520;
+      canvas.height = wrapper.clientHeight || 440;
+      drawWbTemplate();
+    }
+
+    function resizeCanvasPreserveInk() {
+      const wrapper = document.getElementById('wb-canvas-wrapper');
+      if (!wrapper || wrapper.clientWidth === 0) return;
+      const temp = document.createElement('canvas');
+      temp.width = canvas.width;
+      temp.height = canvas.height;
+      temp.getContext('2d').drawImage(canvas, 0, 0);
+
+      canvas.width = wrapper.clientWidth;
+      canvas.height = wrapper.clientHeight;
+      drawWbTemplate();
+      ctx.drawImage(temp, 0, 0);
+    }
+
+    function getPointerPos(e) {
+      const rect = canvas.getBoundingClientRect();
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      return {
+        x: clientX - rect.left,
+        y: clientY - rect.top
+      };
+    }
+
+    function startStroke(e) {
+      saveWbSnapshot();
+      isDrawing = true;
+      const pos = getPointerPos(e);
+      lastX = pos.x;
+      lastY = pos.y;
+    }
+
+    function moveStroke(e) {
+      if (!isDrawing) return;
+      if (e.cancelable) e.preventDefault();
+      const pos = getPointerPos(e);
+
+      ctx.save();
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+
+      if (wbTool === 'eraser') {
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 28;
+      } else if (wbTool === 'highlighter') {
+        ctx.strokeStyle = 'rgba(250, 204, 21, 0.35)';
+        ctx.lineWidth = 20;
+      } else {
+        ctx.strokeStyle = wbPenColor;
+        ctx.lineWidth = 4;
+      }
+
+      ctx.beginPath();
+      ctx.moveTo(lastX, lastY);
+      ctx.lineTo(pos.x, pos.y);
+      ctx.stroke();
+      ctx.restore();
+
+      lastX = pos.x;
+      lastY = pos.y;
+    }
+
+    function endStroke() {
+      isDrawing = false;
+    }
+
+    canvas.addEventListener('mousedown', startStroke);
+    canvas.addEventListener('mousemove', moveStroke);
+    window.addEventListener('mouseup', endStroke);
+
+    canvas.addEventListener('touchstart', startStroke, { passive: false });
+    canvas.addEventListener('touchmove', moveStroke, { passive: false });
+    window.addEventListener('touchend', endStroke);
+
+    window.addEventListener('resize', () => {
+      if (wbOpen) resizeCanvasPreserveInk();
+    });
+
+    // Keyboard shortcuts (Left/Right arrow when not typing in input)
+    window.addEventListener('keydown', (e) => {
+      if (document.activeElement && document.activeElement.id === 'class-check-input') return;
+      if (e.key === 'ArrowRight') nextQuestion();
+      else if (e.key === 'ArrowLeft') prevQuestion();
+    });
+
+    window.onload = function () {
+      setQuestionFilter('all');
+      clearWhiteboard();
+    };
+  </script>
+</body>
+</html>
