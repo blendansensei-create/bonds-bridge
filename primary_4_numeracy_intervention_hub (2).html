@@ -1,0 +1,2485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>St Kieran's Primary School — P4 Numeracy Intervention Hub (Brooke &amp; Amelia)</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Fredoka for friendly primary numerals & Inter for crisp UI -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --forest-dark: #14532d;
+      --forest-mid: #166534;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: #f1f5f9;
+      color: #0f172a;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    textarea, input {
+      user-select: text;
+    }
+
+    .num-font {
+      font-family: 'Fredoka', 'Inter', sans-serif;
+    }
+
+    /* Animations */
+    @keyframes popIn {
+      0% { transform: scale(0.35); opacity: 0; }
+      75% { transform: scale(1.12); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes frogHop {
+      0% { transform: translateY(0) scale(1); }
+      45% { transform: translateY(-20px) scale(1.16); }
+      100% { transform: translateY(0) scale(1); }
+    }
+
+    @keyframes pulseReverse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+    }
+
+    .counter-pop {
+      animation: popIn 0.24s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    .frog-hop {
+      animation: frogHop 0.36s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .reverse-pulse {
+      animation: pulseReverse 0.55s ease-in-out 2;
+    }
+
+    /* 10-Frame Grid */
+    .ten-frame-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      grid-template-rows: repeat(2, minmax(0, 1fr));
+      gap: 0.45rem;
+      background: #ffffff;
+      border: 3.5px solid #14532d;
+      border-radius: 0.9rem;
+      padding: 0.55rem;
+      box-shadow: 0 4px 12px -2px rgba(20, 83, 45, 0.12);
+    }
+
+    .ten-frame-cell {
+      aspect-ratio: 1 / 1;
+      border: 2px solid #cbd5e1;
+      border-radius: 0.55rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #f8fafc;
+      cursor: pointer;
+      transition: background-color 0.15s ease, border-color 0.15s ease;
+    }
+
+    .ten-frame-cell:hover {
+      border-color: #166534;
+      background-color: #f0fdf4;
+    }
+
+    .ten-frame-cell.top-row {
+      border-bottom-color: #94a3b8;
+    }
+
+    /* Two-colour counters: Top row Red (5), Bottom row Amber (5) */
+    .counter-disc {
+      width: 78%;
+      height: 78%;
+      border-radius: 9999px;
+      box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.22), 0 2px 5px rgba(0, 0, 0, 0.18);
+    }
+
+    .counter-red {
+      background: radial-gradient(circle at 32% 30%, #fb7185, #e11d48);
+      border: 2px solid #9f1239;
+    }
+
+    .counter-amber {
+      background: radial-gradient(circle at 32% 30%, #fcd34d, #d97706);
+      border: 2px solid #92400e;
+    }
+
+    /* Opaque Flash & Hide Shutter */
+    .shutter-shield {
+      background: repeating-linear-gradient(
+        45deg,
+        #14532d,
+        #14532d 16px,
+        #166534 16px,
+        #166534 32px
+      );
+    }
+
+    /* Custom Scrollbars */
+    .thin-scroll::-webkit-scrollbar {
+      height: 7px;
+      width: 7px;
+    }
+    .thin-scroll::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+
+    /* Landscape Print Styles for the 5-Week Report Modal */
+    @media print {
+      @page {
+        size: landscape;
+        margin: 10mm;
+      }
+      body * {
+        visibility: hidden;
+      }
+      #reportModal, #reportModal * {
+        visibility: visible;
+      }
+      #reportModal {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        background: #ffffff !important;
+        padding: 0 !important;
+      }
+      .no-print {
+        display: none !important;
+      }
+      table {
+        page-break-inside: auto;
+      }
+      tr {
+        page-break-inside: avoid;
+        page-break-after: auto;
+      }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <!-- ======================================================================= -->
+  <!-- TOP SCHOOL HEADER & GLOBAL REPORT ACTIONS                               -->
+  <!-- ======================================================================= -->
+  <header class="bg-[#14532d] text-white shadow-md sticky top-0 z-30">
+    <div class="max-w-[1600px] mx-auto px-3 sm:px-5 py-2.5 flex flex-wrap items-center justify-between gap-3">
+      <!-- School & Group Identity -->
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-white/15 border border-white/25 flex items-center justify-center font-extrabold num-font text-lg shadow-inner shrink-0">
+          SK
+        </div>
+        <div>
+          <h1 class="text-base sm:text-lg font-extrabold tracking-tight leading-tight">
+            St Kieran's Primary School — P4 Numeracy Intervention Hub
+          </h1>
+          <div class="flex flex-wrap items-center gap-2 text-xs text-emerald-200 font-medium">
+            <span>Focus Group: <strong class="text-white">Brooke</strong> &amp; <strong class="text-white">Amelia</strong></span>
+            <span>•</span>
+            <span id="overallProgressBadge" class="bg-white/15 text-white px-2 py-0.5 rounded-full font-bold">0 / 20 Lessons Covered</span>
+            <span id="autoSaveIndicator" class="text-emerald-300 font-semibold hidden sm:inline">✓ Auto-saved</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Global Action Buttons -->
+      <div class="flex flex-wrap items-center gap-2">
+        <button onclick="toggleScreenAnnotator()" id="annotateHeaderBtn" class="px-3.5 py-2 rounded-xl bg-emerald-400 hover:bg-emerald-300 text-slate-950 font-extrabold text-xs sm:text-sm shadow transition flex items-center gap-1.5">
+          <span>✏️</span> <span>Draw Over Screen</span>
+        </button>
+        <button onclick="toggleSound()" id="soundBtn" class="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-bold transition flex items-center gap-1.5" title="Toggle gentle chimes">
+          <span id="soundIcon">🔊</span> <span class="hidden md:inline">Sound</span>
+        </button>
+        <button onclick="downloadBackupFile()" class="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-bold transition flex items-center gap-1.5" title="Download backup .json file">
+          <span>💾</span> <span class="hidden sm:inline">Save Backup (.json)</span>
+        </button>
+        <button onclick="openBackupModal()" class="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-bold transition flex items-center gap-1.5" title="Load or transfer backup">
+          <span>📂</span> <span class="hidden sm:inline">Load Backup</span>
+        </button>
+        <button onclick="openReportModal()" class="px-4 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-extrabold text-xs sm:text-sm shadow transition flex items-center gap-1.5">
+          <span>📄</span> View &amp; Print 5-Week Tracker
+        </button>
+      </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- 5-WEEK CURRICULUM & LESSON NAVIGATOR BAR                              -->
+    <!-- ===================================================================== -->
+    <div class="bg-[#166534] border-t border-emerald-700/80">
+      <div class="max-w-[1600px] mx-auto px-3 sm:px-5 py-2 flex flex-col xl:flex-row xl:items-center xl:justify-between gap-2">
+        <!-- Week Selector Pills (Weeks 1 to 5) -->
+        <div id="weekTabsContainer" class="flex flex-wrap items-center gap-1.5">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Lesson Selector Pills for Active Week (Lessons 1 to 4) -->
+        <div id="lessonTabsContainer" class="flex flex-wrap items-center gap-1.5">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ======================================================================= -->
+  <!-- MAIN TWO-COLUMN INTERVENTION WORKSPACE (STAGE LEFT | TRACKER RIGHT)     -->
+  <!-- ======================================================================= -->
+  <main class="flex-1 max-w-[1600px] w-full mx-auto px-3 sm:px-5 py-4 grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
+
+    <!-- ===================================================================== -->
+    <!-- LEFT COLUMN (7 COLS): ACTIVE LESSON STAGE & INTERACTIVE TOOLS         -->
+    <!-- ===================================================================== -->
+    <section class="lg:col-span-7 space-y-4">
+
+      <!-- Active Lesson Banner & Prev/Next Controls -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 space-y-2.5">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <span id="activeLessonCode" class="px-2.5 py-1 rounded-lg bg-emerald-100 text-[#14532d] font-extrabold text-xs uppercase tracking-wider">
+            Week 1 • Lesson 1
+          </span>
+          <div class="flex items-center gap-1.5">
+            <button onclick="navigateLesson(-1)" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition">
+              ◀ Prev
+            </button>
+            <button onclick="resetToolsToLessonDefaults()" class="px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-[#14532d] font-bold text-xs border border-emerald-200 transition">
+              ↺ Reset Stage
+            </button>
+            <button onclick="navigateLesson(1)" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition">
+              Next ▶
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <h2 id="activeLessonTitle" class="text-lg sm:text-xl font-extrabold text-slate-900 leading-snug">
+            Concrete Benchmarks of 5 &amp; 10 (Building 6–9)
+          </h2>
+          <p id="activeLessonGoal" class="text-xs sm:text-sm text-slate-600 mt-0.5">
+            Goal: Build 6, 7, 8, 9 filling the top row of 5 first so Brooke stops counting from 1.
+          </p>
+        </div>
+
+        <!-- Stem Sentence Banner -->
+        <div class="p-2.5 rounded-xl bg-[#14532d] text-white flex items-center gap-2 text-xs sm:text-sm">
+          <span class="px-2 py-0.5 rounded bg-white/15 font-extrabold uppercase text-[10px] tracking-wider shrink-0">Stem</span>
+          <span id="lessonStemFooter" class="font-semibold italic">
+            “I didn’t count in ones — I saw 5 on top and 3 on the bottom, which makes 8.”
+          </span>
+        </div>
+      </div>
+
+      <!-- Stage Tool Switcher Tabs -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-2 flex flex-wrap gap-1.5">
+        <button onclick="switchStageTool('frames')" id="stageBtn-frames" class="stage-btn flex-1 min-w-[120px] py-2.5 px-3 rounded-xl font-extrabold text-xs sm:text-sm bg-[#14532d] text-white shadow-sm transition">
+          🔴 10-Frames &amp; Flash
+        </button>
+        <button onclick="switchStageTool('track')" id="stageBtn-track" class="stage-btn flex-1 min-w-[120px] py-2.5 px-3 rounded-xl font-bold text-xs sm:text-sm bg-slate-100 text-slate-700 hover:bg-slate-200 transition">
+          🐸 1–20 Number Track
+        </button>
+        <button onclick="switchStageTool('barnaby')" id="stageBtn-barnaby" class="stage-btn flex-1 min-w-[120px] py-2.5 px-3 rounded-xl font-bold text-xs sm:text-sm bg-slate-100 text-slate-700 hover:bg-slate-200 transition">
+          🐻 Spot the Mistake
+        </button>
+        <button onclick="switchStageTool('pad')" id="stageBtn-pad" class="stage-btn flex-1 min-w-[110px] py-2.5 px-3 rounded-xl font-bold text-xs sm:text-sm bg-slate-100 text-slate-700 hover:bg-slate-200 transition">
+          📋 Blank Pad
+        </button>
+        <button onclick="toggleScreenAnnotator()" id="stageOverlayBtn" class="flex-1 min-w-[140px] py-2.5 px-3 rounded-xl font-extrabold text-xs sm:text-sm bg-amber-400 hover:bg-amber-300 text-slate-950 border-2 border-amber-500 shadow-sm transition flex items-center justify-center gap-1.5">
+          <span>✏️</span> <span>Draw Over Screen</span>
+        </button>
+      </div>
+
+      <!-- =================================================================== -->
+      <!-- STAGE TOOL A: DOUBLE 10-FRAMES & FLASH SHUTTER                      -->
+      <!-- =================================================================== -->
+      <div id="stage-frames" class="stage-panel bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-5 space-y-4">
+        <!-- Quick Preset Bar -->
+        <div class="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-100">
+          <div class="flex flex-wrap items-center gap-1.5">
+            <span class="text-xs font-extrabold uppercase text-slate-400 mr-1">Set:</span>
+            <button onclick="setStageQuantity(5)" class="w-9 h-9 rounded-xl bg-slate-100 hover:bg-emerald-100 font-extrabold text-sm">5</button>
+            <button onclick="setStageQuantity(7)" class="w-9 h-9 rounded-xl bg-slate-100 hover:bg-emerald-100 font-extrabold text-sm">7</button>
+            <button onclick="setStageQuantity(8)" class="w-9 h-9 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-950 font-extrabold text-sm border border-amber-300">8</button>
+            <button onclick="setStageQuantity(9)" class="w-9 h-9 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-950 font-extrabold text-sm border border-amber-300">9</button>
+            <button onclick="setStageQuantity(10)" class="w-9 h-9 rounded-xl bg-emerald-100 hover:bg-emerald-200 text-[#14532d] font-extrabold text-sm border border-emerald-300">10</button>
+            <button onclick="setStageQuantity(11)" class="w-9 h-9 rounded-xl bg-rose-100 hover:bg-rose-200 text-rose-950 font-extrabold text-sm border border-rose-300">11</button>
+            <button onclick="setStageQuantity(12)" class="w-9 h-9 rounded-xl bg-rose-100 hover:bg-rose-200 text-rose-950 font-extrabold text-sm border border-rose-300">12</button>
+            <button onclick="setStageQuantity(13)" class="w-9 h-9 rounded-xl bg-rose-100 hover:bg-rose-200 text-rose-950 font-extrabold text-sm border border-rose-300">13</button>
+            <button onclick="setStageQuantity(15)" class="w-9 h-9 rounded-xl bg-slate-100 hover:bg-emerald-100 font-extrabold text-sm">15</button>
+          </div>
+
+          <div class="flex items-center gap-1.5">
+            <button onclick="adjustStageQuantity(-1)" class="px-3 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-extrabold text-xs shadow-sm">
+              −1 Remove
+            </button>
+            <button onclick="adjustStageQuantity(1)" class="px-3 py-2 rounded-xl bg-[#14532d] hover:bg-[#166534] text-white font-extrabold text-xs shadow-sm">
+              +1 Put On
+            </button>
+            <button onclick="setStageQuantity(0)" class="px-2.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold text-xs">
+              Clear
+            </button>
+          </div>
+        </div>
+
+        <!-- Double 10-Frames Container with Shutter Overlay -->
+        <div class="relative py-2">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
+            <div>
+              <div class="text-[11px] font-extrabold uppercase text-slate-400 mb-1 text-center">First Ten-Frame (Top 5 Red • Bottom 5 Amber)</div>
+              <div id="stageFrame1" class="ten-frame-grid"></div>
+            </div>
+            <div>
+              <div class="text-[11px] font-extrabold uppercase text-slate-400 mb-1 text-center">Second Ten-Frame (Extra Ones)</div>
+              <div id="stageFrame2" class="ten-frame-grid"></div>
+            </div>
+          </div>
+
+          <!-- Anti-Counting Shutter Shield -->
+          <div id="stageShutter" class="hidden shutter-shield absolute inset-0 rounded-2xl border-4 border-[#14532d] shadow-xl flex flex-col items-center justify-center text-white p-4 text-center z-10">
+            <div class="text-3xl mb-1">🙈</div>
+            <h3 class="text-xl sm:text-2xl font-extrabold">How many did your eyes see?</h3>
+            <p class="text-xs sm:text-sm text-emerald-100 mt-1">Don't count in ones — look for groups of 5 and 10!</p>
+            <div class="flex gap-2 mt-4">
+              <button onclick="peekStageShutter()" class="px-4 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-extrabold text-xs sm:text-sm shadow">
+                👀 1-Second Peek
+              </button>
+              <button onclick="revealStageShutter()" class="px-4 py-2 rounded-xl bg-white hover:bg-emerald-50 text-[#14532d] font-extrabold text-xs sm:text-sm shadow">
+                🔓 Uncover Frame
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Flash & Reveal Action Bar -->
+        <div class="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-slate-100">
+          <div class="flex flex-wrap gap-2">
+            <button onclick="flashAndCoverStage()" class="px-4 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-extrabold text-xs sm:text-sm shadow-sm transition">
+              ⚡ Flash 2s &amp; Cover
+            </button>
+            <button onclick="toggleStageShutter()" id="manualShutterBtn" class="px-3.5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs sm:text-sm transition">
+              🙈 Cover Now
+            </button>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <div id="stageSayTenRevealBox" class="hidden px-3.5 py-2 rounded-xl bg-emerald-100 border border-emerald-400 text-[#14532d] font-extrabold text-sm num-font">
+              <span id="stageSayTenLabel">8 = 5 and 3</span>
+            </div>
+            <button onclick="toggleStageSayTen()" id="toggleStageSayTenBtn" class="px-3.5 py-2.5 rounded-xl bg-[#14532d] hover:bg-[#166534] text-white font-extrabold text-xs sm:text-sm transition">
+              👁️ Reveal Number &amp; Say-Ten
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- =================================================================== -->
+      <!-- STAGE TOOL B: 1-20 NUMBER TRACK, FROG HOPPER & PENDULUM             -->
+      <!-- =================================================================== -->
+      <div id="stage-track" class="hidden stage-panel bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-5 space-y-4">
+        <!-- Direction & Jump Log Banner -->
+        <div id="trackBanner" class="p-3.5 rounded-2xl bg-emerald-50 border-2 border-emerald-300 flex flex-col sm:flex-row sm:items-center justify-between gap-2 transition-all">
+          <div class="flex items-center gap-2.5">
+            <span id="trackDirEmoji" class="text-2xl">🐸</span>
+            <div>
+              <div id="trackBannerTitle" class="font-extrabold text-slate-900 text-sm sm:text-base">Standing on 8 • Ready to Hop!</div>
+              <div id="trackJumpLog" class="text-xs font-semibold text-slate-600">Anti-Start-Box Rule: Say "8..." out loud BEFORE counting Hop 1!</div>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <div id="trackEqBox" class="hidden px-3 py-1.5 rounded-xl bg-slate-900 text-amber-300 font-extrabold num-font text-base">
+              8 + 2 = 10
+            </div>
+            <button onclick="toggleTrackEq()" id="toggleTrackEqBtn" class="px-3 py-1.5 rounded-xl bg-white hover:bg-slate-100 border border-slate-300 text-slate-800 font-extrabold text-xs transition">
+              👁️ Reveal Equation
+            </button>
+          </div>
+        </div>
+
+        <!-- Bigger vs Smaller Direction Labels -->
+        <div class="flex items-center justify-between text-[11px] sm:text-xs font-extrabold px-1">
+          <span class="px-2.5 py-1 rounded-lg bg-rose-50 text-rose-700 border border-rose-200">⬅️ SMALLER NUMBERS (Take Away / Backwards)</span>
+          <span class="hidden sm:inline text-amber-800 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">Amber = 8–13 Bridge</span>
+          <span class="px-2.5 py-1 rounded-lg bg-emerald-50 text-[#14532d] border border-emerald-200">BIGGER NUMBERS (Put On / Forwards) ➡️</span>
+        </div>
+
+        <!-- 1-20 Stepped Track -->
+        <div class="overflow-x-auto thin-scroll pt-7 pb-2">
+          <div id="stageNumberTrack" class="grid gap-1 min-w-[780px]"></div>
+        </div>
+
+        <!-- Hop & Pendulum Action Controls -->
+        <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-100">
+          <div class="flex flex-wrap items-center gap-1.5">
+            <button onclick="hopStageTrack(-2)" class="px-3.5 py-2.5 rounded-xl bg-rose-700 hover:bg-rose-800 text-white font-extrabold text-xs sm:text-sm shadow-sm">
+              ⬅️ −2 Take Away
+            </button>
+            <button onclick="hopStageTrack(-1)" class="px-3.5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-extrabold text-xs sm:text-sm shadow-sm">
+              ⬅️ −1 Take Away
+            </button>
+            <button onclick="hopStageTrack(1)" class="px-3.5 py-2.5 rounded-xl bg-[#14532d] hover:bg-[#166534] text-white font-extrabold text-xs sm:text-sm shadow-sm">
+              +1 Put On ➡️
+            </button>
+            <button onclick="hopStageTrack(2)" class="px-3.5 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-white font-extrabold text-xs sm:text-sm shadow-sm">
+              +2 Put On ➡️
+            </button>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-1.5">
+            <button onclick="triggerPendulumReverse()" class="px-3 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-extrabold text-xs shadow-sm">
+              🔄 Pendulum Reverse!
+            </button>
+            <button onclick="toggleTrackMask1011()" id="mask1011Btn" class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs">
+              🙈 Hide 10 &amp; 11
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- =================================================================== -->
+      <!-- STAGE TOOL C: BARNABY BEAR ERROR ANALYSIS ("SPOT THE MISTAKE")      -->
+      <!-- =================================================================== -->
+      <div id="stage-barnaby" class="hidden stage-panel bg-white rounded-2xl border border-slate-200 shadow-sm p-5 space-y-4">
+        <div class="flex items-start gap-3.5">
+          <div class="w-14 h-14 rounded-2xl bg-amber-100 border-2 border-amber-300 flex items-center justify-center text-3xl shrink-0">
+            🐻
+          </div>
+          <div class="space-y-1">
+            <span id="barnabyTag" class="px-2.5 py-0.5 rounded-md bg-amber-100 text-amber-900 font-extrabold text-[11px] uppercase">
+              Week 1 • Unitary Counting Trap
+            </span>
+            <h3 id="barnabyTitle" class="text-lg font-extrabold text-slate-900">
+              Barnaby Counts Loose Counters from 1
+            </h3>
+          </div>
+        </div>
+
+        <div class="p-4 rounded-2xl bg-rose-50 border-2 border-rose-200 space-y-2">
+          <div class="text-xs font-extrabold uppercase text-rose-700">What Barnaby Said:</div>
+          <p id="barnabyQuote" class="text-base sm:text-lg font-extrabold text-slate-900 italic">
+            “1, 2, 3, 4, 5, 6, 7, 8! Every time you add one, I have to count from 1 again!”
+          </p>
+        </div>
+
+        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200">
+          <div class="text-xs font-extrabold uppercase text-slate-500 mb-1">Teacher Prompt for Brooke &amp; Amelia:</div>
+          <p id="barnabyQuestion" class="text-sm sm:text-base font-bold text-slate-800">
+            “How does the 10-frame help Brooke and Amelia see 8 straight away without counting from 1?”
+          </p>
+        </div>
+
+        <div id="barnabyRevealBox" class="hidden p-4 rounded-2xl bg-emerald-50 border-2 border-[#14532d] space-y-1.5">
+          <div class="text-xs font-extrabold uppercase text-[#14532d]">✅ How to Fix Barnaby's Mistake:</div>
+          <p id="barnabyFixText" class="text-sm font-bold text-slate-900"></p>
+          <p id="barnabyStemText" class="text-xs font-extrabold text-[#14532d] pt-1"></p>
+        </div>
+
+        <button onclick="toggleBarnabyReveal()" id="toggleBarnabyBtn" class="w-full py-3 rounded-xl bg-[#14532d] hover:bg-[#166534] text-white font-extrabold text-sm shadow transition">
+          🔓 Reveal Fix &amp; Stem Sentence
+        </button>
+      </div>
+
+      <!-- =================================================================== -->
+      <!-- STAGE TOOL D: QUICK WHITEBOARD SCRATCHPAD                           -->
+      <!-- =================================================================== -->
+      <div id="stage-pad" class="hidden stage-panel bg-white rounded-2xl border border-slate-200 shadow-sm p-4 space-y-3">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <span class="text-xs font-extrabold uppercase text-slate-500">Quick Model Scratchpad (Finger or Stylus)</span>
+          <div class="flex items-center gap-1.5">
+            <button onclick="setPadPen('#14532d', 4)" class="w-7 h-7 rounded-full bg-[#14532d] border-2 border-slate-300" title="Forest Green"></button>
+            <button onclick="setPadPen('#e11d48', 4)" class="w-7 h-7 rounded-full bg-rose-600 border-2 border-slate-300" title="Red"></button>
+            <button onclick="setPadPen('#2563eb', 4)" class="w-7 h-7 rounded-full bg-blue-600 border-2 border-slate-300" title="Blue"></button>
+            <button onclick="clearPadCanvas()" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs ml-2">
+              🗑️ Clear Board
+            </button>
+          </div>
+        </div>
+        <div id="padWrapper" class="w-full h-64 rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50 overflow-hidden">
+          <canvas id="scratchpadCanvas" class="w-full h-full touch-none cursor-crosshair"></canvas>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- RIGHT COLUMN (5 COLS): CLICKABLE LESSON & PUPIL ASSESSMENT TRACKER    -->
+    <!-- ===================================================================== -->
+    <aside class="lg:col-span-5 space-y-4">
+
+      <!-- Lesson Status & "What We Covered" Micro-Steps Card -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 space-y-3">
+        <div class="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-slate-100">
+          <span class="text-xs font-extrabold uppercase tracking-wider text-slate-500">1. Lesson Status &amp; Covered Steps</span>
+          <div class="flex items-center gap-1">
+            <button onclick="setLessonStatus('Not Started')" id="statusBtn-Not Started" class="status-pill px-3 py-1.5 rounded-xl text-xs font-bold border border-slate-300 bg-slate-50 text-slate-600">
+              Not Started
+            </button>
+            <button onclick="setLessonStatus('Needs Repeat')" id="statusBtn-Needs Repeat" class="status-pill px-3 py-1.5 rounded-xl text-xs font-bold border border-slate-300 bg-slate-50 text-slate-600">
+              🔁 Repeat
+            </button>
+            <button onclick="setLessonStatus('Covered')" id="statusBtn-Covered" class="status-pill px-3 py-1.5 rounded-xl text-xs font-bold border border-slate-300 bg-slate-50 text-slate-600">
+              ✅ Covered
+            </button>
+          </div>
+        </div>
+
+        <div id="microStepsContainer" class="grid grid-cols-1 gap-1.5">
+          <!-- Populated by JS -->
+        </div>
+
+        <div class="flex justify-end">
+          <button onclick="tickAllMicroSteps()" class="text-xs font-extrabold text-[#14532d] hover:underline">
+            ✓ Mark All 4 Steps Covered
+          </button>
+        </div>
+      </div>
+
+      <!-- Brooke's Clickable Assessment Card -->
+      <div id="brookeCard" class="bg-white rounded-2xl border-2 border-amber-300 shadow-sm p-4 space-y-3">
+        <!-- Populated by JS -->
+      </div>
+
+      <!-- Amelia's Clickable Assessment Card -->
+      <div id="ameliaCard" class="bg-white rounded-2xl border-2 border-emerald-300 shadow-sm p-4 space-y-3">
+        <!-- Populated by JS -->
+      </div>
+
+    </aside>
+
+  </main>
+
+  <!-- ======================================================================= -->
+  <!-- FULL-SCREEN TRANSPARENT WHITEBOARD ANNOTATION OVERLAY                   -->
+  <!-- ======================================================================= -->
+  <canvas id="screenAnnotateCanvas" style="z-index: 9998;" class="hidden fixed inset-0 w-screen h-screen touch-none cursor-crosshair transition-colors duration-200"></canvas>
+
+  <!-- Floating Draggable/Docked Annotation Toolbar -->
+  <div id="annotateToolbar" style="z-index: 9999;" class="hidden fixed bottom-4 left-1/2 -translate-x-1/2 bg-slate-900/95 text-white border-2 border-emerald-400 rounded-2xl shadow-2xl px-3 py-2.5 flex flex-wrap items-center justify-center gap-2 max-w-[96vw]">
+    <div id="annotateDragHandle" class="px-1.5 py-1 text-slate-400 hover:text-white cursor-move font-extrabold text-xs select-none" title="Drag toolbar">
+      ⠿ BOARD
+    </div>
+
+    <!-- Whiteboard Surface Mode (Clear 0% vs Soft Tint 35% vs Solid Whiteboard 100%) -->
+    <div class="flex items-center gap-1 bg-slate-800 px-2 py-1 rounded-xl">
+      <button onclick="setAnnotateBackdrop('clear')" id="backdropBtn-clear" class="px-2 py-1 rounded-lg bg-emerald-500 text-slate-950 font-extrabold text-xs transition" title="Clear 0% overlay">
+        👁️ Clear (0%)
+      </button>
+      <button onclick="setAnnotateBackdrop('frosted')" id="backdropBtn-frosted" class="px-2 py-1 rounded-lg bg-slate-700 hover:bg-slate-600 text-white font-bold text-xs transition" title="Soft Whiteboard Tint 35%">
+        🌫️ Soft Tint (35%)
+      </button>
+      <button onclick="setAnnotateBackdrop('whiteboard')" id="backdropBtn-whiteboard" class="px-2 py-1 rounded-lg bg-slate-700 hover:bg-slate-600 text-white font-bold text-xs transition" title="Solid Whiteboard 100%">
+        ⬜ Solid (100%)
+      </button>
+    </div>
+
+    <!-- Pen Colors -->
+    <div class="flex items-center gap-1.5 bg-slate-800 px-2 py-1 rounded-xl">
+      <button onclick="setAnnotateTool('pen', '#14532d', 5)" id="inkBtn-green" class="ink-tool-btn w-7 h-7 rounded-full bg-[#14532d] border-2 border-white ring-2 ring-emerald-400" title="St Kieran's Dark Green Pen"></button>
+      <button onclick="setAnnotateTool('pen', '#dc2626', 5)" id="inkBtn-red" class="ink-tool-btn w-7 h-7 rounded-full bg-[#dc2626] border-2 border-white" title="Crimson Red Pen"></button>
+      <button onclick="setAnnotateTool('pen', '#2563eb', 5)" id="inkBtn-blue" class="ink-tool-btn w-7 h-7 rounded-full bg-[#2563eb] border-2 border-white" title="Royal Blue Pen"></button>
+      <button onclick="setAnnotateTool('pen', '#0f172a', 5)" id="inkBtn-black" class="ink-tool-btn w-7 h-7 rounded-full bg-[#0f172a] border-2 border-white" title="Black Pen"></button>
+      <button onclick="setAnnotateTool('highlighter', 'rgba(250, 204, 21, 0.45)', 26)" id="inkBtn-highlighter" class="ink-tool-btn px-2 py-1 rounded-lg bg-amber-400 text-slate-950 font-extrabold text-xs" title="Yellow Highlighter">
+        🖍️ Highlight
+      </button>
+    </div>
+
+    <!-- Eraser, Undo, Clear -->
+    <div class="flex items-center gap-1.5">
+      <button onclick="setAnnotateTool('eraser', '#000000', 28)" id="inkBtn-eraser" class="ink-tool-btn px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold">
+        🧽 Eraser
+      </button>
+      <button onclick="undoAnnotateStroke()" class="px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold" title="Undo last stroke">
+        ↩️ Undo
+      </button>
+      <button onclick="clearAnnotateCanvas()" class="px-2.5 py-1.5 rounded-xl bg-rose-900/80 hover:bg-rose-800 text-rose-100 text-xs font-bold">
+        🗑️ Clear All Ink
+      </button>
+    </div>
+
+    <!-- Pass-Through / Interact Underneath Toggle -->
+    <button onclick="toggleAnnotatePassThrough()" id="passThroughBtn" class="px-3 py-1.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-extrabold text-xs shadow transition">
+      🔓 Interact / Click Underneath
+    </button>
+
+    <!-- Close Overlay -->
+    <button onclick="closeScreenAnnotator()" class="px-3 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-extrabold text-xs">
+      ✕ Close Overlay
+    </button>
+  </div>
+
+  <!-- ======================================================================= -->
+  <!-- PRINTABLE 5-WEEK LANDSCAPE REPORT MODAL                                 -->
+  <!-- ======================================================================= -->
+  <div id="reportModal" class="hidden fixed inset-0 bg-slate-950/75 z-50 overflow-y-auto p-3 sm:p-6">
+    <div class="max-w-7xl mx-auto bg-white rounded-2xl shadow-2xl border border-slate-200 p-5 sm:p-8 space-y-5">
+      <!-- Modal Action Header (Hidden when printing) -->
+      <div class="no-print flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-slate-200">
+        <div>
+          <h2 class="text-xl font-extrabold text-slate-900">5-Week Numeracy Intervention Tracker (Print &amp; Google Docs Export)</h2>
+          <p class="text-xs sm:text-sm text-slate-600">All 20 lessons formatted for Landscape A4 printing or direct copy-paste into your Google Doc.</p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2">
+          <button onclick="copyReportTableForGoogleDocs()" class="px-4 py-2.5 rounded-xl bg-emerald-100 hover:bg-emerald-200 text-[#14532d] font-extrabold text-xs sm:text-sm transition">
+            📋 Copy Table for Google Docs
+          </button>
+          <button onclick="window.print()" class="px-4 py-2.5 rounded-xl bg-[#14532d] hover:bg-[#166534] text-white font-extrabold text-xs sm:text-sm shadow transition">
+            🖨 Print / Save Landscape PDF
+          </button>
+          <button onclick="closeReportModal()" class="px-3.5 py-2.5 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-800 font-extrabold text-xs sm:text-sm transition">
+            ✕ Close
+          </button>
+        </div>
+      </div>
+
+      <div id="reportCopyToast" class="no-print hidden p-3 rounded-xl bg-emerald-50 border border-emerald-300 text-[#14532d] font-bold text-sm text-center">
+        ✅ Full 5-week tracker copied! Open your Google Doc and press Ctrl+V (or Cmd+V) to paste the formatted table.
+      </div>
+
+      <!-- Printable Header -->
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between border-b-2 border-[#14532d] pb-3">
+        <div>
+          <div class="text-xs font-extrabold uppercase tracking-wider text-[#14532d]">St Kieran's Primary School • Primary 4 Numeracy Support</div>
+          <h3 class="text-2xl font-extrabold text-slate-900">5-Week Intervention Record: Brooke &amp; Amelia</h3>
+        </div>
+        <div class="text-xs font-semibold text-slate-600 mt-1 sm:mt-0 text-left sm:text-right">
+          <div><strong>Effort Scale:</strong> 1 Passive | 2 Prompted | 3 Good Focus | 4 Resilient</div>
+          <div><strong>Application Scale:</strong> 1 Counts in 1s | 2 Concrete Only | 3 Pictorial/Slow | 4 Fluent</div>
+        </div>
+      </div>
+
+      <!-- 20-Lesson Table -->
+      <div class="overflow-x-auto">
+        <table id="printableReportTable" class="w-full border-collapse text-left text-xs">
+          <thead>
+            <tr class="bg-[#14532d] text-white">
+              <th class="border border-slate-300 p-2 w-24">Lesson</th>
+              <th class="border border-slate-300 p-2 w-56">Focus &amp; What Was Covered</th>
+              <th class="border border-slate-300 p-2">Brooke (Effort / App / Progress &amp; Notes)</th>
+              <th class="border border-slate-300 p-2">Amelia (Effort / App / Progress &amp; Notes)</th>
+            </tr>
+          </thead>
+          <tbody id="reportTableBody">
+            <!-- Populated by JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================= -->
+  <!-- BACKUP / TRANSFER JSON MODAL (SURFACE PRO <-> CLASSROOM PC)             -->
+  <!-- ======================================================================= -->
+  <div id="backupModal" class="hidden fixed inset-0 bg-slate-950/75 z-50 flex items-center justify-center p-4">
+    <div class="max-w-xl w-full bg-white rounded-2xl shadow-2xl border border-slate-200 p-6 space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <h3 class="text-lg font-extrabold text-slate-900">💾 Backup or Transfer Group Progress</h3>
+        <button onclick="closeBackupModal()" class="px-3 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 font-bold text-slate-700 text-sm">✕</button>
+      </div>
+
+      <p class="text-xs sm:text-sm text-slate-600">
+        Your ticks, scores, and notes save automatically on this device. Use the backup code below if you ever want to move your data between your classroom Promethean PC and your Surface Pro.
+      </p>
+
+      <div class="space-y-2">
+        <label class="block text-xs font-extrabold uppercase text-slate-500">Save Code (Copy or Paste Backup JSON):</label>
+        <textarea id="backupJsonTextarea" rows="5" class="w-full rounded-xl border border-slate-300 p-2.5 font-mono text-xs bg-slate-50 focus:outline-none focus:border-[#14532d]"></textarea>
+      </div>
+
+      <div class="flex flex-wrap items-center justify-between gap-2 pt-2">
+        <div class="flex flex-wrap gap-2">
+          <button onclick="downloadBackupFile()" class="px-3.5 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-extrabold text-xs">
+            💾 Download .json File
+          </button>
+          <label class="px-3.5 py-2 rounded-xl bg-emerald-100 hover:bg-emerald-200 text-[#14532d] font-extrabold text-xs cursor-pointer">
+            📂 Upload .json File
+            <input type="file" accept=".json,application/json" onchange="uploadBackupFile(event)" class="hidden" />
+          </label>
+          <button onclick="copyBackupJson()" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-extrabold text-xs">
+            📋 Copy Code
+          </button>
+          <button onclick="importBackupJson()" class="px-3.5 py-2 rounded-xl bg-[#14532d] hover:bg-[#166534] text-white font-extrabold text-xs">
+            📥 Load Pasted Code
+          </button>
+        </div>
+
+        <button id="resetAllConfirmBtn" onclick="handleResetAllData()" class="px-3.5 py-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-extrabold text-xs">
+          🗑️ Reset All 20 Lessons
+        </button>
+      </div>
+
+      <div id="backupStatusMsg" class="hidden text-xs font-bold text-center py-2 rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-200"></div>
+    </div>
+  </div>
+
+  <script>
+    /* =========================================================================
+       1. 5-WEEK CURRICULUM DATA (20 STRUCTURED MICRO-LESSONS)
+       ========================================================================= */
+    const CURRICULUM = [
+      // WEEK 1: Subitising & Benchmarks of 5 & 10
+      {
+        id: 'w1l1', week: 1, lesson: 1,
+        weekTitle: 'Week 1: Benchmarks 5 & 10',
+        title: 'Concrete Benchmarks of 5 & 10 (Building 6–9)',
+        goal: 'Build 6, 7, 8, 9 filling the top row of 5 first so Brooke stops counting from 1.',
+        defaultTool: 'frames', defaultQty: 8, defaultTrackPos: 8,
+        stem: '“I didn’t count in ones — I saw 5 on top and 3 on the bottom, which makes 8.”',
+        steps: [
+          'Warm-up: Five-and-a-bit fingers (show 6, 7, 8, 9 in one flash)',
+          'Core: Build 6, 7, 8, 9 on 10-frame filling top row of 5 first',
+          'Practice: Flash & Cover 10-frames (6–9) for 2 seconds',
+          'Prove It: Explain how to see 8 without counting from 1'
+        ],
+        barnaby: {
+          tag: 'Week 1 • Unitary Counting Trap',
+          title: 'Barnaby Counts Loose Counters from 1',
+          quote: '“1, 2, 3, 4, 5, 6, 7, 8! Every time you add one, I have to count from 1 again!”',
+          question: '“How does the 10-frame help Brooke and Amelia see 8 straight away without counting from 1?”',
+          fix: 'When the top row is full, it is ALWAYS 5. We just count on from 5: "5... 6, 7, 8!"',
+          stem: 'Stem: “I saw a full top row of 5 and 3 on the bottom, so it is 8.”'
+        }
+      },
+      {
+        id: 'w1l2', week: 1, lesson: 2,
+        weekTitle: 'Week 1: Benchmarks 5 & 10',
+        title: 'Seeing 9 as "One Less Than 10"',
+        goal: 'Recognise 9 instantly on a 10-frame by spotting the 1 empty space.',
+        defaultTool: 'frames', defaultQty: 9, defaultTrackPos: 9,
+        stem: '“I know it is 9 because 10 is full and 1 box is empty.”',
+        steps: [
+          'Warm-up: Flash & Hide retrieval check (6, 7, 8)',
+          'Core: Compare full 10-frame (10) with 1 counter removed (9)',
+          'Practice: Rapid Flash & Cover mixing 8, 9, and 10',
+          'Prove It: Show 9 and explain why we don’t need to count the dots'
+        ],
+        barnaby: {
+          tag: 'Week 1 • Benchmark 10 Trap',
+          title: 'Barnaby Recounts All 9 Dots',
+          quote: '“I see almost a full box, so let me count: 1, 2, 3, 4, 5, 6, 7, 8, 9!”',
+          question: '“What faster trick can we teach Barnaby when only 1 square is empty?”',
+          fix: 'A full frame is 10. One empty square means 1 less than 10, which is always 9!',
+          stem: 'Stem: “10 take away 1 empty box leaves 9.”'
+        }
+      },
+      {
+        id: 'w1l3', week: 1, lesson: 3,
+        weekTitle: 'Week 1: Benchmarks 5 & 10',
+        title: 'Crossing the 8 → 9 → 10 Bridge',
+        goal: 'Count smoothly across 8, 9, 10 without hesitating or skipping 10.',
+        defaultTool: 'track', defaultQty: 8, defaultTrackPos: 8,
+        stem: '“8, 9, 10 — 10 fills the whole first frame!”',
+        steps: [
+          'Warm-up: Pendulum count 5 to 10 forwards & backwards',
+          'Core: Add 1 counter at a time from 8 → 9 → 10 on frame & track',
+          'Practice: Hide 10 on the track; hop from 8 to 10 and name the hidden box',
+          'Prove It: Explain what happens to the 10-frame when we reach 10'
+        ],
+        barnaby: {
+          tag: 'Week 1 • Sequence Bridge Trap',
+          title: 'Barnaby Skips 10 After 9',
+          quote: '“8, 9, 11! Look, I jumped straight over 10!”',
+          question: '“Why must we land on 10 before we can ever make 11?”',
+          fix: '11 means "10 and 1". You cannot have "10 and 1" until you fill the first 10-frame!',
+          stem: 'Stem: “After 9 comes 10, because 1 more fills the whole ten-frame.”'
+        }
+      },
+      {
+        id: 'w1l4', week: 1, lesson: 4,
+        weekTitle: 'Week 1: Benchmarks 5 & 10',
+        title: 'Week 1 Consolidation: Flash & Prove (6–10)',
+        goal: 'Fluently subitise 6–10 on 10-frames and explain the 5-and-a-bit structure.',
+        defaultTool: 'frames', defaultQty: 7, defaultTrackPos: 10,
+        stem: '“I saw ___ and ___, which makes ___.”',
+        steps: [
+          'Warm-up: 2-second Flash & Hide sprint (6, 7, 8, 9, 10)',
+          'Core: Partner challenge — build a number, partner names it in 2s',
+          'Practice: Barnaby Bear error check on 8, 9, 10',
+          'Prove It: Convince the teacher why 9 is bigger than 7 using frames'
+        ],
+        barnaby: {
+          tag: 'Week 1 • Reasoning Check',
+          title: 'Barnaby Confuses 7 and 9',
+          quote: '“Both 7 and 9 have 5 on top, so they must be the same!”',
+          question: '“How do the bottom rows prove that 9 is bigger than 7?”',
+          fix: '7 has 5 on top and 2 on the bottom; 9 has 5 on top and 4 on the bottom (only 1 missing from 10).',
+          stem: 'Stem: “9 is bigger than 7 because 9 has 4 on the bottom row and 7 only has 2.”'
+        }
+      },
+
+      // WEEK 2: Building Teens as "10 and a Bit" (11-15)
+      {
+        id: 'w2l1', week: 2, lesson: 1,
+        weekTitle: 'Week 2: Teens as "10 & a Bit"',
+        title: 'Meet 11 & 12: "10 and 1", "10 and 2"',
+        goal: 'Pair standard teen names (11, 12) with Say-Ten language so Brooke sees the hidden 10.',
+        defaultTool: 'frames', defaultQty: 11, defaultTrackPos: 11,
+        stem: '“11 is 10 and 1. 12 is 10 and 2.”',
+        steps: [
+          'Warm-up: Flash full 10-frame — slap frame and shout "10!"',
+          'Core: Build 11 and 12 on double 10-frames (never recount the full 10)',
+          'Practice: Teacher calls "Show me 10 and 2"; pupils name "12"',
+          'Prove It: Explain why we don’t count the top 10-frame from 1'
+        ],
+        barnaby: {
+          tag: 'Week 2 • Teen Language Trap',
+          title: 'Barnaby Recounts the Full 10-Frame for 12',
+          quote: '“1, 2, 3, 4, 5, 6, 7, 8, 9, 10... 11, 12!”',
+          question: '“How can Brooke and Amelia help Barnaby count 12 in just one second?”',
+          fix: 'The first frame is completely full, so it is already 10. Just say "10... 11, 12!"',
+          stem: 'Stem: “I don’t need to count the full frame — that’s 10, and 2 more makes 12.”'
+        }
+      },
+      {
+        id: 'w2l2', week: 2, lesson: 2,
+        weekTitle: 'Week 2: Teens as "10 & a Bit"',
+        title: 'Conquering 13: "10 and 3"',
+        goal: 'Anchor 13 as "10 and 3" on double 10-frames and sequence 11, 12, 13 reliably.',
+        defaultTool: 'frames', defaultQty: 13, defaultTrackPos: 13,
+        stem: '“13 is 1 full ten and 3 more — 10 and 3!”',
+        steps: [
+          'Warm-up: Say-Ten chant 10, 11 (10 & 1), 12 (10 & 2), 13 (10 & 3)',
+          'Core: Build 13 on double 10-frames; compare with 11 and 12',
+          'Practice: Flash & Cover double 10-frames (11, 12, 13) for 2 seconds',
+          'Prove It: Build 13 and show where the "10" and the "3" live'
+        ],
+        barnaby: {
+          tag: 'Week 2 • 11-12-13 Confusion',
+          title: 'Barnaby Mixes Up 12 and 13',
+          quote: '“There’s a full 10 and 3 extras... so that must be 12!”',
+          question: '“Use Say-Ten counting to prove to Barnaby what 10 and 3 really is!”',
+          fix: '10 and 2 is 12; 10 and 3 is 13 ("thir-teen" = three and ten).',
+          stem: 'Stem: “10 and 3 is 13, because there are 3 counters on the second frame.”'
+        }
+      },
+      {
+        id: 'w2l3', week: 2, lesson: 3,
+        weekTitle: 'Week 2: Teens as "10 & a Bit"',
+        title: 'Extending to 14 & 15 ("10 and 5")',
+        goal: 'See 15 as a full 10-frame plus a full top row of 5 on the second frame.',
+        defaultTool: 'frames', defaultQty: 15, defaultTrackPos: 15,
+        stem: '“15 is 1 full ten and 5 on the top row!”',
+        steps: [
+          'Warm-up: Flash & Hide 11, 12, 13 retrieval check',
+          'Core: Build 14 and 15 on double 10-frames',
+          'Practice: Spot the difference between 13 (10 & 3) and 15 (10 & 5)',
+          'Prove It: Identify 15 in a 2-second flash without counting'
+        ],
+        barnaby: {
+          tag: 'Week 2 • Structure Recognition',
+          title: 'Barnaby Thinks 15 Needs Counting in Ones',
+          quote: '“15 is a really big number! I have to count every single dot!”',
+          question: '“Look at the two frames for 15. Which benchmarks do you see straight away?”',
+          fix: '15 is just one full 10-frame and one full row of 5 — two benchmarks we already know!',
+          stem: 'Stem: “I saw 10 and 5, which makes 15.”'
+        }
+      },
+      {
+        id: 'w2l4', week: 2, lesson: 4,
+        weekTitle: 'Week 2: Teens as "10 & a Bit"',
+        title: 'Week 2 Consolidation: The 8–13 Sequence Bridge',
+        goal: 'Link single-digit benchmarks (8, 9) smoothly into teens (10, 11, 12, 13).',
+        defaultTool: 'track', defaultQty: 12, defaultTrackPos: 8,
+        stem: '“8, 9, 10, 11 (10 & 1), 12 (10 & 2), 13 (10 & 3)!”',
+        steps: [
+          'Warm-up: Count 8 to 15 using Say-Ten names alongside standard names',
+          'Core: Step along the 1–20 track from 8 to 13 matching double 10-frames',
+          'Practice: Hide 10 & 11 on the track; bridge across from 8 to 13',
+          'Prove It: Catch Barnaby’s 8, 9, 11, 12, 13 counting error'
+        ],
+        barnaby: {
+          tag: 'Week 2 • Classic 8-9-11-12-13 Error',
+          title: 'Barnaby Counts 8, 9, 11, 12, 13',
+          quote: '“8, 9, 11, 12, 13! I said all the numbers!”',
+          question: '“Which crucial benchmark number did Barnaby forget between 9 and 11?”',
+          fix: 'Barnaby skipped 10! You have to make 10 before you can build 11 (10 and 1).',
+          stem: 'Stem: “Between 9 and 11 comes 10 — a full ten-frame!”'
+        }
+      },
+
+      // WEEK 3: Counting Backwards & Crossing the 13 -> 10 -> 8 Bridge
+      {
+        id: 'w3l1', week: 3, lesson: 1,
+        weekTitle: 'Week 3: Counting Backwards',
+        title: 'Unbuilding Teens Backwards (13 → 10)',
+        goal: 'Count backwards from 13 to 10 by removing 1 counter at a time and using Say-Ten.',
+        defaultTool: 'frames', defaultQty: 13, defaultTrackPos: 13,
+        stem: '“13 (10 & 3) → 12 (10 & 2) → 11 (10 & 1) → 10!”',
+        steps: [
+          'Warm-up: Say-Ten forwards 10 to 13, then reverse 13 to 10',
+          'Core: Start with 13 on double frames; take off 1 counter at a time down to 10',
+          'Practice: Predict "1 less than 13", "1 less than 12", "1 less than 11"',
+          'Prove It: Explain why 1 less than 11 leaves a full 10-frame'
+        ],
+        barnaby: {
+          tag: 'Week 3 • Backward Teen Trap',
+          title: 'Barnaby Counts Backwards: 13, 12, 10, 11',
+          quote: '“13, 12, 10, 11! Counting backwards is tricky!”',
+          question: '“Look at 12 (10 and 2). When we take away 1 counter, what is left?”',
+          fix: 'Taking 1 away from "10 and 2" leaves "10 and 1", which is 11 — BEFORE we reach 10!',
+          stem: 'Stem: “One less than 12 is 11 (10 and 1), and one less than 11 is 10.”'
+        }
+      },
+      {
+        id: 'w3l2', week: 3, lesson: 2,
+        weekTitle: 'Week 3: Counting Backwards',
+        title: 'Crossing 11 → 10 → 9 → 8 Backwards',
+        goal: 'Cross the tens boundary backwards without freezing at 10.',
+        defaultTool: 'track', defaultQty: 11, defaultTrackPos: 11,
+        stem: '“11 (10 & 1) → 10 (full ten) → 9 (1 missing) → 8!”',
+        steps: [
+          'Warm-up: Countdown rocket from 13 to 8 pointing at the 1–20 track',
+          'Core: Remove 1 counter from 11 → 10 → 9 → 8 while hopping back on track',
+          'Practice: Hide 10 & 11 on track; hop backwards from 12 to 8',
+          'Prove It: Answer "What is 1 less than 10?" without counting from 1'
+        ],
+        barnaby: {
+          tag: 'Week 3 • Crossing 10 Backwards',
+          title: 'Barnaby Freezes at 10 Going Backwards',
+          quote: '“13, 12, 11, 10... um... 7? I forgot what comes before 10!”',
+          question: '“Picture a full 10-frame and take 1 counter off. How many are left?”',
+          fix: 'One less than a full 10 is always 9 (9 and 1 make 10).',
+          stem: 'Stem: “One less than 10 is 9, because 9 and 1 make 10.”'
+        }
+      },
+      {
+        id: 'w3l3', week: 3, lesson: 3,
+        weekTitle: 'Week 3: Counting Backwards',
+        title: 'Pendulum Counting Across 8–13',
+        goal: 'Switch direction smoothly between forwards (bigger) and backwards (smaller) on cue.',
+        defaultTool: 'track', defaultQty: 10, defaultTrackPos: 10,
+        stem: '“Forwards gets bigger; reverse goes backwards and gets smaller!”',
+        steps: [
+          'Warm-up: Start on 8, count forwards to 13, hit REVERSE back to 8',
+          'Core: Pendulum track game — reverse at 11, 12, and 13',
+          'Practice: Hide 9, 10, 11; pendulum count across the hidden boxes',
+          'Prove It: Name the number before and after 11 and 12'
+        ],
+        barnaby: {
+          tag: 'Week 3 • Direction Switch Trap',
+          title: 'Barnaby Keeps Going Up After Reverse',
+          quote: '“10, 11, 12 — REVERSE! — 13, 14! Oops, I kept getting bigger!”',
+          question: '“When we hit Reverse, which end of the track do we move toward?”',
+          fix: 'Reverse means counting backwards toward the SMALLER numbers (12 → 11 → 10 → 9).',
+          stem: 'Stem: “When we reverse, the numbers get smaller: 12, 11, 10, 9.”'
+        }
+      },
+      {
+        id: 'w3l4', week: 3, lesson: 4,
+        weekTitle: 'Week 3: Counting Backwards',
+        title: 'Week 3 Consolidation: Backward Bridge Mastery',
+        goal: 'Count backwards fluently from 15 to 7 with confidence and zero counting from 1.',
+        defaultTool: 'track', defaultQty: 14, defaultTrackPos: 14,
+        stem: '“14, 13, 12, 11, 10, 9, 8 — I know every step backwards!”',
+        steps: [
+          'Warm-up: Rapid "1 less than..." around 8–14',
+          'Core: Backward track race from 15 down to 8',
+          'Practice: Catch Barnaby’s backward counting traps',
+          'Prove It: Count backwards from 13 to 8 independently'
+        ],
+        barnaby: {
+          tag: 'Week 3 • Mastery Check',
+          title: 'Barnaby Skips 11 Going Backwards',
+          quote: '“13, 12, 10, 9, 8! Did I get them all?”',
+          question: '“Stop Barnaby! Which teen number did he leave out between 12 and 10?”',
+          fix: 'He missed 11 ("10 and 1")! 12 → 11 → 10.',
+          stem: 'Stem: “Between 12 and 10 is 11 — ten and one.”'
+        }
+      },
+
+      // WEEK 4: Put On vs Take Away on the 1-20 Track (No Left/Right Confusion)
+      {
+        id: 'w4l1', week: 4, lesson: 1,
+        weekTitle: 'Week 4: Put On vs. Take Away',
+        title: 'Put On (+1/+2) = Bigger | Take Away (−1/−2) = Smaller',
+        goal: 'Replace confusing "left/right" rules with physical quantity growth and shrinking.',
+        defaultTool: 'track', defaultQty: 9, defaultTrackPos: 9,
+        stem: '“When I add, I put more on and the number gets bigger. When I subtract, I take away and it gets smaller.”',
+        steps: [
+          'Warm-up: Predict "Bigger or Smaller?" before moving any counters',
+          'Core: Start on 9; Put On +2 (11) and Take Away −2 (7) on track',
+          'Practice: Hop +1, +2, −1, −2 around 8–12 while saying the rule',
+          'Prove It: Explain why 10 − 2 must be smaller than 10'
+        ],
+        barnaby: {
+          tag: 'Week 4 • Direction Meaning Trap',
+          title: 'Barnaby Hops Forward to Subtract (9 − 2 = 11)',
+          quote: '“Start on 9, subtract 2... hop to 10, 11! Answer is 11!”',
+          question: '“How do we know straight away that Barnaby added instead of subtracting?”',
+          fix: '11 is BIGGER than 9! Subtracting means taking away, so we must hop toward the smaller numbers (8, 7).',
+          stem: 'Stem: “When we subtract, the answer must be smaller than the start number.”'
+        }
+      },
+      {
+        id: 'w4l2', week: 4, lesson: 2,
+        weekTitle: 'Week 4: Put On vs. Take Away',
+        title: 'Counting Jumps, NOT the Starting Square!',
+        goal: 'Eliminate the classic error of counting the starting box as "1" when hopping.',
+        defaultTool: 'track', defaultQty: 12, defaultTrackPos: 12,
+        stem: '“Say 12 first with hands up... then Hop 1 → 11, Hop 2 → 10!”',
+        steps: [
+          'Warm-up: Model the "Hands-Up Start Number" chant on 10 and 12',
+          'Core: Solve 12 − 2 and 11 − 2 on the track counting only the hops',
+          'Practice: Solve 9 + 2 and 8 + 2 without counting the start square',
+          'Prove It: Show 13 − 2 on the track and explain why the answer is 11'
+        ],
+        barnaby: {
+          tag: 'Week 4 • Start-Box Counting Trap',
+          title: 'Barnaby Counts 12 as "1" in 12 − 2',
+          quote: '“12 − 2: touch 12 (that’s 1), touch 11 (that’s 2). So 12 − 2 = 11!”',
+          question: '“Why did Barnaby only actually move 1 square instead of 2?”',
+          fix: 'He counted the square he was already standing on! You only count when the frog leaves the square.',
+          stem: 'Stem: “We say 12 first, then count our hops: Hop 1 is 11, Hop 2 is 10.”'
+        }
+      },
+      {
+        id: 'w4l3', week: 4, lesson: 3,
+        weekTitle: 'Week 4: Put On vs. Take Away',
+        title: 'Bridging Across 10 (+2 and −2)',
+        goal: 'Over-learn the 4 key bridge facts: 8 + 2, 9 + 2, 11 − 2, 12 − 2.',
+        defaultTool: 'track', defaultQty: 9, defaultTrackPos: 9,
+        stem: '“9 + 2 hops over 10 to 11. 11 − 2 hops back over 10 to 9!”',
+        steps: [
+          'Warm-up: Quick-fire +1 and −1 around 10 (9+1, 10+1, 11−1, 10−1)',
+          'Core: Repeat 8 + 2, 9 + 2, 11 − 2, 12 − 2 on track & reveal equations',
+          'Practice: Hide 10 on the track and hop +2 / −2 across the hidden box',
+          'Prove It: Show how 9 + 2 = 11 and 11 − 2 = 9 are opposites'
+        ],
+        barnaby: {
+          tag: 'Week 4 • Bridge Crossing Trap',
+          title: 'Barnaby Gets Stuck Jumping Over 10',
+          quote: '“Start on 9 and add 2... 9, 10... wait, what comes after 10?”',
+          question: '“Use Say-Ten to help Barnaby land cleanly after 10!”',
+          fix: 'Hop 1 lands on 10 (full ten); Hop 2 lands on 11 ("10 and 1").',
+          stem: 'Stem: “9 plus 1 makes 10, and 1 more makes 11.”'
+        }
+      },
+      {
+        id: 'w4l4', week: 4, lesson: 4,
+        weekTitle: 'Week 4: Put On vs. Take Away',
+        title: 'Week 4 Consolidation: Pupil Becomes the Teacher',
+        goal: 'Brooke and Amelia call out +1/+2 and −1/−2 instructions and verify each other’s hops.',
+        defaultTool: 'track', defaultQty: 11, defaultTrackPos: 11,
+        stem: '“Start on ___, add/subtract ___, get bigger/smaller, land on ___!”',
+        steps: [
+          'Warm-up: Retrieval check on 8 + 2, 9 + 2, 11 − 2, 12 − 2',
+          'Core: Brooke & Amelia take turns commanding the frog on the track',
+          'Practice: Spot whether Barnaby added or subtracted from his landing box',
+          'Prove It: Solve 13 − 3 on the track without counting from 1'
+        ],
+        barnaby: {
+          tag: 'Week 4 • Reverse Reasoning',
+          title: 'Mystery Jump: Start 11 → End 9',
+          quote: '“I started on 11 and landed on 9. Did I add 2 or subtract 2?”',
+          question: '“Look at 11 and 9. Did Barnaby’s number get bigger or smaller?”',
+          fix: '9 is smaller than 11, so Barnaby took away (subtracted) 2!',
+          stem: 'Stem: “9 is smaller than 11, so Barnaby subtracted 2.”'
+        }
+      },
+
+      // WEEK 5: Number Bonds to 10, Error Analysis & Mastery Check
+      {
+        id: 'w5l1', week: 5, lesson: 1,
+        weekTitle: 'Week 5: Bonds & Mastery Check',
+        title: 'Making 10: Filling the Empty Boxes (8+2, 9+1, 7+3)',
+        goal: 'Use the 10-frame empty spaces to see what pairs with 7, 8, or 9 to make 10.',
+        defaultTool: 'frames', defaultQty: 8, defaultTrackPos: 10,
+        stem: '“I see 8 counters and 2 empty spaces — 8 and 2 make 10!”',
+        steps: [
+          'Warm-up: Flash 8, 9, 7 — ask "How many empty boxes to make 10?"',
+          'Core: Fill empty spaces on 10-frame for 9 + 1, 8 + 2, 7 + 3',
+          'Practice: Cover the frame and ask "If I have 8, how many more to make 10?"',
+          'Prove It: Show 7 + 3 = 10 and 10 − 3 = 7 on one 10-frame'
+        ],
+        barnaby: {
+          tag: 'Week 5 • Bond to 10 Trap',
+          title: 'Barnaby Says 8 + 3 = 10',
+          quote: '“I have 8 counters on my 10-frame, so I need 3 more to fill it!”',
+          question: '“Look at the bottom row of 8. How many empty spaces are actually left?”',
+          fix: '8 is 5 and 3, so there are only 2 empty spaces left to make 10 (8 + 2 = 10).',
+          stem: 'Stem: “8 and 2 make 10, because there are 2 empty spaces on the ten-frame.”'
+        }
+      },
+      {
+        id: 'w5l2', week: 5, lesson: 2,
+        weekTitle: 'Week 5: Bonds & Mastery Check',
+        title: 'Using 10 to Bridge Teen Additions (9 + 2, 8 + 3)',
+        goal: 'See 9 + 2 as filling the 10-frame first (9 + 1 = 10) plus 1 more (11).',
+        defaultTool: 'frames', defaultQty: 9, defaultTrackPos: 9,
+        stem: '“9 + 2 is the same as 10 + 1, which is 11!”',
+        steps: [
+          'Warm-up: Quick bonds to 10 (9 + 1, 8 + 2)',
+          'Core: Put 9 on frame 1 and 2 outside; slide 1 in to make 10, 1 goes to frame 2',
+          'Practice: Repeat with 8 + 3 (fill 2 to make 10, 1 left over = 11)',
+          'Prove It: Explain how making 10 helps us add without counting on fingers'
+        ],
+        barnaby: {
+          tag: 'Week 5 • Make-10 Strategy',
+          title: 'Barnaby Counts 9 + 2 on His Fingers from 1',
+          quote: '“9 + 2... 1, 2, 3, 4, 5, 6, 7, 8, 9... 10, 11!”',
+          question: '“How can we fill the 10-frame first so we don’t have to count from 1?”',
+          fix: 'Give 1 to 9 to make a full 10, leaving 1 on the next frame: 10 and 1 is 11!',
+          stem: 'Stem: “I took 1 to make 10, and 1 more makes 11.”'
+        }
+      },
+      {
+        id: 'w5l3', week: 5, lesson: 3,
+        weekTitle: 'Week 5: Bonds & Mastery Check',
+        title: 'Mixed Diagnostic Challenge (8–15)',
+        goal: 'Apply subitising, backward counting, and track hopping in a mixed workout.',
+        defaultTool: 'barnaby', defaultQty: 13, defaultTrackPos: 13,
+        stem: '“I can prove my answer using a 10-frame or a number track!”',
+        steps: [
+          'Warm-up: Flash & Hide mixed 10-frames (8, 9, 11, 12, 13, 15)',
+          'Core: Mixed track hops (9 + 2, 12 − 2, 11 − 2, 8 + 2)',
+          'Practice: Rapid-fire Barnaby Bear mistake buzzer round',
+          'Prove It: Brooke & Amelia each explain their favourite strategy'
+        ],
+        barnaby: {
+          tag: 'Week 5 • Ultimate Mixed Trap',
+          title: 'Barnaby’s Triple Mistake!',
+          quote: '“8, 9, 11, 12! And 12 − 2 = 11! And adding means go to smaller numbers!”',
+          question: '“Can Brooke and Amelia fix all THREE of Barnaby’s mistakes?”',
+          fix: '1) 10 comes between 9 and 11. 2) Don’t count 12 as 1: 12 − 2 = 10. 3) Adding makes numbers BIGGER.',
+          stem: 'Stem: “Adding makes numbers bigger; subtracting makes numbers smaller!”'
+        }
+      },
+      {
+        id: 'w5l4', week: 5, lesson: 4,
+        weekTitle: 'Week 5: Bonds & Mastery Check',
+        title: 'End-of-Block Mastery Check & Celebration',
+        goal: 'Assess retention across all 5 weeks to inform next-step P4 target setting.',
+        defaultTool: 'frames', defaultQty: 12, defaultTrackPos: 12,
+        stem: '“I know my numbers to 20 without counting in ones!”',
+        steps: [
+          'Check 1: Subitise 8, 9, 11, 12, 13 in 2 seconds',
+          'Check 2: Count forwards 8→15 and backwards 13→8',
+          'Check 3: Solve 9 + 2 and 12 − 2 on the 1–20 track',
+          'Celebration: Review progress & copy 5-week report for records'
+        ],
+        barnaby: {
+          tag: 'Week 5 • Graduation Check',
+          title: 'Barnaby Asks for One Final Lesson',
+          quote: '“How do you remember 11, 12, and 13 so easily now?”',
+          question: '“Teach Barnaby your Say-Ten secret for 11, 12, and 13!”',
+          fix: '11 is 10 and 1; 12 is 10 and 2; 13 is 10 and 3!',
+          stem: 'Stem: “Every teen number has a hidden 10 inside it!”'
+        }
+      }
+    ];
+
+    /* =========================================================================
+       2. DIAGNOSTIC QUICK-TAP CHIPS FOR BROOKE & AMELIA
+       ========================================================================= */
+    const PUPIL_DIAGNOSTIC_CHIPS = [
+      'Subitised 5-and-a-bit',
+      'Trusted full 10 frame',
+      'Used Say-Ten (10 & 1/2/3)',
+      'Counted backwards 13→8',
+      'Used bigger/smaller rule',
+      'Counted jumps (not start box)',
+      'Spotted Barnaby error',
+      'Still counted in 1s',
+      'Counted start box as 1'
+    ];
+
+    const EFFORT_OPTIONS = [
+      { val: 1, label: '1 Passive' },
+      { val: 2, label: '2 Prompted' },
+      { val: 3, label: '3 Good Focus' },
+      { val: 4, label: '4 Resilient' }
+    ];
+
+    const APP_OPTIONS = [
+      { val: 1, label: '1 Counts in 1s' },
+      { val: 2, label: '2 Concrete Only' },
+      { val: 3, label: '3 Pictorial/Slow' },
+      { val: 4, label: '4 Fluent' }
+    ];
+
+    const PROGRESS_OPTIONS = ['Emerging', 'Developing', 'Secure'];
+
+    /* =========================================================================
+       3. LOCALSTORAGE STATE MANAGEMENT
+       ========================================================================= */
+    const STORAGE_KEY = 'st_kierans_p4_numeracy_hub_v1';
+
+    let appState = {
+      activeLessonIndex: 0,
+      lessons: {} // keyed by lesson.id (e.g., 'w1l1')
+    };
+
+    function createEmptyPupilRecord() {
+      return {
+        effort: null,
+        application: null,
+        progress: null,
+        chips: [],
+        note: ''
+      };
+    }
+
+    function getLessonRecord(lessonId) {
+      if (!appState.lessons[lessonId]) {
+        appState.lessons[lessonId] = {
+          status: 'Not Started',
+          date: '',
+          stepsDone: [],
+          brooke: createEmptyPupilRecord(),
+          amelia: createEmptyPupilRecord()
+        };
+      }
+      return appState.lessons[lessonId];
+    }
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && typeof parsed === 'object') {
+            appState.activeLessonIndex = parsed.activeLessonIndex || 0;
+            appState.lessons = parsed.lessons || {};
+          }
+        }
+      } catch (e) {
+        // Fallback to fresh state if storage unavailable
+      }
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
+        const badge = document.getElementById('autoSaveIndicator');
+        if (badge) {
+          badge.textContent = '✓ Saved just now';
+          setTimeout(() => {
+            badge.textContent = '✓ Auto-saved';
+          }, 1800);
+        }
+      } catch (e) {
+        // Ignore quota issues
+      }
+      updateOverallProgressBadge();
+    }
+
+    function updateOverallProgressBadge() {
+      let coveredCount = 0;
+      CURRICULUM.forEach(l => {
+        const rec = getLessonRecord(l.id);
+        if (rec.status === 'Covered') coveredCount++;
+      });
+      document.getElementById('overallProgressBadge').textContent = `${coveredCount} / 20 Lessons Covered`;
+    }
+
+    /* =========================================================================
+       4. AUDIO FEEDBACK (WEB AUDIO API)
+       ========================================================================= */
+    let soundOn = true;
+    let audioCtx = null;
+
+    function toggleSound() {
+      soundOn = !soundOn;
+      document.getElementById('soundIcon').textContent = soundOn ? '🔊' : '🔇';
+    }
+
+    function playChime(freq = 560, duration = 0.08, type = 'sine') {
+      if (!soundOn) return;
+      try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.07, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) {}
+    }
+
+    /* =========================================================================
+       5. CURRICULUM NAVIGATION RENDERING (WEEKS 1-5 & LESSONS 1-4)
+       ========================================================================= */
+    function renderCurriculumNav() {
+      const activeLesson = CURRICULUM[appState.activeLessonIndex];
+      const activeWeek = activeLesson.week;
+
+      // Render Week Tabs (1 to 5)
+      const weekContainer = document.getElementById('weekTabsContainer');
+      weekContainer.innerHTML = '';
+
+      for (let w = 1; w <= 5; w++) {
+        const weekLessons = CURRICULUM.filter(l => l.week === w);
+        const doneInWeek = weekLessons.filter(l => getLessonRecord(l.id).status === 'Covered').length;
+        const isCurrentWeek = w === activeWeek;
+
+        const btn = document.createElement('button');
+        btn.className = isCurrentWeek
+          ? 'px-3 py-1.5 rounded-xl bg-white text-[#14532d] font-extrabold text-xs shadow-sm transition flex items-center gap-1.5'
+          : 'px-3 py-1.5 rounded-xl bg-emerald-900/60 hover:bg-white/15 text-emerald-100 font-bold text-xs transition flex items-center gap-1.5';
+
+        btn.innerHTML = `<span>Week ${w}</span><span class="px-1.5 py-0.2 rounded-full text-[10px] ${
+          isCurrentWeek ? 'bg-emerald-100 text-[#14532d]' : 'bg-white/15 text-white'
+        }">${doneInWeek}/4</span>`;
+
+        btn.onclick = () => {
+          const firstIndexOfWeek = CURRICULUM.findIndex(l => l.week === w);
+          selectLesson(firstIndexOfWeek);
+        };
+        weekContainer.appendChild(btn);
+      }
+
+      // Render Lesson Tabs for Active Week (Lessons 1 to 4)
+      const lessonContainer = document.getElementById('lessonTabsContainer');
+      lessonContainer.innerHTML = '';
+
+      CURRICULUM.forEach((lessonObj, idx) => {
+        if (lessonObj.week !== activeWeek) return;
+        const rec = getLessonRecord(lessonObj.id);
+        const isSelected = idx === appState.activeLessonIndex;
+
+        let statusDot = '⚪';
+        if (rec.status === 'Covered') statusDot = '✅';
+        else if (rec.status === 'Needs Repeat') statusDot = '🔁';
+
+        const btn = document.createElement('button');
+        btn.className = isSelected
+          ? 'px-3 py-1.5 rounded-xl bg-amber-400 text-slate-950 font-extrabold text-xs shadow-sm transition flex items-center gap-1.5'
+          : 'px-3 py-1.5 rounded-xl bg-emerald-800/80 hover:bg-white/15 text-white font-semibold text-xs transition flex items-center gap-1.5';
+
+        btn.innerHTML = `<span>${statusDot}</span><span>L${lessonObj.lesson}: ${lessonObj.title.split(':')[0]}</span>`;
+        btn.onclick = () => selectLesson(idx);
+        lessonContainer.appendChild(btn);
+      });
+    }
+
+    function selectLesson(index) {
+      if (index < 0 || index >= CURRICULUM.length) return;
+      appState.activeLessonIndex = index;
+      saveState();
+
+      const lesson = CURRICULUM[index];
+      document.getElementById('activeLessonCode').textContent = `Week ${lesson.week} • Lesson ${lesson.lesson}`;
+      document.getElementById('activeLessonTitle').textContent = lesson.title;
+      document.getElementById('activeLessonGoal').textContent = `Goal: ${lesson.goal}`;
+      document.getElementById('lessonStemFooter').textContent = lesson.stem;
+
+      renderCurriculumNav();
+      resetToolsToLessonDefaults();
+      renderTrackerPanel();
+    }
+
+    function navigateLesson(delta) {
+      const next = appState.activeLessonIndex + delta;
+      if (next >= 0 && next < CURRICULUM.length) {
+        selectLesson(next);
+      }
+    }
+
+    function resetToolsToLessonDefaults() {
+      const lesson = CURRICULUM[appState.activeLessonIndex];
+
+      // Configure 10-Frame quantity
+      setStageQuantity(lesson.defaultQty);
+
+      // Configure Number Track start position
+      setTrackStartPos(lesson.defaultTrackPos);
+
+      // Configure Barnaby Bear Error Card
+      document.getElementById('barnabyTag').textContent = lesson.barnaby.tag;
+      document.getElementById('barnabyTitle').textContent = lesson.barnaby.title;
+      document.getElementById('barnabyQuote').textContent = lesson.barnaby.quote;
+      document.getElementById('barnabyQuestion').textContent = lesson.barnaby.question;
+      document.getElementById('barnabyFixText').textContent = lesson.barnaby.fix;
+      document.getElementById('barnabyStemText').textContent = lesson.barnaby.stem;
+      barnabyRevealed = false;
+      document.getElementById('barnabyRevealBox').classList.add('hidden');
+      document.getElementById('toggleBarnabyBtn').textContent = '🔓 Reveal Fix & Stem Sentence';
+
+      // Switch to the lesson's primary recommended stage tool
+      switchStageTool(lesson.defaultTool);
+    }
+
+    /* =========================================================================
+       6. LEFT STAGE TOOLS: 10-FRAMES, NUMBER TRACK, BARNABY, SCRATCHPAD
+       ========================================================================= */
+    function switchStageTool(toolId) {
+      document.querySelectorAll('.stage-panel').forEach(p => p.classList.add('hidden'));
+      document.getElementById(`stage-${toolId}`).classList.remove('hidden');
+
+      document.querySelectorAll('.stage-btn').forEach(btn => {
+        btn.className = 'stage-btn flex-1 min-w-[120px] py-2.5 px-3 rounded-xl font-bold text-xs sm:text-sm bg-slate-100 text-slate-700 hover:bg-slate-200 transition';
+      });
+      const activeBtn = document.getElementById(`stageBtn-${toolId}`);
+      activeBtn.className = 'stage-btn flex-1 min-w-[120px] py-2.5 px-3 rounded-xl font-extrabold text-xs sm:text-sm bg-[#14532d] text-white shadow-sm transition';
+
+      if (toolId === 'pad') {
+        resizePadCanvas();
+      }
+    }
+
+    /* --- Tool A: Double 10-Frames & Shutter --- */
+    let frame1Cells = Array(10).fill(false);
+    let frame2Cells = Array(10).fill(false);
+    let stageSayTenVisible = false;
+    let shutterTimer = null;
+
+    function setStageQuantity(qty) {
+      const clamped = Math.max(0, Math.min(20, qty));
+      frame1Cells = Array.from({ length: 10 }, (_, i) => i < Math.min(10, clamped));
+      frame2Cells = Array.from({ length: 10 }, (_, i) => i < Math.max(0, clamped - 10));
+
+      // Keep Say-Ten reveal hidden when switching quantity
+      stageSayTenVisible = false;
+      document.getElementById('stageSayTenRevealBox').classList.add('hidden');
+      document.getElementById('toggleStageSayTenBtn').textContent = '👁️ Reveal Number & Say-Ten';
+
+      revealStageShutter();
+      renderStageFrames();
+    }
+
+    function adjustStageQuantity(delta) {
+      const currentTotal = getStageTotal();
+      setStageQuantity(currentTotal + delta);
+      playChime(delta > 0 ? 640 : 440, 0.07);
+    }
+
+    function getStageTotal() {
+      return frame1Cells.filter(Boolean).length + frame2Cells.filter(Boolean).length;
+    }
+
+    function renderStageFrames() {
+      renderInteractiveTenFrame('stageFrame1', frame1Cells);
+      renderInteractiveTenFrame('stageFrame2', frame2Cells);
+
+      const total = getStageTotal();
+      let sayTenStr = `${total}`;
+      if (total > 10 && total < 20) sayTenStr = `${total} = 10 and ${total - 10}`;
+      else if (total === 10) sayTenStr = `10 = 1 Full Ten`;
+      else if (total === 20) sayTenStr = `20 = 2 Full Tens`;
+      else if (total > 5 && total < 10) sayTenStr = `${total} = 5 and ${total - 5}`;
+
+      document.getElementById('stageSayTenLabel').textContent = sayTenStr;
+    }
+
+    function renderInteractiveTenFrame(elId, cellsArr) {
+      const container = document.getElementById(elId);
+      container.innerHTML = '';
+      cellsArr.forEach((filled, idx) => {
+        const cell = document.createElement('div');
+        cell.className = 'ten-frame-cell' + (idx < 5 ? ' top-row' : '');
+        cell.onclick = () => {
+          cellsArr[idx] = !cellsArr[idx];
+          renderStageFrames();
+          playChime(cellsArr[idx] ? 600 : 420, 0.06);
+        };
+
+        if (filled) {
+          const disc = document.createElement('div');
+          disc.className = `counter-disc counter-pop ${idx < 5 ? 'counter-red' : 'counter-amber'}`;
+          cell.appendChild(disc);
+        }
+        container.appendChild(cell);
+      });
+    }
+
+    function flashAndCoverStage() {
+      clearTimeout(shutterTimer);
+      stageSayTenVisible = false;
+      document.getElementById('stageSayTenRevealBox').classList.add('hidden');
+      document.getElementById('toggleStageSayTenBtn').textContent = '👁️ Reveal Number & Say-Ten';
+      revealStageShutter();
+      playChime(680, 0.09);
+
+      shutterTimer = setTimeout(() => {
+        coverStageShutter();
+        playChime(380, 0.11);
+      }, 2000);
+    }
+
+    function coverStageShutter() {
+      document.getElementById('stageShutter').classList.remove('hidden');
+      document.getElementById('manualShutterBtn').textContent = '👁 Reveal Frame';
+    }
+
+    function revealStageShutter() {
+      clearTimeout(shutterTimer);
+      document.getElementById('stageShutter').classList.add('hidden');
+      document.getElementById('manualShutterBtn').textContent = '🙈 Cover Now';
+    }
+
+    function toggleStageShutter() {
+      const isHidden = document.getElementById('stageShutter').classList.contains('hidden');
+      if (isHidden) coverStageShutter();
+      else revealStageShutter();
+    }
+
+    function peekStageShutter() {
+      revealStageShutter();
+      playChime(620, 0.08);
+      shutterTimer = setTimeout(() => {
+        coverStageShutter();
+      }, 1000);
+    }
+
+    function toggleStageSayTen() {
+      stageSayTenVisible = !stageSayTenVisible;
+      const box = document.getElementById('stageSayTenRevealBox');
+      const btn = document.getElementById('toggleStageSayTenBtn');
+      if (stageSayTenVisible) {
+        box.classList.remove('hidden');
+        btn.textContent = '🙈 Hide Answer';
+        playChime(740, 0.08);
+      } else {
+        box.classList.add('hidden');
+        btn.textContent = '👁️ Reveal Number & Say-Ten';
+      }
+    }
+
+    /* --- Tool B: 1-20 Board-Game Number Track, Frog Hopper & Pendulum --- */
+    let trackPos = 9;
+    let trackStartPos = 9;
+    let trackLastDelta = 0;
+    let trackHide1011 = false;
+    let trackEqVisible = false;
+    let pendulumIsBackward = false;
+
+    function setTrackStartPos(pos) {
+      trackPos = Math.max(1, Math.min(20, pos));
+      trackStartPos = trackPos;
+      trackLastDelta = 0;
+      trackEqVisible = false;
+      pendulumIsBackward = false;
+
+      document.getElementById('trackEqBox').classList.add('hidden');
+      document.getElementById('toggleTrackEqBtn').textContent = '👁️ Reveal Equation';
+
+      const banner = document.getElementById('trackBanner');
+      banner.className = 'p-3.5 rounded-2xl bg-emerald-50 border-2 border-emerald-300 flex flex-col sm:flex-row sm:items-center justify-between gap-2 transition-all';
+      document.getElementById('trackDirEmoji').textContent = '🐸';
+      document.getElementById('trackBannerTitle').textContent = `Standing on ${trackPos} • Ready to Hop!`;
+      document.getElementById('trackJumpLog').textContent = `Anti-Start-Box Rule: Say "${trackPos}..." out loud BEFORE counting Hop 1!`;
+
+      renderStageNumberTrack([]);
+    }
+
+    function hopStageTrack(delta) {
+      const next = trackPos + delta;
+      if (next < 1 || next > 20) return;
+
+      const prev = trackPos;
+      trackStartPos = prev;
+      trackPos = next;
+      trackLastDelta = delta;
+
+      // Keep equation hidden until teacher clicks Reveal
+      trackEqVisible = false;
+      document.getElementById('trackEqBox').classList.add('hidden');
+      document.getElementById('toggleTrackEqBtn').textContent = '👁️ Reveal Equation';
+
+      const hops = [];
+      const visited = [];
+      const stepDir = delta > 0 ? 1 : -1;
+      for (let s = 1; s <= Math.abs(delta); s++) {
+        const landed = prev + s * stepDir;
+        hops.push(`Hop ${s} → ${landed}`);
+        visited.push(landed);
+      }
+
+      const banner = document.getElementById('trackBanner');
+      const title = document.getElementById('trackBannerTitle');
+      const log = document.getElementById('trackJumpLog');
+      const eqBox = document.getElementById('trackEqBox');
+
+      if (delta > 0) {
+        banner.className = 'p-3.5 rounded-2xl bg-emerald-50 border-2 border-emerald-400 flex flex-col sm:flex-row sm:items-center justify-between gap-2 transition-all';
+        document.getElementById('trackDirEmoji').textContent = '➡️';
+        title.textContent = `Put On ${delta} → Getting BIGGER!`;
+        eqBox.textContent = `${prev} + ${delta} = ${next}`;
+        playChime(680, 0.1);
+      } else {
+        banner.className = 'p-3.5 rounded-2xl bg-rose-50 border-2 border-rose-400 flex flex-col sm:flex-row sm:items-center justify-between gap-2 transition-all';
+        document.getElementById('trackDirEmoji').textContent = '⬅️';
+        title.textContent = `Take Away ${Math.abs(delta)} → Getting SMALLER!`;
+        eqBox.textContent = `${prev} − ${Math.abs(delta)} = ${next}`;
+        playChime(430, 0.1);
+      }
+
+      log.textContent = `Start on "${prev}..." (${hops.join(', ')})`;
+
+      // Also sync 10-frames quietly in background so switching tabs matches
+      setStageQuantity(next);
+      renderStageNumberTrack(visited);
+    }
+
+    function toggleTrackMask1011() {
+      trackHide1011 = !trackHide1011;
+      document.getElementById('mask1011Btn').textContent = trackHide1011
+        ? '🔓 Show 10 & 11'
+        : '🙈 Hide 10 & 11';
+      renderStageNumberTrack([]);
+    }
+
+    function triggerPendulumReverse() {
+      pendulumIsBackward = !pendulumIsBackward;
+      const banner = document.getElementById('trackBanner');
+      const title = document.getElementById('trackBannerTitle');
+      const emoji = document.getElementById('trackDirEmoji');
+
+      if (pendulumIsBackward) {
+        banner.className = 'reverse-pulse p-3.5 rounded-2xl bg-rose-100 border-2 border-rose-500 flex flex-col sm:flex-row sm:items-center justify-between gap-2 transition-all';
+        emoji.textContent = '🔄';
+        title.textContent = 'PENDULUM REVERSE! Count Backwards (Getting Smaller)';
+        playChime(370, 0.15, 'triangle');
+      } else {
+        banner.className = 'reverse-pulse p-3.5 rounded-2xl bg-emerald-100 border-2 border-emerald-500 flex flex-col sm:flex-row sm:items-center justify-between gap-2 transition-all';
+        emoji.textContent = '🔄';
+        title.textContent = 'PENDULUM FORWARDS! Count Up (Getting Bigger)';
+        playChime(690, 0.15, 'triangle');
+      }
+    }
+
+    function toggleTrackEq() {
+      if (trackLastDelta === 0) return;
+      trackEqVisible = !trackEqVisible;
+      const box = document.getElementById('trackEqBox');
+      const btn = document.getElementById('toggleTrackEqBtn');
+      if (trackEqVisible) {
+        box.classList.remove('hidden');
+        btn.textContent = '🙈 Hide Equation';
+        playChime(750, 0.08);
+      } else {
+        box.classList.add('hidden');
+        btn.textContent = '👁️ Reveal Equation';
+      }
+    }
+
+    function renderStageNumberTrack(visitedSquares) {
+      const container = document.getElementById('stageNumberTrack');
+      container.innerHTML = '';
+      container.style.gridTemplateColumns = 'repeat(20, minmax(38px, 1fr))';
+
+      for (let n = 1; n <= 20; n++) {
+        const isCurrent = n === trackPos;
+        const isDangerBridge = n >= 8 && n <= 13;
+        const isMasked = trackHide1011 && (n === 10 || n === 11);
+        const hopIndex = visitedSquares.indexOf(n);
+        const isStart = trackLastDelta !== 0 && n === trackStartPos;
+
+        let style = 'bg-slate-50 border-slate-300 text-slate-700 hover:bg-slate-100';
+        if (isDangerBridge) {
+          style = 'bg-amber-50 border-amber-400 text-amber-950';
+        }
+        if (isStart) {
+          style = 'bg-amber-100 border-amber-500 text-amber-950';
+        }
+        if (isCurrent) {
+          style = 'bg-[#14532d] border-[#14532d] text-white shadow-md scale-105';
+        }
+
+        const btn = document.createElement('button');
+        btn.className = `relative h-12 rounded-xl border-2 flex items-center justify-center font-extrabold num-font text-base transition-all ${style}`;
+        btn.textContent = isMasked ? '?' : n;
+        btn.onclick = () => setTrackStartPos(n);
+
+        if (isCurrent) {
+          const frog = document.createElement('div');
+          frog.className = 'frog-hop absolute -top-7 text-xl drop-shadow';
+          frog.textContent = '🐸';
+          btn.appendChild(frog);
+        } else if (hopIndex !== -1) {
+          const badge = document.createElement('div');
+          badge.className = 'absolute -top-5 px-1 rounded bg-amber-400 text-slate-950 text-[9px] font-extrabold whitespace-nowrap';
+          badge.textContent = `Hop ${hopIndex + 1}`;
+          btn.appendChild(badge);
+        } else if (isStart) {
+          const sBadge = document.createElement('div');
+          sBadge.className = 'absolute -top-5 px-1 rounded bg-slate-200 text-slate-700 text-[9px] font-bold whitespace-nowrap';
+          sBadge.textContent = 'Start';
+          btn.appendChild(sBadge);
+        }
+
+        container.appendChild(btn);
+      }
+    }
+
+    /* --- Tool C: Barnaby Bear Reveal --- */
+    let barnabyRevealed = false;
+    function toggleBarnabyReveal() {
+      barnabyRevealed = !barnabyRevealed;
+      const box = document.getElementById('barnabyRevealBox');
+      const btn = document.getElementById('toggleBarnabyBtn');
+      if (barnabyRevealed) {
+        box.classList.remove('hidden');
+        btn.textContent = '🙈 Hide Fix & Stem Sentence';
+        playChime(720, 0.09);
+      } else {
+        box.classList.add('hidden');
+        btn.textContent = '🔓 Reveal Fix & Stem Sentence';
+      }
+    }
+
+    /* --- Tool D: Teacher Scratchpad Canvas --- */
+    let padCanvas, padCtx, padDrawing = false;
+    let padColor = '#14532d', padSize = 4;
+
+    function initPadCanvas() {
+      padCanvas = document.getElementById('scratchpadCanvas');
+      padCtx = padCanvas.getContext('2d');
+
+      window.addEventListener('resize', () => {
+        if (!document.getElementById('stage-pad').classList.contains('hidden')) {
+          resizePadCanvas();
+        }
+      });
+
+      padCanvas.addEventListener('mousedown', startPadDraw);
+      padCanvas.addEventListener('mousemove', movePadDraw);
+      window.addEventListener('mouseup', () => { padDrawing = false; });
+
+      padCanvas.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        startPadDraw(e.touches[0]);
+      }, { passive: false });
+      padCanvas.addEventListener('touchmove', (e) => {
+        e.preventDefault();
+        movePadDraw(e.touches[0]);
+      }, { passive: false });
+      padCanvas.addEventListener('touchend', () => { padDrawing = false; });
+    }
+
+    function resizePadCanvas() {
+      const wrap = document.getElementById('padWrapper');
+      if (!wrap || !padCanvas) return;
+      const rect = wrap.getBoundingClientRect();
+      if (rect.width === 0) return;
+      const saved = padCtx.getImageData(0, 0, padCanvas.width || 1, padCanvas.height || 1);
+      padCanvas.width = rect.width;
+      padCanvas.height = rect.height;
+      padCtx.lineCap = 'round';
+      padCtx.lineJoin = 'round';
+      padCtx.putImageData(saved, 0, 0);
+    }
+
+    function getPadPos(evt) {
+      const rect = padCanvas.getBoundingClientRect();
+      return { x: evt.clientX - rect.left, y: evt.clientY - rect.top };
+    }
+
+    function startPadDraw(evt) {
+      padDrawing = true;
+      const { x, y } = getPadPos(evt);
+      padCtx.beginPath();
+      padCtx.moveTo(x, y);
+    }
+
+    function movePadDraw(evt) {
+      if (!padDrawing) return;
+      const { x, y } = getPadPos(evt);
+      padCtx.strokeStyle = padColor;
+      padCtx.lineWidth = padSize;
+      padCtx.lineTo(x, y);
+      padCtx.stroke();
+    }
+
+    function setPadPen(color, size) {
+      padColor = color;
+      padSize = size;
+    }
+
+    function clearPadCanvas() {
+      if (padCtx && padCanvas) {
+        padCtx.clearRect(0, 0, padCanvas.width, padCanvas.height);
+      }
+    }
+
+    /* =========================================================================
+       7. RIGHT COLUMN: CLICKABLE LESSON & PUPIL ASSESSMENT TRACKER
+       ========================================================================= */
+    function renderTrackerPanel() {
+      const lesson = CURRICULUM[appState.activeLessonIndex];
+      const rec = getLessonRecord(lesson.id);
+
+      // 1. Render Status Pills
+      ['Not Started', 'Needs Repeat', 'Covered'].forEach(st => {
+        const btn = document.getElementById(`statusBtn-${st}`);
+        const isActive = rec.status === st;
+        if (isActive) {
+          if (st === 'Covered') {
+            btn.className = 'status-pill px-3 py-1.5 rounded-xl text-xs font-extrabold border-2 border-[#14532d] bg-[#14532d] text-white shadow-sm';
+          } else if (st === 'Needs Repeat') {
+            btn.className = 'status-pill px-3 py-1.5 rounded-xl text-xs font-extrabold border-2 border-amber-500 bg-amber-400 text-slate-950 shadow-sm';
+          } else {
+            btn.className = 'status-pill px-3 py-1.5 rounded-xl text-xs font-extrabold border-2 border-slate-700 bg-slate-800 text-white shadow-sm';
+          }
+        } else {
+          btn.className = 'status-pill px-3 py-1.5 rounded-xl text-xs font-bold border border-slate-300 bg-slate-50 text-slate-600 hover:bg-slate-100';
+        }
+      });
+
+      // 2. Render "What We Covered" Micro-Step Chips
+      const stepsContainer = document.getElementById('microStepsContainer');
+      stepsContainer.innerHTML = '';
+
+      lesson.steps.forEach((stepText, idx) => {
+        const isDone = rec.stepsDone.includes(idx);
+        const btn = document.createElement('button');
+        btn.className = isDone
+          ? 'p-2.5 rounded-xl border-2 border-[#14532d] bg-emerald-50 text-[#14532d] text-left text-xs font-extrabold flex items-start gap-2 transition'
+          : 'p-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 text-left text-xs font-semibold flex items-start gap-2 transition';
+
+        btn.innerHTML = `<span class="text-sm leading-none mt-0.5">${isDone ? '☑️' : '⬜'}</span><span>${stepText}</span>`;
+        btn.onclick = () => {
+          if (rec.stepsDone.includes(idx)) {
+            rec.stepsDone = rec.stepsDone.filter(i => i !== idx);
+          } else {
+            rec.stepsDone.push(idx);
+            // Auto-stamp today's date when teacher starts ticking steps
+            if (!rec.date) {
+              rec.date = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
+            }
+          }
+          saveState();
+          renderTrackerPanel();
+          playChime(640, 0.06);
+        };
+        stepsContainer.appendChild(btn);
+      });
+
+      // 3. Render Brooke & Amelia Assessment Cards
+      renderPupilAssessmentCard('brooke', 'Brooke (Target Focus)', 'amber', rec.brooke);
+      renderPupilAssessmentCard('amelia', 'Amelia', 'emerald', rec.amelia);
+    }
+
+    function setLessonStatus(newStatus) {
+      const lesson = CURRICULUM[appState.activeLessonIndex];
+      const rec = getLessonRecord(lesson.id);
+      rec.status = newStatus;
+      if (newStatus !== 'Not Started' && !rec.date) {
+        rec.date = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
+      }
+      saveState();
+      renderCurriculumNav();
+      renderTrackerPanel();
+      playChime(newStatus === 'Covered' ? 760 : 520, 0.09);
+    }
+
+    function tickAllMicroSteps() {
+      const lesson = CURRICULUM[appState.activeLessonIndex];
+      const rec = getLessonRecord(lesson.id);
+      rec.stepsDone = [0, 1, 2, 3];
+      if (rec.status === 'Not Started') rec.status = 'Covered';
+      if (!rec.date) {
+        rec.date = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
+      }
+      saveState();
+      renderCurriculumNav();
+      renderTrackerPanel();
+      playChime(740, 0.1);
+    }
+
+    function renderPupilAssessmentCard(pupilKey, displayName, themeColor, pupilData) {
+      const container = document.getElementById(`${pupilKey}Card`);
+      const headerBg = themeColor === 'amber' ? 'bg-amber-50 text-amber-950 border-amber-200' : 'bg-emerald-50 text-[#14532d] border-emerald-200';
+
+      // Effort Pills HTML
+      const effortPills = EFFORT_OPTIONS.map(opt => {
+        const active = pupilData.effort === opt.val;
+        const cls = active
+          ? 'bg-[#14532d] text-white border-[#14532d] font-extrabold shadow-sm'
+          : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100 font-semibold';
+        return `<button onclick="setPupilMetric('${pupilKey}', 'effort', ${opt.val})" class="px-2 py-1.5 rounded-lg border text-[11px] transition ${cls}">${opt.label}</button>`;
+      }).join('');
+
+      // Application Pills HTML
+      const appPills = APP_OPTIONS.map(opt => {
+        const active = pupilData.application === opt.val;
+        const cls = active
+          ? 'bg-[#14532d] text-white border-[#14532d] font-extrabold shadow-sm'
+          : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100 font-semibold';
+        return `<button onclick="setPupilMetric('${pupilKey}', 'application', ${opt.val})" class="px-2 py-1.5 rounded-lg border text-[11px] transition ${cls}">${opt.label}</button>`;
+      }).join('');
+
+      // Progress Pills HTML
+      const progPills = PROGRESS_OPTIONS.map(opt => {
+        const active = pupilData.progress === opt;
+        let cls = 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100 font-semibold';
+        if (active) {
+          if (opt === 'Secure') cls = 'bg-emerald-600 text-white border-emerald-600 font-extrabold shadow-sm';
+          else if (opt === 'Developing') cls = 'bg-amber-500 text-white border-amber-500 font-extrabold shadow-sm';
+          else cls = 'bg-rose-600 text-white border-rose-600 font-extrabold shadow-sm';
+        }
+        return `<button onclick="setPupilMetric('${pupilKey}', 'progress', '${opt}')" class="px-2.5 py-1.5 rounded-lg border text-[11px] transition ${cls}">${opt}</button>`;
+      }).join('');
+
+      // Quick Diagnostic Chips HTML
+      const chipsHtml = PUPIL_DIAGNOSTIC_CHIPS.map(chip => {
+        const active = pupilData.chips.includes(chip);
+        const cls = active
+          ? 'bg-emerald-100 border-[#14532d] text-[#14532d] font-extrabold'
+          : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50 font-medium';
+        return `<button onclick="togglePupilChip('${pupilKey}', '${chip.replace(/'/g, "\\'")}')" class="px-2 py-1 rounded-md border text-[11px] transition ${cls}">${active ? '✓ ' : '+ '}${chip}</button>`;
+      }).join('');
+
+      container.innerHTML = `
+        <div class="flex items-center justify-between px-3 py-2 rounded-xl border ${headerBg}">
+          <span class="font-extrabold text-sm">👧 ${displayName}</span>
+          <span class="text-[11px] font-bold">
+            ${pupilData.effort ? `E:${pupilData.effort}` : 'E:—'} • ${pupilData.application ? `App:${pupilData.application}` : 'App:—'} • ${pupilData.progress || 'Progress:—'}
+          </span>
+        </div>
+
+        <div class="space-y-2">
+          <div>
+            <div class="text-[11px] font-extrabold uppercase tracking-wider text-slate-400 mb-1">Effort</div>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-1">${effortPills}</div>
+          </div>
+
+          <div>
+            <div class="text-[11px] font-extrabold uppercase tracking-wider text-slate-400 mb-1">Application</div>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-1">${appPills}</div>
+          </div>
+
+          <div>
+            <div class="text-[11px] font-extrabold uppercase tracking-wider text-slate-400 mb-1">Progress</div>
+            <div class="grid grid-cols-3 gap-1.5">${progPills}</div>
+          </div>
+
+          <div>
+            <div class="text-[11px] font-extrabold uppercase tracking-wider text-slate-400 mb-1">Quick Diagnostic Observations (Tap to Append)</div>
+            <div class="flex flex-wrap gap-1">${chipsHtml}</div>
+          </div>
+
+          <div>
+            <textarea
+              rows="2"
+              placeholder="Custom note for ${displayName.split(' ')[0]}..."
+              oninput="updatePupilNote('${pupilKey}', this.value)"
+              class="w-full rounded-xl border border-slate-300 p-2 text-xs font-medium text-slate-800 focus:outline-none focus:border-[#14532d]"
+            >${pupilData.note || ''}</textarea>
+          </div>
+        </div>
+      `;
+    }
+
+    function setPupilMetric(pupilKey, field, value) {
+      const lesson = CURRICULUM[appState.activeLessonIndex];
+      const rec = getLessonRecord(lesson.id);
+      rec[pupilKey][field] = rec[pupilKey][field] === value ? null : value;
+
+      if (!rec.date) {
+        rec.date = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
+      }
+      saveState();
+      renderTrackerPanel();
+      playChime(620, 0.06);
+    }
+
+    function togglePupilChip(pupilKey, chipLabel) {
+      const lesson = CURRICULUM[appState.activeLessonIndex];
+      const rec = getLessonRecord(lesson.id);
+      const pupil = rec[pupilKey];
+
+      if (pupil.chips.includes(chipLabel)) {
+        pupil.chips = pupil.chips.filter(c => c !== chipLabel);
+      } else {
+        pupil.chips.push(chipLabel);
+      }
+
+      if (!rec.date) {
+        rec.date = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
+      }
+      saveState();
+      renderTrackerPanel();
+      playChime(660, 0.06);
+    }
+
+    function updatePupilNote(pupilKey, textValue) {
+      const lesson = CURRICULUM[appState.activeLessonIndex];
+      const rec = getLessonRecord(lesson.id);
+      rec[pupilKey].note = textValue;
+      saveState();
+    }
+
+    /* =========================================================================
+       8. PRINTABLE 5-WEEK LANDSCAPE REPORT & GOOGLE DOCS EXPORT MODAL
+       ========================================================================= */
+    function formatPupilSummaryCell(pupilObj) {
+      const eText = pupilObj.effort ? `Effort: ${pupilObj.effort}/4` : 'Effort: —';
+      const aText = pupilObj.application ? `App: ${pupilObj.application}/4` : 'App: —';
+      const pText = pupilObj.progress ? `Progress: ${pupilObj.progress}` : 'Progress: —';
+
+      const obsParts = [];
+      if (pupilObj.chips && pupilObj.chips.length > 0) {
+        obsParts.push(pupilObj.chips.join('; '));
+      }
+      if (pupilObj.note && pupilObj.note.trim()) {
+        obsParts.push(pupilObj.note.trim());
+      }
+
+      return `
+        <div class="font-bold text-slate-900 mb-1">${eText} | ${aText} | <span class="underline">${pText}</span></div>
+        <div class="text-slate-700">${obsParts.length > 0 ? obsParts.join(' — ') : '<span class="text-slate-400 italic">No notes recorded yet</span>'}</div>
+      `;
+    }
+
+    function openReportModal() {
+      const tbody = document.getElementById('reportTableBody');
+      tbody.innerHTML = '';
+
+      CURRICULUM.forEach(lesson => {
+        const rec = getLessonRecord(lesson.id);
+        const coveredSteps = rec.stepsDone.map(idx => lesson.steps[idx]).filter(Boolean);
+
+        const row = document.createElement('tr');
+        row.className = lesson.week % 2 === 0 ? 'bg-slate-50/70' : 'bg-white';
+
+        row.innerHTML = `
+          <td class="border border-slate-300 p-2 align-top">
+            <div class="font-extrabold text-[#14532d]">W${lesson.week} L${lesson.lesson}</div>
+            <div class="text-[11px] font-bold text-slate-600 mt-0.5">${rec.status}</div>
+            ${rec.date ? `<div class="text-[10px] text-slate-500">${rec.date}</div>` : ''}
+          </td>
+          <td class="border border-slate-300 p-2 align-top">
+            <div class="font-extrabold text-slate-900">${lesson.title}</div>
+            <div class="text-[11px] text-slate-600 mt-1">
+              ${coveredSteps.length > 0
+                ? `<strong>Covered:</strong> ${coveredSteps.join(' • ')}`
+                : `<span class="text-slate-400 italic">Planned: ${lesson.goal}</span>`}
+            </div>
+          </td>
+          <td class="border border-slate-300 p-2 align-top">${formatPupilSummaryCell(rec.brooke)}</td>
+          <td class="border border-slate-300 p-2 align-top">${formatPupilSummaryCell(rec.amelia)}</td>
+        `;
+        tbody.appendChild(row);
+      });
+
+      document.getElementById('reportModal').classList.remove('hidden');
+    }
+
+    function closeReportModal() {
+      document.getElementById('reportModal').classList.add('hidden');
+    }
+
+    function copyReportTableForGoogleDocs() {
+      const tableEl = document.getElementById('printableReportTable');
+      const range = document.createRange();
+      range.selectNode(tableEl);
+      const selection = window.getSelection();
+      selection.removeAllRanges();
+      selection.addRange(range);
+
+      try {
+        document.execCommand('copy');
+        selection.removeAllRanges();
+        const toast = document.getElementById('reportCopyToast');
+        toast.classList.remove('hidden');
+        playChime(760, 0.12);
+        setTimeout(() => toast.classList.add('hidden'), 4000);
+      } catch (e) {
+        selection.removeAllRanges();
+      }
+    }
+
+    /* =========================================================================
+       9. BACKUP / TRANSFER JSON MODAL & TWO-STEP SAFE RESET
+       ========================================================================= */
+    let resetArmed = false;
+
+    function downloadBackupFile() {
+      try {
+        const dataStr = JSON.stringify(appState, null, 2);
+        const blob = new Blob([dataStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        const dateStamp = new Date().toISOString().slice(0, 10);
+        a.href = url;
+        a.download = `StKierans_P4_Numeracy_Backup_${dateStamp}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        playChime(740, 0.1);
+      } catch (e) {
+        openBackupModal();
+      }
+    }
+
+    function uploadBackupFile(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        document.getElementById('backupJsonTextarea').value = e.target.result;
+        importBackupJson();
+      };
+      reader.readAsText(file);
+    }
+
+    function openBackupModal() {
+      resetArmed = false;
+      document.getElementById('resetAllConfirmBtn').textContent = '🗑️ Reset All 20 Lessons';
+      document.getElementById('backupStatusMsg').classList.add('hidden');
+      document.getElementById('backupJsonTextarea').value = JSON.stringify(appState);
+      document.getElementById('backupModal').classList.remove('hidden');
+    }
+
+    function closeBackupModal() {
+      document.getElementById('backupModal').classList.add('hidden');
+    }
+
+    function copyBackupJson() {
+      const area = document.getElementById('backupJsonTextarea');
+      area.select();
+      try {
+        document.execCommand('copy');
+        showBackupMsg('✅ Save code copied! Paste it into an email or Google Doc to transfer to another device.');
+      } catch (e) {}
+    }
+
+    function importBackupJson() {
+      try {
+        const raw = document.getElementById('backupJsonTextarea').value.trim();
+        const parsed = JSON.parse(raw);
+        if (parsed && parsed.lessons) {
+          appState = parsed;
+          saveState();
+          selectLesson(appState.activeLessonIndex || 0);
+          showBackupMsg('✅ Backup loaded successfully! All 20 lessons updated.');
+          playChime(740, 0.12);
+        } else {
+          showBackupMsg('⚠️ Invalid save code format. Please paste a valid backup code.');
+        }
+      } catch (e) {
+        showBackupMsg('⚠️ Could not read that code. Check that the entire text was pasted.');
+      }
+    }
+
+    function handleResetAllData() {
+      const btn = document.getElementById('resetAllConfirmBtn');
+      if (!resetArmed) {
+        resetArmed = true;
+        btn.textContent = '⚠️ Tap Again to Confirm Wipe';
+        btn.className = 'px-3.5 py-2 rounded-xl bg-rose-600 text-white font-extrabold text-xs shadow';
+        return;
+      }
+
+      appState = { activeLessonIndex: 0, lessons: {} };
+      saveState();
+      selectLesson(0);
+      resetArmed = false;
+      btn.textContent = '🗑️ Reset All 20 Lessons';
+      btn.className = 'px-3.5 py-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-extrabold text-xs';
+      document.getElementById('backupJsonTextarea').value = JSON.stringify(appState);
+      showBackupMsg('✅ All 20 lessons reset to fresh.');
+    }
+
+    function showBackupMsg(text) {
+      const msg = document.getElementById('backupStatusMsg');
+      msg.textContent = text;
+      msg.classList.remove('hidden');
+    }
+
+    /* =========================================================================
+       10. FULL-SCREEN TRANSPARENT WHITEBOARD ANNOTATION OVERLAY
+       ========================================================================= */
+    let annotateCanvas, annotateCtx;
+    let annotateActive = false;
+    let annotatePassThrough = false;
+    let annotateDrawing = false;
+    let annotateStrokes = [];
+    let currentStroke = null;
+    let annotateBackdrop = 'clear';
+    let annotateConfig = {
+      mode: 'pen',
+      color: '#14532d',
+      size: 5
+    };
+
+    function setAnnotateBackdrop(mode) {
+      annotateBackdrop = mode;
+      if (!annotateCanvas) return;
+
+      annotateCanvas.style.backgroundColor =
+        mode === 'whiteboard' ? 'rgba(255, 255, 255, 1)' :
+        mode === 'frosted' ? 'rgba(255, 255, 255, 0.35)' :
+        'transparent';
+
+      ['clear', 'frosted', 'whiteboard'].forEach(m => {
+        const btn = document.getElementById(`backdropBtn-${m}`);
+        if (!btn) return;
+        btn.className = m === mode
+          ? 'px-2 py-1 rounded-lg bg-emerald-500 text-slate-950 font-extrabold text-xs transition'
+          : 'px-2 py-1 rounded-lg bg-slate-700 hover:bg-slate-600 text-white font-bold text-xs transition';
+      });
+      playChime(600, 0.05);
+    }
+
+    function initScreenAnnotator() {
+      annotateCanvas = document.getElementById('screenAnnotateCanvas');
+      annotateCtx = annotateCanvas.getContext('2d');
+
+      function resizeOverlay() {
+        if (!annotateCanvas) return;
+        annotateCanvas.width = window.innerWidth;
+        annotateCanvas.height = window.innerHeight;
+        redrawAnnotateStrokes();
+      }
+
+      window.addEventListener('resize', resizeOverlay);
+      resizeOverlay();
+
+      const getCoords = (e) => {
+        if (e.touches && e.touches.length > 0) {
+          return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+        }
+        return { x: e.clientX, y: e.clientY };
+      };
+
+      const startStroke = (e) => {
+        if (!annotateActive || annotatePassThrough) return;
+        if (e.cancelable) e.preventDefault();
+        annotateDrawing = true;
+        const pt = getCoords(e);
+        currentStroke = {
+          mode: annotateConfig.mode,
+          color: annotateConfig.color,
+          size: annotateConfig.size,
+          points: [pt]
+        };
+      };
+
+      const moveStroke = (e) => {
+        if (!annotateDrawing || !currentStroke) return;
+        if (e.cancelable) e.preventDefault();
+        const pt = getCoords(e);
+        currentStroke.points.push(pt);
+        redrawAnnotateStrokes();
+        drawSingleStroke(currentStroke);
+      };
+
+      const endStroke = () => {
+        if (!annotateDrawing) return;
+        annotateDrawing = false;
+        if (currentStroke && currentStroke.points.length > 0) {
+          annotateStrokes.push(currentStroke);
+        }
+        currentStroke = null;
+        redrawAnnotateStrokes();
+      };
+
+      annotateCanvas.addEventListener('mousedown', startStroke);
+      annotateCanvas.addEventListener('mousemove', moveStroke);
+      window.addEventListener('mouseup', endStroke);
+
+      annotateCanvas.addEventListener('touchstart', startStroke, { passive: false });
+      annotateCanvas.addEventListener('touchmove', moveStroke, { passive: false });
+      window.addEventListener('touchend', endStroke);
+
+      // Make floating toolbar draggable
+      initDraggableToolbar();
+    }
+
+    function drawSingleStroke(stroke) {
+      if (!stroke || stroke.points.length === 0) return;
+      annotateCtx.save();
+      annotateCtx.lineCap = 'round';
+      annotateCtx.lineJoin = 'round';
+      annotateCtx.lineWidth = stroke.size;
+
+      if (stroke.mode === 'eraser') {
+        annotateCtx.globalCompositeOperation = 'destination-out';
+        annotateCtx.strokeStyle = 'rgba(0,0,0,1)';
+      } else {
+        annotateCtx.globalCompositeOperation = 'source-over';
+        annotateCtx.strokeStyle = stroke.color;
+      }
+
+      annotateCtx.beginPath();
+      annotateCtx.moveTo(stroke.points[0].x, stroke.points[0].y);
+      if (stroke.points.length === 1) {
+        annotateCtx.lineTo(stroke.points[0].x + 0.1, stroke.points[0].y + 0.1);
+      } else {
+        for (let i = 1; i < stroke.points.length; i++) {
+          annotateCtx.lineTo(stroke.points[i].x, stroke.points[i].y);
+        }
+      }
+      annotateCtx.stroke();
+      annotateCtx.restore();
+    }
+
+    function redrawAnnotateStrokes() {
+      if (!annotateCtx || !annotateCanvas) return;
+      annotateCtx.clearRect(0, 0, annotateCanvas.width, annotateCanvas.height);
+      for (const s of annotateStrokes) {
+        drawSingleStroke(s);
+      }
+    }
+
+    function toggleScreenAnnotator() {
+      if (annotateActive) {
+        closeScreenAnnotator();
+      } else {
+        annotateActive = true;
+        annotatePassThrough = false;
+        annotateCanvas.width = window.innerWidth;
+        annotateCanvas.height = window.innerHeight;
+        annotateCanvas.classList.remove('hidden', 'pointer-events-none');
+        document.getElementById('annotateToolbar').classList.remove('hidden');
+        setAnnotateBackdrop(annotateBackdrop);
+
+        const headerBtn = document.getElementById('annotateHeaderBtn');
+        headerBtn.className = 'px-3.5 py-2 rounded-xl bg-rose-500 hover:bg-rose-400 text-white font-extrabold text-xs sm:text-sm shadow transition flex items-center gap-1.5';
+        headerBtn.innerHTML = '<span>✏️</span> <span>Overlay Active</span>';
+
+        const stageOverlayBtn = document.getElementById('stageOverlayBtn');
+        if (stageOverlayBtn) {
+          stageOverlayBtn.className = 'flex-1 min-w-[140px] py-2.5 px-3 rounded-xl font-extrabold text-xs sm:text-sm bg-rose-500 hover:bg-rose-400 text-white border-2 border-rose-600 shadow-sm transition flex items-center justify-center gap-1.5';
+          stageOverlayBtn.innerHTML = '<span>✏️</span> <span>Overlay Active</span>';
+        }
+
+        updatePassThroughButtonUI();
+        redrawAnnotateStrokes();
+        playChime(680, 0.08);
+      }
+    }
+
+    function closeScreenAnnotator() {
+      annotateActive = false;
+      annotatePassThrough = false;
+      annotateCanvas.classList.add('hidden');
+      annotateCanvas.style.backgroundColor = 'transparent';
+      document.getElementById('annotateToolbar').classList.add('hidden');
+
+      const headerBtn = document.getElementById('annotateHeaderBtn');
+      headerBtn.className = 'px-3.5 py-2 rounded-xl bg-emerald-400 hover:bg-emerald-300 text-slate-950 font-extrabold text-xs sm:text-sm shadow transition flex items-center gap-1.5';
+      headerBtn.innerHTML = '<span>✏️</span> <span>Draw Over Screen</span>';
+
+      const stageOverlayBtn = document.getElementById('stageOverlayBtn');
+      if (stageOverlayBtn) {
+        stageOverlayBtn.className = 'flex-1 min-w-[140px] py-2.5 px-3 rounded-xl font-extrabold text-xs sm:text-sm bg-amber-400 hover:bg-amber-300 text-slate-950 border-2 border-amber-500 shadow-sm transition flex items-center justify-center gap-1.5';
+        stageOverlayBtn.innerHTML = '<span>✏️</span> <span>Draw Over Screen</span>';
+      }
+    }
+
+    function closeScreenAnnotator() {
+      annotateActive = false;
+      annotatePassThrough = false;
+      annotateCanvas.classList.add('hidden');
+      annotateCanvas.style.backgroundColor = 'transparent';
+      document.getElementById('annotateToolbar').classList.add('hidden');
+
+      const headerBtn = document.getElementById('annotateHeaderBtn');
+      headerBtn.className = 'px-3.5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-xs sm:text-sm shadow transition flex items-center gap-1.5';
+      headerBtn.innerHTML = '<span>🖊️</span> <span>Annotate Screen</span>';
+    }
+
+    function setAnnotateTool(mode, color, size) {
+      annotateConfig = { mode, color, size };
+      // If user was in Freeze/Pass-Through mode, automatically switch back to drawing
+      if (annotatePassThrough) {
+        annotatePassThrough = false;
+        annotateCanvas.classList.remove('pointer-events-none');
+        updatePassThroughButtonUI();
+      }
+      playChime(620, 0.05);
+    }
+
+    function undoAnnotateStroke() {
+      if (annotateStrokes.length > 0) {
+        annotateStrokes.pop();
+        redrawAnnotateStrokes();
+        playChime(480, 0.06);
+      }
+    }
+
+    function clearAnnotateCanvas() {
+      annotateStrokes = [];
+      redrawAnnotateStrokes();
+      playChime(400, 0.08);
+    }
+
+    function toggleAnnotatePassThrough() {
+      annotatePassThrough = !annotatePassThrough;
+      if (annotatePassThrough) {
+        annotateCanvas.classList.add('pointer-events-none');
+      } else {
+        annotateCanvas.classList.remove('pointer-events-none');
+      }
+      updatePassThroughButtonUI();
+      playChime(annotatePassThrough ? 540 : 660, 0.07);
+    }
+
+    function updatePassThroughButtonUI() {
+      const btn = document.getElementById('passThroughBtn');
+      if (annotatePassThrough) {
+        btn.className = 'px-3 py-1.5 rounded-xl bg-emerald-400 hover:bg-emerald-300 text-slate-950 font-extrabold text-xs shadow transition';
+        btn.textContent = '🖊️ Resume Drawing';
+      } else {
+        btn.className = 'px-3 py-1.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-extrabold text-xs shadow transition';
+        btn.textContent = '🔓 Interact / Click Underneath';
+      }
+    }
+
+    function initDraggableToolbar() {
+      const toolbar = document.getElementById('annotateToolbar');
+      const handle = document.getElementById('annotateDragHandle');
+      let dragging = false, offsetX = 0, offsetY = 0;
+
+      const startDrag = (clientX, clientY) => {
+        dragging = true;
+        const rect = toolbar.getBoundingClientRect();
+        toolbar.style.left = rect.left + 'px';
+        toolbar.style.top = rect.top + 'px';
+        toolbar.style.bottom = 'auto';
+        toolbar.style.transform = 'none';
+        offsetX = clientX - rect.left;
+        offsetY = clientY - rect.top;
+      };
+
+      const onDrag = (clientX, clientY) => {
+        if (!dragging) return;
+        const maxX = window.innerWidth - toolbar.offsetWidth;
+        const maxY = window.innerHeight - toolbar.offsetHeight;
+        toolbar.style.left = Math.max(4, Math.min(maxX - 4, clientX - offsetX)) + 'px';
+        toolbar.style.top = Math.max(4, Math.min(maxY - 4, clientY - offsetY)) + 'px';
+      };
+
+      handle.addEventListener('mousedown', (e) => startDrag(e.clientX, e.clientY));
+      window.addEventListener('mousemove', (e) => onDrag(e.clientX, e.clientY));
+      window.addEventListener('mouseup', () => { dragging = false; });
+
+      handle.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        startDrag(e.touches[0].clientX, e.touches[0].clientY);
+      }, { passive: false });
+      window.addEventListener('touchmove', (e) => {
+        if (dragging) onDrag(e.touches[0].clientX, e.touches[0].clientY);
+      }, { passive: false });
+      window.addEventListener('touchend', () => { dragging = false; });
+    }
+
+    /* =========================================================================
+       11. INITIALISE ON WINDOW LOAD
+       ========================================================================= */
+    window.onload = function () {
+      loadState();
+      initPadCanvas();
+      initScreenAnnotator();
+      updateOverallProgressBadge();
+      selectLesson(appState.activeLessonIndex);
+    };
+  </script>
+</body>
+</html>
