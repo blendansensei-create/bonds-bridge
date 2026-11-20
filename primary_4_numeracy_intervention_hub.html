@@ -1,0 +1,1591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Primary 4 Numeracy Intervention Hub — Brooke &amp; Amelia</title>
+  <!-- Tailwind CSS for clean, responsive layout and touch-friendly controls -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Font: Inter & Fredoka for friendly, crystal-clear primary numerals -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --forest-dark: #14532d;
+      --forest-mid: #166534;
+      --forest-light: #dcfce7;
+      --accent-amber: #d97706;
+      --accent-coral: #e11d48;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: #f8fafc;
+      color: #0f172a;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .num-font {
+      font-family: 'Fredoka', 'Inter', sans-serif;
+    }
+
+    /* Smooth animations for counters and frog hops */
+    @keyframes popIn {
+      0% { transform: scale(0.3); opacity: 0; }
+      75% { transform: scale(1.12); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes sweepOut {
+      0% { transform: scale(1) translateY(0); opacity: 1; }
+      100% { transform: scale(0.3) translateY(24px); opacity: 0; }
+    }
+
+    @keyframes frogHop {
+      0% { transform: translateY(0) scale(1); }
+      45% { transform: translateY(-22px) scale(1.15); }
+      100% { transform: translateY(0) scale(1); }
+    }
+
+    @keyframes pulseBanner {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.03); }
+    }
+
+    .counter-pop {
+      animation: popIn 0.28s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    .frog-hop {
+      animation: frogHop 0.38s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .reverse-pulse {
+      animation: pulseBanner 0.7s ease-in-out 2;
+    }
+
+    /* 10-Frame grid styling */
+    .ten-frame-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      grid-template-rows: repeat(2, minmax(0, 1fr));
+      gap: 0.5rem;
+      background: #ffffff;
+      border: 4px solid #14532d;
+      border-radius: 1rem;
+      padding: 0.65rem;
+      box-shadow: 0 6px 16px -4px rgba(20, 83, 45, 0.14);
+    }
+
+    .ten-frame-cell {
+      aspect-ratio: 1 / 1;
+      border: 2.5px solid #cbd5e1;
+      border-radius: 0.65rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #f8fafc;
+      position: relative;
+      transition: background-color 0.2s ease, border-color 0.2s ease;
+    }
+
+    .ten-frame-cell.top-row {
+      border-bottom-color: #94a3b8;
+    }
+
+    /* Two-colour counters: Top 5 Red/Coral, Bottom 5 Amber/Gold for instant 5-and-a-bit subitising */
+    .counter-disc {
+      width: 78%;
+      height: 78%;
+      border-radius: 9999px;
+      box-shadow: inset 0 -4px 0 rgba(0,0,0,0.22), 0 3px 6px rgba(0,0,0,0.18);
+      transition: transform 0.15s ease;
+    }
+
+    .counter-red {
+      background: radial-gradient(circle at 32% 30%, #fb7185, #e11d48);
+      border: 2px solid #9f1239;
+    }
+
+    .counter-amber {
+      background: radial-gradient(circle at 32% 30%, #fcd34d, #d97706);
+      border: 2px solid #92400e;
+    }
+
+    /* Curtain Shutter Overlay */
+    .shutter-shield {
+      background: repeating-linear-gradient(
+        45deg,
+        #14532d,
+        #14532d 18px,
+        #166534 18px,
+        #166534 36px
+      );
+      transition: opacity 0.22s ease, transform 0.22s ease;
+    }
+
+    /* Custom Scrollbar for horizontal track on narrow screens */
+    .track-scroll::-webkit-scrollbar {
+      height: 8px;
+    }
+    .track-scroll::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <!-- TOP TEACHER HEADER & NAVIGATION -->
+  <header class="bg-[#14532d] text-white shadow-lg sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 py-3 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+      <!-- Brand / Title -->
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-11 h-11 rounded-xl bg-white/15 border border-white/25 flex items-center justify-center text-2xl font-bold num-font shadow-inner">
+            10+
+          </div>
+          <div>
+            <h1 class="text-lg sm:text-xl font-extrabold tracking-tight leading-tight">
+              P4 Numeracy Intervention Hub
+            </h1>
+            <p class="text-xs text-emerald-200 font-medium">
+              Small Group Focus: <span class="text-white font-semibold underline decoration-emerald-400">Brooke</span> &amp; <span class="text-white font-semibold underline decoration-emerald-400">Amelia</span> • Numbers to 20
+            </p>
+          </div>
+        </div>
+
+        <!-- Quick Sound Toggle for Whiteboard Feedback -->
+        <button id="soundToggleBtn" onclick="toggleSound()" class="lg:hidden px-3 py-2 rounded-xl bg-white/15 hover:bg-white/25 text-xs font-semibold flex items-center gap-1.5 transition">
+          <span id="soundIconMobile">🔊</span> Sound On
+        </button>
+      </div>
+
+      <!-- 5 Interactive Module Tabs -->
+      <nav class="flex flex-wrap items-center gap-1.5 sm:gap-2" aria-label="Intervention Modules">
+        <button onclick="switchTab('flash')" id="tab-flash" class="nav-tab px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition flex items-center gap-1.5 bg-white text-[#14532d] shadow">
+          <span>👁️</span> 1. Flash &amp; Hide
+        </button>
+        <button onclick="switchTab('bridge')" id="tab-bridge" class="nav-tab px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition flex items-center gap-1.5 bg-[#166534] text-emerald-100 hover:bg-white/20">
+          <span>🐸</span> 2. Frame + Track Bridge
+        </button>
+        <button onclick="switchTab('pendulum')" id="tab-pendulum" class="nav-tab px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition flex items-center gap-1.5 bg-[#166534] text-emerald-100 hover:bg-white/20">
+          <span>↔️</span> 3. Pendulum Track
+        </button>
+        <button onclick="switchTab('mistakes')" id="tab-mistakes" class="nav-tab px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition flex items-center gap-1.5 bg-[#166534] text-emerald-100 hover:bg-white/20">
+          <span>🕵️</span> 4. Spot the Mistake
+        </button>
+        <button onclick="switchTab('scratchpad')" id="tab-scratchpad" class="nav-tab px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition flex items-center gap-1.5 bg-[#166534] text-emerald-100 hover:bg-white/20">
+          <span>✏️</span> 5. Board &amp; Notes
+        </button>
+
+        <button id="soundToggleBtnDesktop" onclick="toggleSound()" class="hidden lg:flex ml-1 px-3 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-semibold items-center gap-1.5 transition" title="Toggle gentle audio chimes">
+          <span id="soundIconDesktop">🔊</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- MAIN WORKSPACE -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 py-4 sm:py-6">
+
+    <!-- ===================================================================== -->
+    <!-- MODULE 1: FLASH & HIDE 10-FRAMES (SUBITISING & BENCHMARKS 5 & 10)     -->
+    <!-- ===================================================================== -->
+    <section id="module-flash" class="module-view space-y-5">
+      <!-- Top Control Bar -->
+      <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+        <div>
+          <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-[#14532d] mb-1">Module 1 • Stop Counting in Ones</span>
+          <h2 class="text-xl font-extrabold text-slate-900">Flash &amp; Hide 10-Frames</h2>
+          <p class="text-sm text-slate-600">Flash for 2 seconds, then cover so Brooke sees <strong>5-and-a-bit</strong> or <strong>10-and-a-bit</strong> instead of counting from 1.</p>
+        </div>
+
+        <!-- Target Bridge Number Presets -->
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="text-xs font-bold uppercase tracking-wider text-slate-500 mr-1">Target Numbers:</span>
+          <button onclick="setFlashNumber(8)" class="flash-preset px-4 py-2.5 rounded-xl font-extrabold num-font text-lg bg-slate-100 hover:bg-emerald-100 text-slate-800 border-2 border-slate-300 transition">8</button>
+          <button onclick="setFlashNumber(9)" class="flash-preset px-4 py-2.5 rounded-xl font-extrabold num-font text-lg bg-slate-100 hover:bg-emerald-100 text-slate-800 border-2 border-slate-300 transition">9</button>
+          <button onclick="setFlashNumber(10)" class="flash-preset px-4 py-2.5 rounded-xl font-extrabold num-font text-lg bg-slate-100 hover:bg-emerald-100 text-slate-800 border-2 border-slate-300 transition">10</button>
+          <button onclick="setFlashNumber(11)" class="flash-preset px-4 py-2.5 rounded-xl font-extrabold num-font text-lg bg-amber-50 hover:bg-amber-100 text-amber-900 border-2 border-amber-300 transition">11</button>
+          <button onclick="setFlashNumber(12)" class="flash-preset px-4 py-2.5 rounded-xl font-extrabold num-font text-lg bg-amber-50 hover:bg-amber-100 text-amber-900 border-2 border-amber-300 transition">12</button>
+          <button onclick="setFlashNumber(13)" class="flash-preset px-4 py-2.5 rounded-xl font-extrabold num-font text-lg bg-amber-50 hover:bg-amber-100 text-amber-900 border-2 border-amber-300 transition">13</button>
+          <button onclick="randomFlashNumber()" class="px-4 py-2.5 rounded-xl font-bold text-sm bg-[#14532d] hover:bg-[#166534] text-white shadow transition">
+            🎲 Random (6–13)
+          </button>
+        </div>
+      </div>
+
+      <!-- Main Stage: 10-Frames + Curtain Shield -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
+        <!-- Left 8 Cols: Interactive Ten-Frame Arena -->
+        <div class="lg:col-span-8 bg-white rounded-2xl border-2 border-slate-200 p-5 sm:p-7 shadow-sm flex flex-col justify-between relative min-h-[370px]">
+          
+          <!-- Top Frame Toolbar -->
+          <div class="flex flex-wrap items-center justify-between gap-2 pb-4 border-b border-slate-100">
+            <div class="flex items-center gap-2">
+              <button onclick="adjustFlashNumber(-1)" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 font-bold text-slate-700 text-sm transition">−1 Counter</button>
+              <button onclick="adjustFlashNumber(1)" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 font-bold text-slate-700 text-sm transition">+1 Counter</button>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <button id="layoutModeBtn" onclick="toggleFlashLayout()" class="px-3.5 py-2 rounded-xl bg-emerald-50 border border-emerald-200 text-[#14532d] font-bold text-xs sm:text-sm hover:bg-emerald-100 transition">
+                Layout: Structured (5-First)
+              </button>
+            </div>
+          </div>
+
+          <!-- Frame Stage with Shutter Overlay -->
+          <div class="relative my-6 flex-1 flex items-center justify-center">
+            <div id="flashFramesContainer" class="w-full max-w-2xl grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <!-- Top / First 10-Frame -->
+              <div>
+                <div class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5 text-center">First Ten-Frame</div>
+                <div id="flashFrame1" class="ten-frame-grid"></div>
+              </div>
+              <!-- Second 10-Frame (for 11-20) -->
+              <div id="flashFrame2Wrapper">
+                <div class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5 text-center">Second Ten-Frame</div>
+                <div id="flashFrame2" class="ten-frame-grid"></div>
+              </div>
+            </div>
+
+            <!-- OPAQUE SHUTTER SHIELD (Covers frames so Brooke cannot count in ones) -->
+            <div id="flashShutter" class="hidden shutter-shield absolute inset-0 rounded-2xl flex flex-col items-center justify-center text-white p-6 text-center shadow-xl z-10">
+              <div class="text-4xl mb-2">🙈</div>
+              <h3 class="text-2xl sm:text-3xl font-extrabold tracking-tight">Frames Covered!</h3>
+              <p class="text-emerald-100 text-base sm:text-lg mt-1 max-w-md font-medium">
+                "How many did your eyes see? How did you see them without counting?"
+              </p>
+              <div class="mt-5 flex flex-wrap justify-center gap-3">
+                <button onclick="peekFlashFrames()" class="px-5 py-3 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-extrabold text-sm sm:text-base shadow-lg transition">
+                  👀 Quick 1s Peek
+                </button>
+                <button onclick="uncoverFlashFrames()" class="px-5 py-3 rounded-xl bg-white hover:bg-emerald-50 text-[#14532d] font-extrabold text-sm sm:text-base shadow-lg transition">
+                  🔓 Uncover &amp; Check
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom Flash Action Controls -->
+          <div class="pt-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold text-slate-500 uppercase">Flash Timer:</span>
+              <select id="flashDurationSelect" class="px-3 py-2 rounded-xl border border-slate-300 bg-slate-50 font-bold text-sm text-slate-800">
+                <option value="1500">1.5 Seconds</option>
+                <option value="2000" selected>2.0 Seconds</option>
+                <option value="3000">3.0 Seconds</option>
+              </select>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2.5">
+              <button onclick="triggerFlashAndHide()" class="px-5 py-3 rounded-xl bg-[#14532d] hover:bg-[#166534] text-white font-extrabold text-sm sm:text-base shadow-md flex items-center gap-2 transition">
+                <span>⚡</span> Flash &amp; Cover
+              </button>
+              <button id="manualCoverBtn" onclick="toggleManualCover()" class="px-4 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-sm transition">
+                🙈 Cover Now
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right 4 Cols: Manual Teacher Reveals (Zero Premature Answer Leaks!) -->
+        <div class="lg:col-span-4 flex flex-col gap-4">
+          <!-- Card 1: Number & Say-Ten Reveal -->
+          <div class="bg-white rounded-2xl border-2 border-slate-200 p-5 shadow-sm">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-xs font-extrabold uppercase tracking-wider text-slate-500">Teacher Reveal 1</span>
+              <span class="text-xs font-semibold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md">Hidden by default</span>
+            </div>
+
+            <div id="flashAnswerBox" class="hidden mb-4 p-4 rounded-xl bg-emerald-50 border-2 border-emerald-300 text-center">
+              <div id="flashBigNumber" class="text-5xl font-extrabold num-font text-[#14532d]">13</div>
+              <div id="flashSayTenText" class="text-lg font-extrabold text-emerald-800 mt-1">Say-Ten: "10 and 3"</div>
+              <div id="flashStructureHint" class="text-xs font-semibold text-emerald-700 mt-1">1 full ten-frame + 3 on the top row</div>
+            </div>
+
+            <button id="toggleFlashAnswerBtn" onclick="toggleFlashAnswer()" class="w-full py-3.5 px-4 rounded-xl bg-emerald-100 hover:bg-emerald-200 text-[#14532d] font-extrabold text-sm sm:text-base transition flex items-center justify-center gap-2">
+              <span>👁️</span> Reveal Number &amp; Say-Ten
+            </button>
+          </div>
+
+          <!-- Card 2: Stem Sentence Prompt -->
+          <div class="bg-white rounded-2xl border-2 border-slate-200 p-5 shadow-sm flex-1 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-extrabold uppercase tracking-wider text-slate-500">Teacher Reveal 2</span>
+                <span class="text-xs font-semibold text-slate-500">Oracy Scaffold</span>
+              </div>
+
+              <div id="flashStemBox" class="hidden p-4 rounded-xl bg-amber-50 border-2 border-amber-200 text-slate-900 space-y-2">
+                <p class="text-base sm:text-lg font-bold leading-snug">
+                  “I didn’t count in ones — I saw <span class="underline decoration-amber-500 decoration-2 px-1">___</span> and <span class="underline decoration-amber-500 decoration-2 px-1">___</span>, which makes <span class="underline decoration-amber-500 decoration-2 px-1">___</span>.”
+                </p>
+                <p class="text-xs text-amber-800 font-medium">
+                  Alternative for 9: “I saw a full 10 with 1 empty box, so it’s 9.”
+                </p>
+              </div>
+            </div>
+
+            <button id="toggleFlashStemBtn" onclick="toggleFlashStem()" class="mt-3 w-full py-3.5 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-extrabold text-sm sm:text-base transition flex items-center justify-center gap-2">
+              <span>💬</span> Show Stem Sentence
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- MODULE 2: 10-FRAME + NUMBER TRACK BRIDGE (ADD/SUBTRACT WITHOUT L/R)   -->
+    <!-- ===================================================================== -->
+    <section id="module-bridge" class="module-view hidden space-y-5">
+      <!-- Top Control Bar -->
+      <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+        <div>
+          <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-[#14532d] mb-1">Module 2 • Concrete Quantity Linked to Track</span>
+          <h2 class="text-xl font-extrabold text-slate-900">10-Frame + Number Track Bridge</h2>
+          <p class="text-sm text-slate-600">No "left/right" confusion: <strong>Add = Put On (Gets Bigger)</strong> • <strong>Subtract = Take Away (Gets Smaller)</strong>.</p>
+        </div>
+
+        <!-- Start Number Selector -->
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="text-xs font-bold uppercase tracking-wider text-slate-500 mr-1">Start On:</span>
+          <button onclick="setBridgeStart(8)" class="px-3.5 py-2 rounded-xl font-extrabold num-font text-base bg-slate-100 hover:bg-emerald-100 border border-slate-300">8</button>
+          <button onclick="setBridgeStart(9)" class="px-3.5 py-2 rounded-xl font-extrabold num-font text-base bg-slate-100 hover:bg-emerald-100 border border-slate-300">9</button>
+          <button onclick="setBridgeStart(10)" class="px-3.5 py-2 rounded-xl font-extrabold num-font text-base bg-slate-100 hover:bg-emerald-100 border border-slate-300">10</button>
+          <button onclick="setBridgeStart(11)" class="px-3.5 py-2 rounded-xl font-extrabold num-font text-base bg-amber-50 hover:bg-amber-100 border border-amber-300">11</button>
+          <button onclick="setBridgeStart(12)" class="px-3.5 py-2 rounded-xl font-extrabold num-font text-base bg-amber-50 hover:bg-amber-100 border border-amber-300">12</button>
+          <button onclick="setBridgeStart(13)" class="px-3.5 py-2 rounded-xl font-extrabold num-font text-base bg-amber-50 hover:bg-amber-100 border border-amber-300">13</button>
+        </div>
+      </div>
+
+      <!-- Synchronized Split-Screen Workbench -->
+      <div class="bg-white rounded-2xl border-2 border-slate-200 p-5 sm:p-6 shadow-sm space-y-6">
+        
+        <!-- Top Half: Synchronized Double 10-Frame + Action Buttons -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-center">
+          <!-- Double 10-Frame -->
+          <div class="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <div class="text-xs font-bold text-slate-400 uppercase mb-1 text-center">First 10-Frame</div>
+              <div id="bridgeFrame1" class="ten-frame-grid"></div>
+            </div>
+            <div>
+              <div class="text-xs font-bold text-slate-400 uppercase mb-1 text-center">Second 10-Frame</div>
+              <div id="bridgeFrame2" class="ten-frame-grid"></div>
+            </div>
+          </div>
+
+          <!-- Action Controls & Direction-Free Meaning Banner -->
+          <div class="lg:col-span-5 flex flex-col gap-3">
+            <!-- Dynamic Action Feedback Banner -->
+            <div id="bridgeStatusBanner" class="p-4 rounded-2xl bg-slate-50 border-2 border-slate-200 text-center transition-all">
+              <div class="text-xs font-extrabold uppercase tracking-wider text-slate-500">Current Position</div>
+              <div id="bridgeStatusMain" class="text-2xl font-extrabold text-slate-900 mt-0.5">Standing on 9</div>
+              <div id="bridgeStatusSub" class="text-sm font-semibold text-slate-600 mt-1">Choose Put On (+) or Take Away (−)</div>
+            </div>
+
+            <!-- Big Touch Buttons for +1, +2, -1, -2 -->
+            <div class="grid grid-cols-2 gap-2.5">
+              <button onclick="stepBridge(1)" class="py-3.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-extrabold text-base shadow transition">
+                ➕ Put On 1 (+1)<br><span class="text-xs font-medium text-emerald-100">Gets Bigger</span>
+              </button>
+              <button onclick="stepBridge(2)" class="py-3.5 px-4 rounded-xl bg-[#14532d] hover:bg-[#166534] active:scale-95 text-white font-extrabold text-base shadow transition">
+                ➕ Put On 2 (+2)<br><span class="text-xs font-medium text-emerald-100">Gets Bigger</span>
+              </button>
+              <button onclick="stepBridge(-1)" class="py-3.5 px-4 rounded-xl bg-rose-600 hover:bg-rose-700 active:scale-95 text-white font-extrabold text-base shadow transition">
+                ➖ Take Away 1 (−1)<br><span class="text-xs font-medium text-rose-100">Gets Smaller</span>
+              </button>
+              <button onclick="stepBridge(-2)" class="py-3.5 px-4 rounded-xl bg-rose-800 hover:bg-rose-900 active:scale-95 text-white font-extrabold text-base shadow transition">
+                ➖ Take Away 2 (−2)<br><span class="text-xs font-medium text-rose-100">Gets Smaller</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Anti-Start-Box-Counting Jump Log -->
+        <div class="bg-amber-50 border-2 border-amber-200 rounded-2xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div class="flex items-center gap-2.5">
+            <span class="text-2xl">🐸</span>
+            <div>
+              <div class="text-xs font-extrabold uppercase tracking-wider text-amber-800">Anti-Start-Box Jump Counter (Count the Hops, NOT the Start Square!)</div>
+              <div id="bridgeJumpNarration" class="text-base sm:text-lg font-extrabold text-slate-900">
+                Ready on square 9. Say "9..." before hopping!
+              </div>
+            </div>
+          </div>
+
+          <!-- Manual Equation Reveal -->
+          <div class="flex items-center gap-2 shrink-0">
+            <div id="bridgeEquationBox" class="hidden px-4 py-2 rounded-xl bg-white border-2 border-[#14532d] font-extrabold num-font text-xl text-[#14532d]">
+              9 + 2 = 11
+            </div>
+            <button id="toggleBridgeEqBtn" onclick="toggleBridgeEquation()" class="px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-extrabold text-sm shadow transition">
+              👁️ Reveal Equation
+            </button>
+          </div>
+        </div>
+
+        <!-- Bottom Half: Horizontal 1–20 Board-Game Number Track (Boxes, NOT tick lines) -->
+        <div>
+          <div class="flex items-center justify-between text-xs font-extrabold uppercase tracking-wider mb-2 px-1">
+            <span class="text-rose-700">⬅️ Smaller Numbers (Take Away / Subtract)</span>
+            <span class="text-slate-500">1–20 Stepping-Stone Number Track</span>
+            <span class="text-emerald-700">Bigger Numbers (Put On / Add) ➡️</span>
+          </div>
+
+          <div class="track-scroll overflow-x-auto pb-2">
+            <div id="bridgeNumberTrack" class="grid grid-cols-20 min-w-[920px] gap-1.5 pt-8 pb-2 px-1">
+              <!-- Populated by JS: 20 stepping stone boxes -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- MODULE 3: PENDULUM & BACKWARD COUNTING TRACK (8 TO 13 BRIDGE)         -->
+    <!-- ===================================================================== -->
+    <section id="module-pendulum" class="module-view hidden space-y-5">
+      <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+        <div>
+          <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-[#14532d] mb-1">Module 3 • Crossing the 8–13 Bridge</span>
+          <h2 class="text-xl font-extrabold text-slate-900">Pendulum &amp; Backward Counting Track</h2>
+          <p class="text-sm text-slate-600">Chant forwards, hit <strong>REVERSE!</strong> to switch direction backwards across <strong>13, 12, 11, 10, 9, 8</strong>, or hide boxes to test recall.</p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2">
+          <button id="toggleZoneBtn" onclick="toggleDangerZone()" class="px-3.5 py-2.5 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-950 font-bold text-xs sm:text-sm border border-amber-300 transition">
+            🎯 Spotlight 8–13 Bridge: ON
+          </button>
+          <button id="togglePendulumSayTenBtn" onclick="togglePendulumSayTen()" class="px-3.5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs sm:text-sm border border-slate-300 transition">
+            👁️ Reveal Say-Ten Labels (11–19)
+          </button>
+        </div>
+      </div>
+
+      <!-- Direction Banner & Interactive Track -->
+      <div class="bg-white rounded-2xl border-2 border-slate-200 p-5 sm:p-6 shadow-sm space-y-6">
+        <!-- Direction Banner -->
+        <div id="pendulumDirectionBanner" class="p-4 rounded-2xl bg-emerald-50 border-2 border-emerald-300 flex flex-col sm:flex-row items-center justify-between gap-3 transition-all">
+          <div class="flex items-center gap-3">
+            <span id="pendulumDirIcon" class="text-3xl">➡️</span>
+            <div>
+              <div id="pendulumDirTitle" class="text-xl sm:text-2xl font-extrabold text-[#14532d]">
+                Counting FORWARDS (Getting Bigger)
+              </div>
+              <div class="text-xs sm:text-sm font-semibold text-slate-600">
+                Tip: Tap any square to jump there, or click the padlock icon on a square to mask/unmask it!
+              </div>
+            </div>
+          </div>
+
+          <button onclick="reversePendulumDirection()" class="px-6 py-3.5 rounded-xl bg-amber-500 hover:bg-amber-600 active:scale-95 text-white font-extrabold text-base shadow-md transition shrink-0">
+            🔄 REVERSE DIRECTION!
+          </button>
+        </div>
+
+        <!-- 1-20 Track with Masking Controls -->
+        <div class="track-scroll overflow-x-auto pb-2">
+          <div id="pendulumTrack" class="grid grid-cols-20 min-w-[940px] gap-1.5">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- Big Step & Masking Controls -->
+        <div class="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-slate-100">
+          <div class="flex flex-wrap items-center gap-2">
+            <button onclick="maskPreset('tenBridge')" class="px-3.5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs sm:text-sm transition">
+              🙈 Hide 10 &amp; 11
+            </button>
+            <button onclick="maskPreset('teens')" class="px-3.5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs sm:text-sm transition">
+              🙈 Hide 9, 11, 13
+            </button>
+            <button onclick="maskPreset('none')" class="px-3.5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs sm:text-sm transition">
+              🔓 Unmask All
+            </button>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <button onclick="stepPendulum(-1)" class="px-6 py-4 rounded-2xl bg-rose-600 hover:bg-rose-700 active:scale-95 text-white font-extrabold text-lg shadow transition">
+              ⬅️ Step Back (−1)
+            </button>
+            <button onclick="stepPendulum(1)" class="px-6 py-4 rounded-2xl bg-[#14532d] hover:bg-[#166534] active:scale-95 text-white font-extrabold text-lg shadow transition">
+              Step Forward (+1) ➡️
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- MODULE 4: SPOT THE MISTAKE (ERROR ANALYSIS FOR BROOKE & AMELIA)       -->
+    <!-- ===================================================================== -->
+    <section id="module-mistakes" class="module-view hidden space-y-5">
+      <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+        <div>
+          <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-[#14532d] mb-1">Module 4 • Reasoning &amp; Misconception Busting</span>
+          <h2 class="text-xl font-extrabold text-slate-900">Spot the Mistake with Barnaby Bear 🧸</h2>
+          <p class="text-sm text-slate-600">Barnaby makes the exact mistakes Brooke makes. Let Brooke &amp; Amelia play teacher and prove why he's wrong!</p>
+        </div>
+
+        <!-- Scenario Selector Pills -->
+        <div id="mistakeSelectorBar" class="flex flex-wrap gap-2">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Active Error Scenario Card -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+        <!-- Left 7 Cols: Puppet's Attempt & Visual Evidence -->
+        <div class="lg:col-span-7 bg-white rounded-2xl border-2 border-slate-200 p-6 shadow-sm flex flex-col justify-between space-y-5">
+          <div>
+            <div class="flex items-center gap-3 mb-4">
+              <div class="w-14 h-14 rounded-2xl bg-amber-100 border-2 border-amber-300 flex items-center justify-center text-3xl">
+                🧸
+              </div>
+              <div>
+                <span id="mistakeTag" class="text-xs font-extrabold uppercase tracking-wider text-rose-700 bg-rose-50 px-2.5 py-0.5 rounded-full">
+                  Counting Sequence Trap
+                </span>
+                <h3 id="mistakeTitle" class="text-xl font-extrabold text-slate-900 mt-1">
+                  Barnaby Counts Forward from 8
+                </h3>
+              </div>
+            </div>
+
+            <!-- Puppet Speech Bubble -->
+            <div class="p-5 rounded-2xl bg-slate-50 border-2 border-slate-200 relative">
+              <div class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Barnaby says:</div>
+              <p id="mistakeQuote" class="text-xl sm:text-2xl font-extrabold text-slate-900 leading-snug">
+                “8, 9, 11, 12, 13! Look, I counted all the way to 13!”
+              </p>
+            </div>
+
+            <!-- Visual Evidence Display -->
+            <div id="mistakeVisualBox" class="mt-5 p-4 rounded-2xl bg-emerald-50/60 border border-emerald-200">
+              <!-- Dynamic visual rendered by JS -->
+            </div>
+          </div>
+
+          <div class="p-4 rounded-xl bg-amber-50 border border-amber-200">
+            <div class="text-xs font-extrabold uppercase tracking-wider text-amber-800">Ask Brooke &amp; Amelia:</div>
+            <p id="mistakePrompt" class="text-base font-bold text-slate-900 mt-0.5">
+              “Hold on! Did Barnaby miss an important number? How can we prove it using our 10-frame or track?”
+            </p>
+          </div>
+        </div>
+
+        <!-- Right 5 Cols: Manual Teacher Fix & Proof Reveal -->
+        <div class="lg:col-span-5 bg-white rounded-2xl border-2 border-slate-200 p-6 shadow-sm flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-xs font-extrabold uppercase tracking-wider text-slate-500">Teacher Reveal</span>
+              <span class="text-xs font-semibold text-amber-700 bg-amber-50 px-2 py-0.5 rounded">Manual Reveal</span>
+            </div>
+
+            <div id="mistakeFixBox" class="hidden space-y-4">
+              <div class="p-4 rounded-2xl bg-emerald-50 border-2 border-emerald-400">
+                <div class="text-xs font-extrabold uppercase tracking-wider text-emerald-800 mb-1">✅ What Went Wrong:</div>
+                <p id="mistakeDiagnosis" class="text-base font-bold text-slate-900"></p>
+              </div>
+
+              <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200">
+                <div class="text-xs font-extrabold uppercase tracking-wider text-slate-600 mb-1">🛠️ How to Fix It Together:</div>
+                <p id="mistakeFixSteps" class="text-sm font-semibold text-slate-800 leading-relaxed"></p>
+              </div>
+            </div>
+
+            <div id="mistakeHiddenPlaceholder" class="py-12 text-center border-2 border-dashed border-slate-200 rounded-2xl px-4">
+              <div class="text-3xl mb-2">🤔</div>
+              <p class="text-sm font-bold text-slate-600">
+                Let Brooke and Amelia explain the mistake first before revealing the proof!
+              </p>
+            </div>
+          </div>
+
+          <button id="toggleMistakeFixBtn" onclick="toggleMistakeFix()" class="mt-5 w-full py-4 px-5 rounded-xl bg-[#14532d] hover:bg-[#166534] text-white font-extrabold text-base shadow-md transition">
+            🔓 Reveal Fix &amp; Proof
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- MODULE 5: TEACHER SCRATCHPAD & LIVE GROUP CHECK (BROOKE & AMELIA)     -->
+    <!-- ===================================================================== -->
+    <section id="module-scratchpad" class="module-view hidden space-y-5">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+        
+        <!-- Left 7 Cols: Interactive Whiteboard Drawing Canvas -->
+        <div class="lg:col-span-7 bg-white rounded-2xl border-2 border-slate-200 p-4 sm:p-5 shadow-sm flex flex-col">
+          <div class="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-100">
+            <div>
+              <h3 class="text-lg font-extrabold text-slate-900">Quick Modelling Whiteboard</h3>
+              <p class="text-xs text-slate-500">Draw quick 10-frames, part-whole circles, or hop arcs with your finger/pen.</p>
+            </div>
+
+            <div class="flex items-center gap-1.5">
+              <button onclick="setPenColor('#14532d')" class="w-8 h-8 rounded-full bg-[#14532d] border-2 border-white ring-2 ring-slate-300" title="Forest Green Pen"></button>
+              <button onclick="setPenColor('#e11d48')" class="w-8 h-8 rounded-full bg-rose-600 border-2 border-white ring-2 ring-slate-300" title="Red Pen"></button>
+              <button onclick="setPenColor('#d97706')" class="w-8 h-8 rounded-full bg-amber-500 border-2 border-white ring-2 ring-slate-300" title="Amber Pen"></button>
+              <button onclick="setPenColor('#0f172a')" class="w-8 h-8 rounded-full bg-slate-900 border-2 border-white ring-2 ring-slate-300" title="Black Pen"></button>
+              <button onclick="setPenEraser()" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 ml-1">Eraser</button>
+              <button onclick="clearWhiteboard()" class="px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-xs font-bold text-rose-700">Clear</button>
+            </div>
+          </div>
+
+          <div id="canvasWrapper" class="relative w-full h-[360px] mt-3 rounded-xl border-2 border-dashed border-slate-300 bg-slate-50/50 overflow-hidden touch-none">
+            <canvas id="whiteboardCanvas" class="w-full h-full block cursor-crosshair"></canvas>
+          </div>
+        </div>
+
+        <!-- Right 5 Cols: Live Group Check for Brooke & Amelia -->
+        <div class="lg:col-span-5 bg-white rounded-2xl border-2 border-slate-200 p-5 shadow-sm flex flex-col justify-between space-y-4">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-extrabold uppercase tracking-wider text-[#14532d] bg-emerald-100 px-2.5 py-0.5 rounded-full">Live Session Tracker</span>
+              <span id="sessionDateLabel" class="text-xs font-semibold text-slate-400"></span>
+            </div>
+            <h3 class="text-lg font-extrabold text-slate-900">Quick Observation Toggles</h3>
+            <p class="text-xs text-slate-500 mb-4">Tap skills observed today, then copy straight into your planning tracker.</p>
+
+            <!-- Brooke Checklist -->
+            <div class="p-3.5 rounded-xl bg-amber-50/70 border border-amber-200 mb-3">
+              <div class="font-extrabold text-sm text-amber-950 mb-2">👧 Brooke (Target Diagnostic Focus)</div>
+              <div id="brookeChecks" class="flex flex-wrap gap-1.5"></div>
+            </div>
+
+            <!-- Amelia Checklist -->
+            <div class="p-3.5 rounded-xl bg-emerald-50/70 border border-emerald-200 mb-3">
+              <div class="font-extrabold text-sm text-[#14532d] mb-2">👧 Amelia</div>
+              <div id="ameliaChecks" class="flex flex-wrap gap-1.5"></div>
+            </div>
+
+            <!-- Optional Quick Teacher Note -->
+            <div>
+              <label for="teacherNoteInput" class="block text-xs font-bold text-slate-600 mb-1">Extra Session Note (Optional):</label>
+              <textarea id="teacherNoteInput" rows="2" placeholder="e.g., Brooke trusted the full 10-frame for 12 today without recounting!" class="w-full rounded-xl border border-slate-300 p-2.5 text-sm focus:outline-none focus:border-[#14532d]"></textarea>
+            </div>
+          </div>
+
+          <div class="space-y-2">
+            <button onclick="copySessionNotes()" class="w-full py-3.5 px-4 rounded-xl bg-[#14532d] hover:bg-[#166534] text-white font-extrabold text-sm sm:text-base shadow transition flex items-center justify-center gap-2">
+              <span>📋</span> Copy Session Notes for Tracker
+            </button>
+            <div id="copyFeedbackBanner" class="hidden text-center text-xs font-bold text-emerald-700 bg-emerald-50 py-2 rounded-lg border border-emerald-200">
+              ✅ Copied to clipboard! Ready to paste into your Google Doc / Word tracker.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    /* =========================================================================
+       GENTLE AUDIO CHIMES (Web Audio API - No external URLs required)
+       ========================================================================= */
+    let soundEnabled = true;
+    let audioCtx = null;
+
+    function toggleSound() {
+      soundEnabled = !soundEnabled;
+      const icon = soundEnabled ? '🔊' : '🔇';
+      const desktopBtn = document.getElementById('soundIconDesktop');
+      const mobileBtn = document.getElementById('soundIconMobile');
+      if (desktopBtn) desktopBtn.textContent = icon;
+      if (mobileBtn) mobileBtn.textContent = icon;
+    }
+
+    function playTone(freq = 520, duration = 0.09, type = 'sine') {
+      if (!soundEnabled) return;
+      try {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) {
+        // Silently ignore if audio context blocked
+      }
+    }
+
+    /* =========================================================================
+       TAB NAVIGATION
+       ========================================================================= */
+    function switchTab(tabId) {
+      document.querySelectorAll('.module-view').forEach(el => el.classList.add('hidden'));
+      document.getElementById(`module-${tabId}`).classList.remove('hidden');
+
+      document.querySelectorAll('.nav-tab').forEach(btn => {
+        btn.classList.remove('bg-white', 'text-[#14532d]', 'shadow');
+        btn.classList.add('bg-[#166534]', 'text-emerald-100');
+      });
+
+      const activeBtn = document.getElementById(`tab-${tabId}`);
+      activeBtn.classList.remove('bg-[#166534]', 'text-emerald-100');
+      activeBtn.classList.add('bg-white', 'text-[#14532d]', 'shadow');
+
+      if (tabId === 'scratchpad') {
+        resizeWhiteboardCanvas();
+      }
+    }
+
+    /* =========================================================================
+       SHARED HELPER: RENDER A 10-FRAME (1 to 10 counters)
+       ========================================================================= */
+    function renderTenFrame(containerEl, count, structured = true, scatteredIndices = []) {
+      containerEl.innerHTML = '';
+      for (let i = 0; i < 10; i++) {
+        const cell = document.createElement('div');
+        cell.className = 'ten-frame-cell' + (i < 5 ? ' top-row' : '');
+
+        let hasCounter = false;
+        if (structured) {
+          hasCounter = i < count;
+        } else {
+          hasCounter = scatteredIndices.includes(i);
+        }
+
+        if (hasCounter) {
+          const disc = document.createElement('div');
+          // Top row (0-4) = Red, Bottom row (5-9) = Amber for instant 5-and-a-bit recognition
+          const isTopRow = i < 5;
+          disc.className = `counter-disc counter-pop ${isTopRow ? 'counter-red' : 'counter-amber'}`;
+          cell.appendChild(disc);
+        }
+
+        containerEl.appendChild(cell);
+      }
+    }
+
+    /* =========================================================================
+       MODULE 1: FLASH & HIDE 10-FRAMES LOGIC
+       ========================================================================= */
+    let flashNumber = 13;
+    let flashStructured = true;
+    let flashTimerId = null;
+    let flashAnswerVisible = false;
+    let flashStemVisible = false;
+    let scatteredMap1 = [];
+    let scatteredMap2 = [];
+
+    function generateScatteredMaps(num) {
+      const c1 = Math.min(num, 10);
+      const c2 = Math.max(0, num - 10);
+      scatteredMap1 = pickRandomIndices(10, c1);
+      scatteredMap2 = pickRandomIndices(10, c2);
+    }
+
+    function pickRandomIndices(max, count) {
+      const arr = Array.from({ length: max }, (_, i) => i);
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr.slice(0, count);
+    }
+
+    function getSayTenDescription(n) {
+      if (n < 10) {
+        if (n <= 5) return `${n} on the top row`;
+        return `5 on top and ${n - 5} on the bottom`;
+      }
+      if (n === 10) return `1 full ten-frame (10)`;
+      return `1 full ten-frame (10) and ${n - 10} more`;
+    }
+
+    function getSayTenName(n) {
+      if (n === 10) return 'Say-Ten: "1 Ten"';
+      if (n > 10 && n < 20) return `Say-Ten: "10 and ${n - 10}"`;
+      if (n === 20) return 'Say-Ten: "2 Tens"';
+      return `Five-and-a-Bit: "${n <= 5 ? n : '5 and ' + (n - 5)}"`;
+    }
+
+    function updateFlashUI() {
+      const c1 = Math.min(flashNumber, 10);
+      const c2 = Math.max(0, flashNumber - 10);
+
+      renderTenFrame(document.getElementById('flashFrame1'), c1, flashStructured, scatteredMap1);
+      renderTenFrame(document.getElementById('flashFrame2'), c2, flashStructured, scatteredMap2);
+
+      // Update hidden answer box content (stays hidden unless teacher toggles reveal)
+      document.getElementById('flashBigNumber').textContent = flashNumber;
+      document.getElementById('flashSayTenText').textContent = getSayTenName(flashNumber);
+      document.getElementById('flashStructureHint').textContent = getSayTenDescription(flashNumber);
+    }
+
+    function setFlashNumber(n) {
+      clearTimeout(flashTimerId);
+      flashNumber = Math.max(1, Math.min(20, n));
+      generateScatteredMaps(flashNumber);
+      // Auto-hide reveals when switching to a new number so there are zero leaks!
+      hideFlashReveals();
+      uncoverFlashFrames();
+      updateFlashUI();
+      playTone(580, 0.08);
+    }
+
+    function adjustFlashNumber(delta) {
+      setFlashNumber(flashNumber + delta);
+    }
+
+    function randomFlashNumber() {
+      const pool = [6, 7, 8, 9, 11, 12, 13];
+      let next = pool[Math.floor(Math.random() * pool.length)];
+      if (next === flashNumber) {
+        next = pool[(pool.indexOf(next) + 1) % pool.length];
+      }
+      setFlashNumber(next);
+    }
+
+    function toggleFlashLayout() {
+      flashStructured = !flashStructured;
+      generateScatteredMaps(flashNumber);
+      document.getElementById('layoutModeBtn').textContent = flashStructured
+        ? 'Layout: Structured (5-First)'
+        : 'Layout: Scattered (Challenge)';
+      updateFlashUI();
+    }
+
+    function triggerFlashAndHide() {
+      clearTimeout(flashTimerId);
+      hideFlashReveals();
+      uncoverFlashFrames();
+      playTone(660, 0.1);
+
+      const duration = parseInt(document.getElementById('flashDurationSelect').value, 10);
+      flashTimerId = setTimeout(() => {
+        coverFlashFrames();
+        playTone(380, 0.12);
+      }, duration);
+    }
+
+    function coverFlashFrames() {
+      document.getElementById('flashShutter').classList.remove('hidden');
+      document.getElementById('manualCoverBtn').textContent = '🔓 Uncover';
+    }
+
+    function uncoverFlashFrames() {
+      clearTimeout(flashTimerId);
+      document.getElementById('flashShutter').classList.add('hidden');
+      document.getElementById('manualCoverBtn').textContent = '🙈 Cover Now';
+    }
+
+    function toggleManualCover() {
+      const isHidden = document.getElementById('flashShutter').classList.contains('hidden');
+      if (isHidden) coverFlashFrames();
+      else uncoverFlashFrames();
+    }
+
+    function peekFlashFrames() {
+      uncoverFlashFrames();
+      playTone(620, 0.08);
+      flashTimerId = setTimeout(() => {
+        coverFlashFrames();
+        playTone(380, 0.1);
+      }, 1000);
+    }
+
+    function hideFlashReveals() {
+      flashAnswerVisible = false;
+      flashStemVisible = false;
+      document.getElementById('flashAnswerBox').classList.add('hidden');
+      document.getElementById('toggleFlashAnswerBtn').innerHTML = '<span>👁️</span> Reveal Number &amp; Say-Ten';
+      document.getElementById('flashStemBox').classList.add('hidden');
+      document.getElementById('toggleFlashStemBtn').innerHTML = '<span>💬</span> Show Stem Sentence';
+    }
+
+    function toggleFlashAnswer() {
+      flashAnswerVisible = !flashAnswerVisible;
+      const box = document.getElementById('flashAnswerBox');
+      const btn = document.getElementById('toggleFlashAnswerBtn');
+      if (flashAnswerVisible) {
+        box.classList.remove('hidden');
+        btn.innerHTML = '<span>🙈</span> Hide Number &amp; Say-Ten';
+        playTone(740, 0.1);
+      } else {
+        box.classList.add('hidden');
+        btn.innerHTML = '<span>👁️</span> Reveal Number &amp; Say-Ten';
+      }
+    }
+
+    function toggleFlashStem() {
+      flashStemVisible = !flashStemVisible;
+      const box = document.getElementById('flashStemBox');
+      const btn = document.getElementById('toggleFlashStemBtn');
+      if (flashStemVisible) {
+        box.classList.remove('hidden');
+        btn.innerHTML = '<span>🙈</span> Hide Stem Sentence';
+      } else {
+        box.classList.add('hidden');
+        btn.innerHTML = '<span>💬</span> Show Stem Sentence';
+      }
+    }
+
+    /* =========================================================================
+       MODULE 2: 10-FRAME + NUMBER TRACK BRIDGE LOGIC
+       ========================================================================= */
+    let bridgeStart = 9;
+    let bridgeCurrent = 9;
+    let bridgeLastDelta = 0;
+    let bridgeEqVisible = false;
+
+    function setBridgeStart(num) {
+      bridgeStart = num;
+      bridgeCurrent = num;
+      bridgeLastDelta = 0;
+      bridgeEqVisible = false;
+      document.getElementById('bridgeEquationBox').classList.add('hidden');
+      document.getElementById('toggleBridgeEqBtn').textContent = '👁️ Reveal Equation';
+
+      const banner = document.getElementById('bridgeStatusBanner');
+      banner.className = 'p-4 rounded-2xl bg-slate-50 border-2 border-slate-200 text-center transition-all';
+      document.getElementById('bridgeStatusMain').textContent = `Standing on ${num}`;
+      document.getElementById('bridgeStatusSub').textContent = 'Choose Put On (+) or Take Away (−)';
+      document.getElementById('bridgeJumpNarration').textContent = `Ready on square ${num}. Say "${num}..." before hopping!`;
+
+      renderBridgeWorkspace([]);
+      playTone(520, 0.08);
+    }
+
+    function stepBridge(delta) {
+      const target = bridgeCurrent + delta;
+      if (target < 1 || target > 20) return;
+
+      const prev = bridgeCurrent;
+      bridgeStart = prev;
+      bridgeCurrent = target;
+      bridgeLastDelta = delta;
+
+      // Hide equation again until teacher reveals
+      bridgeEqVisible = false;
+      document.getElementById('bridgeEquationBox').classList.add('hidden');
+      document.getElementById('toggleBridgeEqBtn').textContent = '👁️ Reveal Equation';
+
+      const banner = document.getElementById('bridgeStatusBanner');
+      const mainText = document.getElementById('bridgeStatusMain');
+      const subText = document.getElementById('bridgeStatusSub');
+      const narration = document.getElementById('bridgeJumpNarration');
+      const eqBox = document.getElementById('bridgeEquationBox');
+
+      // Build explicit hop narration to prevent counting the start box as "1"
+      const hops = [];
+      const visited = [];
+      const dir = delta > 0 ? 1 : -1;
+      for (let step = 1; step <= Math.abs(delta); step++) {
+        const landed = prev + step * dir;
+        hops.push(`Hop ${step} → ${landed}`);
+        visited.push(landed);
+      }
+
+      if (delta > 0) {
+        banner.className = 'p-4 rounded-2xl bg-emerald-50 border-2 border-emerald-400 text-center transition-all';
+        mainText.textContent = `Put On ${delta} → Getting BIGGER!`;
+        subText.textContent = `Added ${delta} counter${delta > 1 ? 's' : ''} onto the frame & hopped forward to bigger numbers.`;
+        eqBox.textContent = `${prev} + ${delta} = ${target}`;
+        playTone(680, 0.12);
+      } else {
+        banner.className = 'p-4 rounded-2xl bg-rose-50 border-2 border-rose-400 text-center transition-all';
+        mainText.textContent = `Take Away ${Math.abs(delta)} → Getting SMALLER!`;
+        subText.textContent = `Took away ${Math.abs(delta)} counter${Math.abs(delta) > 1 ? 's' : ''} & hopped back to smaller numbers.`;
+        eqBox.textContent = `${prev} − ${Math.abs(delta)} = ${target}`;
+        playTone(420, 0.12);
+      }
+
+      narration.textContent = `Start on "${prev}..." (${hops.join(', ')})`;
+      renderBridgeWorkspace(visited);
+    }
+
+    function toggleBridgeEquation() {
+      if (bridgeLastDelta === 0) return;
+      bridgeEqVisible = !bridgeEqVisible;
+      const box = document.getElementById('bridgeEquationBox');
+      const btn = document.getElementById('toggleBridgeEqBtn');
+      if (bridgeEqVisible) {
+        box.classList.remove('hidden');
+        btn.textContent = '🙈 Hide Equation';
+        playTone(760, 0.09);
+      } else {
+        box.classList.add('hidden');
+        btn.textContent = '👁️ Reveal Equation';
+      }
+    }
+
+    function renderBridgeWorkspace(visitedSquares) {
+      // 1. Render synchronized Double 10-Frame
+      const c1 = Math.min(bridgeCurrent, 10);
+      const c2 = Math.max(0, bridgeCurrent - 10);
+      renderTenFrame(document.getElementById('bridgeFrame1'), c1, true);
+      renderTenFrame(document.getElementById('bridgeFrame2'), c2, true);
+
+      // 2. Render 1-20 Stepping-Stone Number Track
+      const trackEl = document.getElementById('bridgeNumberTrack');
+      trackEl.innerHTML = '';
+      trackEl.style.gridTemplateColumns = 'repeat(20, minmax(42px, 1fr))';
+
+      for (let n = 1; n <= 20; n++) {
+        const box = document.createElement('div');
+        const isCurrent = n === bridgeCurrent;
+        const isStart = bridgeLastDelta !== 0 && n === bridgeStart;
+        const hopIndex = visitedSquares.indexOf(n);
+        const isTenBenchmark = n === 10 || n === 20;
+
+        let bgClass = 'bg-slate-50 border-slate-300 text-slate-700';
+        if (isTenBenchmark) {
+          bgClass = 'bg-emerald-50/70 border-emerald-400 text-[#14532d]';
+        }
+        if (isStart) {
+          bgClass = 'bg-amber-100 border-amber-400 text-amber-950';
+        }
+        if (isCurrent) {
+          bgClass = 'bg-[#14532d] border-[#14532d] text-white shadow-md scale-105';
+        }
+
+        box.className = `relative h-14 rounded-xl border-2 flex items-center justify-center font-extrabold num-font text-lg transition-all ${bgClass}`;
+        box.textContent = n;
+
+        // Frog Mascot on current box
+        if (isCurrent) {
+          const frog = document.createElement('div');
+          frog.className = 'frog-hop absolute -top-8 text-2xl drop-shadow';
+          frog.textContent = '🐸';
+          box.appendChild(frog);
+        }
+
+        // Hop Badge above visited squares ("Hop 1", "Hop 2")
+        if (hopIndex !== -1 && !isCurrent) {
+          const badge = document.createElement('div');
+          badge.className = 'absolute -top-6 px-1.5 py-0.5 rounded bg-amber-400 text-slate-950 text-[10px] font-extrabold whitespace-nowrap shadow-sm';
+          badge.textContent = `Hop ${hopIndex + 1}`;
+          box.appendChild(badge);
+        } else if (isStart && bridgeLastDelta !== 0) {
+          const startBadge = document.createElement('div');
+          startBadge.className = 'absolute -top-6 px-1.5 py-0.5 rounded bg-slate-200 text-slate-700 text-[10px] font-bold whitespace-nowrap';
+          startBadge.textContent = 'Start';
+          box.appendChild(startBadge);
+        }
+
+        trackEl.appendChild(box);
+      }
+    }
+
+    /* =========================================================================
+       MODULE 3: PENDULUM & BACKWARD COUNTING TRACK LOGIC
+       ========================================================================= */
+    let pendulumPos = 10;
+    let pendulumForward = true;
+    let pendulumSpotlight = true;
+    let pendulumShowSayTen = false;
+    let maskedNumbers = new Set();
+
+    function renderPendulumTrack() {
+      const track = document.getElementById('pendulumTrack');
+      track.innerHTML = '';
+      track.style.gridTemplateColumns = 'repeat(20, minmax(44px, 1fr))';
+
+      for (let n = 1; n <= 20; n++) {
+        const isCurrent = n === pendulumPos;
+        const isDangerZone = pendulumSpotlight && n >= 8 && n <= 13;
+        const isMasked = maskedNumbers.has(n);
+
+        const wrapper = document.createElement('div');
+        wrapper.className = 'flex flex-col items-center gap-1';
+
+        // Main Number Box
+        const cell = document.createElement('button');
+        let cellStyle = 'bg-white border-slate-300 text-slate-800 hover:bg-slate-50';
+        if (isDangerZone) {
+          cellStyle = 'bg-amber-50 border-amber-400 text-amber-950';
+        }
+        if (isCurrent) {
+          cellStyle = pendulumForward
+            ? 'bg-[#14532d] border-[#14532d] text-white scale-105 shadow-lg'
+            : 'bg-rose-700 border-rose-700 text-white scale-105 shadow-lg';
+        }
+
+        cell.className = `w-full h-16 rounded-xl border-2 flex flex-col items-center justify-center font-extrabold num-font text-xl transition-all relative ${cellStyle}`;
+        cell.onclick = () => {
+          pendulumPos = n;
+          renderPendulumTrack();
+          playTone(440 + n * 18, 0.08);
+        };
+
+        if (isMasked) {
+          cell.innerHTML = `<span class="text-xl">❓</span>`;
+        } else {
+          cell.textContent = n;
+        }
+
+        // Mask Toggle Mini Button
+        const maskBtn = document.createElement('button');
+        maskBtn.className = `text-[11px] px-2 py-0.5 rounded-md font-bold transition ${
+          isMasked ? 'bg-amber-200 text-amber-950' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
+        }`;
+        maskBtn.textContent = isMasked ? '🔒 Hidden' : '👁️';
+        maskBtn.title = isMasked ? 'Click to reveal number' : 'Click to hide number';
+        maskBtn.onclick = (e) => {
+          e.stopPropagation();
+          if (maskedNumbers.has(n)) maskedNumbers.delete(n);
+          else maskedNumbers.add(n);
+          renderPendulumTrack();
+        };
+
+        wrapper.appendChild(cell);
+        wrapper.appendChild(maskBtn);
+
+        // Optional Say-Ten Sub-label (11 to 19)
+        if (pendulumShowSayTen && n >= 11 && n <= 19) {
+          const sub = document.createElement('div');
+          sub.className = 'text-[10px] font-extrabold text-emerald-800 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200 whitespace-nowrap';
+          sub.textContent = `10 & ${n - 10}`;
+          wrapper.appendChild(sub);
+        }
+
+        track.appendChild(wrapper);
+      }
+    }
+
+    function stepPendulum(delta) {
+      const next = pendulumPos + delta;
+      if (next < 1 || next > 20) return;
+      pendulumPos = next;
+
+      // Sync banner visual with step direction
+      const shouldBeForward = delta > 0;
+      if (pendulumForward !== shouldBeForward) {
+        pendulumForward = shouldBeForward;
+        updatePendulumBanner(false);
+      }
+
+      renderPendulumTrack();
+      playTone(delta > 0 ? 640 : 440, 0.09);
+    }
+
+    function reversePendulumDirection() {
+      pendulumForward = !pendulumForward;
+      updatePendulumBanner(true);
+      playTone(pendulumForward ? 700 : 360, 0.16, 'triangle');
+    }
+
+    function updatePendulumBanner(animate) {
+      const banner = document.getElementById('pendulumDirectionBanner');
+      const icon = document.getElementById('pendulumDirIcon');
+      const title = document.getElementById('pendulumDirTitle');
+
+      if (pendulumForward) {
+        banner.className = 'p-4 rounded-2xl bg-emerald-50 border-2 border-emerald-400 flex flex-col sm:flex-row items-center justify-between gap-3 transition-all';
+        icon.textContent = '➡️';
+        title.className = 'text-xl sm:text-2xl font-extrabold text-[#14532d]';
+        title.textContent = 'Counting FORWARDS (Getting Bigger)';
+      } else {
+        banner.className = 'p-4 rounded-2xl bg-rose-50 border-2 border-rose-400 flex flex-col sm:flex-row items-center justify-between gap-3 transition-all';
+        icon.textContent = '⬅️';
+        title.className = 'text-xl sm:text-2xl font-extrabold text-rose-800';
+        title.textContent = 'REVERSE! Counting BACKWARDS (Getting Smaller)';
+      }
+
+      if (animate) {
+        banner.classList.remove('reverse-pulse');
+        void banner.offsetWidth;
+        banner.classList.add('reverse-pulse');
+      }
+    }
+
+    function toggleDangerZone() {
+      pendulumSpotlight = !pendulumSpotlight;
+      document.getElementById('toggleZoneBtn').textContent = pendulumSpotlight
+        ? '🎯 Spotlight 8–13 Bridge: ON'
+        : '🎯 Spotlight 8–13 Bridge: OFF';
+      renderPendulumTrack();
+    }
+
+    function togglePendulumSayTen() {
+      pendulumShowSayTen = !pendulumShowSayTen;
+      document.getElementById('togglePendulumSayTenBtn').textContent = pendulumShowSayTen
+        ? '🙈 Hide Say-Ten Labels'
+        : '👁️ Reveal Say-Ten Labels (11–19)';
+      renderPendulumTrack();
+    }
+
+    function maskPreset(type) {
+      maskedNumbers.clear();
+      if (type === 'tenBridge') {
+        maskedNumbers.add(10);
+        maskedNumbers.add(11);
+      } else if (type === 'teens') {
+        maskedNumbers.add(9);
+        maskedNumbers.add(11);
+        maskedNumbers.add(13);
+      }
+      renderPendulumTrack();
+    }
+
+    /* =========================================================================
+       MODULE 4: SPOT THE MISTAKE (ERROR ANALYSIS BANK)
+       ========================================================================= */
+    const mistakeScenarios = [
+      {
+        id: 'skip10',
+        pill: '1. 8, 9, 11, 12, 13',
+        tag: 'Counting Sequence Trap',
+        title: 'Barnaby Counts Forwards from 8',
+        quote: '“8, 9, 11, 12, 13! Look, I counted all the way to 13!”',
+        visualHTML: `
+          <div class="flex flex-wrap items-center justify-center gap-2 py-2">
+            <span class="px-4 py-2 rounded-xl bg-white border-2 border-slate-300 font-extrabold num-font text-2xl">8</span>
+            <span class="px-4 py-2 rounded-xl bg-white border-2 border-slate-300 font-extrabold num-font text-2xl">9</span>
+            <span class="px-4 py-2 rounded-xl bg-rose-100 border-2 border-rose-400 text-rose-800 font-extrabold num-font text-2xl">11 ❌</span>
+            <span class="px-4 py-2 rounded-xl bg-white border-2 border-slate-300 font-extrabold num-font text-2xl">12</span>
+            <span class="px-4 py-2 rounded-xl bg-white border-2 border-slate-300 font-extrabold num-font text-2xl">13</span>
+          </div>
+        `,
+        prompt: '“Did Barnaby miss an important number? How can we prove what comes after 9?”',
+        diagnosis: 'Barnaby skipped 10! You cannot build 11 ("10 and 1") until you have filled a whole 10-frame first.',
+        fixSteps: 'Put 9 counters on a 10-frame. Add 1 counter to fill the box: "10! One full ten." Now add 1 more counter on the second frame: "11 — that is 10 and 1."'
+      },
+      {
+        id: 'backwards',
+        pill: '2. Backward 13 → 9',
+        tag: 'Backward Teen Trap',
+        title: 'Barnaby Counts Backwards from 13',
+        quote: '“13, 12, 10, 11, 9! Counting backwards is easy!”',
+        visualHTML: `
+          <div class="flex flex-wrap items-center justify-center gap-2 py-2">
+            <span class="px-4 py-2 rounded-xl bg-white border-2 border-slate-300 font-extrabold num-font text-2xl">13</span>
+            <span class="px-4 py-2 rounded-xl bg-white border-2 border-slate-300 font-extrabold num-font text-2xl">12</span>
+            <span class="px-4 py-2 rounded-xl bg-rose-100 border-2 border-rose-400 text-rose-800 font-extrabold num-font text-2xl">10 ❌</span>
+            <span class="px-4 py-2 rounded-xl bg-rose-100 border-2 border-rose-400 text-rose-800 font-extrabold num-font text-2xl">11 ❌</span>
+            <span class="px-4 py-2 rounded-xl bg-white border-2 border-slate-300 font-extrabold num-font text-2xl">9</span>
+          </div>
+        `,
+        prompt: '“Listen closely to Barnaby’s order. Which two numbers did he muddle up?”',
+        diagnosis: 'Barnaby swapped 11 and 10! 11 is "10 and 1", so when we take 1 away from 12 ("10 and 2"), we get 11 ("10 and 1") before we reach 10.',
+        fixSteps: 'Use Say-Ten language backwards: "13 (10 & 3) → 12 (10 & 2) → 11 (10 & 1) → 10 (full ten) → 9 (one less than 10)."'
+      },
+      {
+        id: 'direction',
+        pill: '3. 9 − 2 = 11?',
+        tag: 'Subtract Direction Trap',
+        title: 'Barnaby Solves 9 − 2 on the Track',
+        quote: '“I started on 9, subtracted 2, and landed on 11!”',
+        visualHTML: `
+          <div class="flex items-center justify-center gap-2 py-2 text-lg font-extrabold num-font">
+            <span class="px-3.5 py-2 rounded-xl bg-amber-100 border-2 border-amber-400">Start: 9</span>
+            <span class="text-rose-600">➡️ Hopped to bigger numbers ➡️</span>
+            <span class="px-3.5 py-2 rounded-xl bg-rose-100 border-2 border-rose-400 text-rose-800">Landed: 11 ❌</span>
+          </div>
+        `,
+        prompt: '“Did Barnaby add or subtract? How can you tell straight away without even counting?”',
+        diagnosis: 'Barnaby added instead of subtracting! 11 is BIGGER than 9, and when we subtract (take away), the number must get SMALLER.',
+        fixSteps: 'Put 9 counters on a 10-frame and take 2 off. Watch the group shrink to 7, then hop toward the smaller numbers on the track: "9... hop 1 → 8, hop 2 → 7."'
+      },
+      {
+        id: 'startBox',
+        pill: '4. 12 − 2 = 11?',
+        tag: 'Counting Start Square Trap',
+        title: 'Barnaby Counts the Start Square as "1"',
+        quote: '“Start on 12 and take away 2: touch 12 (that’s 1), touch 11 (that’s 2). Answer is 11!”',
+        visualHTML: `
+          <div class="flex items-center justify-center gap-3 py-2 font-extrabold num-font text-lg">
+            <span class="px-3.5 py-2 rounded-xl bg-rose-100 border-2 border-rose-400 text-rose-800">12 ("1" ❌)</span>
+            <span>⬅️</span>
+            <span class="px-3.5 py-2 rounded-xl bg-rose-100 border-2 border-rose-400 text-rose-800">11 ("2" ❌)</span>
+            <span>|</span>
+            <span class="px-3.5 py-2 rounded-xl bg-emerald-100 border-2 border-emerald-400 text-emerald-900">10 (Missed!)</span>
+          </div>
+        `,
+        prompt: '“Why did Barnaby land on 11 instead of 10 when he hopped back 2 from 12?”',
+        diagnosis: 'Barnaby counted the square he was already standing on (12) as his first jump, so he only actually moved 1 space!',
+        fixSteps: 'Say the start number with hands in the air ("12..."), and ONLY count when the frog leaves the square: "Hop 1 → 11, Hop 2 → 10."'
+      },
+      {
+        id: 'recountTen',
+        pill: '5. Recounting Full 10',
+        tag: 'Unitary Counting Trap',
+        title: 'Barnaby Counts 1 to 13 from Scratch',
+        quote: '“1, 2, 3, 4, 5, 6, 7, 8, 9, 10... 11, 12, 13!”',
+        visualHTML: `
+          <div class="flex items-center justify-center gap-4 py-2">
+            <div class="px-4 py-2 rounded-xl bg-emerald-100 border-2 border-emerald-500 font-extrabold text-emerald-950 text-sm">
+              Full 10-Frame = Always 10!
+            </div>
+            <span class="font-extrabold text-xl">+</span>
+            <div class="px-4 py-2 rounded-xl bg-amber-100 border-2 border-amber-400 font-extrabold text-amber-950 text-sm">
+              3 Counters on Top Row
+            </div>
+          </div>
+        `,
+        prompt: '“Why doesn’t Barnaby need to count the first 10-frame one by one?”',
+        diagnosis: 'A full 10-frame ALWAYS holds 10 counters. Recounting it from 1 wastes brainpower and causes mistakes around 11, 12, and 13.',
+        fixSteps: 'Slap the full 10-frame gently and say "10!", then count on the extra counters: "10... 11, 12, 13 — 10 and 3 is 13!"'
+      }
+    ];
+
+    let activeMistakeIdx = 0;
+    let mistakeFixVisible = false;
+
+    function initMistakesModule() {
+      const bar = document.getElementById('mistakeSelectorBar');
+      bar.innerHTML = '';
+      mistakeScenarios.forEach((sc, idx) => {
+        const btn = document.createElement('button');
+        btn.id = `mistake-pill-${idx}`;
+        btn.className = 'px-3 py-2 rounded-xl text-xs font-extrabold border transition';
+        btn.textContent = sc.pill;
+        btn.onclick = () => selectMistakeScenario(idx);
+        bar.appendChild(btn);
+      });
+      selectMistakeScenario(0);
+    }
+
+    function selectMistakeScenario(idx) {
+      activeMistakeIdx = idx;
+      mistakeFixVisible = false;
+
+      mistakeScenarios.forEach((_, i) => {
+        const pill = document.getElementById(`mistake-pill-${i}`);
+        if (i === idx) {
+          pill.className = 'px-3 py-2 rounded-xl text-xs font-extrabold border-2 border-[#14532d] bg-emerald-100 text-[#14532d] shadow-sm transition';
+        } else {
+          pill.className = 'px-3 py-2 rounded-xl text-xs font-bold border border-slate-300 bg-slate-50 text-slate-700 hover:bg-slate-100 transition';
+        }
+      });
+
+      const sc = mistakeScenarios[idx];
+      document.getElementById('mistakeTag').textContent = sc.tag;
+      document.getElementById('mistakeTitle').textContent = sc.title;
+      document.getElementById('mistakeQuote').textContent = sc.quote;
+      document.getElementById('mistakeVisualBox').innerHTML = sc.visualHTML;
+      document.getElementById('mistakePrompt').textContent = sc.prompt;
+      document.getElementById('mistakeDiagnosis').textContent = sc.diagnosis;
+      document.getElementById('mistakeFixSteps').textContent = sc.fixSteps;
+
+      document.getElementById('mistakeFixBox').classList.add('hidden');
+      document.getElementById('mistakeHiddenPlaceholder').classList.remove('hidden');
+      document.getElementById('toggleMistakeFixBtn').textContent = '🔓 Reveal Fix & Proof';
+    }
+
+    function toggleMistakeFix() {
+      mistakeFixVisible = !mistakeFixVisible;
+      const fixBox = document.getElementById('mistakeFixBox');
+      const placeholder = document.getElementById('mistakeHiddenPlaceholder');
+      const btn = document.getElementById('toggleMistakeFixBtn');
+
+      if (mistakeFixVisible) {
+        fixBox.classList.remove('hidden');
+        placeholder.classList.add('hidden');
+        btn.textContent = '🙈 Hide Fix & Proof';
+        playTone(720, 0.1);
+      } else {
+        fixBox.classList.add('hidden');
+        placeholder.classList.remove('hidden');
+        btn.textContent = '🔓 Reveal Fix & Proof';
+      }
+    }
+
+    /* =========================================================================
+       MODULE 5: TEACHER SCRATCHPAD & LIVE SESSION CHECKLIST
+       ========================================================================= */
+    const skillTags = [
+      'Subitised 5-and-a-bit',
+      'Trusted full 10-frame',
+      'Used Say-Ten (10 & 1/2/3)',
+      'Counted backwards 13→8',
+      'Predicted bigger/smaller',
+      'Counted jumps (not start box)'
+    ];
+
+    const selectedSkills = {
+      Brooke: new Set(),
+      Amelia: new Set()
+    };
+
+    function initObservationChecklists() {
+      const today = new Date();
+      document.getElementById('sessionDateLabel').textContent = today.toLocaleDateString('en-GB', {
+        weekday: 'short', day: 'numeric', month: 'short'
+      });
+
+      renderPupilPills('Brooke', 'brookeChecks');
+      renderPupilPills('Amelia', 'ameliaChecks');
+    }
+
+    function renderPupilPills(pupilName, containerId) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = '';
+
+      skillTags.forEach(skill => {
+        const active = selectedSkills[pupilName].has(skill);
+        const btn = document.createElement('button');
+        btn.className = active
+          ? 'px-2.5 py-1.5 rounded-lg text-xs font-extrabold bg-[#14532d] text-white shadow-sm transition'
+          : 'px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-white border border-slate-300 text-slate-700 hover:bg-slate-100 transition';
+        btn.textContent = (active ? '✓ ' : '+ ') + skill;
+        btn.onclick = () => {
+          if (selectedSkills[pupilName].has(skill)) selectedSkills[pupilName].delete(skill);
+          else selectedSkills[pupilName].add(skill);
+          renderPupilPills(pupilName, containerId);
+        };
+        container.appendChild(btn);
+      });
+    }
+
+    function copySessionNotes() {
+      const dateStr = new Date().toLocaleDateString('en-GB');
+      const brookeList = Array.from(selectedSkills.Brooke).join(', ') || 'Needs continued concrete 10-frame scaffold';
+      const ameliaList = Array.from(selectedSkills.Amelia).join(', ') || 'Needs continued concrete 10-frame scaffold';
+      const extraNote = document.getElementById('teacherNoteInput').value.trim();
+
+      let summary = `P4 Numeracy Intervention (${dateStr})\n`;
+      summary += `• Brooke: ${brookeList}\n`;
+      summary += `• Amelia: ${ameliaList}`;
+      if (extraNote) {
+        summary += `\n• Note: ${extraNote}`;
+      }
+
+      // Use textarea + execCommand('copy') for reliable iFrame/whiteboard clipboard copying
+      const tempArea = document.createElement('textarea');
+      tempArea.value = summary;
+      tempArea.style.position = 'fixed';
+      tempArea.style.left = '-9999px';
+      document.body.appendChild(tempArea);
+      tempArea.select();
+      try {
+        document.execCommand('copy');
+        const banner = document.getElementById('copyFeedbackBanner');
+        banner.classList.remove('hidden');
+        playTone(760, 0.12);
+        setTimeout(() => banner.classList.add('hidden'), 3500);
+      } catch (err) {
+        // Fallback silently
+      }
+      document.body.removeChild(tempArea);
+    }
+
+    /* =========================================================================
+       WHITEBOARD DRAWING CANVAS (Mouse + Touch Support)
+       ========================================================================= */
+    let wbCanvas, wbCtx;
+    let isDrawing = false;
+    let penColor = '#14532d';
+    let penWidth = 4;
+
+    function initWhiteboardCanvas() {
+      wbCanvas = document.getElementById('whiteboardCanvas');
+      wbCtx = wbCanvas.getContext('2d');
+      resizeWhiteboardCanvas();
+
+      window.addEventListener('resize', () => {
+        if (!document.getElementById('module-scratchpad').classList.contains('hidden')) {
+          resizeWhiteboardCanvas();
+        }
+      });
+
+      // Mouse events
+      wbCanvas.addEventListener('mousedown', startDraw);
+      wbCanvas.addEventListener('mousemove', drawMove);
+      window.addEventListener('mouseup', endDraw);
+
+      // Touch events for Promethean ActivPanel / Surface Pro
+      wbCanvas.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        const touch = e.touches[0];
+        startDraw(touch);
+      }, { passive: false });
+
+      wbCanvas.addEventListener('touchmove', (e) => {
+        e.preventDefault();
+        const touch = e.touches[0];
+        drawMove(touch);
+      }, { passive: false });
+
+      wbCanvas.addEventListener('touchend', endDraw);
+    }
+
+    function resizeWhiteboardCanvas() {
+      const wrapper = document.getElementById('canvasWrapper');
+      if (!wrapper || !wbCanvas) return;
+      const rect = wrapper.getBoundingClientRect();
+      if (rect.width === 0) return;
+
+      // Save current drawing before resize
+      const tempImg = wbCtx.getImageData(0, 0, wbCanvas.width || 1, wbCanvas.height || 1);
+      wbCanvas.width = rect.width;
+      wbCanvas.height = rect.height;
+      wbCtx.lineCap = 'round';
+      wbCtx.lineJoin = 'round';
+      wbCtx.putImageData(tempImg, 0, 0);
+    }
+
+    function getCanvasCoords(evt) {
+      const rect = wbCanvas.getBoundingClientRect();
+      return {
+        x: evt.clientX - rect.left,
+        y: evt.clientY - rect.top
+      };
+    }
+
+    function startDraw(evt) {
+      isDrawing = true;
+      const { x, y } = getCanvasCoords(evt);
+      wbCtx.beginPath();
+      wbCtx.moveTo(x, y);
+    }
+
+    function drawMove(evt) {
+      if (!isDrawing) return;
+      const { x, y } = getCanvasCoords(evt);
+      wbCtx.strokeStyle = penColor;
+      wbCtx.lineWidth = penWidth;
+      wbCtx.lineTo(x, y);
+      wbCtx.stroke();
+    }
+
+    function endDraw() {
+      isDrawing = false;
+    }
+
+    function setPenColor(color) {
+      penColor = color;
+      penWidth = 4;
+    }
+
+    function setPenEraser() {
+      penColor = '#f8fafc';
+      penWidth = 24;
+    }
+
+    function clearWhiteboard() {
+      if (!wbCanvas) return;
+      wbCtx.clearRect(0, 0, wbCanvas.width, wbCanvas.height);
+    }
+
+    /* =========================================================================
+       INITIALISE ALL MODULES ON LOAD
+       ========================================================================= */
+    window.onload = function () {
+      generateScatteredMaps(flashNumber);
+      updateFlashUI();
+      setBridgeStart(9);
+      renderPendulumTrack();
+      initMistakesModule();
+      initObservationChecklists();
+      initWhiteboardCanvas();
+    };
+  </script>
+</body>
+</html>
