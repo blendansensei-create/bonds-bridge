@@ -1,0 +1,2857 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P4A/P5A Group A: Foundational Mastery Teacher Hub</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f1f5f9;
+      color: #0f172a;
+      overflow-x: hidden;
+    }
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #e2e8f0;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #94a3b8;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #64748b;
+    }
+    #wb-canvas, #screenAnnotateCanvas {
+      touch-action: none;
+      cursor: crosshair;
+    }
+    .dienes-rod {
+      background-image: linear-gradient(to bottom, rgba(255,255,255,0.55) 1px, transparent 1px);
+      background-size: 100% 7px;
+    }
+    @keyframes popIn {
+      0% { opacity: 0; transform: translateY(5px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    .animate-pop {
+      animation: popIn 0.2s ease-out forwards;
+    }
+    @media print {
+      @page { size: landscape; margin: 10mm; }
+      body * { visibility: hidden; }
+      #reportModal, #reportModal * { visibility: visible; }
+      #reportModal {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        background: #ffffff !important;
+        padding: 0 !important;
+      }
+      .no-print { display: none !important; }
+      table { page-break-inside: auto; }
+      tr { page-break-inside: avoid; page-break-after: auto; }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col select-none">
+
+  <!-- ======================================================================= -->
+  <!-- TOP PERSISTENT CLASSROOM HEADER (EXACT P5A SLATE-900 DESIGN)            -->
+  <!-- ======================================================================= -->
+  <header class="bg-slate-900 text-white shadow-lg border-b border-slate-700 sticky top-0 z-40">
+    <div class="max-w-[1720px] mx-auto px-3 sm:px-5 py-2.5 flex flex-wrap items-center justify-between gap-2">
+      <!-- Left: Hub Menu & Title -->
+      <div class="flex items-center gap-2.5">
+        <button id="btn-back-hub" onclick="goHome()" class="hidden items-center gap-1.5 bg-slate-800 hover:bg-slate-700 active:bg-slate-600 text-white font-bold px-3 py-2 rounded-xl border border-slate-600 transition shadow-sm text-xs sm:text-sm">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+          </svg>
+          <span>Hub Menu</span>
+        </button>
+
+        <div class="flex items-center gap-2.5">
+          <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center font-black text-base shadow-inner border border-indigo-400 shrink-0">
+            P5A
+          </div>
+          <div>
+            <h1 class="text-sm sm:text-lg font-extrabold tracking-tight leading-tight">
+              P4A/P5A Group A: Foundational Mastery Teacher Hub
+            </h1>
+            <div class="flex flex-wrap items-center gap-2 text-xs text-slate-300">
+              <span>Sofia, Mya, Orlaith-Louise &amp; James &bull; St Kieran's PS</span>
+              <span id="overallProgressBadge" class="px-2 py-0.5 rounded-full bg-slate-800 border border-slate-600 text-amber-300 font-bold text-[11px]">0 / 20 Covered</span>
+              <span id="syncStatusBadge" class="px-2 py-0.5 rounded-full bg-slate-800 border border-slate-600 text-emerald-300 font-bold text-[11px]">💾 Local Auto-Save</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Action Buttons -->
+      <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
+        <button id="btn-toggle-targets" onclick="toggleTargetsDrawer()" class="flex items-center gap-1.5 bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-slate-950 font-extrabold px-3 py-2 rounded-xl shadow-md border border-amber-300 transition text-xs">
+          <span>&#128203; Diagnostic Targets</span>
+        </button>
+
+        <button id="btn-toggle-tracker" onclick="toggleTrackerPane()" class="flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold px-3 py-2 rounded-xl shadow-md border border-indigo-400 transition text-xs">
+          <span>&#9989;</span>
+          <span id="tracker-toggle-label">Live Tracker</span>
+        </button>
+
+        <button id="btn-toggle-wb" onclick="toggleWhiteboard()" class="flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white font-extrabold px-3 py-2 rounded-xl shadow-md border border-emerald-400 transition text-xs">
+          <span>&#9999;&#65039;</span>
+          <span id="wb-toggle-label">Open Whiteboard</span>
+        </button>
+
+        <button id="annotateHeaderBtn" onclick="toggleScreenAnnotator()" class="flex items-center gap-1.5 bg-teal-400 hover:bg-teal-300 text-slate-950 font-extrabold px-3 py-2 rounded-xl shadow-md border border-teal-200 transition text-xs">
+          <span>&#128397;&#65039; Draw Over Screen</span>
+        </button>
+
+        <button onclick="openGoogleSyncModal()" class="flex items-center gap-1.5 bg-sky-400 hover:bg-sky-300 text-slate-950 font-extrabold px-3 py-2 rounded-xl shadow-md border border-sky-200 transition text-xs">
+          <span>&#9729;&#65039; Google Doc Sync</span>
+        </button>
+
+        <button id="manualSyncNowBtn" onclick="syncNowManual()" class="hidden items-center gap-1 bg-emerald-400 hover:bg-emerald-300 text-slate-950 font-extrabold px-2.5 py-2 rounded-xl shadow transition text-xs">
+          &#128260; Sync
+        </button>
+
+        <button onclick="openReportModal()" class="flex items-center gap-1 bg-slate-800 hover:bg-slate-700 text-amber-300 border border-slate-600 font-extrabold px-3 py-2 rounded-xl transition text-xs">
+          <span>&#128196; Report</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- PERSISTENT 5-WEEK LESSON NAVIGATOR BAR (WEEKS 1–5, 20 LESSONS)        -->
+    <!-- ===================================================================== -->
+    <div class="bg-slate-800/95 border-t border-slate-700">
+      <div class="max-w-[1720px] mx-auto px-3 sm:px-5 py-2 flex flex-col xl:flex-row xl:items-center xl:justify-between gap-2">
+        <div id="weekTabsContainer" class="flex flex-wrap items-center gap-1.5"></div>
+        <div id="lessonTabsContainer" class="flex flex-wrap items-center gap-1.5"></div>
+      </div>
+    </div>
+
+    <!-- COLLAPSIBLE PUPIL DIAGNOSTIC TARGETS DRAWER -->
+    <div id="pupil-targets-drawer" class="hidden bg-slate-800 border-t border-slate-700 px-3 sm:px-6 py-4 animate-pop">
+      <div class="max-w-[1720px] mx-auto space-y-3">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-extrabold uppercase tracking-wider text-amber-400">
+            P4A/P5A Group A November Check-Up Profiles &amp; 5-Week Targets
+          </span>
+          <button onclick="toggleTargetsDrawer()" class="text-xs font-bold text-slate-300 hover:text-white px-2.5 py-1 rounded-lg bg-slate-700">
+            Close &times;
+          </button>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3 text-xs">
+          <!-- Sofia -->
+          <div class="bg-slate-900/90 rounded-xl p-3.5 border border-slate-700 space-y-1.5">
+            <div class="flex items-center justify-between">
+              <span class="font-extrabold text-sm text-white">Sofia</span>
+              <span class="px-2 py-0.5 rounded bg-blue-900 text-blue-200 font-bold">Ten-Frame &amp; Bridging</span>
+            </div>
+            <p class="text-emerald-400 font-semibold">Strengths: 1 more/less &amp; foundational number bonds to 10.</p>
+            <p class="text-amber-200 font-medium"><strong>Targets:</strong> Ten-frame unitising (10 + 4 = 14, not 4!), cherry part-whole bridging through 10 (8 + 5 = 13), tens &amp; ones (34 = 3T 4O), and odd/even (12 is even).</p>
+          </div>
+          <!-- Mya -->
+          <div class="bg-slate-900/90 rounded-xl p-3.5 border border-slate-700 space-y-1.5">
+            <div class="flex items-center justify-between">
+              <span class="font-extrabold text-sm text-white">Mya</span>
+              <span class="px-2 py-0.5 rounded bg-purple-900 text-purple-200 font-bold">Fact Families &amp; Vocab</span>
+            </div>
+            <p class="text-emerald-400 font-semibold">Strengths: Confident counting &amp; emerging bridging strategies.</p>
+            <p class="text-amber-200 font-medium"><strong>Targets:</strong> Fact family syntax (7 + 3 = 10 &amp; 10 − 7 = 3, not 3 = 7 = 10), decade subtraction (1 less than 40 = 39, not 34), 10 more than 43 (= 53), and <em>difference / remaining</em>.</p>
+          </div>
+          <!-- Orlaith-Louise -->
+          <div class="bg-slate-900/90 rounded-xl p-3.5 border border-slate-700 space-y-1.5">
+            <div class="flex items-center justify-between">
+              <span class="font-extrabold text-sm text-white">Orlaith-Louise</span>
+              <span class="px-2 py-0.5 rounded bg-emerald-900 text-emerald-200 font-bold">Place Value &amp; Comparison</span>
+            </div>
+            <p class="text-emerald-400 font-semibold">Strengths: Strong bridging through 10 (9 + 6 = 15, 15 − 6 = 9) &amp; peer-coaching.</p>
+            <p class="text-amber-200 font-medium"><strong>Targets:</strong> Tens &amp; ones unitising (5 tens &amp; 2 ones = 52, not 87!), 10 more than 43 (= 53, not 50!), comparison symbols (&gt; 67 = 71, not 59!), and cherry splits (9 = 5 + 4).</p>
+          </div>
+          <!-- James -->
+          <div class="bg-slate-900/90 rounded-xl p-3.5 border border-slate-700 space-y-1.5">
+            <div class="flex items-center justify-between">
+              <span class="font-extrabold text-sm text-white">James</span>
+              <span class="px-2 py-0.5 rounded bg-indigo-900 text-indigo-200 font-bold">Foundational Mastery</span>
+            </div>
+            <p class="text-emerald-400 font-semibold">Strengths: Engaged with concrete manipulatives &amp; number patterns.</p>
+            <p class="text-amber-200 font-medium"><strong>Targets:</strong> Subitising 10-frames, cherry split bridging through 10, writing all 4 equations in a fact family, and tens/ones place value unitising.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ======================================================================= -->
+  <!-- MAIN WORKSPACE (TEACHING STAGE + OPTIONAL TRACKER + WHITEBOARD)         -->
+  <!-- ======================================================================= -->
+  <div id="workspace-wrapper" class="flex-1 flex flex-col lg:flex-row max-w-[1720px] w-full mx-auto">
+
+    <!-- LEFT / PRIMARY TEACHING PANE -->
+    <main id="main-teaching-pane" class="flex-1 p-3 sm:p-5 transition-all duration-200 overflow-y-auto space-y-4">
+
+      <!-- ACTIVE 5-WEEK LESSON CONTEXT BAR (ALWAYS SHOWS CURRENT SCHEDULED LESSON) -->
+      <div id="active-lesson-strip" class="bg-white rounded-2xl px-4 py-3 shadow-sm border border-slate-200 flex flex-wrap items-center justify-between gap-2">
+        <div class="flex flex-wrap items-center gap-2.5">
+          <span id="strip-lesson-code" class="px-3 py-1 rounded-lg bg-indigo-600 text-white font-extrabold text-xs uppercase tracking-wider">
+            Week 1 &bull; Lesson 1
+          </span>
+          <div>
+            <h2 id="strip-lesson-title" class="text-sm sm:text-base font-extrabold text-slate-900 leading-tight">
+              L1: Full Ten-Frame Unitising &amp; Bridging Through 10 (10 + 4 = 14, 8 + 5)
+            </h2>
+            <p id="strip-lesson-stem" class="text-xs text-slate-600 font-medium">
+              Stem: “A full ten-frame is 10. 10 and 4 more is 14 — not 4!”
+            </p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-1.5">
+          <button onclick="navigateScheduledLesson(-1)" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition">
+            &larr; Prev Lesson
+          </button>
+          <button onclick="navigateScheduledLesson(1)" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition">
+            Next Lesson &rarr;
+          </button>
+          <button onclick="toggleTrackerPane()" class="px-3 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 font-extrabold text-xs transition">
+            &#128203; Toggle Pupil Tracker
+          </button>
+        </div>
+      </div>
+
+      <!-- ===================================================================== -->
+      <!-- VIEW 0: HUB LANDING DASHBOARD                                         -->
+      <!-- ===================================================================== -->
+      <section id="view-hub" class="space-y-5">
+        <div class="bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-slate-200 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div>
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 font-bold text-xs uppercase tracking-wider mb-2 border border-indigo-200">
+              <span>5-Week Intervention Plan &bull; Zero-Scroll Bridging &amp; Teacher Scaffolding</span>
+            </div>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900">
+              Select a Pillar Module or the 100-Question Retrieval Bank
+            </h2>
+            <p class="text-slate-600 mt-1 text-sm sm:text-base max-w-3xl">
+              Launch <strong class="text-indigo-700">Module 1</strong> for the zero-scroll tactile <strong>Base-10 Bridging Lab</strong>, or explore Modules 2–5 where hints, visual models, worked steps, and answers stay hidden until you reveal them.
+            </p>
+          </div>
+          <button onclick="openModule(6)" class="shrink-0 bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold px-5 py-3.5 rounded-xl shadow-md transition flex items-center gap-2 text-base">
+            <span>Open 100-Question Bank</span>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+            </svg>
+          </button>
+        </div>
+
+        <!-- 6 Module Cards Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+          <!-- Module 1 -->
+          <div onclick="openModule(1)" class="group cursor-pointer bg-white hover:bg-blue-50/40 rounded-2xl p-6 shadow-sm hover:shadow-md border-2 border-blue-300 hover:border-blue-600 transition flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-4">
+                <span class="px-3 py-1 rounded-lg bg-blue-600 text-white font-extrabold text-xs uppercase">Module 1 &bull; Zero-Scroll Lab</span>
+                <span class="text-xs font-bold text-blue-700 group-hover:translate-x-0.5 transition">Launch Lab &rarr;</span>
+              </div>
+              <h3 class="text-xl font-extrabold text-slate-900 group-hover:text-blue-700">Base-10 Bridging Lab (Through 10 &amp; Up to 100)</h3>
+              <p class="text-slate-600 text-sm mt-2 leading-relaxed">
+                Zero-scroll Concrete-Pictorial-Abstract lab: subitise &amp; count hidden blocks first, tap or drag yellow cubes into the ten-frame to make 10, then complete the cherry split &amp; open number line!
+              </p>
+            </div>
+            <div class="mt-5 pt-4 border-t border-slate-100 flex flex-wrap gap-1.5">
+              <span class="text-xs font-semibold bg-blue-50 text-blue-800 px-2.5 py-1 rounded-md">Through 10 (8 + 5)</span>
+              <span class="text-xs font-semibold bg-blue-50 text-blue-800 px-2.5 py-1 rounded-md">Up to 100 (28 + 5)</span>
+              <span class="text-xs font-semibold bg-blue-50 text-blue-800 px-2.5 py-1 rounded-md">10 + 4 = 14</span>
+            </div>
+          </div>
+
+          <!-- Module 2 -->
+          <div onclick="openModule(2)" class="group cursor-pointer bg-white hover:bg-emerald-50/40 rounded-2xl p-6 shadow-sm hover:shadow-md border-2 border-slate-200 hover:border-emerald-500 transition flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-4">
+                <span class="px-3 py-1 rounded-lg bg-emerald-100 text-emerald-800 font-extrabold text-xs uppercase">Module 2 &bull; Week 2</span>
+                <span class="text-xs font-bold text-slate-400 group-hover:text-emerald-600">10 Examples + Triangle Builder &rarr;</span>
+              </div>
+              <h3 class="text-xl font-extrabold text-slate-900 group-hover:text-emerald-700">Part-Whole Fact Family Triangles &amp; Bar Models</h3>
+              <p class="text-slate-600 text-sm mt-2 leading-relaxed">
+                Interactive Fact Family Triangle builder (10 with 7 &amp; 3; 10 with 8 &amp; 2; 20 with 14 &amp; 6; 9 split into 5 &amp; 4) fixing Mya's equation syntax and connecting addition &amp; subtraction inverses.
+              </p>
+            </div>
+            <div class="mt-5 pt-4 border-t border-slate-100 flex flex-wrap gap-1.5">
+              <span class="text-xs font-semibold bg-slate-100 text-slate-700 px-2.5 py-1 rounded-md">7 + 3 = 10 / 10 − 7 = 3</span>
+              <span class="text-xs font-semibold bg-slate-100 text-slate-700 px-2.5 py-1 rounded-md">9 = 5 + [ ? ]</span>
+            </div>
+          </div>
+
+          <!-- Module 3 -->
+          <div onclick="openModule(3)" class="group cursor-pointer bg-white hover:bg-amber-50/40 rounded-2xl p-6 shadow-sm hover:shadow-md border-2 border-slate-200 hover:border-amber-500 transition flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-4">
+                <span class="px-3 py-1 rounded-lg bg-amber-100 text-amber-800 font-extrabold text-xs uppercase">Module 3 &bull; Week 3</span>
+                <span class="text-xs font-bold text-slate-400 group-hover:text-amber-600">10 Examples + Dienes/100-Sq &rarr;</span>
+              </div>
+              <h3 class="text-xl font-extrabold text-slate-900 group-hover:text-amber-700">Place Value Unitising &amp; Comparison (Tens &amp; Ones)</h3>
+              <p class="text-slate-600 text-sm mt-2 leading-relaxed">
+                Interactive Dienes Rod &amp; Cube Builder + 100-Square Jump Explorer: proving 5 tens &amp; 2 ones = 52 (not 87!), 34 = 3 tens &amp; 4 ones, 10 more than 43 = 53, and 67 &lt; 71.
+              </p>
+            </div>
+            <div class="mt-5 pt-4 border-t border-slate-100 flex flex-wrap gap-1.5">
+              <span class="text-xs font-semibold bg-slate-100 text-slate-700 px-2.5 py-1 rounded-md">5T + 2O = 52</span>
+              <span class="text-xs font-semibold bg-slate-100 text-slate-700 px-2.5 py-1 rounded-md">43 + 10 = 53</span>
+              <span class="text-xs font-semibold bg-slate-100 text-slate-700 px-2.5 py-1 rounded-md">71 &gt; 67</span>
+            </div>
+          </div>
+
+          <!-- Module 4 -->
+          <div onclick="openModule(4)" class="group cursor-pointer bg-white hover:bg-purple-50/40 rounded-2xl p-6 shadow-sm hover:shadow-md border-2 border-slate-200 hover:border-purple-500 transition flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-4">
+                <span class="px-3 py-1 rounded-lg bg-purple-100 text-purple-800 font-extrabold text-xs uppercase">Module 4 &bull; Week 4</span>
+                <span class="text-xs font-bold text-slate-400 group-hover:text-purple-600">10 Examples + Jump-Back Line &rarr;</span>
+              </div>
+              <h3 class="text-xl font-extrabold text-slate-900 group-hover:text-purple-700">Counting Back Across Decades &amp; Working Backwards</h3>
+              <p class="text-slate-600 text-sm mt-2 leading-relaxed">
+                Interactive Open Number Line Jump-Back Visualiser for crossing decade boundaries (1 less than 40 = 39, 40 − 6 = 34, 43 − 6 = 37) and inverse missing start numbers ([ ? ] − 6 = 34 &rarr; 40).
+              </p>
+            </div>
+            <div class="mt-5 pt-4 border-t border-slate-100 flex flex-wrap gap-1.5">
+              <span class="text-xs font-semibold bg-slate-100 text-slate-700 px-2.5 py-1 rounded-md">40 − 6 = 34</span>
+              <span class="text-xs font-semibold bg-slate-100 text-slate-700 px-2.5 py-1 rounded-md">43 − 6 = 37</span>
+              <span class="text-xs font-semibold bg-slate-100 text-slate-700 px-2.5 py-1 rounded-md">[ ? ] − 6 = 34</span>
+            </div>
+          </div>
+
+          <!-- Module 5 -->
+          <div onclick="openModule(5)" class="group cursor-pointer bg-white hover:bg-rose-50/40 rounded-2xl p-6 shadow-sm hover:shadow-md border-2 border-slate-200 hover:border-rose-500 transition flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-4">
+                <span class="px-3 py-1 rounded-lg bg-rose-100 text-rose-800 font-extrabold text-xs uppercase">Module 5 &bull; Week 5</span>
+                <span class="text-xs font-bold text-slate-400 group-hover:text-rose-600">10 Examples + Tower Decoder &rarr;</span>
+              </div>
+              <h3 class="text-xl font-extrabold text-slate-900 group-hover:text-rose-700">Action-Word Decoder (Difference, Remaining, Altogether, Even)</h3>
+              <p class="text-slate-600 text-sm mt-2 leading-relaxed">
+                Interactive Cube-Tower Comparison &amp; Bar Model Visualiser decoding PTM action words: <em>Difference</em> (12 vs 8 = 4), <em>Remaining</em> (15 − 6 = 9), <em>Altogether</em> (8 + 5 = 13), and <em>Even vs Odd</em> sorting (12 is even!).
+              </p>
+            </div>
+            <div class="mt-5 pt-4 border-t border-slate-100 flex flex-wrap gap-1.5">
+              <span class="text-xs font-semibold bg-slate-100 text-slate-700 px-2.5 py-1 rounded-md">Difference = 4</span>
+              <span class="text-xs font-semibold bg-slate-100 text-slate-700 px-2.5 py-1 rounded-md">Remaining = 9</span>
+              <span class="text-xs font-semibold bg-slate-100 text-slate-700 px-2.5 py-1 rounded-md">12 is Even</span>
+            </div>
+          </div>
+
+          <!-- Module 6 -->
+          <div onclick="openModule(6)" class="group cursor-pointer bg-indigo-900 hover:bg-indigo-800 rounded-2xl p-6 shadow-md hover:shadow-lg border-2 border-indigo-700 transition flex flex-col justify-between text-white">
+            <div>
+              <div class="flex items-center justify-between mb-4">
+                <span class="px-3 py-1 rounded-lg bg-amber-400 text-slate-950 font-extrabold text-xs uppercase">Module 6 &bull; 100 Qs</span>
+                <span class="text-xs font-bold text-indigo-200 group-hover:text-white">Full Retrieval Bank &rarr;</span>
+              </div>
+              <h3 class="text-xl font-extrabold text-white">100-Question P4A/P5A Retrieval Bank</h3>
+              <p class="text-indigo-200 text-sm mt-2 leading-relaxed">
+                100 bespoke foundational questions (20 per pillar) with topic filters, Random Question picker, live group score counter, and teacher-controlled Hint, Working &amp; Answer reveals.
+              </p>
+            </div>
+            <div class="mt-5 pt-4 border-t border-indigo-700/70 flex flex-wrap gap-1.5">
+              <span class="text-xs font-semibold bg-indigo-800 text-indigo-100 px-2.5 py-1 rounded-md">20 Qs per Pillar</span>
+              <span class="text-xs font-semibold bg-indigo-800 text-indigo-100 px-2.5 py-1 rounded-md">Auto-Reset Reveals</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================================================================== -->
+      <!-- VIEW 1: MODULE 1 — ZERO-SCROLL BASE-10 BRIDGING LAB                   -->
+      <!-- ===================================================================== -->
+      <section id="view-bridging-lab" class="hidden space-y-3">
+        <!-- Compact Top Bar with Mode Toggle & Module Switcher -->
+        <div class="bg-white rounded-2xl px-4 py-2.5 shadow-sm border border-slate-200 flex flex-wrap items-center justify-between gap-2">
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="px-2.5 py-1 rounded-lg bg-blue-600 text-white font-extrabold text-xs uppercase">Module 1 &bull; Zero-Scroll Lab</span>
+            <div class="inline-flex rounded-xl bg-slate-100 p-1 border border-slate-200">
+              <button id="btn-bridge-mode-10" onclick="setBridgeMode('ten')" class="px-3 py-1 rounded-lg text-xs font-extrabold bg-indigo-600 text-white shadow-sm transition">
+                Through 10 (e.g. 8 + 5)
+              </button>
+              <button id="btn-bridge-mode-100" onclick="setBridgeMode('hundred')" class="px-3 py-1 rounded-lg text-xs font-bold text-slate-700 hover:text-slate-900 transition">
+                Up to 100 (e.g. 28 + 5)
+              </button>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-1.5">
+            <button onclick="openModule(1)" class="px-2.5 py-1 rounded-lg text-xs font-extrabold bg-slate-900 text-white">1. Bridging Lab</button>
+            <button onclick="openModule(2)" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200">2. Fact Families</button>
+            <button onclick="openModule(3)" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200">3. Place Value</button>
+            <button onclick="openModule(4)" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200">4. Decades</button>
+            <button onclick="openModule(5)" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200">5. Action Words</button>
+            <button onclick="openModule(6)" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-indigo-600 text-white hover:bg-indigo-700">100-Q Bank</button>
+          </div>
+        </div>
+
+        <!-- Zero-Scroll Interactive Stage -->
+        <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border-2 border-blue-200 space-y-3">
+          <!-- Step Tracker Banner + Equation Unlock -->
+          <div class="flex flex-wrap items-center justify-between gap-2 pb-2.5 border-b border-slate-100">
+            <div class="flex flex-wrap items-center gap-1.5 text-xs font-extrabold">
+              <span id="lab-step-1-pill" class="px-3 py-1 rounded-full bg-amber-400 text-slate-950 shadow-sm">1. Count Blocks</span>
+              <span class="text-slate-400">&rarr;</span>
+              <span id="lab-step-2-pill" class="px-3 py-1 rounded-full bg-slate-100 text-slate-500">2. Slide Cubes to Make Friendly 10</span>
+              <span class="text-slate-400">&rarr;</span>
+              <span id="lab-step-3-pill" class="px-3 py-1 rounded-full bg-slate-100 text-slate-500">3. Cherry Split &amp; Number Line</span>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <div id="lab-equation-banner" class="px-4 py-1.5 rounded-xl bg-slate-900 text-white font-black text-base sm:text-lg tracking-wide">
+                [ ? ] + [ ? ] = [ ? ]
+              </div>
+              <button onclick="newBridgingProblem()" class="px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-extrabold text-xs sm:text-sm shadow-sm transition">
+                &#128260; New Problem
+              </button>
+            </div>
+          </div>
+
+          <!-- TOP ROW: SIDE-BY-SIDE BASE-10 DIENES / TEN-FRAME & YELLOW ADD-CUBES -->
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-stretch">
+            <!-- Left (7 cols): Start Number Base-10 Rods + Ten-Frame -->
+            <div class="md:col-span-7 bg-blue-50/70 rounded-2xl p-3.5 border-2 border-blue-200 flex flex-col justify-between space-y-2.5">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-extrabold uppercase tracking-wider text-blue-900">Start Number (Count First!)</span>
+                <div class="flex items-center gap-1.5">
+                  <span class="text-xs font-bold text-slate-600">Count:</span>
+                  <input id="lab-input-start" type="number" placeholder="?" class="w-16 h-8 text-center font-black text-base rounded-lg border-2 border-blue-400 bg-white text-slate-900 outline-none" onkeydown="if(event.key==='Enter') unlockStartCount()" />
+                  <button id="btn-unlock-start" onclick="unlockStartCount()" class="px-2.5 py-1 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs transition">
+                    Check
+                  </button>
+                </div>
+              </div>
+
+              <!-- Visual Dienes Rods (if Up to 100) + Interactive Ten-Frame -->
+              <div class="flex flex-wrap items-center justify-center gap-4 py-1">
+                <div id="lab-tens-rods-box" class="hidden flex items-center gap-1.5 bg-white px-3 py-2 rounded-xl border border-blue-200"></div>
+
+                <!-- 5x2 Ten-Frame Grid -->
+                <div id="lab-ten-frame" ondragover="event.preventDefault()" ondrop="handleTenFrameDrop(event)" class="grid grid-cols-5 gap-1.5 bg-white p-2.5 rounded-xl border-2 border-blue-400 shadow-inner"></div>
+              </div>
+
+              <div id="lab-start-status" class="text-center text-xs font-extrabold text-blue-900">
+                Subitise and count the blue blocks, then enter the start number!
+              </div>
+            </div>
+
+            <!-- Right (5 cols): Yellow Add-Cubes Bank -->
+            <div class="md:col-span-5 bg-amber-50/80 rounded-2xl p-3.5 border-2 border-amber-300 flex flex-col justify-between space-y-2.5">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-extrabold uppercase tracking-wider text-amber-900">Yellow Cubes to Add</span>
+                <div class="flex items-center gap-1.5">
+                  <span class="text-xs font-bold text-slate-600">Count:</span>
+                  <input id="lab-input-add" type="number" placeholder="?" class="w-16 h-8 text-center font-black text-base rounded-lg border-2 border-amber-400 bg-white text-slate-900 outline-none" onkeydown="if(event.key==='Enter') unlockAddCount()" />
+                  <button id="btn-unlock-add" onclick="unlockAddCount()" class="px-2.5 py-1 rounded-lg bg-amber-500 hover:bg-amber-600 text-slate-950 font-extrabold text-xs transition">
+                    Check
+                  </button>
+                </div>
+              </div>
+
+              <div id="lab-add-cubes-bank" class="flex flex-wrap items-center justify-center gap-2 bg-white p-3 rounded-xl border-2 border-amber-300 min-h-[76px]"></div>
+
+              <div class="flex items-center justify-between gap-2">
+                <span id="lab-add-status" class="text-xs font-extrabold text-amber-950">
+                  Count the yellow cubes!
+                </span>
+                <button id="btn-slide-one-cube" onclick="slideOneYellowCube()" class="hidden px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-extrabold text-xs shadow-sm transition shrink-0">
+                  Tap to Slide 1 Cube &rarr;
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- BOTTOM ROW: CONNECTED CHERRY PARTITION & OPEN NUMBER LINE -->
+          <div id="lab-pictorial-bridge-box" class="bg-slate-50 rounded-2xl p-3.5 border-2 border-slate-200 space-y-2.5">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <span class="text-xs font-extrabold uppercase tracking-wider text-indigo-800">
+                Connected Cherry Partition &amp; Open Number Line Jumps
+              </span>
+              <div class="flex items-center gap-2">
+                <button id="btn-lab-reveal-cherry" onclick="toggleLabReveal('cherry')" class="px-3 py-1.5 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-950 border border-amber-300 font-extrabold text-xs transition">
+                  &#128161; Reveal Cherry Split
+                </button>
+                <button id="btn-lab-reveal-line" onclick="toggleLabReveal('line')" class="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs transition">
+                  &#9989; Reveal Jumps &amp; Total
+                </button>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
+              <!-- Cherry Partition Diagram -->
+              <div class="md:col-span-4 flex flex-col items-center justify-center bg-white py-2.5 px-4 rounded-xl border border-slate-200">
+                <div class="text-[11px] font-bold text-slate-500 mb-1">Partition the Add-Number:</div>
+                <div id="lab-cherry-top" class="w-11 h-10 rounded-full bg-amber-400 text-slate-950 font-black text-lg flex items-center justify-center shadow-sm">
+                  ?
+                </div>
+                <svg class="w-28 h-6" viewBox="0 0 120 26">
+                  <line x1="60" y1="0" x2="26" y2="26" stroke="#64748b" stroke-width="2.5" stroke-linecap="round"></line>
+                  <line x1="60" y1="0" x2="94" y2="26" stroke="#64748b" stroke-width="2.5" stroke-linecap="round"></line>
+                </svg>
+                <div class="flex items-center gap-7">
+                  <div class="text-center">
+                    <div id="lab-cherry-left" class="w-11 h-10 rounded-full bg-emerald-100 border-2 border-emerald-500 text-emerald-950 font-black text-base flex items-center justify-center">
+                      ?
+                    </div>
+                    <span class="text-[10px] font-extrabold text-emerald-700">Fills 10</span>
+                  </div>
+                  <div class="text-center">
+                    <div id="lab-cherry-right" class="w-11 h-10 rounded-full bg-indigo-100 border-2 border-indigo-500 text-indigo-950 font-black text-base flex items-center justify-center">
+                      ?
+                    </div>
+                    <span class="text-[10px] font-extrabold text-indigo-700">Left Over</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Open Number Line Two-Hop Bridge -->
+              <div class="md:col-span-8 bg-white py-3 px-4 rounded-xl border border-slate-200 flex flex-col justify-center">
+                <div class="flex items-center justify-around text-xs font-black text-emerald-700 mb-1">
+                  <span id="lab-jump1-label">+ ? (to friendly 10)</span>
+                  <span id="lab-jump2-label">+ ? (left over)</span>
+                </div>
+                <svg class="w-full h-9" viewBox="0 0 400 36" preserveAspectRatio="none">
+                  <path d="M 45 34 Q 122 2 200 34" fill="none" stroke="#10b981" stroke-width="3" stroke-dasharray="5,3" />
+                  <path d="M 200 34 Q 278 2 355 34" fill="none" stroke="#6366f1" stroke-width="3" stroke-dasharray="5,3" />
+                  <line x1="20" y1="34" x2="380" y2="34" stroke="#334155" stroke-width="3" stroke-linecap="round" />
+                </svg>
+                <div class="flex items-center justify-between px-4 sm:px-8 pt-1.5">
+                  <div id="lab-nl-start" class="px-3.5 py-1 rounded-xl bg-blue-100 border-2 border-blue-400 font-black text-base sm:text-lg text-blue-950">?</div>
+                  <div id="lab-nl-friendly" class="px-3.5 py-1 rounded-xl bg-emerald-100 border-2 border-emerald-500 font-black text-base sm:text-lg text-emerald-950">?</div>
+                  <div id="lab-nl-total" class="px-3.5 py-1 rounded-xl bg-indigo-600 text-white font-black text-base sm:text-lg shadow-sm">?</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================================================================== -->
+      <!-- VIEW 2: TEACHING MODULES 2 TO 5 (STRICT TEACHER REVEALS + TOOLS)      -->
+      <!-- ===================================================================== -->
+      <section id="view-module" class="hidden space-y-5">
+        <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200 flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <div class="flex items-center gap-2">
+              <span id="mod-badge" class="px-2.5 py-0.5 rounded-md bg-emerald-100 text-emerald-800 font-extrabold text-xs uppercase">Module 2 &bull; Week 2</span>
+              <span id="mod-counter" class="text-xs font-bold text-slate-500">Example 1 of 10</span>
+            </div>
+            <h2 id="mod-title" class="text-xl sm:text-2xl font-extrabold text-slate-900 mt-1">Part-Whole Fact Family Triangles &amp; Bar Models</h2>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-1.5">
+            <button onclick="openModule(1)" class="px-2.5 py-1.5 rounded-lg text-xs font-bold bg-blue-50 text-blue-800 border border-blue-200 hover:bg-blue-100 transition">1. Bridging Lab</button>
+            <button onclick="openModule(2)" data-mod-tab="2" class="mod-tab-btn px-3 py-1.5 rounded-lg text-xs font-bold border transition">2. Fact Families</button>
+            <button onclick="openModule(3)" data-mod-tab="3" class="mod-tab-btn px-3 py-1.5 rounded-lg text-xs font-bold border transition">3. Place Value</button>
+            <button onclick="openModule(4)" data-mod-tab="4" class="mod-tab-btn px-3 py-1.5 rounded-lg text-xs font-bold border transition">4. Decades</button>
+            <button onclick="openModule(5)" data-mod-tab="5" class="mod-tab-btn px-3 py-1.5 rounded-lg text-xs font-bold border transition">5. Action Words</button>
+            <button onclick="openModule(6)" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-indigo-600 text-white hover:bg-indigo-700 transition">100-Q Bank</button>
+          </div>
+        </div>
+
+        <!-- Worked Example Card -->
+        <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border-2 border-slate-200 space-y-6">
+          <div class="flex flex-wrap items-center justify-between gap-2 pb-4 border-b border-slate-100">
+            <span id="ex-skill-tag" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 text-slate-700 font-bold text-xs uppercase tracking-wide">
+              Core Skill
+            </span>
+            <div class="flex items-center gap-2">
+              <button onclick="prevExample()" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-800 font-bold text-sm transition">
+                &larr; Prev
+              </button>
+              <button onclick="nextExample()" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-800 font-bold text-sm transition">
+                Next Example &rarr;
+              </button>
+              <button onclick="generateDynamicExample()" class="px-3.5 py-2 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 font-bold text-sm transition flex items-center gap-1.5">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                </svg>
+                <span>Generate New Problem</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="py-2">
+            <p class="text-xs font-extrabold uppercase tracking-wider text-slate-400 mb-2">Class Discussion Prompt (Read &amp; Model Before Revealing)</p>
+            <div id="ex-question-text" class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 leading-snug"></div>
+          </div>
+
+          <!-- STRICT TEACHER-CONTROLLED REVEAL BUTTONS -->
+          <div class="pt-4 border-t border-slate-100 flex flex-wrap items-center gap-3">
+            <button id="btn-ex-hint" onclick="toggleExampleReveal('hint')" class="px-4 py-3 rounded-xl font-bold text-sm sm:text-base border-2 border-amber-400 bg-amber-50 hover:bg-amber-100 text-amber-950 transition flex items-center gap-2 shadow-sm">
+              <span>&#128161; Show Visual Hint</span>
+            </button>
+
+            <button id="btn-ex-working" onclick="toggleExampleReveal('working')" class="px-4 py-3 rounded-xl font-bold text-sm sm:text-base border-2 border-blue-400 bg-blue-50 hover:bg-blue-100 text-blue-950 transition flex items-center gap-2 shadow-sm">
+              <span>&#129692; Show Step-by-Step Working</span>
+            </button>
+
+            <button id="btn-ex-answer" onclick="toggleExampleReveal('answer')" class="px-4 py-3 rounded-xl font-bold text-sm sm:text-base border-2 border-emerald-500 bg-emerald-600 hover:bg-emerald-700 text-white transition flex items-center gap-2 shadow-sm">
+              <span>&#9989; Reveal Final Answer</span>
+            </button>
+          </div>
+
+          <!-- HIDDEN-BY-DEFAULT REVEAL PANELS -->
+          <div class="space-y-4">
+            <div id="ex-panel-hint" class="hidden animate-pop rounded-2xl bg-amber-50/90 border-2 border-amber-300 p-5 space-y-3">
+              <div class="text-amber-900 font-extrabold text-xs uppercase tracking-wider">
+                Teacher Visual Hint &amp; Stem Scaffold
+              </div>
+              <p id="ex-hint-text" class="text-slate-800 text-base sm:text-lg font-medium"></p>
+              <div id="ex-visual-box" class="pt-2"></div>
+            </div>
+
+            <div id="ex-panel-working" class="hidden animate-pop rounded-2xl bg-blue-50/90 border-2 border-blue-300 p-5 space-y-2">
+              <div class="text-blue-900 font-extrabold text-xs uppercase tracking-wider">
+                Step-by-Step Worked Strategy
+              </div>
+              <div id="ex-working-text" class="text-slate-800 text-base sm:text-lg font-semibold space-y-1.5"></div>
+            </div>
+
+            <div id="ex-panel-answer" class="hidden animate-pop rounded-2xl bg-emerald-50 border-2 border-emerald-400 p-5 flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <span class="text-emerald-800 font-extrabold text-xs uppercase tracking-wider block">Final Answer</span>
+                <span id="ex-answer-text" class="text-2xl sm:text-3xl font-black text-emerald-950"></span>
+              </div>
+              <span class="px-3 py-1 rounded-full bg-emerald-200 text-emerald-900 font-bold text-xs">Check &amp; Justify Aloud</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- COLLAPSIBLE INTERACTIVE TEACHER DEMONSTRATION TOOL -->
+        <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <span class="text-xs font-extrabold uppercase tracking-wider text-indigo-600 block">Interactive Teacher Demonstration Tool</span>
+              <h3 id="manip-header-title" class="text-base sm:text-lg font-extrabold text-slate-900">Interactive Fact Family Triangle Builder</h3>
+            </div>
+            <button id="btn-toggle-manip" onclick="toggleManipulativeDrawer()" class="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs sm:text-sm transition">
+              Show Interactive Tool
+            </button>
+          </div>
+          <div id="manipulative-body" class="hidden mt-4 pt-4 border-t border-slate-100 animate-pop"></div>
+        </div>
+      </section>
+
+      <!-- ===================================================================== -->
+      <!-- VIEW 3: MODULE 6 — 100-QUESTION RETRIEVAL BANK                        -->
+      <!-- ===================================================================== -->
+      <section id="view-bank" class="hidden space-y-5">
+        <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200 flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-0.5 rounded-md bg-indigo-100 text-indigo-800 font-extrabold text-xs uppercase">Module 6 &bull; 100-Question Bank</span>
+              <span id="bank-filtered-count" class="text-xs font-bold text-slate-500">Showing 100 Questions</span>
+            </div>
+            <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900 mt-1">P4A/P5A Group A Foundational Retrieval Bank</h2>
+          </div>
+
+          <div class="flex items-center gap-3 bg-slate-50 px-4 py-2.5 rounded-xl border border-slate-200">
+            <div class="text-right">
+              <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">Group Score</span>
+              <span class="text-lg font-black text-slate-900"><span id="bank-score-correct">0</span> / <span id="bank-score-attempted">0</span></span>
+            </div>
+            <div class="flex items-center gap-1.5 border-l border-slate-200 pl-3">
+              <button onclick="markBankScore(true)" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-sm transition">+1 Mastered</button>
+              <button onclick="markBankScore(false)" class="px-3 py-1.5 rounded-lg bg-rose-100 hover:bg-rose-200 text-rose-800 font-bold text-xs transition">Revisit</button>
+              <button onclick="resetBankScore()" class="px-2.5 py-1.5 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-xs transition">Reset</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pillar Filter Tabs & Jumper -->
+        <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200 flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-3">
+          <div class="flex flex-wrap items-center gap-1.5">
+            <button onclick="setBankFilter('all')" data-bank-filter="all" class="bank-filter-btn px-3 py-2 rounded-xl text-xs font-bold border transition">All 100</button>
+            <button onclick="setBankFilter('Bridging & Ten-Frames')" data-bank-filter="Bridging & Ten-Frames" class="bank-filter-btn px-3 py-2 rounded-xl text-xs font-bold border transition">1. Bridging &amp; Ten-Frames (20)</button>
+            <button onclick="setBankFilter('Fact Families')" data-bank-filter="Fact Families" class="bank-filter-btn px-3 py-2 rounded-xl text-xs font-bold border transition">2. Fact Families (20)</button>
+            <button onclick="setBankFilter('Place Value & 10 More/Less')" data-bank-filter="Place Value & 10 More/Less" class="bank-filter-btn px-3 py-2 rounded-xl text-xs font-bold border transition">3. Place Value &amp; 10 More/Less (20)</button>
+            <button onclick="setBankFilter('Decade Subtraction')" data-bank-filter="Decade Subtraction" class="bank-filter-btn px-3 py-2 rounded-xl text-xs font-bold border transition">4. Decade Subtraction (20)</button>
+            <button onclick="setBankFilter('Maths Vocabulary')" data-bank-filter="Maths Vocabulary" class="bank-filter-btn px-3 py-2 rounded-xl text-xs font-bold border transition">5. Maths Vocabulary (20)</button>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <label for="bank-jump-select" class="text-xs font-bold text-slate-600 whitespace-nowrap">Jump:</label>
+            <select id="bank-jump-select" onchange="jumpToBankQuestion(this.value)" class="bg-slate-50 border border-slate-300 text-slate-900 text-sm font-bold rounded-xl px-3 py-2 focus:ring-2 focus:ring-indigo-500 outline-none"></select>
+            <button onclick="randomBankQuestion()" class="px-3.5 py-2 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-950 font-extrabold text-xs sm:text-sm border border-amber-300 transition whitespace-nowrap">
+              &#127922; Random Question
+            </button>
+          </div>
+        </div>
+
+        <!-- Question Card -->
+        <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border-2 border-slate-200 space-y-6">
+          <div class="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-slate-100">
+            <div class="flex items-center gap-2.5">
+              <span id="bank-q-number" class="px-3.5 py-1.5 rounded-xl bg-slate-900 text-white font-black text-sm sm:text-base">Question #1</span>
+              <span id="bank-q-topic" class="px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200 font-bold text-xs uppercase">Bridging &amp; Ten-Frames</span>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <button onclick="prevBankQuestion()" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-800 font-bold text-sm transition">
+                &larr; Previous
+              </button>
+              <button onclick="nextBankQuestion()" class="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-bold text-sm transition shadow-sm">
+                Next Question &rarr;
+              </button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center py-2">
+            <div class="lg:col-span-8">
+              <p class="text-xs font-extrabold uppercase tracking-wider text-slate-400 mb-2">Circle Key Action Words &amp; Solve on Mini-Whiteboards</p>
+              <div id="bank-q-text" class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 leading-snug"></div>
+            </div>
+
+            <div class="lg:col-span-4 bg-slate-50 rounded-2xl p-4 sm:p-5 border-2 border-dashed border-slate-300 flex flex-col justify-center">
+              <label for="bank-pupil-input" class="text-xs font-extrabold uppercase tracking-wider text-slate-500 mb-2">Optional Group Check Box</label>
+              <div class="flex items-center gap-2">
+                <input id="bank-pupil-input" type="text" placeholder="Enter answer..." class="w-full bg-white border-2 border-slate-300 focus:border-indigo-500 rounded-xl px-3.5 py-2.5 text-xl font-extrabold text-slate-900 outline-none" onkeydown="if(event.key==='Enter') checkPupilInput()" />
+                <button onclick="checkPupilInput()" class="px-4 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-sm transition shrink-0">
+                  Check
+                </button>
+              </div>
+              <p id="bank-input-feedback" class="text-xs font-bold mt-2 min-h-[1.25rem]"></p>
+            </div>
+          </div>
+
+          <!-- STRICT TEACHER-CONTROLLED REVEAL BUTTONS -->
+          <div class="pt-4 border-t border-slate-100 flex flex-wrap items-center gap-3">
+            <button id="btn-bank-hint" onclick="toggleBankReveal('hint')" class="px-4 py-3 rounded-xl font-bold text-sm sm:text-base border-2 border-amber-400 bg-amber-50 hover:bg-amber-100 text-amber-950 transition flex items-center gap-2 shadow-sm">
+              <span>&#128161; Show Visual Hint</span>
+            </button>
+
+            <button id="btn-bank-working" onclick="toggleBankReveal('working')" class="px-4 py-3 rounded-xl font-bold text-sm sm:text-base border-2 border-blue-400 bg-blue-50 hover:bg-blue-100 text-blue-950 transition flex items-center gap-2 shadow-sm">
+              <span>&#129692; Show Step-by-Step Working</span>
+            </button>
+
+            <button id="btn-bank-answer" onclick="toggleBankReveal('answer')" class="px-4 py-3 rounded-xl font-bold text-sm sm:text-base border-2 border-emerald-500 bg-emerald-600 hover:bg-emerald-700 text-white transition flex items-center gap-2 shadow-sm">
+              <span>&#9989; Reveal Final Answer</span>
+            </button>
+          </div>
+
+          <!-- HIDDEN-BY-DEFAULT REVEAL BOXES -->
+          <div class="space-y-3">
+            <div id="bank-panel-hint" class="hidden animate-pop rounded-2xl bg-amber-50 border-2 border-amber-300 p-4 sm:p-5">
+              <span class="text-amber-900 font-extrabold text-xs uppercase tracking-wider block mb-1">Visual Hint / Clue</span>
+              <p id="bank-hint-text" class="text-slate-800 text-base sm:text-lg font-semibold"></p>
+            </div>
+
+            <div id="bank-panel-working" class="hidden animate-pop rounded-2xl bg-blue-50 border-2 border-blue-300 p-4 sm:p-5">
+              <span class="text-blue-900 font-extrabold text-xs uppercase tracking-wider block mb-1">Step-by-Step Working</span>
+              <p id="bank-working-text" class="text-slate-800 text-base sm:text-lg font-semibold"></p>
+            </div>
+
+            <div id="bank-panel-answer" class="hidden animate-pop rounded-2xl bg-emerald-50 border-2 border-emerald-400 p-4 sm:p-5 flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <span class="text-emerald-800 font-extrabold text-xs uppercase tracking-wider block">Final Answer</span>
+                <span id="bank-answer-text" class="text-2xl sm:text-3xl font-black text-emerald-950"></span>
+              </div>
+              <button onclick="nextBankQuestion()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-sm transition">
+                Next Question &rarr;
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- ===================================================================== -->
+    <!-- DOCKED CLICKABLE LIVE LESSON & PUPIL TRACKER PANEL (RIGHT)            -->
+    <!-- ===================================================================== -->
+    <aside id="tracker-pane" class="lg:w-[410px] xl:w-[440px] bg-slate-100 border-t-4 lg:border-t-0 lg:border-l-2 border-slate-300 p-3 sm:p-4 space-y-3 overflow-y-auto">
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-3.5 space-y-2.5">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+          <div>
+            <span class="text-[10px] font-extrabold uppercase tracking-wider text-indigo-600 block">Live 5-Week Lesson Tracker</span>
+            <span id="tracker-lesson-heading" class="text-xs font-extrabold text-slate-900">Week 1 &bull; Lesson 1</span>
+          </div>
+          <button onclick="toggleTrackerPane()" class="px-2 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold text-xs" title="Hide Tracker Panel">
+            Hide &times;
+          </button>
+        </div>
+
+        <!-- Lesson Status Pills -->
+        <div class="flex items-center justify-between gap-1">
+          <button onclick="setLessonStatus('Not Started')" id="statusBtn-Not Started" class="status-pill flex-1 py-1.5 rounded-xl text-[11px] font-bold border border-slate-300 bg-slate-50 text-slate-600">
+            Not Started
+          </button>
+          <button onclick="setLessonStatus('Needs Repeat')" id="statusBtn-Needs Repeat" class="status-pill flex-1 py-1.5 rounded-xl text-[11px] font-bold border border-slate-300 bg-slate-50 text-slate-600">
+            &#128257; Repeat
+          </button>
+          <button onclick="setLessonStatus('Covered')" id="statusBtn-Covered" class="status-pill flex-1 py-1.5 rounded-xl text-[11px] font-bold border border-slate-300 bg-slate-50 text-slate-600">
+            &#9989; Covered
+          </button>
+        </div>
+
+        <!-- What We Covered Clickable Micro-Step Toggles -->
+        <div>
+          <div class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 mb-1">What We Covered (Tap to Toggle)</div>
+          <div id="coveredPillsContainer" class="grid grid-cols-2 gap-1.5"></div>
+        </div>
+      </div>
+
+      <!-- 4 Individual Pupil Cards (Sofia, Mya, Orlaith-Louise, James) -->
+      <div id="pupilCardsContainer" class="space-y-2.5"></div>
+    </aside>
+
+    <!-- ===================================================================== -->
+    <!-- RIGHT / FULLSCREEN INTERACTIVE SCRATCHPAD WHITEBOARD                  -->
+    <!-- ===================================================================== -->
+    <aside id="whiteboard-pane" class="hidden lg:w-[46%] xl:w-[48%] bg-white border-t-4 lg:border-t-0 lg:border-l-4 border-slate-300 flex flex-col shadow-2xl z-30">
+      <div class="bg-slate-800 text-white p-3 flex flex-wrap items-center justify-between gap-2 border-b border-slate-700">
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="font-extrabold text-xs sm:text-sm tracking-wide text-emerald-400">WHITEBOARD</span>
+          <div class="flex items-center gap-1.5 bg-slate-900 px-2 py-1 rounded-xl border border-slate-700">
+            <button onclick="setWbColor('#0f172a')" data-wb-color="#0f172a" class="wb-color-btn w-6 h-6 rounded-full bg-slate-900 border-2 border-white ring-2 ring-emerald-400" title="Black Pen"></button>
+            <button onclick="setWbColor('#2563eb')" data-wb-color="#2563eb" class="wb-color-btn w-6 h-6 rounded-full bg-blue-600 border-2 border-white/60" title="Blue Pen"></button>
+            <button onclick="setWbColor('#dc2626')" data-wb-color="#dc2626" class="wb-color-btn w-6 h-6 rounded-full bg-red-600 border-2 border-white/60" title="Red Pen"></button>
+            <button onclick="setWbColor('#059669')" data-wb-color="#059669" class="wb-color-btn w-6 h-6 rounded-full bg-emerald-600 border-2 border-white/60" title="Green Pen"></button>
+            <button onclick="setWbColor('#ea580c')" data-wb-color="#ea580c" class="wb-color-btn w-6 h-6 rounded-full bg-orange-600 border-2 border-white/60" title="Orange Pen"></button>
+          </div>
+
+          <div class="flex items-center gap-1 bg-slate-900 px-2 py-1 rounded-xl border border-slate-700">
+            <button onclick="setWbSize(3)" data-wb-size="3" class="wb-size-btn px-2 py-0.5 rounded text-xs font-bold bg-slate-700 text-white">Thin</button>
+            <button onclick="setWbSize(6)" data-wb-size="6" class="wb-size-btn px-2 py-0.5 rounded text-xs font-bold text-slate-300 hover:text-white">Med</button>
+            <button onclick="setWbSize(11)" data-wb-size="11" class="wb-size-btn px-2 py-0.5 rounded text-xs font-bold text-slate-300 hover:text-white">Bold</button>
+            <button onclick="setWbTool('eraser')" id="btn-wb-eraser" class="px-2 py-0.5 rounded text-xs font-bold text-amber-300 hover:bg-slate-700 transition">Eraser</button>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-1.5">
+          <select id="wb-bg-select" onchange="setWbBackground(this.value)" class="bg-slate-900 text-white text-xs font-bold px-2.5 py-1.5 rounded-lg border border-slate-600 outline-none">
+            <option value="blank">Blank White</option>
+            <option value="grid">Squared Maths Grid</option>
+            <option value="numberline">Empty Number Line</option>
+            <option value="to">Tens | Ones Columns</option>
+          </select>
+
+          <button onclick="undoWbStroke()" class="px-2.5 py-1.5 rounded-lg bg-slate-700 hover:bg-slate-600 text-xs font-bold text-white transition">
+            Undo
+          </button>
+          <button onclick="toggleWbFullscreen()" id="btn-wb-expand" class="px-2.5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-xs font-bold text-white transition">
+            Fullscreen
+          </button>
+          <button onclick="clearWhiteboard()" class="px-2.5 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-xs font-bold text-white transition">
+            Clear
+          </button>
+          <button onclick="toggleWhiteboard()" class="px-2.5 py-1.5 rounded-lg bg-slate-700 hover:bg-slate-600 text-xs font-bold text-slate-200 transition">
+            &times;
+          </button>
+        </div>
+      </div>
+
+      <div id="wb-canvas-wrapper" class="relative flex-1 min-h-[400px] lg:min-h-[calc(100vh-115px)] bg-white overflow-hidden">
+        <canvas id="wb-canvas" class="block w-full h-full"></canvas>
+      </div>
+    </aside>
+  </div>
+
+  <!-- ======================================================================= -->
+  <!-- FULL-SCREEN TRANSPARENT "DRAW OVER SCREEN" ANNOTATION OVERLAY           -->
+  <!-- ======================================================================= -->
+  <canvas id="screenAnnotateCanvas" style="z-index: 9998;" class="hidden fixed inset-0 w-screen h-screen transition-colors duration-200"></canvas>
+
+  <div id="annotateToolbar" style="z-index: 9999;" class="hidden fixed bottom-4 left-1/2 -translate-x-1/2 bg-slate-900/95 text-white border-2 border-teal-400 rounded-2xl shadow-2xl px-3 py-2.5 flex flex-wrap items-center justify-center gap-2 max-w-[96vw]">
+    <div id="annotateDragHandle" class="px-1.5 py-1 text-slate-400 hover:text-white cursor-move font-extrabold text-xs select-none" title="Drag toolbar">
+      ⠿ OVERLAY
+    </div>
+
+    <div class="flex items-center gap-1 bg-slate-800 px-2 py-1 rounded-xl">
+      <button onclick="setAnnotateBackdrop('clear')" id="backdropBtn-clear" class="px-2 py-1 rounded-lg bg-teal-400 text-slate-950 font-extrabold text-xs transition">
+        👁️ Clear
+      </button>
+      <button onclick="setAnnotateBackdrop('frosted')" id="backdropBtn-frosted" class="px-2 py-1 rounded-lg bg-slate-700 hover:bg-slate-600 text-white font-bold text-xs transition">
+        🌫️ Soft Tint
+      </button>
+      <button onclick="setAnnotateBackdrop('whiteboard')" id="backdropBtn-whiteboard" class="px-2 py-1 rounded-lg bg-slate-700 hover:bg-slate-600 text-white font-bold text-xs transition">
+        ⬜ Solid White
+      </button>
+    </div>
+
+    <div class="flex items-center gap-1.5 bg-slate-800 px-2 py-1 rounded-xl">
+      <button onclick="setAnnotateTool('pen', '#0f172a', 5)" class="w-7 h-7 rounded-full bg-slate-900 border-2 border-white" title="Black Pen"></button>
+      <button onclick="setAnnotateTool('pen', '#2563eb', 5)" class="w-7 h-7 rounded-full bg-blue-600 border-2 border-white" title="Blue Pen"></button>
+      <button onclick="setAnnotateTool('pen', '#dc2626', 5)" class="w-7 h-7 rounded-full bg-red-600 border-2 border-white" title="Red Pen"></button>
+      <button onclick="setAnnotateTool('highlighter', 'rgba(250, 204, 21, 0.45)', 26)" class="px-2 py-1 rounded-lg bg-amber-400 text-slate-950 font-extrabold text-xs" title="Yellow Highlighter">
+        🖍️ Highlight
+      </button>
+    </div>
+
+    <div class="flex items-center gap-1.5">
+      <button onclick="setAnnotateTool('eraser', '#000000', 28)" class="px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold">
+        🧽 Eraser
+      </button>
+      <button onclick="undoAnnotateStroke()" class="px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold">
+        ↩️ Undo
+      </button>
+      <button onclick="clearAnnotateCanvas()" class="px-2.5 py-1.5 rounded-xl bg-rose-900/80 hover:bg-rose-800 text-rose-100 text-xs font-bold">
+        🗑️ Clear Ink
+      </button>
+    </div>
+
+    <button onclick="toggleAnnotatePassThrough()" id="passThroughBtn" class="px-3 py-1.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-extrabold text-xs shadow transition">
+      🔓 Interact Underneath
+    </button>
+
+    <button onclick="closeScreenAnnotator()" class="px-3 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-extrabold text-xs">
+      ✕ Close
+    </button>
+  </div>
+
+  <!-- ======================================================================= -->
+  <!-- GOOGLE DOC LIVE AUTO-SYNC MODAL                                         -->
+  <!-- ======================================================================= -->
+  <div id="googleSyncModal" class="hidden fixed inset-0 bg-slate-950/75 z-50 flex items-center justify-center p-4 overflow-y-auto">
+    <div class="max-w-2xl w-full bg-white rounded-2xl shadow-2xl border border-slate-200 p-6 space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div>
+          <h3 class="text-lg font-extrabold text-slate-900">☁️ Google Doc Live Auto-Sync Setup</h3>
+          <p class="text-xs text-slate-500">Connect your Google Apps Script Web App URL once — every tap on the tracker auto-saves straight into your Google Doc.</p>
+        </div>
+        <button onclick="closeGoogleSyncModal()" class="px-3 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 font-bold text-slate-700 text-sm">✕</button>
+      </div>
+
+      <div class="space-y-2">
+        <label class="block text-xs font-extrabold uppercase text-slate-600">Google Apps Script Web App URL:</label>
+        <input id="appsScriptUrlInput" type="url" placeholder="https://script.google.com/macros/s/.../exec" class="w-full rounded-xl border-2 border-slate-300 p-2.5 text-xs sm:text-sm font-mono focus:outline-none focus:border-indigo-600" />
+      </div>
+
+      <div class="flex flex-wrap items-center justify-between gap-2">
+        <div class="flex flex-wrap gap-2">
+          <button onclick="saveAppsScriptUrl()" class="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold text-xs sm:text-sm shadow">
+            ✅ Save URL &amp; Sync Now
+          </button>
+          <button onclick="disconnectGoogleSync()" class="px-3.5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs">
+            Disconnect
+          </button>
+        </div>
+
+        <div class="flex gap-1.5">
+          <button onclick="downloadBackupFile()" class="px-3 py-2 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-950 font-extrabold text-xs">
+            💾 Download .json
+          </button>
+          <label class="px-3 py-2 rounded-xl bg-emerald-100 hover:bg-emerald-200 text-emerald-950 font-extrabold text-xs cursor-pointer">
+            📂 Restore .json
+            <input type="file" accept=".json,application/json" onchange="handleRestoreFileUpload(event)" class="hidden" />
+          </label>
+        </div>
+      </div>
+
+      <div id="googleSyncModalMsg" class="hidden p-2.5 rounded-xl bg-emerald-50 border border-emerald-300 text-emerald-900 font-bold text-xs"></div>
+
+      <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-2 text-xs text-slate-700">
+        <div class="font-extrabold text-slate-900">Quick 3-Step Setup:</div>
+        <ol class="list-decimal list-inside space-y-1">
+          <li>Open your Google Doc → <strong>Extensions → Apps Script</strong>.</li>
+          <li>Paste the Apps Script receiver code (with your Google Doc ID) and click <strong>Deploy → New deployment → Web app</strong>.</li>
+          <li>Set <em>Execute as: Me</em> and <em>Who has access: Anyone</em>, copy the Web App URL, and paste it above.</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================= -->
+  <!-- PRINTABLE 5-WEEK LANDSCAPE REPORT MODAL                                 -->
+  <!-- ======================================================================= -->
+  <div id="reportModal" class="hidden fixed inset-0 bg-slate-950/75 z-50 overflow-y-auto p-3 sm:p-6">
+    <div class="max-w-[1500px] mx-auto bg-white rounded-2xl shadow-2xl border border-slate-200 p-5 sm:p-8 space-y-5">
+      <div class="no-print flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-slate-200">
+        <div>
+          <h2 class="text-xl font-extrabold text-slate-900">P4A/P5A Group A — 5-Week Intervention Report</h2>
+          <p class="text-xs sm:text-sm text-slate-600">Formatted for Landscape printing or direct copy-paste into Google Docs.</p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2">
+          <button onclick="copyReportTableForGoogleDocs()" class="px-4 py-2.5 rounded-xl bg-emerald-100 hover:bg-emerald-200 text-emerald-950 font-extrabold text-xs sm:text-sm transition">
+            📋 Copy Table for Google Docs
+          </button>
+          <button onclick="window.print()" class="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold text-xs sm:text-sm shadow transition">
+            🖨 Print / Landscape PDF
+          </button>
+          <button onclick="closeReportModal()" class="px-3.5 py-2.5 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-800 font-extrabold text-xs sm:text-sm transition">
+            ✕ Close
+          </button>
+        </div>
+      </div>
+
+      <div id="reportCopyToast" class="no-print hidden p-3 rounded-xl bg-emerald-50 border border-emerald-300 text-emerald-900 font-bold text-sm text-center">
+        ✅ Full 20-lesson table copied! Open your Google Doc and press Ctrl+V to paste the table.
+      </div>
+
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between border-b-2 border-slate-900 pb-3">
+        <div>
+          <div class="text-xs font-extrabold uppercase tracking-wider text-indigo-700">St Kieran's Primary School • P4A/P5A Group A</div>
+          <h3 class="text-2xl font-extrabold text-slate-900">5-Week Foundational Mastery Tracker: Sofia, Mya, Orlaith-Louise &amp; James</h3>
+        </div>
+        <div class="text-xs font-semibold text-slate-600 mt-1 sm:mt-0 text-left sm:text-right">
+          <div><strong>Effort (E):</strong> 1 Passive | 2 Prompted | 3 Good Focus | 4 Resilient</div>
+          <div><strong>Application (A):</strong> 1 Counts in 1s | 2 Concrete Only | 3 Pictorial/Slow | 4 Fluent</div>
+        </div>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table id="printableReportTable" class="w-full border-collapse text-left text-xs">
+          <thead>
+            <tr class="bg-slate-900 text-white">
+              <th class="border border-slate-300 p-2 w-44">Lesson &amp; Focus</th>
+              <th class="border border-slate-300 p-2 w-36">What We Covered</th>
+              <th class="border border-slate-300 p-2">Sofia</th>
+              <th class="border border-slate-300 p-2">Mya</th>
+              <th class="border border-slate-300 p-2">Orlaith-Louise</th>
+              <th class="border border-slate-300 p-2">James</th>
+            </tr>
+          </thead>
+          <tbody id="reportTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // =========================================================================
+    // 1. 5-WEEK CURRICULUM SCHEDULE (20 LESSONS LINKED TO MODULES 1–6)
+    // =========================================================================
+    const SCHEDULE_20_LESSONS = [
+      // WEEK 1
+      { id: 'w1l1', week: 1, lesson: 1, code: 'W1 L1', module: 1, bridgeMode: 'ten', presetIdx: 0, exIdx: 0, title: 'Concrete Ten-Frames & Making 10 (10 + 4 = 14, 8 + 5)', stem: '“A full ten-frame is 10. 10 and 4 more is 14 — not 4!”' },
+      { id: 'w1l2', week: 1, lesson: 2, code: 'W1 L2', module: 1, bridgeMode: 'ten', presetIdx: 1, exIdx: 0, title: 'Cherry Part-Whole Split into Jump Lines (8 + 5, 9 + 6)', stem: '“8 needs 2 to make 10. Split 5 into 2 and 3 → 10 + 3 = 13!”' },
+      { id: 'w1l3', week: 1, lesson: 3, code: 'W1 L3', module: 1, bridgeMode: 'hundred', presetIdx: 0, exIdx: 0, title: 'Bridging Across Decades Up to 100 (28 + 5, 47 + 6)', stem: '“28 needs 2 to reach friendly 30, then 3 more makes 33!”' },
+      { id: 'w1l4', week: 1, lesson: 4, code: 'W1 L4', module: 6, bankFilter: 'Bridging & Ten-Frames', exIdx: 0, title: 'Application & Retrieval Sprint (Bridging & Ten-Frames)', stem: '“5 splits into 2 and 3, so 8 + 5 = 10 + 3 = 13!”' },
+      // WEEK 2
+      { id: 'w2l1', week: 2, lesson: 5, code: 'W2 L5', module: 2, exIdx: 0, title: 'Part-Whole Fact Families (7, 3, 10 → Fixing 3 = 7 = 10)', stem: '“10 is the Boss Whole at the top. Subtraction starts with 10: 10 − 7 = 3!”' },
+      { id: 'w2l2', week: 2, lesson: 6, code: 'W2 L6', module: 2, exIdx: 1, title: 'Missing Part Subtraction & Cherry Splits (10 − 8, 9 = 5 + ?)', stem: '“Whole minus known part equals the missing part!”' },
+      { id: 'w2l3', week: 2, lesson: 7, code: 'W2 L7', module: 2, exIdx: 3, title: 'Bonds to 20 & Inverse Checking (14 + ? = 20, 10 − 3 = 7)', stem: '“I know 10 − 8 = 2 because 2 + 8 = 10!”' },
+      { id: 'w2l4', week: 2, lesson: 8, code: 'W2 L8', module: 6, bankFilter: 'Fact Families', exIdx: 6, title: 'Pillar 1 & 2 Retrieval Check (Fact Families & Inverse)', stem: '“Add the parts to get the whole; subtract from the whole to find a part!”' },
+      // WEEK 3
+      { id: 'w3l1', week: 3, lesson: 9, code: 'W3 L9', module: 3, exIdx: 0, title: 'Base-10 Dienes Unitising (5 tens 2 ones = 52 vs 87; 34)', stem: '“5 tens is 50, and 2 ones is 2 — together that makes 52!”' },
+      { id: 'w3l2', week: 3, lesson: 10, code: 'W3 L10', module: 3, exIdx: 8, title: 'Flexible & Non-Standard Partitioning (43 = 30 + 13; 54 = 40 + 14)', stem: '“Exchange 1 ten rod for 10 ones: 43 = 30 + 13!”' },
+      { id: 'w3l3', week: 3, lesson: 11, code: 'W3 L11', module: 3, exIdx: 2, title: '10 More/Less & Comparison (<, >) (43 + 10 = 53, 67 < 71)', stem: '“10 more than 43 is 53 — the tens go up by 1 and the 3 ones stay fixed!”' },
+      { id: 'w3l4', week: 3, lesson: 12, code: 'W3 L12', module: 6, bankFilter: 'Place Value & 10 More/Less', exIdx: 7, title: 'Place Value Retrieval Check (Spot Digit-Swaps & Comparisons)', stem: '“Compare the tens digit first: 71 has 7 tens, 67 has 6 tens!”' },
+      // WEEK 4
+      { id: 'w4l1', week: 4, lesson: 13, code: 'W4 L13', module: 4, exIdx: 0, title: 'Subtracting from Friendly Decades (40 − 6 = 34; 40 − 1 = 39)', stem: '“Exchange 1 ten for 10 ones: 40 − 1 = 39 and 40 − 6 = 34!”' },
+      { id: 'w4l2', week: 4, lesson: 14, code: 'W4 L14', module: 4, exIdx: 1, title: 'Two-Hop Jump Back Across Decades (43 − 6 = 37; 32 − 5 = 27)', stem: '“43 − 6: hop back 3 to 40, then hop back 3 more to 37!”' },
+      { id: 'w4l3', week: 4, lesson: 15, code: 'W4 L15', module: 4, exIdx: 2, title: 'Working Backwards & Inverse Decades ([ ? ] − 6 = 34 → 40)', stem: '“The start of subtraction is the Boss Whole: 34 + 6 = 40!”' },
+      { id: 'w4l4', week: 4, lesson: 16, code: 'W4 L16', module: 6, bankFilter: 'Decade Subtraction', exIdx: 4, title: 'Decade Subtraction Retrieval Check (40 − 6, 43 − 6, [ ? ] − 6 = 34)', stem: '“Jump back to the friendly decade first, then subtract the rest!”' },
+      // WEEK 5
+      { id: 'w5l1', week: 5, lesson: 17, code: 'W5 L17', module: 5, exIdx: 0, title: 'Action Words: "Difference" (12 vs 8 = 4) & "Remaining" (15 − 6 = 9)', stem: '“Difference is the gap (12 − 8 = 4). Remaining means what is left over!”' },
+      { id: 'w5l2', week: 5, lesson: 18, code: 'W5 L18', module: 5, exIdx: 2, title: 'Action Words: "Altogether" (8 + 5 = 13) & Even/Odd Pairs (12 is Even)', stem: '“Altogether combines the parts (8 + 5 = 13). 12 makes 6 pairs so it is EVEN!”' },
+      { id: 'w5l3', week: 5, lesson: 19, code: 'W5 L19', module: 5, exIdx: 8, title: '2-Step Stories & PTM Test-Craft Strategy Checklist', stem: '“1. Circle key words  2. Draw model  3. Check tens & ones  4. Inverse check!”' },
+      { id: 'w5l4', week: 5, lesson: 20, code: 'W5 L20', module: 6, bankFilter: 'all', exIdx: 9, title: 'Post-Intervention 100-Question Random Mastery Check', stem: '“We unitise tens, bridge through 10, and check with inverse!”' }
+    ];
+
+    const PUPIL_CARDS_META = [
+      {
+        key: 'sofia', name: 'Sofia',
+        target: '10+4=14 unitising, bridging 10, even/difference',
+        border: 'border-blue-300', headerBg: 'bg-blue-50 text-blue-950 border-blue-200',
+        lessonChecks: {
+          1: 'Sofia Check: Trusted full 10-frame (10+4=14) & bridged 8+5',
+          2: 'Sofia Check: Used Boss Whole 10 first & wrote valid = syntax',
+          3: 'Sofia Check: Built 34 (3T 4O) & 52 without digit reversal',
+          4: 'Sofia Check: Crossed decade boundary back to 39 / 34 cleanly',
+          5: 'Sofia Check: Identified 12 as EVEN & subtracted for difference'
+        }
+      },
+      {
+        key: 'mya', name: 'Mya',
+        target: '10−7=3 syntax (not 3=7=10), 40−1=39, vocab',
+        border: 'border-purple-300', headerBg: 'bg-purple-50 text-purple-950 border-purple-200',
+        lessonChecks: {
+          1: 'Mya Check: Bridged 9+6 & 15−6 cleanly without counting in 1s',
+          2: 'Mya Check: Fixed 3=7=10 syntax; wrote 10−7=3 & 10−3=7',
+          3: 'Mya Check: Found 10 more than 43 (=53, not 38) on 100-square',
+          4: 'Mya Check: Solved 40−1=39 & 40−6=34 (no 34 slip on 40−1)',
+          5: 'Mya Check: Decoded "remaining" & "difference" accurately'
+        }
+      },
+      {
+        key: 'orlaith', name: 'Orlaith-Louise',
+        target: '5T 2O = 52 (not 87), 43+10=53, 67 < 71, 9=5+4',
+        border: 'border-emerald-300', headerBg: 'bg-emerald-50 text-emerald-950 border-emerald-200',
+        lessonChecks: {
+          1: 'Orlaith Check: Modelled bridging & peer-coached partner clearly',
+          2: 'Orlaith Check: Completed cherry split 9 = 5 + 4 independently',
+          3: 'Orlaith Check: Unitised 5T 2O = 52 (not 87), 43+10=53 & 71 > 67',
+          4: 'Orlaith Check: Solved 43−6=37 & [ ? ]−6=34 (=40) fluently',
+          5: 'Orlaith Check: Explained 2-step & comparison problems aloud'
+        }
+      },
+      {
+        key: 'james', name: 'James',
+        target: 'Subitising, cherry split, fact families, place value',
+        border: 'border-amber-300', headerBg: 'bg-amber-50 text-amber-950 border-amber-200',
+        lessonChecks: {
+          1: 'James Check: Subitised 10-frame & bridged through 10 accurately',
+          2: 'James Check: Generated all 4 equations in fact family triangle',
+          3: 'James Check: Unitised 5 tens 2 ones = 52 & 10 more = 53',
+          4: 'James Check: Used two-hop jump back across decade cleanly',
+          5: 'James Check: Matched action word to operation & checked inverse'
+        }
+      }
+    ];
+
+    const STOCK_COMMENT_GROUPS = [
+      {
+        id: 'wins',
+        label: '✅ Wins',
+        activeBtn: 'bg-emerald-600 text-white border-emerald-600',
+        pillIdle: 'bg-emerald-50/80 hover:bg-emerald-100 text-emerald-900 border-emerald-200',
+        pillOn: 'bg-emerald-600 text-white border-emerald-700 font-extrabold shadow-xs',
+        items: [
+          'Subitised 5-group without counting',
+          'Trusted full 10-frame (10+4=14)',
+          'Bridged through 10 cleanly',
+          'Used cherry split independently',
+          'Wrote all 4 fact-family facts',
+          'Unitised tens & ones accurately',
+          'Crossed decade boundary cleanly',
+          'Decoded action word correctly',
+          'Explained reasoning using stem',
+          'Peer-coached partner clearly'
+        ]
+      },
+      {
+        id: 'scaffolding',
+        label: '🟡 Prompts',
+        activeBtn: 'bg-amber-500 text-slate-950 border-amber-500',
+        pillIdle: 'bg-amber-50/80 hover:bg-amber-100 text-amber-950 border-amber-200',
+        pillOn: 'bg-amber-400 text-slate-950 border-amber-600 font-extrabold shadow-xs',
+        items: [
+          'Reverted to finger counting',
+          'Counted in 1s from 1',
+          'Needed 10-frame / Dienes prompt',
+          'Needed open number line jump cue',
+          'Hesitant crossing 10 / decade',
+          'Needed choral reading prompt'
+        ]
+      },
+      {
+        id: 'traps',
+        label: '🔴 Traps',
+        activeBtn: 'bg-rose-600 text-white border-rose-600',
+        pillIdle: 'bg-rose-50/80 hover:bg-rose-100 text-rose-900 border-rose-200',
+        pillOn: 'bg-rose-600 text-white border-rose-700 font-extrabold shadow-xs',
+        items: [
+          'Wrote 4 instead of 14 (10-frame slip)',
+          'Fact family syntax slip (3=7=10)',
+          'Digit reversal (5T 2O -> 87 / 25)',
+          '10 more slip (43+10 -> 50 / 38)',
+          'Decade count-back slip (40-1 -> 34)',
+          'Added instead of finding difference',
+          'Confused odd & even numbers',
+          'Counted start box as 1 on track'
+        ]
+      }
+    ];
+
+    let activePupilChipTab = {
+      sofia: 'wins',
+      mya: 'wins',
+      orlaith: 'wins',
+      james: 'wins'
+    };
+
+    const MICRO_STEPS = ['Warm-up (4m)', 'Core CPA (8m)', 'Practice (5m)', 'Prove It (3m)'];
+
+    // =========================================================================
+    // 2. TRACKER STATE, LOCALSTORAGE & GOOGLE DOCS AUTO-SYNC
+    // =========================================================================
+    const STORAGE_KEY = 'st_kierans_p4a_p5a_group_a_hub_v1';
+    const SCRIPT_URL_KEY = 'st_kierans_p4a_p5a_group_a_script_url';
+
+    let trackerState = {
+      activeLessonIdx: 0,
+      trackerOpen: true,
+      lessons: {}
+    };
+
+    let syncDebounceTimer = null;
+
+    function emptyPupil() {
+      return { effort: null, app: null, progress: null, absent: false, notes: '' };
+    }
+
+    function getLessonRec(lessonId) {
+      if (!trackerState.lessons[lessonId]) {
+        trackerState.lessons[lessonId] = {
+          status: 'Not Started',
+          covered: [],
+          pupils: {
+            sofia: emptyPupil(),
+            mya: emptyPupil(),
+            orlaith: emptyPupil(),
+            james: emptyPupil()
+          }
+        };
+      }
+      return trackerState.lessons[lessonId];
+    }
+
+    function loadTrackerState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && typeof parsed === 'object') {
+            trackerState.activeLessonIdx = parsed.activeLessonIdx || 0;
+            trackerState.trackerOpen = parsed.trackerOpen !== undefined ? parsed.trackerOpen : true;
+            trackerState.lessons = parsed.lessons || {};
+          }
+        }
+      } catch (e) {}
+      updateSyncUIStatus();
+    }
+
+    function saveTrackerState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(trackerState));
+      } catch (e) {}
+      updateProgressPill();
+      scheduleGoogleDocSync();
+    }
+
+    function updateProgressPill() {
+      let coveredCount = 0;
+      SCHEDULE_20_LESSONS.forEach(l => {
+        if (getLessonRec(l.id).status === 'Covered') coveredCount++;
+      });
+      const badge = document.getElementById('overallProgressBadge');
+      if (badge) badge.textContent = `${coveredCount} / 20 Covered`;
+    }
+
+    function getAppsScriptUrl() {
+      try {
+        return localStorage.getItem(SCRIPT_URL_KEY) || '';
+      } catch (e) {
+        return '';
+      }
+    }
+
+    function updateSyncUIStatus(customText) {
+      const url = getAppsScriptUrl();
+      const badge = document.getElementById('syncStatusBadge');
+      const syncBtn = document.getElementById('manualSyncNowBtn');
+      if (!badge) return;
+
+      if (url) {
+        if (syncBtn) {
+          syncBtn.classList.remove('hidden');
+          syncBtn.classList.add('inline-flex');
+        }
+        badge.textContent = customText || '☁️ Google Doc Auto-Sync On';
+        badge.className = 'px-2 py-0.5 rounded-full bg-emerald-950 border border-emerald-500 text-emerald-300 font-bold text-[11px]';
+      } else {
+        if (syncBtn) {
+          syncBtn.classList.add('hidden');
+          syncBtn.classList.remove('inline-flex');
+        }
+        badge.textContent = customText || '💾 Local Auto-Save';
+        badge.className = 'px-2 py-0.5 rounded-full bg-slate-800 border border-slate-600 text-emerald-300 font-bold text-[11px]';
+      }
+    }
+
+    function scheduleGoogleDocSync() {
+      const url = getAppsScriptUrl();
+      if (!url) return;
+      updateSyncUIStatus('⏳ Syncing...');
+      clearTimeout(syncDebounceTimer);
+      syncDebounceTimer = setTimeout(() => {
+        pushToGoogleDoc(url);
+      }, 1500);
+    }
+
+    function syncNowManual() {
+      const url = getAppsScriptUrl();
+      if (!url) {
+        openGoogleSyncModal();
+        return;
+      }
+      updateSyncUIStatus('⏳ Syncing...');
+      pushToGoogleDoc(url);
+    }
+
+    async function pushToGoogleDoc(url) {
+      const payload = {
+        group: 'P4A/P5A Group A',
+        updatedAt: new Date().toISOString(),
+        lessons: SCHEDULE_20_LESSONS.map(l => {
+          const rec = getLessonRec(l.id);
+          return {
+            id: l.id,
+            code: l.code,
+            title: l.title,
+            status: rec.status,
+            covered: rec.covered,
+            pupils: rec.pupils
+          };
+        })
+      };
+
+      try {
+        await fetch(url, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(payload)
+        });
+        const t = new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+        updateSyncUIStatus(`✅ Synced (${t})`);
+      } catch (e) {
+        updateSyncUIStatus('⚠️ Sync offline (saved locally)');
+      }
+    }
+
+    function openGoogleSyncModal() {
+      document.getElementById('appsScriptUrlInput').value = getAppsScriptUrl();
+      document.getElementById('googleSyncModalMsg').classList.add('hidden');
+      document.getElementById('googleSyncModal').classList.remove('hidden');
+    }
+
+    function closeGoogleSyncModal() {
+      document.getElementById('googleSyncModal').classList.add('hidden');
+    }
+
+    function saveAppsScriptUrl() {
+      const val = document.getElementById('appsScriptUrlInput').value.trim();
+      const msg = document.getElementById('googleSyncModalMsg');
+      if (!val) {
+        msg.textContent = '⚠️ Please paste your Google Apps Script Web App URL first.';
+        msg.classList.remove('hidden');
+        return;
+      }
+      try {
+        localStorage.setItem(SCRIPT_URL_KEY, val);
+      } catch (e) {}
+      updateSyncUIStatus('⏳ Syncing...');
+      pushToGoogleDoc(val);
+      msg.textContent = '✅ Connected! Syncing all 20 lessons to your Google Doc now.';
+      msg.classList.remove('hidden');
+    }
+
+    function disconnectGoogleSync() {
+      try {
+        localStorage.removeItem(SCRIPT_URL_KEY);
+      } catch (e) {}
+      document.getElementById('appsScriptUrlInput').value = '';
+      updateSyncUIStatus();
+      const msg = document.getElementById('googleSyncModalMsg');
+      msg.textContent = 'Disconnected from Google Doc auto-sync (local auto-save remains active).';
+      msg.classList.remove('hidden');
+    }
+
+    // =========================================================================
+    // 3. 5-WEEK LESSON NAVIGATOR & DOCKED PUPIL TRACKER RENDERING
+    // =========================================================================
+    function toggleTrackerPane() {
+      trackerState.trackerOpen = !trackerState.trackerOpen;
+      const pane = document.getElementById('tracker-pane');
+      const label = document.getElementById('tracker-toggle-label');
+      if (trackerState.trackerOpen) {
+        pane.classList.remove('hidden');
+        if (label) label.textContent = 'Hide Tracker';
+      } else {
+        pane.classList.add('hidden');
+        if (label) label.textContent = 'Live Tracker';
+      }
+      saveTrackerState();
+    }
+
+    function renderWeekAndLessonNav() {
+      const currentLesson = SCHEDULE_20_LESSONS[trackerState.activeLessonIdx] || SCHEDULE_20_LESSONS[0];
+      const activeWeek = currentLesson.week;
+
+      const weekBox = document.getElementById('weekTabsContainer');
+      if (weekBox) {
+        weekBox.innerHTML = '';
+        for (let w = 1; w <= 5; w++) {
+          const wLessons = SCHEDULE_20_LESSONS.filter(l => l.week === w);
+          const doneCount = wLessons.filter(l => getLessonRec(l.id).status === 'Covered').length;
+          const isCurrent = w === activeWeek;
+          const btn = document.createElement('button');
+          btn.className = isCurrent
+            ? 'px-2.5 py-1 rounded-lg bg-indigo-600 text-white font-extrabold text-xs shadow-sm transition flex items-center gap-1'
+            : 'px-2.5 py-1 rounded-lg bg-slate-700/80 hover:bg-slate-700 text-slate-200 font-bold text-xs transition flex items-center gap-1';
+          btn.innerHTML = `<span>Week ${w}</span><span class="px-1.5 py-0.2 rounded-full text-[10px] ${isCurrent ? 'bg-indigo-800 text-indigo-100' : 'bg-slate-800 text-slate-300'}">${doneCount}/4</span>`;
+          btn.onclick = () => {
+            const firstIdx = SCHEDULE_20_LESSONS.findIndex(l => l.week === w);
+            selectScheduledLesson(firstIdx, true);
+          };
+          weekBox.appendChild(btn);
+        }
+      }
+
+      const lessonBox = document.getElementById('lessonTabsContainer');
+      if (lessonBox) {
+        lessonBox.innerHTML = '';
+        SCHEDULE_20_LESSONS.forEach((l, idx) => {
+          if (l.week !== activeWeek) return;
+          const rec = getLessonRec(l.id);
+          const isSel = idx === trackerState.activeLessonIdx;
+          const dot = rec.status === 'Covered' ? '✅' : rec.status === 'Needs Repeat' ? '🔁' : '⚪';
+          const btn = document.createElement('button');
+          btn.className = isSel
+            ? 'px-2.5 py-1 rounded-lg bg-amber-400 text-slate-950 font-extrabold text-xs shadow-sm transition flex items-center gap-1'
+            : 'px-2.5 py-1 rounded-lg bg-slate-900/70 hover:bg-slate-700 text-slate-200 font-semibold text-xs transition flex items-center gap-1';
+          btn.innerHTML = `<span>${dot}</span><span>${l.code}</span>`;
+          btn.onclick = () => selectScheduledLesson(idx, true);
+          lessonBox.appendChild(btn);
+        });
+      }
+    }
+
+    function selectScheduledLesson(idx, launchStage = true) {
+      if (idx < 0 || idx >= SCHEDULE_20_LESSONS.length) return;
+      trackerState.activeLessonIdx = idx;
+      const l = SCHEDULE_20_LESSONS[idx];
+
+      document.getElementById('strip-lesson-code').textContent = `Week ${l.week} • Lesson ${l.lesson}`;
+      document.getElementById('strip-lesson-title').textContent = `${l.code}: ${l.title}`;
+      document.getElementById('strip-lesson-stem').textContent = `Stem: ${l.stem}`;
+
+      const pane = document.getElementById('tracker-pane');
+      const label = document.getElementById('tracker-toggle-label');
+      if (trackerState.trackerOpen) {
+        pane.classList.remove('hidden');
+        if (label) label.textContent = 'Hide Tracker';
+      } else {
+        pane.classList.add('hidden');
+        if (label) label.textContent = 'Live Tracker';
+      }
+
+      renderWeekAndLessonNav();
+      renderDockedTracker();
+      saveTrackerState();
+
+      if (launchStage) {
+        if (l.module === 1) {
+          bridgePresetIdx = l.presetIdx || 0;
+          openModule(1);
+          setBridgeMode(l.bridgeMode || 'ten');
+        } else if (l.module === 6) {
+          openModule(6);
+          setBankFilter(l.bankFilter || 'all');
+          if (typeof l.exIdx === 'number') jumpToBankQuestion(l.exIdx);
+        } else {
+          openModule(l.module);
+          currentExIndex = l.exIdx || 0;
+          renderModuleExample();
+        }
+      }
+    }
+
+    function navigateScheduledLesson(delta) {
+      const next = trackerState.activeLessonIdx + delta;
+      if (next >= 0 && next < SCHEDULE_20_LESSONS.length) {
+        selectScheduledLesson(next, true);
+      }
+    }
+
+    function toggleCoveredStep(stepLabel) {
+      const l = SCHEDULE_20_LESSONS[trackerState.activeLessonIdx];
+      const rec = getLessonRec(l.id);
+      const pos = rec.covered.indexOf(stepLabel);
+      if (pos !== -1) rec.covered.splice(pos, 1);
+      else rec.covered.push(stepLabel);
+      saveTrackerState();
+      renderDockedTracker();
+    }
+
+    function renderDockedTracker() {
+      const l = SCHEDULE_20_LESSONS[trackerState.activeLessonIdx] || SCHEDULE_20_LESSONS[0];
+      const rec = getLessonRec(l.id);
+
+      document.getElementById('tracker-lesson-heading').textContent = `${l.code} • ${l.title.split('(')[0].trim()}`;
+
+      ['Not Started', 'Needs Repeat', 'Covered'].forEach(st => {
+        const btn = document.getElementById(`statusBtn-${st}`);
+        if (!btn) return;
+        const isAct = rec.status === st;
+        if (isAct) {
+          if (st === 'Covered') btn.className = 'status-pill flex-1 py-1.5 rounded-xl text-[11px] font-extrabold border-2 border-emerald-600 bg-emerald-600 text-white shadow-sm';
+          else if (st === 'Needs Repeat') btn.className = 'status-pill flex-1 py-1.5 rounded-xl text-[11px] font-extrabold border-2 border-amber-500 bg-amber-400 text-slate-950 shadow-sm';
+          else btn.className = 'status-pill flex-1 py-1.5 rounded-xl text-[11px] font-extrabold border-2 border-slate-800 bg-slate-800 text-white shadow-sm';
+        } else {
+          btn.className = 'status-pill flex-1 py-1.5 rounded-xl text-[11px] font-bold border border-slate-300 bg-slate-50 text-slate-600 hover:bg-slate-100';
+        }
+      });
+
+      const covBox = document.getElementById('coveredPillsContainer');
+      if (covBox) {
+        covBox.innerHTML = MICRO_STEPS.map(step => {
+          const isOn = rec.covered.includes(step);
+          const safe = step.replace(/'/g, "\\'");
+          return `<button onclick="toggleCoveredStep('${safe}')" class="px-2.5 py-1.5 rounded-xl border text-[11px] text-left transition ${
+            isOn ? 'bg-indigo-600 text-white border-indigo-700 font-extrabold shadow-xs' : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200 font-semibold'
+          }">${isOn ? '☑️ ' : '⬜ '}${step}</button>`;
+        }).join('');
+      }
+
+      const pBox = document.getElementById('pupilCardsContainer');
+      if (!pBox) return;
+      pBox.innerHTML = '';
+
+      PUPIL_CARDS_META.forEach(pm => {
+        const pData = rec.pupils[pm.key] || emptyPupil();
+        const isAbsent = Boolean(pData.absent);
+        const currentNotes = (pData.notes || '').trim();
+        const currentGroupTab = activePupilChipTab[pm.key] || 'wins';
+        const activeGroup = STOCK_COMMENT_GROUPS.find(g => g.id === currentGroupTab) || STOCK_COMMENT_GROUPS[0];
+        const lessonCheckText = (pm.lessonChecks && pm.lessonChecks[l.week]) || `Target check achieved (${l.code})`;
+        const isLessonCheckOn = currentNotes.includes(lessonCheckText);
+
+        const effHtml = [1, 2, 3, 4].map(n => {
+          const act = !isAbsent && pData.effort === n;
+          return `<button ${isAbsent ? 'disabled' : ''} onclick="setPupilScore('${pm.key}', 'effort', ${n})" class="w-7 h-6 rounded-md border text-[11px] font-extrabold transition ${
+            act ? 'bg-slate-900 text-white border-slate-900' : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100 disabled:opacity-40'
+          }">${n}</button>`;
+        }).join('');
+
+        const appHtml = [1, 2, 3, 4].map(n => {
+          const act = !isAbsent && pData.app === n;
+          return `<button ${isAbsent ? 'disabled' : ''} onclick="setPupilScore('${pm.key}', 'app', ${n})" class="w-7 h-6 rounded-md border text-[11px] font-extrabold transition ${
+            act ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100 disabled:opacity-40'
+          }">${n}</button>`;
+        }).join('');
+
+        const progHtml = ['Emerging', 'Developing', 'Secure'].map(lvl => {
+          const act = !isAbsent && pData.progress === lvl;
+          let cls = 'bg-rose-600 text-white border-rose-600';
+          if (lvl === 'Developing') cls = 'bg-amber-500 text-white border-amber-500';
+          if (lvl === 'Secure') cls = 'bg-emerald-600 text-white border-emerald-600';
+          return `<button ${isAbsent ? 'disabled' : ''} onclick="setPupilScore('${pm.key}', 'progress', '${lvl}')" class="px-1.5 py-0.5 rounded-md border text-[10px] font-extrabold transition ${
+            act ? cls : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100 disabled:opacity-40'
+          }">${lvl}</button>`;
+        }).join('');
+
+        const categoryTabsHtml = STOCK_COMMENT_GROUPS.map(grp => {
+          const isTabActive = grp.id === currentGroupTab;
+          return `<button ${isAbsent ? 'disabled' : ''} onclick="setPupilChipTab('${pm.key}', '${grp.id}')" class="px-2 py-0.5 rounded-md border text-[10px] font-extrabold transition ${
+            isTabActive ? grp.activeBtn : 'bg-slate-100 text-slate-600 border-slate-200 hover:bg-slate-200'
+          }">${grp.label}</button>`;
+        }).join('');
+
+        const chipsHtml = activeGroup.items.map(ch => {
+          const isSelected = currentNotes.includes(ch);
+          const safe = ch.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+          return `<button ${isAbsent ? 'disabled' : ''} onclick="togglePupilChip('${pm.key}', '${safe}')" class="px-2 py-1 rounded-lg border text-[10px] leading-tight text-left transition disabled:opacity-40 ${
+            isSelected ? activeGroup.pillOn : `${activeGroup.pillIdle} font-semibold`
+          }">${isSelected ? '✓ ' : '+ '}${ch}</button>`;
+        }).join('');
+
+        const safeCheck = lessonCheckText.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+
+        const card = document.createElement('div');
+        card.className = isAbsent
+          ? 'bg-slate-200/80 rounded-2xl border-2 border-slate-300 p-3 space-y-2 opacity-80 transition'
+          : `bg-white rounded-2xl border-2 ${pm.border} shadow-sm p-3 space-y-2 transition`;
+
+        card.innerHTML = `
+          <div class="flex items-center justify-between gap-1.5 px-2.5 py-1.5 rounded-xl border ${isAbsent ? 'bg-slate-300 text-slate-700 border-slate-400' : pm.headerBg}">
+            <div>
+              <div class="font-extrabold text-xs sm:text-sm flex items-center gap-1.5">
+                <span>${pm.name}</span>
+                ${isAbsent ? '<span class="px-1.5 py-0.5 rounded bg-rose-600 text-white text-[9px] font-extrabold uppercase">Absent / Off Today</span>' : ''}
+              </div>
+              <div class="text-[10px] opacity-80 font-medium leading-tight">${pm.target}</div>
+            </div>
+            <button onclick="togglePupilAbsent('${pm.key}')" class="px-2 py-1 rounded-lg text-[10px] font-extrabold border shrink-0 transition ${
+              isAbsent ? 'bg-rose-600 text-white border-rose-700' : 'bg-white hover:bg-rose-50 text-rose-700 border-rose-300'
+            }">
+              ${isAbsent ? '🚫 Absent (Undo)' : 'Absent'}
+            </button>
+          </div>
+
+          <div class="${isAbsent ? 'hidden' : 'space-y-2'}">
+            <div class="flex flex-wrap items-center justify-between gap-1">
+              <div class="flex items-center gap-0.5"><span class="text-[9px] font-extrabold uppercase text-slate-400 mr-0.5">E:</span>${effHtml}</div>
+              <div class="flex items-center gap-0.5"><span class="text-[9px] font-extrabold uppercase text-slate-400 mr-0.5">A:</span>${appHtml}</div>
+              <div class="flex items-center gap-0.5">${progHtml}</div>
+            </div>
+
+            <!-- Lesson-Specific Diagnostic Check Pill (Blue) -->
+            <div>
+              <button onclick="togglePupilChip('${pm.key}', '${safeCheck}')" class="w-full px-2.5 py-1.5 rounded-lg border text-[10px] font-extrabold text-left transition flex items-center justify-between gap-1 ${
+                isLessonCheckOn
+                  ? 'bg-blue-600 text-white border-blue-700 shadow-xs'
+                  : 'bg-blue-50 hover:bg-blue-100 text-blue-900 border-blue-300'
+              }">
+                <span>${isLessonCheckOn ? '✓ ' : '🎯 '}${lessonCheckText}</span>
+              </button>
+            </div>
+
+            <!-- Categorized Stock Comment Tabs & Pills -->
+            <div class="space-y-1.5 bg-slate-50/90 p-2 rounded-xl border border-slate-200">
+              <div class="flex items-center justify-between gap-1">
+                <div class="flex items-center gap-1">${categoryTabsHtml}</div>
+                ${currentNotes ? `<button onclick="clearPupilNotes('${pm.key}')" class="text-[10px] font-bold text-slate-400 hover:text-rose-600 px-1">Clear</button>` : ''}
+              </div>
+              <div class="flex flex-wrap gap-1">${chipsHtml}</div>
+            </div>
+          </div>
+
+          <input
+            type="text"
+            value="${(pData.notes || '').replace(/"/g, '&quot;')}"
+            oninput="updatePupilNote('${pm.key}', this.value)"
+            placeholder="${isAbsent ? `Absence reason for ${pm.name}...` : `Tap comment pills above or type note for ${pm.name}...`}"
+            class="w-full rounded-xl border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-800 focus:outline-none focus:border-indigo-500"
+          />
+        `;
+        pBox.appendChild(card);
+      });
+    }
+
+    function setPupilChipTab(pKey, tabId) {
+      activePupilChipTab[pKey] = tabId;
+      renderDockedTracker();
+    }
+
+    function setLessonStatus(st) {
+      const l = SCHEDULE_20_LESSONS[trackerState.activeLessonIdx];
+      getLessonRec(l.id).status = st;
+      saveTrackerState();
+      renderWeekAndLessonNav();
+      renderDockedTracker();
+    }
+
+    function togglePupilAbsent(pKey) {
+      const l = SCHEDULE_20_LESSONS[trackerState.activeLessonIdx];
+      const rec = getLessonRec(l.id);
+      if (!rec.pupils[pKey]) rec.pupils[pKey] = emptyPupil();
+      rec.pupils[pKey].absent = !rec.pupils[pKey].absent;
+      saveTrackerState();
+      renderDockedTracker();
+    }
+
+    function setPupilScore(pKey, field, val) {
+      const l = SCHEDULE_20_LESSONS[trackerState.activeLessonIdx];
+      const p = getLessonRec(l.id).pupils[pKey];
+      p[field] = p[field] === val ? null : val;
+      saveTrackerState();
+      renderDockedTracker();
+    }
+
+    function togglePupilChip(pKey, chip) {
+      const l = SCHEDULE_20_LESSONS[trackerState.activeLessonIdx];
+      const p = getLessonRec(l.id).pupils[pKey];
+      const parts = (p.notes || '').split(';').map(s => s.trim()).filter(Boolean);
+      const existingIdx = parts.indexOf(chip);
+      if (existingIdx !== -1) {
+        parts.splice(existingIdx, 1);
+      } else {
+        parts.push(chip);
+      }
+      p.notes = parts.join('; ');
+      saveTrackerState();
+      renderDockedTracker();
+    }
+
+    function clearPupilNotes(pKey) {
+      const l = SCHEDULE_20_LESSONS[trackerState.activeLessonIdx];
+      getLessonRec(l.id).pupils[pKey].notes = '';
+      saveTrackerState();
+      renderDockedTracker();
+    }
+
+    function updatePupilNote(pKey, text) {
+      const l = SCHEDULE_20_LESSONS[trackerState.activeLessonIdx];
+      getLessonRec(l.id).pupils[pKey].notes = text;
+      saveTrackerState();
+    }
+
+    // =========================================================================
+    // 4. FULL-SCREEN TRANSPARENT "DRAW OVER SCREEN" ANNOTATION OVERLAY
+    // =========================================================================
+    let annotateCanvas, annotateCtx;
+    let annotateActive = false;
+    let annotatePassThrough = false;
+    let annotateDrawing = false;
+    let annotateStrokes = [];
+    let currentStroke = null;
+    let annotateBackdrop = 'clear';
+    let annotateConfig = { mode: 'pen', color: '#0f172a', size: 5 };
+
+    function initScreenAnnotator() {
+      annotateCanvas = document.getElementById('screenAnnotateCanvas');
+      annotateCtx = annotateCanvas.getContext('2d');
+
+      window.addEventListener('resize', () => {
+        annotateCanvas.width = window.innerWidth;
+        annotateCanvas.height = window.innerHeight;
+        redrawAnnotateStrokes();
+      });
+
+      const getCoords = (e) => {
+        if (e.touches && e.touches.length > 0) return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+        return { x: e.clientX, y: e.clientY };
+      };
+
+      const start = (e) => {
+        if (!annotateActive || annotatePassThrough) return;
+        if (e.cancelable) e.preventDefault();
+        annotateDrawing = true;
+        currentStroke = { mode: annotateConfig.mode, color: annotateConfig.color, size: annotateConfig.size, points: [getCoords(e)] };
+      };
+
+      const move = (e) => {
+        if (!annotateDrawing || !currentStroke) return;
+        if (e.cancelable) e.preventDefault();
+        currentStroke.points.push(getCoords(e));
+        redrawAnnotateStrokes();
+        drawSingleStroke(currentStroke);
+      };
+
+      const end = () => {
+        if (!annotateDrawing) return;
+        annotateDrawing = false;
+        if (currentStroke && currentStroke.points.length > 0) annotateStrokes.push(currentStroke);
+        currentStroke = null;
+        redrawAnnotateStrokes();
+      };
+
+      annotateCanvas.addEventListener('mousedown', start);
+      annotateCanvas.addEventListener('mousemove', move);
+      window.addEventListener('mouseup', end);
+      annotateCanvas.addEventListener('touchstart', start, { passive: false });
+      annotateCanvas.addEventListener('touchmove', move, { passive: false });
+      window.addEventListener('touchend', end);
+
+      const toolbar = document.getElementById('annotateToolbar');
+      const handle = document.getElementById('annotateDragHandle');
+      let dragging = false, offX = 0, offY = 0;
+      const startDrag = (cx, cy) => {
+        dragging = true;
+        const rect = toolbar.getBoundingClientRect();
+        toolbar.style.left = rect.left + 'px';
+        toolbar.style.top = rect.top + 'px';
+        toolbar.style.bottom = 'auto';
+        toolbar.style.transform = 'none';
+        offX = cx - rect.left;
+        offY = cy - rect.top;
+      };
+      const onDrag = (cx, cy) => {
+        if (!dragging) return;
+        toolbar.style.left = Math.max(4, Math.min(window.innerWidth - toolbar.offsetWidth - 4, cx - offX)) + 'px';
+        toolbar.style.top = Math.max(4, Math.min(window.innerHeight - toolbar.offsetHeight - 4, cy - offY)) + 'px';
+      };
+      handle.addEventListener('mousedown', e => startDrag(e.clientX, e.clientY));
+      window.addEventListener('mousemove', e => onDrag(e.clientX, e.clientY));
+      window.addEventListener('mouseup', () => { dragging = false; });
+      handle.addEventListener('touchstart', e => { e.preventDefault(); startDrag(e.touches[0].clientX, e.touches[0].clientY); }, { passive: false });
+      window.addEventListener('touchmove', e => { if (dragging) onDrag(e.touches[0].clientX, e.touches[0].clientY); }, { passive: false });
+      window.addEventListener('touchend', () => { dragging = false; });
+    }
+
+    function drawSingleStroke(s) {
+      if (!s || s.points.length === 0) return;
+      annotateCtx.save();
+      annotateCtx.lineCap = 'round';
+      annotateCtx.lineJoin = 'round';
+      annotateCtx.lineWidth = s.size;
+      if (s.mode === 'eraser') {
+        annotateCtx.globalCompositeOperation = 'destination-out';
+        annotateCtx.strokeStyle = 'rgba(0,0,0,1)';
+      } else {
+        annotateCtx.globalCompositeOperation = 'source-over';
+        annotateCtx.strokeStyle = s.color;
+      }
+      annotateCtx.beginPath();
+      annotateCtx.moveTo(s.points[0].x, s.points[0].y);
+      if (s.points.length === 1) annotateCtx.lineTo(s.points[0].x + 0.1, s.points[0].y + 0.1);
+      else for (let i = 1; i < s.points.length; i++) annotateCtx.lineTo(s.points[i].x, s.points[i].y);
+      annotateCtx.stroke();
+      annotateCtx.restore();
+    }
+
+    function redrawAnnotateStrokes() {
+      if (!annotateCtx || !annotateCanvas) return;
+      annotateCtx.clearRect(0, 0, annotateCanvas.width, annotateCanvas.height);
+      for (const s of annotateStrokes) drawSingleStroke(s);
+    }
+
+    function setAnnotateBackdrop(mode) {
+      annotateBackdrop = mode;
+      annotateCanvas.style.backgroundColor =
+        mode === 'whiteboard' ? 'rgba(255, 255, 255, 1)' :
+        mode === 'frosted' ? 'rgba(255, 255, 255, 0.35)' :
+        'transparent';
+      ['clear', 'frosted', 'whiteboard'].forEach(m => {
+        const b = document.getElementById(`backdropBtn-${m}`);
+        b.className = m === mode
+          ? 'px-2 py-1 rounded-lg bg-teal-400 text-slate-950 font-extrabold text-xs transition'
+          : 'px-2 py-1 rounded-lg bg-slate-700 hover:bg-slate-600 text-white font-bold text-xs transition';
+      });
+    }
+
+    function toggleScreenAnnotator() {
+      if (annotateActive) { closeScreenAnnotator(); return; }
+      annotateActive = true;
+      annotatePassThrough = false;
+      annotateCanvas.width = window.innerWidth;
+      annotateCanvas.height = window.innerHeight;
+      annotateCanvas.classList.remove('hidden', 'pointer-events-none');
+      document.getElementById('annotateToolbar').classList.remove('hidden');
+      setAnnotateBackdrop(annotateBackdrop);
+
+      const btn = document.getElementById('annotateHeaderBtn');
+      btn.className = 'flex items-center gap-1.5 bg-rose-500 hover:bg-rose-400 text-white font-extrabold px-3 py-2 rounded-xl shadow-md border border-rose-300 transition text-xs';
+      btn.innerHTML = '<span>&#9999;&#65039; Overlay Active</span>';
+      updatePassThroughBtn();
+      redrawAnnotateStrokes();
+    }
+
+    function closeScreenAnnotator() {
+      annotateActive = false;
+      annotatePassThrough = false;
+      annotateCanvas.classList.add('hidden');
+      annotateCanvas.style.backgroundColor = 'transparent';
+      document.getElementById('annotateToolbar').classList.add('hidden');
+
+      const btn = document.getElementById('annotateHeaderBtn');
+      btn.className = 'flex items-center gap-1.5 bg-teal-400 hover:bg-teal-300 text-slate-950 font-extrabold px-3 py-2 rounded-xl shadow-md border border-teal-200 transition text-xs';
+      btn.innerHTML = '<span>&#128397;&#65039; Draw Over Screen</span>';
+    }
+
+    function setAnnotateTool(mode, color, size) {
+      annotateConfig = { mode, color, size };
+      if (annotatePassThrough) {
+        annotatePassThrough = false;
+        annotateCanvas.classList.remove('pointer-events-none');
+        updatePassThroughBtn();
+      }
+    }
+
+    function undoAnnotateStroke() { annotateStrokes.pop(); redrawAnnotateStrokes(); }
+    function clearAnnotateCanvas() { annotateStrokes = []; redrawAnnotateStrokes(); }
+    function toggleAnnotatePassThrough() {
+      annotatePassThrough = !annotatePassThrough;
+      annotateCanvas.classList.toggle('pointer-events-none', annotatePassThrough);
+      updatePassThroughBtn();
+    }
+    function updatePassThroughBtn() {
+      const btn = document.getElementById('passThroughBtn');
+      if (annotatePassThrough) {
+        btn.className = 'px-3 py-1.5 rounded-xl bg-teal-400 hover:bg-teal-300 text-slate-950 font-extrabold text-xs shadow transition';
+        btn.textContent = '🖊️ Resume Drawing';
+      } else {
+        btn.className = 'px-3 py-1.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-extrabold text-xs shadow transition';
+        btn.textContent = '🔓 Interact Underneath';
+      }
+    }
+
+    // =========================================================================
+    // 5. REPORT EXPORT & BACKUP / RESTORE
+    // =========================================================================
+    function openReportModal() {
+      const tbody = document.getElementById('reportTableBody');
+      tbody.innerHTML = '';
+      SCHEDULE_20_LESSONS.forEach(l => {
+        const rec = getLessonRec(l.id);
+        const fmt = (p) => {
+          if (!p) return 'E: — | A: —<br/>Progress: —';
+          if (p.absent) return `<strong class="text-rose-700">ABSENT / OFF TODAY</strong>${p.notes ? `<br/>${p.notes}` : ''}`;
+          return `<strong>E:${p.effort || '—'} | A:${p.app || '—'} | ${p.progress || '—'}</strong><br/>${p.notes || '<span class="text-slate-400 italic">No notes</span>'}`;
+        };
+        const tr = document.createElement('tr');
+        tr.className = l.week % 2 === 0 ? 'bg-slate-50/70' : 'bg-white';
+        tr.innerHTML = `
+          <td class="border border-slate-300 p-2 align-top">
+            <div class="font-extrabold text-slate-900">${l.code}: ${l.title}</div>
+            <div class="text-[11px] font-bold text-slate-600 mt-0.5">Status: ${rec.status}</div>
+          </td>
+          <td class="border border-slate-300 p-2 align-top">${rec.covered.length ? rec.covered.join(', ') : '<span class="text-slate-400 italic">Not started</span>'}</td>
+          <td class="border border-slate-300 p-2 align-top">${fmt(rec.pupils.sofia)}</td>
+          <td class="border border-slate-300 p-2 align-top">${fmt(rec.pupils.mya)}</td>
+          <td class="border border-slate-300 p-2 align-top">${fmt(rec.pupils.orlaith)}</td>
+          <td class="border border-slate-300 p-2 align-top">${fmt(rec.pupils.james)}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+      document.getElementById('reportModal').classList.remove('hidden');
+    }
+
+    function closeReportModal() { document.getElementById('reportModal').classList.add('hidden'); }
+
+    function copyReportTableForGoogleDocs() {
+      const table = document.getElementById('printableReportTable');
+      const range = document.createRange();
+      range.selectNode(table);
+      const sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+      try {
+        document.execCommand('copy');
+        sel.removeAllRanges();
+        const toast = document.getElementById('reportCopyToast');
+        toast.classList.remove('hidden');
+        setTimeout(() => toast.classList.add('hidden'), 4000);
+      } catch (e) { sel.removeAllRanges(); }
+    }
+
+    function downloadBackupFile() {
+      const blob = new Blob([JSON.stringify(trackerState, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `StKierans_P4A_P5A_GroupA_Backup_${new Date().toISOString().slice(0, 10)}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    function handleRestoreFileUpload(evt) {
+      const file = evt.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const parsed = JSON.parse(e.target.result);
+          if (parsed && parsed.lessons) {
+            trackerState = parsed;
+            saveTrackerState();
+            selectScheduledLesson(trackerState.activeLessonIdx || 0, true);
+            closeGoogleSyncModal();
+          }
+        } catch (err) {}
+      };
+      reader.readAsText(file);
+    }
+
+    // =========================================================================
+    // 6. MODULE 1: ZERO-SCROLL BASE-10 BRIDGING LAB ENGINE (EXACT ORIGINAL)
+    // =========================================================================
+    let bridgeMode = 'ten';
+    let bridgeState = {
+      tens: 0, startOnes: 8, addOnes: 5, movedCubes: 0,
+      startUnlocked: false, addUnlocked: false, revealCherry: false, revealLine: false
+    };
+
+    const BRIDGE_PRESETS_10 = [
+      { tens: 0, startOnes: 8, addOnes: 5 },
+      { tens: 0, startOnes: 9, addOnes: 6 },
+      { tens: 0, startOnes: 8, addOnes: 4 },
+      { tens: 0, startOnes: 7, addOnes: 5 },
+      { tens: 0, startOnes: 9, addOnes: 7 },
+      { tens: 0, startOnes: 8, addOnes: 6 }
+    ];
+
+    const BRIDGE_PRESETS_100 = [
+      { tens: 2, startOnes: 8, addOnes: 5 },
+      { tens: 4, startOnes: 7, addOnes: 6 },
+      { tens: 3, startOnes: 9, addOnes: 4 },
+      { tens: 5, startOnes: 8, addOnes: 6 },
+      { tens: 6, startOnes: 9, addOnes: 5 },
+      { tens: 2, startOnes: 7, addOnes: 5 }
+    ];
+    let bridgePresetIdx = 0;
+
+    function setBridgeMode(mode) {
+      bridgeMode = mode;
+      const btn10 = document.getElementById('btn-bridge-mode-10');
+      const btn100 = document.getElementById('btn-bridge-mode-100');
+      if (mode === 'ten') {
+        btn10.className = 'px-3 py-1 rounded-lg text-xs font-extrabold bg-indigo-600 text-white shadow-sm transition';
+        btn100.className = 'px-3 py-1 rounded-lg text-xs font-bold text-slate-700 hover:text-slate-900 transition';
+      } else {
+        btn100.className = 'px-3 py-1 rounded-lg text-xs font-extrabold bg-indigo-600 text-white shadow-sm transition';
+        btn10.className = 'px-3 py-1 rounded-lg text-xs font-bold text-slate-700 hover:text-slate-900 transition';
+      }
+      newBridgingProblem();
+    }
+
+    function newBridgingProblem() {
+      const list = bridgeMode === 'ten' ? BRIDGE_PRESETS_10 : BRIDGE_PRESETS_100;
+      const preset = list[bridgePresetIdx % list.length];
+      bridgePresetIdx++;
+
+      bridgeState = {
+        tens: preset.tens, startOnes: preset.startOnes, addOnes: preset.addOnes, movedCubes: 0,
+        startUnlocked: false, addUnlocked: false, revealCherry: false, revealLine: false
+      };
+
+      document.getElementById('lab-input-start').value = '';
+      document.getElementById('lab-input-add').value = '';
+      document.getElementById('lab-input-start').disabled = false;
+      document.getElementById('lab-input-add').disabled = false;
+      document.getElementById('btn-unlock-start').disabled = false;
+      document.getElementById('btn-unlock-add').disabled = false;
+      document.getElementById('btn-unlock-start').textContent = 'Check';
+      document.getElementById('btn-unlock-add').textContent = 'Check';
+      renderBridgingLab();
+    }
+
+    function unlockStartCount() {
+      const expected = bridgeState.tens * 10 + bridgeState.startOnes;
+      const val = parseInt(document.getElementById('lab-input-start').value, 10);
+      const status = document.getElementById('lab-start-status');
+      if (val === expected) {
+        bridgeState.startUnlocked = true;
+        document.getElementById('lab-input-start').disabled = true;
+        document.getElementById('btn-unlock-start').disabled = true;
+        document.getElementById('btn-unlock-start').textContent = '✓';
+        status.textContent = `Great counting! Start number = ${expected}.`;
+        status.className = 'text-center text-xs font-extrabold text-emerald-700';
+        renderBridgingLab();
+      } else {
+        status.textContent = bridgeState.tens > 0
+          ? `Count the ${bridgeState.tens} tens-rods (${bridgeState.tens * 10}) plus the blue ones!`
+          : `Count the blue blocks in the ten-frame carefully!`;
+        status.className = 'text-center text-xs font-extrabold text-rose-600';
+      }
+    }
+
+    function unlockAddCount() {
+      const val = parseInt(document.getElementById('lab-input-add').value, 10);
+      const status = document.getElementById('lab-add-status');
+      if (val === bridgeState.addOnes) {
+        bridgeState.addUnlocked = true;
+        document.getElementById('lab-input-add').disabled = true;
+        document.getElementById('btn-unlock-add').disabled = true;
+        document.getElementById('btn-unlock-add').textContent = '✓';
+        renderBridgingLab();
+      } else {
+        status.textContent = `Count the yellow cubes in the bank again!`;
+        status.className = 'text-xs font-extrabold text-rose-600';
+      }
+    }
+
+    function slideOneYellowCube() {
+      const neededToFillTen = 10 - bridgeState.startOnes;
+      if (bridgeState.movedCubes < neededToFillTen && bridgeState.movedCubes < bridgeState.addOnes) {
+        bridgeState.movedCubes++;
+        if (bridgeState.movedCubes === neededToFillTen) bridgeState.revealCherry = true;
+        renderBridgingLab();
+      }
+    }
+
+    function handleTenFrameDrop(e) { e.preventDefault(); slideOneYellowCube(); }
+
+    function toggleLabReveal(which) {
+      if (which === 'cherry') bridgeState.revealCherry = !bridgeState.revealCherry;
+      else if (which === 'line') {
+        bridgeState.revealLine = !bridgeState.revealLine;
+        if (bridgeState.revealLine) bridgeState.revealCherry = true;
+      }
+      renderBridgingLab();
+    }
+
+    function renderBridgingLab() {
+      const startTotal = bridgeState.tens * 10 + bridgeState.startOnes;
+      const friendlyTen = (bridgeState.tens + 1) * 10;
+      const neededToTen = 10 - bridgeState.startOnes;
+      const leftOver = bridgeState.addOnes - neededToTen;
+      const finalTotal = startTotal + bridgeState.addOnes;
+      const bothUnlocked = bridgeState.startUnlocked && bridgeState.addUnlocked;
+      const tenCompleted = bridgeState.movedCubes >= neededToTen;
+
+      document.getElementById('lab-step-1-pill').className = bothUnlocked
+        ? 'px-3 py-1 rounded-full bg-emerald-600 text-white shadow-sm'
+        : 'px-3 py-1 rounded-full bg-amber-400 text-slate-950 shadow-sm';
+
+      document.getElementById('lab-step-2-pill').className = tenCompleted
+        ? 'px-3 py-1 rounded-full bg-emerald-600 text-white shadow-sm'
+        : bothUnlocked ? 'px-3 py-1 rounded-full bg-amber-400 text-slate-950 shadow-sm' : 'px-3 py-1 rounded-full bg-slate-100 text-slate-500';
+
+      document.getElementById('lab-step-3-pill').className = tenCompleted || bridgeState.revealLine
+        ? 'px-3 py-1 rounded-full bg-indigo-600 text-white shadow-sm'
+        : 'px-3 py-1 rounded-full bg-slate-100 text-slate-500';
+
+      document.getElementById('lab-equation-banner').textContent = bothUnlocked
+        ? `${startTotal} + ${bridgeState.addOnes} = ${bridgeState.revealLine ? finalTotal : '[ ? ]'}`
+        : `[ ? ] + [ ? ] = [ ? ]`;
+
+      const rodsBox = document.getElementById('lab-tens-rods-box');
+      if (bridgeState.tens > 0) {
+        rodsBox.classList.remove('hidden');
+        rodsBox.innerHTML = Array(bridgeState.tens).fill(
+          '<div class="w-3.5 h-16 bg-blue-600 border border-blue-800 rounded-sm dienes-rod shadow-sm" title="1 Ten Rod"></div>'
+        ).join('');
+      } else {
+        rodsBox.classList.add('hidden');
+      }
+
+      const tf = document.getElementById('lab-ten-frame');
+      let tfHtml = '';
+      for (let i = 0; i < 10; i++) {
+        if (i < bridgeState.startOnes) {
+          tfHtml += `<div class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-blue-600 border-2 border-blue-800 shadow-sm"></div>`;
+        } else if (i < bridgeState.startOnes + bridgeState.movedCubes) {
+          tfHtml += `<div class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-amber-400 border-2 border-amber-600 shadow-sm animate-pop"></div>`;
+        } else {
+          tfHtml += `<div onclick="slideOneYellowCube()" class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg border-2 border-dashed border-slate-300 bg-slate-50 hover:border-amber-400 cursor-pointer flex items-center justify-center text-[10px] font-bold text-slate-400">+</div>`;
+        }
+      }
+      tf.innerHTML = tfHtml;
+
+      const remainingYellow = bridgeState.addOnes - bridgeState.movedCubes;
+      const bank = document.getElementById('lab-add-cubes-bank');
+      bank.innerHTML = Array(remainingYellow).fill(
+        `<div draggable="true" onclick="slideOneYellowCube()" class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-amber-400 hover:bg-amber-300 border-2 border-amber-600 shadow-sm cursor-pointer active:scale-90 transition" title="Tap or drag into ten-frame"></div>`
+      ).join('') || '<span class="text-xs font-extrabold text-emerald-700">All cubes moved!</span>';
+
+      const addStatus = document.getElementById('lab-add-status');
+      const slideBtn = document.getElementById('btn-slide-one-cube');
+      if (!bridgeState.addUnlocked) {
+        addStatus.textContent = 'Count the yellow cubes!';
+        addStatus.className = 'text-xs font-extrabold text-amber-950';
+        slideBtn.classList.add('hidden');
+      } else if (!tenCompleted) {
+        addStatus.textContent = `Tap or drag ${neededToTen - bridgeState.movedCubes} cube(s) to fill ${friendlyTen}!`;
+        addStatus.className = 'text-xs font-extrabold text-indigo-800';
+        slideBtn.classList.remove('hidden');
+      } else {
+        addStatus.textContent = `Friendly ${friendlyTen} made! ${leftOver} yellow cube(s) left over.`;
+        addStatus.className = 'text-xs font-extrabold text-emerald-700';
+        slideBtn.classList.add('hidden');
+      }
+
+      document.getElementById('lab-cherry-top').textContent = bridgeState.addUnlocked ? bridgeState.addOnes : '?';
+      document.getElementById('lab-cherry-left').textContent = bridgeState.revealCherry ? neededToTen : '?';
+      document.getElementById('lab-cherry-right').textContent = bridgeState.revealCherry ? leftOver : '?';
+
+      document.getElementById('lab-jump1-label').textContent = bridgeState.revealCherry ? `+${neededToTen} (to friendly ${friendlyTen})` : '+ ? (to friendly 10)';
+      document.getElementById('lab-jump2-label').textContent = bridgeState.revealCherry ? `+${leftOver} (left over)` : '+ ? (left over)';
+
+      document.getElementById('lab-nl-start').textContent = bridgeState.startUnlocked ? startTotal : '?';
+      document.getElementById('lab-nl-friendly').textContent = (tenCompleted || bridgeState.revealLine) ? friendlyTen : '?';
+      document.getElementById('lab-nl-total').textContent = bridgeState.revealLine ? finalTotal : '?';
+
+      document.getElementById('btn-lab-reveal-cherry').innerHTML = bridgeState.revealCherry ? '&#128161; Hide Cherry Split' : '&#128161; Reveal Cherry Split';
+      document.getElementById('btn-lab-reveal-line').innerHTML = bridgeState.revealLine ? '&#9989; Hide Jumps &amp; Total' : '&#9989; Reveal Jumps &amp; Total';
+    }
+
+    // =========================================================================
+    // 7. MODULES 2 TO 5 WORKED EXAMPLES DATA (EXACT ORIGINAL)
+    // =========================================================================
+    const MODULES_DATA = {
+      2: {
+        badge: "Module 2 • Week 2",
+        title: "Part-Whole Fact Family Triangles & Bar Models",
+        manipTitle: "Interactive Fact Family Triangle Builder",
+        examples: [
+          { skill: "Part-Whole Fact Family (7, 3, 10)", question: "Use the numbers 7, 3, and 10 to write TWO addition facts and TWO subtraction facts.", hint: "Put the Boss Number (10) at the top of the triangle and the two parts (7 and 3) at the bottom! Always use + or − and = (never 3 = 7 = 10).", visual: "triangle:10,7,3", working: ["1. Addition facts: 7 + 3 = 10 and 3 + 7 = 10", "2. Subtraction facts (start with 10!): 10 − 7 = 3 and 10 − 3 = 7."], answer: "7 + 3 = 10 | 3 + 7 = 10 | 10 − 7 = 3 | 10 − 3 = 7" },
+          { skill: "Missing Part Subtraction (10 − 8)", question: "Work out:   10 − 8 = [ ? ]", hint: "Use your number bonds to 10! 8 + [ ? ] = 10.", visual: "triangle:10,8,?", working: ["1. In the (10, 8, 2) fact family: 8 + 2 = 10", "2. Therefore, 10 − 8 = 2."], answer: "2" },
+          { skill: "Cherry Part-Whole Split (9 = 5 + ?)", question: "Complete the part-whole split:   9 splits into 5 and [ ? ]", hint: "Hold up 9 fingers, tuck away 5—how many are left? (5 + [ ? ] = 9).", visual: "cherry:9,5,?", working: ["1. 9 − 5 = 4 (Check: 5 + 4 = 9)."], answer: "4" },
+          { skill: "Number Bonds to 20 (14 + ? = 20)", question: "Find the missing part to make 20:   14 + [ ? ] = 20", hint: "Use your bond to 10! Since 4 + 6 = 10, 14 + 6 = 20.", visual: "triangle:20,14,?", working: ["1. 4 + 6 = 10", "2. 14 + 6 = 20 (So 20 − 14 = 6)."], answer: "6" },
+          { skill: "Ten-Frame Unitising (10 + 4)", question: "A full ten-frame has 10 counters, and there are 4 counters outside. How many counters ALTOGETHER?", hint: "1 full ten + 4 ones = 14 (not just 4!).", visual: "tenframe14:10,4", working: ["1. 1 ten + 4 ones = 14."], answer: "14" },
+          { skill: "Fact Family for 6, 4, 10", question: "Write all 4 number sentences in the fact family for 6 + 4 = 10.", hint: "Two additions (+), two subtractions (−) starting with 10!", visual: "triangle:10,6,4", working: ["1. 6 + 4 = 10, 4 + 6 = 10", "2. 10 − 6 = 4, 10 − 4 = 6."], answer: "6 + 4 = 10, 4 + 6 = 10, 10 − 6 = 4, 10 − 4 = 6" },
+          { skill: "Inverse Verification", question: "Sofia says 10 − 3 = 6. How can we use ADDITION to check if she is right?", hint: "Add the two small parts back together: 6 + 3 = 9 (not 10!).", visual: "triangle:10,7,3", working: ["1. 6 + 3 = 9 (does not make 10).", "2. Since 7 + 3 = 10, 10 − 3 = 7."], answer: "No, 6 + 3 = 9; 10 − 3 = 7" },
+          { skill: "Subtracting from 20 (20 − 14)", question: "Work out:   20 − 14", hint: "Count up from 14 to 20!", visual: "triangle:20,14,6", working: ["1. 14 + 6 = 20 -> 20 − 14 = 6."], answer: "6" },
+          { skill: "Cherry Part-Whole Split (8 = 3 + ?)", question: "8 splits into 3 and [ ? ].", hint: "8 − 3 = 5.", visual: "cherry:8,3,?", working: ["1. 3 + 5 = 8."], answer: "5" },
+          { skill: "Missing Part Addition ([ ? ] + 7 = 10)", question: "Find the missing number:   [ ? ] + 7 = 10", hint: "10 − 7 = 3.", visual: "triangle:10,?,7", working: ["1. 3 + 7 = 10."], answer: "3" }
+        ]
+      },
+      3: {
+        badge: "Module 3 • Week 3",
+        title: "Place Value Unitising & Comparison (Tens & Ones)",
+        manipTitle: "Interactive Dienes Tens & Ones Builder + 100-Square",
+        examples: [
+          { skill: "Building from Tens & Ones (5 tens & 2 ones)", question: "What number has 5 tens and 2 ones?", hint: "Put 5 in the Tens column (50) and 2 in the Ones column (2) -> 52 (NOT 87!).", visual: "to:5,2", working: ["1. 5 tens = 50", "2. 2 ones = 2", "3. 50 + 2 = 52."], answer: "52" },
+          { skill: "Unitising a 2-Digit Number (34)", question: "How many TENS and how many ONES are in 34?", hint: "The left digit counts the tens (3 tens = 30), and the right digit counts the ones (4 ones = 4).", visual: "to:3,4", working: ["1. 34 = 3 tens and 4 ones."], answer: "3 tens and 4 ones" },
+          { skill: "10 More on a 100-Square (10 more than 43)", question: "What is 10 MORE than 43?", hint: "Jump ONE row DOWN on a 100-square! The tens digit goes up by 1 (40 -> 50), and the 3 ones stay the same -> 53 (not 50 or 38!).", visual: "jumps:43,+10 (1 row down)->53", working: ["1. 43 + 10 = 53."], answer: "53" },
+          { skill: "Comparing Numbers (Greater than 67)", question: "Circle the number that is GREATER than 67:   49  |  59  |  62  |  71", hint: "Compare the TENS digit first! 67 has 6 tens; 71 has 7 tens (70 > 60). 59 only has 5 tens!", visual: "jumps:49,59,62,67,71 (71 is greater!)", working: ["1. 71 has 7 tens, which is greater than 6 tens (67)."], answer: "71" },
+          { skill: "1 Less Across a Decade (1 less than 40)", question: "What is 1 LESS than 40?", hint: "Count backwards 1 step from 40 (38, 39, 40) -> 39 (not 34!).", visual: "jumps:39,<-1- 40", working: ["1. 40 − 1 = 39."], answer: "39" },
+          { skill: "1 More Across a Decade (1 more than 29)", question: "What is 1 MORE than 29?", hint: "29 + 1 reaches the next friendly ten -> 30!", visual: "jumps:29,+1->30", working: ["1. 29 + 1 = 30."], answer: "30" },
+          { skill: "10 Less on a 100-Square (10 less than 65)", question: "What is 10 LESS than 65?", hint: "Jump ONE row UP on a 100-square: 6 tens drop to 5 tens -> 55.", visual: "jumps:55,<-10 (1 row up)- 65", working: ["1. 65 − 10 = 55."], answer: "55" },
+          { skill: "Spot the Mistake (Digit Reversal)", question: "Spot the Mistake: Sam says 4 tens and 7 ones is 74. Explain why he is wrong.", hint: "74 has 7 tens and 4 ones! 4 tens and 7 ones is 47.", visual: "to:4,7", working: ["1. Sam swapped the tens and ones digits.", "2. 4 tens and 7 ones = 47."], answer: "47 (74 has 7 tens and 4 ones)" },
+          { skill: "Non-Standard Partitioning (43 = 30 + ?)", question: "Complete:   43 = 30 + [ ? ]", hint: "43 is 40 + 3, which is the same as 30 + 13!", visual: "cherry:43,30,?", working: ["1. 30 + 13 = 43."], answer: "13" },
+          { skill: "Comparison Symbols (< and >)", question: "Put < or > in the box:   58 [ ? ] 64", hint: "The crocodile mouth opens toward the BIGGER number (64)!", visual: "jumps:58 < 64", working: ["1. 58 is less than 64 -> 58 < 64."], answer: "< (58 < 64)" }
+        ]
+      },
+      4: {
+        badge: "Module 4 • Week 4",
+        title: "Counting Back Across Decades & Working Backwards",
+        manipTitle: "Interactive Decade Jump-Back Number Line",
+        examples: [
+          { skill: "Subtracting from a Friendly Decade (40 − 6)", question: "Work out:   40 − 6", hint: "Exchange 1 ten from 40 (leaving 30), and use your bond to 10: 10 − 6 = 4 -> 34!", visual: "jumps:34,<-6- 40", working: ["1. 40 = 30 + 10", "2. 10 − 6 = 4 -> 30 + 4 = 34."], answer: "34" },
+          { skill: "Two-Hop Jump Back Across a Decade (43 − 6)", question: "Work out:   43 − 6", hint: "Jump back 3 to land on the friendly decade (40), then jump back 3 more to land on 37!", visual: "jumps:37,<-3- 40,<-3- 43", working: ["1. Split 6 into 3 and 3.", "2. 43 − 3 = 40; 40 − 3 = 37."], answer: "37" },
+          { skill: "Working Backwards ([ ? ] − 6 = 34)", question: "Find the missing starting number:   [ ? ] − 6 = 34", hint: "The starting number at the front is the BIGGEST number! Add 34 + 6 = 40.", visual: "cherry:?,34,6", working: ["1. Inverse of − 6 is + 6: 34 + 6 = 40."], answer: "40" },
+          { skill: "Subtracting from a Friendly Decade (50 − 7)", question: "Work out:   50 − 7", hint: "50 = 40 + 10, and 10 − 7 = 3 -> 43!", visual: "jumps:43,<-7- 50", working: ["1. 50 − 7 = 43."], answer: "43" },
+          { skill: "Two-Hop Jump Back Across a Decade (32 − 5)", question: "Work out:   32 − 5", hint: "Jump back 2 to 30, then jump back 3 more to 27!", visual: "jumps:27,<-3- 30,<-2- 32", working: ["1. 32 − 2 = 30; 30 − 3 = 27."], answer: "27" },
+          { skill: "Two-Hop Jump Back Across a Decade (54 − 6)", question: "Work out:   54 − 6", hint: "Jump back 4 to 50, then jump back 2 more to 48!", visual: "jumps:48,<-2- 50,<-4- 54", working: ["1. 54 − 4 = 50; 50 − 2 = 48."], answer: "48" },
+          { skill: "Working Backwards ([ ? ] − 5 = 27)", question: "Find the missing starting number:   [ ? ] − 5 = 27", hint: "Add 27 + 5 (27 + 3 = 30, + 2 = 32)!", visual: "cherry:?,27,5", working: ["1. 27 + 5 = 32."], answer: "32" },
+          { skill: "Subtracting from a Friendly Decade (30 − 4)", question: "Work out:   30 − 4", hint: "30 = 20 + 10, and 10 − 4 = 6 -> 26.", visual: "jumps:26,<-4- 30", working: ["1. 30 − 4 = 26."], answer: "26" },
+          { skill: "Two-Hop Jump Back Across a Decade (41 − 4)", question: "Work out:   41 − 4", hint: "Jump back 1 to 40, then jump back 3 more to 37!", visual: "jumps:37,<-3- 40,<-1- 41", working: ["1. 41 − 1 = 40; 40 − 3 = 37."], answer: "37" },
+          { skill: "Counting Back in 10s", question: "What number comes next when counting back in 10s?   74, 64, 54, [ ? ]", hint: "The tens digit drops by 1 each jump (5 tens -> 4 tens).", visual: "jumps:44,<-10- 54,<-10- 64,<-10- 74", working: ["1. 54 − 10 = 44."], answer: "44" }
+        ]
+      },
+      5: {
+        badge: "Module 5 • Week 5",
+        title: "Action-Word Decoder (Difference, Remaining, Altogether, Even)",
+        manipTitle: "Interactive Cube-Tower Comparison & Odd/Even Sorter",
+        examples: [
+          { skill: "Action Word: DIFFERENCE (12 and 8)", question: "What is the DIFFERENCE between 12 and 8?", hint: "DIFFERENCE means compare two towers and subtract to find the gap: 12 − 8 = 4 (do NOT add 12 + 8 = 20!).", visual: "towers:12,8", working: ["1. Compare 12 and 8: 12 − 8 = 4 (or 8 + 4 = 12)."], answer: "4" },
+          { skill: "Action Word: REMAINING (15 − 6)", question: "Mya has 15 grapes. She eats 6 of them. How many grapes are REMAINING?", hint: "REMAINING means what is LEFT OVER after taking away: 15 − 6 = 9.", visual: "jumps:9,<-1- 10,<-5- 15", working: ["1. 15 − 5 = 10, then 10 − 1 = 9 grapes remaining."], answer: "9 grapes" },
+          { skill: "Action Word: ALTOGETHER (8 + 5)", question: "Sofia has 8 stickers and Orlaith-Louise has 5 stickers. How many stickers do they have ALTOGETHER?", hint: "ALTOGETHER means combine both groups: 8 + 5 (bridge through 10: 8 + 2 + 3 = 13!).", visual: "cherry:13,8,5", working: ["1. 8 + 2 = 10, + 3 = 13 stickers altogether."], answer: "13 stickers" },
+          { skill: "Vocabulary: EVEN Numbers (12)", question: "Circle the EVEN number below:   7  |  9  |  12  |  15", hint: "EVEN numbers end in 0, 2, 4, 6, or 8 and share equally into 2 groups with none left over! 12 ends in 2 (6 + 6 = 12).", visual: "even:12", working: ["1. 12 ends in 2 (6 pairs of 2) -> 12 is EVEN."], answer: "12" },
+          { skill: "Action Word: DIFFERENCE (15 and 9)", question: "What is the DIFFERENCE between 15 and 9?", hint: "Count up from 9 to 15 (9 + 1 = 10, + 5 = 15 -> 6).", visual: "towers:15,9", working: ["1. 15 − 9 = 6."], answer: "6" },
+          { skill: "Action Word: REMAINING (14 − 8)", question: "There are 14 birds on a fence. 8 fly away. How many birds are REMAINING?", hint: "14 − 8 = 6.", visual: "jumps:6,<-4- 10,<-4- 14", working: ["1. 14 − 4 = 10, − 4 = 6 birds remaining."], answer: "6 birds" },
+          { skill: "Vocabulary: ODD Numbers", question: "Which number is ODD?   4  |  8  |  10  |  17", hint: "ODD numbers end in 1, 3, 5, 7, or 9 (17 has 1 left over when paired).", visual: "even:17", working: ["1. 17 ends in 7 -> 17 is ODD."], answer: "17" },
+          { skill: "Action Word: ALTOGETHER (9 + 6)", question: "Tom reads 9 pages on Monday and 6 pages on Tuesday. How many pages does he read ALTOGETHER?", hint: "9 + 1 = 10, + 5 = 15.", visual: "cherry:15,9,6", working: ["1. 9 + 6 = 15 pages altogether."], answer: "15 pages" },
+          { skill: "Two-Step Story (Remaining + More)", question: "Leo has 12 sweets. He eats 4 sweets, then his mum gives him 5 more. How many sweets does he have now?", hint: "Step 1: 12 − 4 = 8 remaining. Step 2: 8 + 5 = 13!", visual: "jumps:12,-4->8,+5->13", working: ["1. 12 − 4 = 8", "2. 8 + 5 = 13 sweets."], answer: "13 sweets" },
+          { skill: "Action Word: DIFFERENCE (20 and 13)", question: "What is the DIFFERENCE between 20 and 13?", hint: "13 + 7 = 20 -> difference is 7.", visual: "towers:20,13", working: ["1. 20 − 13 = 7."], answer: "7" }
+        ]
+      }
+    };
+
+    // =========================================================================
+    // 8. 100-QUESTION RETRIEVAL BANK (EXACT ORIGINAL)
+    // =========================================================================
+    const BANK_QUESTIONS = [
+      { id: 1, topic: "Bridging & Ten-Frames", q: "Work out: 8 + 5", hint: "Split 5 into 2 and 3: 8 + 2 = 10, then + 3 = 13.", working: "8 + 2 + 3 = 13", answer: "13" },
+      { id: 2, topic: "Bridging & Ten-Frames", q: "Work out: 9 + 6", hint: "9 + 1 = 10, then + 5 = 15.", working: "9 + 1 + 5 = 15", answer: "15" },
+      { id: 3, topic: "Bridging & Ten-Frames", q: "A full ten-frame has 10 counters and 4 counters are outside. How many altogether?", hint: "1 ten + 4 ones = 14.", working: "10 + 4 = 14", answer: "14" },
+      { id: 4, topic: "Bridging & Ten-Frames", q: "Work out: 8 + 4", hint: "8 + 2 = 10, + 2 = 12.", working: "12", answer: "12" },
+      { id: 5, topic: "Bridging & Ten-Frames", q: "Work out: 7 + 5", hint: "7 + 3 = 10, + 2 = 12.", working: "12", answer: "12" },
+      { id: 6, topic: "Bridging & Ten-Frames", q: "Work out: 9 + 7", hint: "9 + 1 = 10, + 6 = 16.", working: "16", answer: "16" },
+      { id: 7, topic: "Bridging & Ten-Frames", q: "Work out: 8 + 6", hint: "8 + 2 = 10, + 4 = 14.", working: "14", answer: "14" },
+      { id: 8, topic: "Bridging & Ten-Frames", q: "Work out: 15 − 6", hint: "Jump back 5 to 10, then 1 more to 9.", working: "15 − 5 − 1 = 9", answer: "9" },
+      { id: 9, topic: "Bridging & Ten-Frames", q: "Work out: 13 − 5", hint: "Jump back 3 to 10, then 2 more to 8.", working: "13 − 3 − 2 = 8", answer: "8" },
+      { id: 10, topic: "Bridging & Ten-Frames", q: "Work out: 14 − 6", hint: "14 − 4 = 10, − 2 = 8.", working: "8", answer: "8" },
+      { id: 11, topic: "Bridging & Ten-Frames", q: "Work out: 28 + 5", hint: "28 + 2 = 30, + 3 = 33.", working: "33", answer: "33" },
+      { id: 12, topic: "Bridging & Ten-Frames", q: "Work out: 47 + 6", hint: "47 + 3 = 50, + 3 = 53.", working: "53", answer: "53" },
+      { id: 13, topic: "Bridging & Ten-Frames", q: "Work out: 39 + 4", hint: "39 + 1 = 40, + 3 = 43.", working: "43", answer: "43" },
+      { id: 14, topic: "Bridging & Ten-Frames", q: "Work out: 7 + 6", hint: "7 + 3 = 10, + 3 = 13.", working: "13", answer: "13" },
+      { id: 15, topic: "Bridging & Ten-Frames", q: "Work out: 15 − 7", hint: "15 − 5 = 10, − 2 = 8.", working: "8", answer: "8" },
+      { id: 16, topic: "Bridging & Ten-Frames", q: "A full ten-frame has 10 counters and 7 counters are outside. How many altogether?", hint: "10 + 7 = 17.", working: "17", answer: "17" },
+      { id: 17, topic: "Bridging & Ten-Frames", q: "Work out: 9 + 8", hint: "9 + 1 = 10, + 7 = 17.", working: "17", answer: "17" },
+      { id: 18, topic: "Bridging & Ten-Frames", q: "Work out: 58 + 6", hint: "58 + 2 = 60, + 4 = 64.", working: "64", answer: "64" },
+      { id: 19, topic: "Bridging & Ten-Frames", q: "Work out: 12 − 5", hint: "12 − 2 = 10, − 3 = 7.", working: "7", answer: "7" },
+      { id: 20, topic: "Bridging & Ten-Frames", q: "Work out: 6 + 6", hint: "Double 6 = 12.", working: "12", answer: "12" },
+      { id: 21, topic: "Fact Families", q: "Find the missing number: 7 + [ ? ] = 10", hint: "3 + 7 = 10.", working: "3", answer: "3" },
+      { id: 22, topic: "Fact Families", q: "Work out: 10 − 8", hint: "8 + 2 = 10.", working: "2", answer: "2" },
+      { id: 23, topic: "Fact Families", q: "9 splits into 5 and [ ? ].", hint: "5 + 4 = 9.", working: "4", answer: "4" },
+      { id: 24, topic: "Fact Families", q: "Find the missing number: 14 + [ ? ] = 20", hint: "4 + 6 = 10, so 14 + 6 = 20.", working: "6", answer: "6" },
+      { id: 25, topic: "Fact Families", q: "Write ONE subtraction fact in the same fact family as 7 + 3 = 10.", hint: "Start with 10!", working: "10 − 7 = 3 or 10 − 3 = 7", answer: "10 − 7 = 3" },
+      { id: 26, topic: "Fact Families", q: "Work out: 10 − 6", hint: "6 + 4 = 10.", working: "4", answer: "4" },
+      { id: 27, topic: "Fact Families", q: "Find the missing number: [ ? ] + 4 = 10", hint: "6 + 4 = 10.", working: "6", answer: "6" },
+      { id: 28, topic: "Fact Families", q: "Work out: 20 − 14", hint: "14 + 6 = 20.", working: "6", answer: "6" },
+      { id: 29, topic: "Fact Families", q: "8 splits into 3 and [ ? ].", hint: "3 + 5 = 8.", working: "5", answer: "5" },
+      { id: 30, topic: "Fact Families", q: "Work out: 10 − 3", hint: "3 + 7 = 10.", working: "7", answer: "7" },
+      { id: 31, topic: "Fact Families", q: "Find the missing number: 12 + [ ? ] = 20", hint: "2 + 8 = 10 -> 12 + 8 = 20.", working: "8", answer: "8" },
+      { id: 32, topic: "Fact Families", q: "Work out: 20 − 7", hint: "10 − 7 = 3, so 20 − 7 = 13.", working: "13", answer: "13" },
+      { id: 33, topic: "Fact Families", q: "7 splits into 4 and [ ? ].", hint: "4 + 3 = 7.", working: "3", answer: "3" },
+      { id: 34, topic: "Fact Families", q: "Find the missing number: 10 − [ ? ] = 1", hint: "9 + 1 = 10.", working: "9", answer: "9" },
+      { id: 35, topic: "Fact Families", q: "Work out: 20 − 15", hint: "15 + 5 = 20.", working: "5", answer: "5" },
+      { id: 36, topic: "Fact Families", q: "10 splits into 2 and [ ? ].", hint: "2 + 8 = 10.", working: "8", answer: "8" },
+      { id: 37, topic: "Fact Families", q: "Find the missing number: [ ? ] + 11 = 20", hint: "9 + 11 = 20.", working: "9", answer: "9" },
+      { id: 38, topic: "Fact Families", q: "Work out: 10 − 5", hint: "5 + 5 = 10.", working: "5", answer: "5" },
+      { id: 39, topic: "Fact Families", q: "Write ONE subtraction fact from 8 + 2 = 10.", hint: "10 − 8 = 2 or 10 − 2 = 8.", working: "10 − 8 = 2", answer: "10 − 8 = 2" },
+      { id: 40, topic: "Fact Families", q: "Work out: 20 − 18", hint: "18 + 2 = 20.", working: "2", answer: "2" },
+      { id: 41, topic: "Place Value & 10 More/Less", q: "What number has 5 tens and 2 ones?", hint: "50 + 2 = 52 (not 87!).", working: "52", answer: "52" },
+      { id: 42, topic: "Place Value & 10 More/Less", q: "How many TENS and ONES are in 34?", hint: "3 tens and 4 ones.", working: "3 tens and 4 ones", answer: "3 tens and 4 ones" },
+      { id: 43, topic: "Place Value & 10 More/Less", q: "What is 10 MORE than 43?", hint: "Jump down one row on a 100-square: 53.", working: "53", answer: "53" },
+      { id: 44, topic: "Place Value & 10 More/Less", q: "Circle the number GREATER than 67: 49 | 59 | 62 | 71", hint: "71 has 7 tens (70 > 67).", working: "71", answer: "71" },
+      { id: 45, topic: "Place Value & 10 More/Less", q: "What is 1 MORE than 29?", hint: "29 + 1 = 30.", working: "30", answer: "30" },
+      { id: 46, topic: "Place Value & 10 More/Less", q: "What number has 4 tens and 7 ones?", hint: "40 + 7 = 47.", working: "47", answer: "47" },
+      { id: 47, topic: "Place Value & 10 More/Less", q: "What is 10 LESS than 65?", hint: "65 − 10 = 55.", working: "55", answer: "55" },
+      { id: 48, topic: "Place Value & 10 More/Less", q: "What is 10 MORE than 28?", hint: "28 + 10 = 38.", working: "38", answer: "38" },
+      { id: 49, topic: "Place Value & 10 More/Less", q: "What number has 6 tens and 0 ones?", hint: "60.", working: "60", answer: "60" },
+      { id: 50, topic: "Place Value & 10 More/Less", q: "Circle the SMALLEST number: 82 | 28 | 54 | 45", hint: "28 has only 2 tens.", working: "28", answer: "28" },
+      { id: 51, topic: "Place Value & 10 More/Less", q: "Complete: 43 = 30 + [ ? ]", hint: "30 + 13 = 43.", working: "13", answer: "13" },
+      { id: 52, topic: "Place Value & 10 More/Less", q: "What is 10 LESS than 81?", hint: "81 − 10 = 71.", working: "71", answer: "71" },
+      { id: 53, topic: "Place Value & 10 More/Less", q: "What is the value of the 7 in 74?", hint: "7 tens = 70.", working: "70", answer: "70" },
+      { id: 54, topic: "Place Value & 10 More/Less", q: "What is 10 MORE than 59?", hint: "59 + 10 = 69.", working: "69", answer: "69" },
+      { id: 55, topic: "Place Value & 10 More/Less", q: "What number has 8 tens and 9 ones?", hint: "89.", working: "89", answer: "89" },
+      { id: 56, topic: "Place Value & 10 More/Less", q: "Complete: 54 = 40 + [ ? ]", hint: "40 + 14 = 54.", working: "14", answer: "14" },
+      { id: 57, topic: "Place Value & 10 More/Less", q: "What is 1 MORE than 49?", hint: "50.", working: "50", answer: "50" },
+      { id: 58, topic: "Place Value & 10 More/Less", q: "What is 10 LESS than 30?", hint: "20.", working: "20", answer: "20" },
+      { id: 59, topic: "Place Value & 10 More/Less", q: "Circle the number GREATER than 54: 39 | 48 | 51 | 63", hint: "63 has 6 tens.", working: "63", answer: "63" },
+      { id: 60, topic: "Place Value & 10 More/Less", q: "How many TENS are in 90?", hint: "9 tens.", working: "9", answer: "9" },
+      { id: 61, topic: "Decade Subtraction", q: "What is 1 LESS than 40?", hint: "Count back 1 from 40 -> 39.", working: "39", answer: "39" },
+      { id: 62, topic: "Decade Subtraction", q: "Work out: 40 − 6", hint: "30 + (10 − 6) = 34.", working: "34", answer: "34" },
+      { id: 63, topic: "Decade Subtraction", q: "Work out: 43 − 6", hint: "43 − 3 = 40, − 3 = 37.", working: "37", answer: "37" },
+      { id: 64, topic: "Decade Subtraction", q: "Find the missing starting number: [ ? ] − 6 = 34", hint: "Add 34 + 6 = 40.", working: "40", answer: "40" },
+      { id: 65, topic: "Decade Subtraction", q: "Work out: 50 − 7", hint: "40 + (10 − 7) = 43.", working: "43", answer: "43" },
+      { id: 66, topic: "Decade Subtraction", q: "Work out: 32 − 5", hint: "32 − 2 = 30, − 3 = 27.", working: "27", answer: "27" },
+      { id: 67, topic: "Decade Subtraction", q: "Work out: 54 − 6", hint: "54 − 4 = 50, − 2 = 48.", working: "48", answer: "48" },
+      { id: 68, topic: "Decade Subtraction", q: "Work out: 30 − 4", hint: "20 + (10 − 4) = 26.", working: "26", answer: "26" },
+      { id: 69, topic: "Decade Subtraction", q: "Work out: 41 − 4", hint: "41 − 1 = 40, − 3 = 37.", working: "37", answer: "37" },
+      { id: 70, topic: "Decade Subtraction", q: "What is 1 LESS than 60?", hint: "59.", working: "59", answer: "59" },
+      { id: 71, topic: "Decade Subtraction", q: "Find the missing starting number: [ ? ] − 5 = 27", hint: "27 + 5 = 32.", working: "32", answer: "32" },
+      { id: 72, topic: "Decade Subtraction", q: "Work out: 60 − 8", hint: "52.", working: "52", answer: "52" },
+      { id: 73, topic: "Decade Subtraction", q: "Work out: 63 − 5", hint: "63 − 3 = 60, − 2 = 58.", working: "58", answer: "58" },
+      { id: 74, topic: "Decade Subtraction", q: "Work out: 70 − 3", hint: "67.", working: "67", answer: "67" },
+      { id: 75, topic: "Decade Subtraction", q: "Work out: 35 − 7", hint: "35 − 5 = 30, − 2 = 28.", working: "28", answer: "28" },
+      { id: 76, topic: "Decade Subtraction", q: "What is 1 LESS than 80?", hint: "79.", working: "79", answer: "79" },
+      { id: 77, topic: "Decade Subtraction", q: "Find the missing starting number: [ ? ] − 4 = 36", hint: "36 + 4 = 40.", working: "40", answer: "40" },
+      { id: 78, topic: "Decade Subtraction", q: "Work out: 52 − 6", hint: "52 − 2 = 50, − 4 = 46.", working: "46", answer: "46" },
+      { id: 79, topic: "Decade Subtraction", q: "Work out: 80 − 5", hint: "75.", working: "75", answer: "75" },
+      { id: 80, topic: "Decade Subtraction", q: "Work out: 44 − 7", hint: "44 − 4 = 40, − 3 = 37.", working: "37", answer: "37" },
+      { id: 81, topic: "Maths Vocabulary", q: "What is the DIFFERENCE between 12 and 8?", hint: "Difference = subtract: 12 − 8 = 4.", working: "4", answer: "4" },
+      { id: 82, topic: "Maths Vocabulary", q: "Mya has 15 grapes. She eats 6. How many grapes are REMAINING?", hint: "Remaining = left over: 15 − 6 = 9.", working: "9", answer: "9" },
+      { id: 83, topic: "Maths Vocabulary", q: "Sofia has 8 stickers and Ariana has 5. How many ALTOGETHER?", hint: "Altogether = add: 8 + 5 = 13.", working: "13", answer: "13" },
+      { id: 84, topic: "Maths Vocabulary", q: "Circle the EVEN number: 7 | 9 | 12 | 15", hint: "12 ends in 2 (6 + 6 = 12).", working: "12", answer: "12" },
+      { id: 85, topic: "Maths Vocabulary", q: "What is the DIFFERENCE between 15 and 9?", hint: "15 − 9 = 6.", working: "6", answer: "6" },
+      { id: 86, topic: "Maths Vocabulary", q: "There are 14 birds on a wall. 8 fly away. How many are REMAINING?", hint: "14 − 8 = 6.", working: "6", answer: "6" },
+      { id: 87, topic: "Maths Vocabulary", q: "Circle the ODD number: 4 | 8 | 10 | 17", hint: "17 ends in 7.", working: "17", answer: "17" },
+      { id: 88, topic: "Maths Vocabulary", q: "Orlaith-Louise has 9 pens and Mya has 6 pens. How many ALTOGETHER?", hint: "9 + 6 = 15.", working: "15", answer: "15" },
+      { id: 89, topic: "Maths Vocabulary", q: "What is the DIFFERENCE between 20 and 13?", hint: "20 − 13 = 7.", working: "7", answer: "7" },
+      { id: 90, topic: "Maths Vocabulary", q: "A box holds 16 cakes. 7 are eaten. How many cakes are REMAINING?", hint: "16 − 7 = 9.", working: "9", answer: "9" },
+      { id: 91, topic: "Maths Vocabulary", q: "Circle the EVEN number: 3 | 11 | 18 | 19", hint: "18 ends in 8 (9 + 9 = 18).", working: "18", answer: "18" },
+      { id: 92, topic: "Maths Vocabulary", q: "Find the TOTAL of 7 and 8.", hint: "Total = add: 7 + 8 = 15.", working: "15", answer: "15" },
+      { id: 93, topic: "Maths Vocabulary", q: "What is the DIFFERENCE between 14 and 6?", hint: "14 − 6 = 8.", working: "8", answer: "8" },
+      { id: 94, topic: "Maths Vocabulary", q: "20 children are in class. 4 go to music. How many are REMAINING?", hint: "20 − 4 = 16.", working: "16", answer: "16" },
+      { id: 95, topic: "Maths Vocabulary", q: "Circle the EVEN number: 5 | 13 | 14 | 21", hint: "14 ends in 4 (7 + 7 = 14).", working: "14", answer: "14" },
+      { id: 96, topic: "Maths Vocabulary", q: "Leo has 12 sweets, eats 4, and gets 5 more. How many now?", hint: "12 − 4 = 8, + 5 = 13.", working: "13", answer: "13" },
+      { id: 97, topic: "Maths Vocabulary", q: "What is the DIFFERENCE between 18 and 11?", hint: "18 − 11 = 7.", working: "7", answer: "7" },
+      { id: 98, topic: "Maths Vocabulary", q: "13 ducks are in a pond. 5 swim away. How many are REMAINING?", hint: "13 − 5 = 8.", working: "8", answer: "8" },
+      { id: 99, topic: "Maths Vocabulary", q: "Find the SUM of 9 and 4.", hint: "Sum = add: 9 + 4 = 13.", working: "13", answer: "13" },
+      { id: 100, topic: "Maths Vocabulary", q: "Circle the EVEN number: 1 | 9 | 16 | 17", hint: "16 ends in 6 (8 + 8 = 16).", working: "16", answer: "16" }
+    ];
+
+    // =========================================================================
+    // 9. APP NAVIGATION, MODULES 2-5, 100-Q BANK & WHITEBOARD ENGINE
+    // =========================================================================
+    let currentModule = 0;
+    let currentExIndex = 0;
+    let customDynamicExample = null;
+    let exReveals = { hint: false, working: false, answer: false };
+    let manipOpen = false;
+
+    let triPresetIdx = 0;
+    let dienesTens = 5;
+    let dienesOnes = 2;
+    let decStart = 43;
+    let decSub = 6;
+    let towerA = 12;
+    let towerB = 8;
+
+    let bankFilter = 'all';
+    let filteredBank = [...BANK_QUESTIONS];
+    let currentBankPos = 0;
+    let bankReveals = { hint: false, working: false, answer: false };
+    let bankScore = { correct: 0, attempted: 0 };
+
+    let wbOpen = false;
+    let wbFullscreen = false;
+    let wbColor = '#0f172a';
+    let wbSize = 3;
+    let wbTool = 'pen';
+    let wbBg = 'blank';
+    let isDrawing = false;
+    let lastX = 0;
+    let lastY = 0;
+    let wbHistory = [];
+
+    function toggleTargetsDrawer() {
+      document.getElementById('pupil-targets-drawer').classList.toggle('hidden');
+    }
+
+    function goHome() {
+      currentModule = 0;
+      document.getElementById('view-hub').classList.remove('hidden');
+      document.getElementById('view-bridging-lab').classList.add('hidden');
+      document.getElementById('view-module').classList.add('hidden');
+      document.getElementById('view-bank').classList.add('hidden');
+      document.getElementById('btn-back-hub').classList.add('hidden');
+      document.getElementById('btn-back-hub').classList.remove('flex');
+    }
+
+    function openModule(modNum) {
+      currentModule = modNum;
+      document.getElementById('view-hub').classList.add('hidden');
+      document.getElementById('btn-back-hub').classList.remove('hidden');
+      document.getElementById('btn-back-hub').classList.add('flex');
+
+      document.getElementById('view-bridging-lab').classList.add('hidden');
+      document.getElementById('view-module').classList.add('hidden');
+      document.getElementById('view-bank').classList.add('hidden');
+
+      if (modNum === 1) {
+        document.getElementById('view-bridging-lab').classList.remove('hidden');
+        renderBridgingLab();
+        return;
+      }
+
+      if (modNum === 6) {
+        document.getElementById('view-bank').classList.remove('hidden');
+        renderBankQuestion();
+        return;
+      }
+
+      document.getElementById('view-module').classList.remove('hidden');
+      customDynamicExample = null;
+      manipOpen = false;
+      document.getElementById('manipulative-body').classList.add('hidden');
+      document.getElementById('btn-toggle-manip').textContent = 'Show Interactive Tool';
+
+      updateModuleTabStyles(modNum);
+      renderModuleExample();
+      renderManipulativePlayground(modNum);
+    }
+
+    function updateModuleTabStyles(activeMod) {
+      document.querySelectorAll('.mod-tab-btn').forEach(btn => {
+        const num = parseInt(btn.getAttribute('data-mod-tab'), 10);
+        btn.className = num === activeMod
+          ? 'mod-tab-btn px-3 py-1.5 rounded-lg text-xs font-extrabold bg-slate-900 text-white border border-slate-900 transition'
+          : 'mod-tab-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-50 text-slate-700 border border-slate-200 hover:bg-slate-100 transition';
+      });
+    }
+
+    function resetExampleReveals() {
+      exReveals = { hint: false, working: false, answer: false };
+      document.getElementById('ex-panel-hint').classList.add('hidden');
+      document.getElementById('ex-panel-working').classList.add('hidden');
+      document.getElementById('ex-panel-answer').classList.add('hidden');
+      document.getElementById('btn-ex-hint').innerHTML = '<span>&#128161; Show Visual Hint</span>';
+      document.getElementById('btn-ex-working').innerHTML = '<span>&#129692; Show Step-by-Step Working</span>';
+      document.getElementById('btn-ex-answer').innerHTML = '<span>&#9989; Reveal Final Answer</span>';
+    }
+
+    function toggleExampleReveal(type) {
+      exReveals[type] = !exReveals[type];
+      const panel = document.getElementById(`ex-panel-${type}`);
+      const btn = document.getElementById(`btn-ex-${type}`);
+      if (exReveals[type]) {
+        panel.classList.remove('hidden');
+        if (type === 'hint') btn.innerHTML = '<span>&#128161; Hide Visual Hint</span>';
+        if (type === 'working') btn.innerHTML = '<span>&#129692; Hide Step-by-Step Working</span>';
+        if (type === 'answer') btn.innerHTML = '<span>&#9989; Hide Final Answer</span>';
+      } else {
+        panel.classList.add('hidden');
+        if (type === 'hint') btn.innerHTML = '<span>&#128161; Show Visual Hint</span>';
+        if (type === 'working') btn.innerHTML = '<span>&#129692; Show Step-by-Step Working</span>';
+        if (type === 'answer') btn.innerHTML = '<span>&#9989; Reveal Final Answer</span>';
+      }
+    }
+
+    function renderModuleExample() {
+      resetExampleReveals();
+      const mod = MODULES_DATA[currentModule];
+      const ex = customDynamicExample || mod.examples[currentExIndex % mod.examples.length];
+
+      document.getElementById('mod-badge').textContent = mod.badge;
+      document.getElementById('mod-title').textContent = mod.title;
+      document.getElementById('manip-header-title').textContent = mod.manipTitle;
+      document.getElementById('mod-counter').textContent = customDynamicExample
+        ? 'Generated Practice Problem'
+        : `Example ${(currentExIndex % mod.examples.length) + 1} of ${mod.examples.length}`;
+
+      document.getElementById('ex-skill-tag').textContent = ex.skill;
+      document.getElementById('ex-question-text').textContent = ex.question;
+      document.getElementById('ex-hint-text').textContent = ex.hint;
+      document.getElementById('ex-visual-box').innerHTML = buildVisualDiagramHTML(ex.visual);
+
+      const workingContainer = document.getElementById('ex-working-text');
+      workingContainer.innerHTML = ex.working.map(step => `<div class="flex items-start gap-2"><span class="text-blue-600 font-black">&bull;</span><span>${step}</span></div>`).join('');
+      document.getElementById('ex-answer-text').textContent = ex.answer;
+    }
+
+    function prevExample() {
+      customDynamicExample = null;
+      const list = MODULES_DATA[currentModule].examples;
+      currentExIndex = (currentExIndex - 1 + list.length) % list.length;
+      renderModuleExample();
+    }
+
+    function nextExample() {
+      customDynamicExample = null;
+      const list = MODULES_DATA[currentModule].examples;
+      currentExIndex = (currentExIndex + 1) % list.length;
+      renderModuleExample();
+    }
+
+    function generateDynamicExample() {
+      const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+      if (currentModule === 2) {
+        const p1 = rand(2, 8), p2 = 10 - p1;
+        customDynamicExample = {
+          skill: "Generated Fact Family to 10",
+          question: `Write TWO addition facts and TWO subtraction facts for ${p1}, ${p2}, and 10.`,
+          hint: `10 goes at the top of the triangle, with ${p1} and ${p2} at the bottom!`,
+          visual: `triangle:10,${p1},${p2}`,
+          working: [`1. ${p1} + ${p2} = 10 and ${p2} + ${p1} = 10`, `2. 10 − ${p1} = ${p2} and 10 − ${p2} = ${p1}.`],
+          answer: `${p1} + ${p2} = 10 | ${p2} + ${p1} = 10 | 10 − ${p1} = ${p2} | 10 − ${p2} = ${p1}`
+        };
+      } else if (currentModule === 3) {
+        const t = rand(2, 8), o = rand(1, 9), num = t * 10 + o;
+        customDynamicExample = {
+          skill: "Generated Tens & Ones Unitising",
+          question: `What number has ${t} tens and ${o} ones? What is 10 MORE than ${num}?`,
+          hint: `Put ${t} in the Tens column and ${o} in the Ones column!`,
+          visual: `to:${t},${o}`,
+          working: [`1. ${t} tens + ${o} ones = ${num}`, `2. 10 more than ${num} = ${num + 10}.`],
+          answer: `${num}  |  10 more = ${num + 10}`
+        };
+      } else if (currentModule === 4) {
+        const dec = rand(3, 8) * 10, ones = rand(1, 4), start = dec + ones, sub = rand(ones + 2, 8), ans = start - sub;
+        customDynamicExample = {
+          skill: "Generated Decade Jump-Back",
+          question: `Work out:   ${start} − ${sub}`,
+          hint: `Jump back ${ones} to land on ${dec}, then jump back ${sub - ones} more!`,
+          visual: `jumps:${ans},<-${sub - ones}- ${dec},<-${ones}- ${start}`,
+          working: [`1. ${start} − ${ones} = ${dec}`, `2. ${dec} − ${sub - ones} = ${ans}.`],
+          answer: `${ans}`
+        };
+      } else if (currentModule === 5) {
+        const a = rand(11, 18), b = rand(4, 9);
+        customDynamicExample = {
+          skill: "Generated Action-Word Comparison",
+          question: `What is the DIFFERENCE between ${a} and ${b}?`,
+          hint: `Difference means subtract (${a} − ${b})!`,
+          visual: `towers:${a},${b}`,
+          working: [`1. ${a} − ${b} = ${a - b}.`],
+          answer: `${a - b}`
+        };
+      }
+      renderModuleExample();
+    }
+
+    function buildVisualDiagramHTML(code) {
+      if (!code) return '';
+      const idx = code.indexOf(':');
+      const type = code.slice(0, idx);
+      const payload = code.slice(idx + 1);
+
+      if (type === 'jumps') {
+        const steps = payload.split(',');
+        return `<div class="flex flex-wrap items-center gap-2 bg-white p-3 rounded-xl border border-amber-200 font-bold text-sm">${steps.map(s => `<span class="px-3 py-1.5 rounded-lg bg-slate-100 border border-slate-300 text-slate-900">${s}</span>`).join('<span class="text-amber-600 font-black">&rarr;</span>')}</div>`;
+      }
+      if (type === 'triangle') {
+        const [top, a, b] = payload.split(',');
+        return `<div class="inline-flex flex-col items-center bg-white px-6 py-3 rounded-xl border border-amber-200"><div class="w-12 h-11 rounded-full bg-indigo-600 text-white font-black text-lg flex items-center justify-center">${top}</div><div class="text-xs font-black text-slate-400 my-1">+ / −</div><div class="flex gap-6"><div class="w-11 h-10 rounded-full bg-emerald-100 border-2 border-emerald-500 font-black text-base text-emerald-950 flex items-center justify-center">${a}</div><div class="w-11 h-10 rounded-full bg-amber-100 border-2 border-amber-500 font-black text-base text-amber-950 flex items-center justify-center">${b}</div></div></div>`;
+      }
+      if (type === 'cherry') {
+        const [top, left, right] = payload.split(',');
+        return `<div class="inline-flex flex-col items-center bg-white px-6 py-3 rounded-xl border border-amber-200"><div class="px-4 h-10 rounded-full bg-indigo-100 border-2 border-indigo-500 flex items-center justify-center font-black text-base text-indigo-950">${top}</div><div class="flex items-center gap-10 -mt-1"><div class="w-0.5 h-5 bg-slate-400 rotate-25"></div><div class="w-0.5 h-5 bg-slate-400 -rotate-25"></div></div><div class="flex items-center gap-6"><div class="px-3.5 h-10 rounded-full bg-emerald-100 border-2 border-emerald-500 flex items-center justify-center font-black text-sm text-emerald-950">${left}</div><div class="px-3.5 h-10 rounded-full bg-amber-100 border-2 border-amber-500 flex items-center justify-center font-black text-sm text-amber-950">${right}</div></div></div>`;
+      }
+      if (type === 'tenframe14') {
+        return `<div class="inline-flex items-center gap-4 bg-white p-3 rounded-xl border border-amber-200"><div class="grid grid-cols-5 gap-1 p-2 rounded-lg border-2 border-blue-500 bg-blue-50">${Array(10).fill('<div class="w-5 h-5 rounded bg-blue-600"></div>').join('')}</div><span class="font-black text-lg">+</span><div class="grid grid-cols-2 gap-1 p-2 rounded-lg border-2 border-amber-400 bg-amber-50">${Array(4).fill('<div class="w-5 h-5 rounded bg-amber-400"></div>').join('')}</div></div>`;
+      }
+      if (type === 'to') {
+        const [t, o] = payload.split(',').map(Number);
+        return `<div class="inline-grid grid-cols-2 gap-3 bg-white p-3 rounded-xl border border-amber-200 text-center"><div class="bg-blue-50 p-2.5 rounded-lg border border-blue-200"><div class="text-xs font-extrabold text-blue-900 mb-1">Tens (${t})</div><div class="flex justify-center gap-1">${Array(t).fill('<div class="w-2.5 h-10 bg-blue-600 rounded-sm dienes-rod"></div>').join('')}</div></div><div class="bg-amber-50 p-2.5 rounded-lg border border-amber-200"><div class="text-xs font-extrabold text-amber-900 mb-1">Ones (${o})</div><div class="flex flex-wrap justify-center gap-1 max-w-[80px]">${Array(o).fill('<div class="w-3.5 h-3.5 bg-amber-400 border border-amber-600 rounded-sm"></div>').join('')}</div></div></div>`;
+      }
+      if (type === 'towers') {
+        const [a, b] = payload.split(',').map(Number);
+        return `<div class="inline-flex items-end gap-4 bg-white p-3 rounded-xl border border-amber-200 text-xs font-extrabold"><div class="text-center"><div class="w-10 bg-indigo-600 text-white rounded-t-lg flex items-center justify-center" style="height:${a * 5}px">${a}</div><span>Tower 1</span></div><div class="text-center"><div class="w-10 bg-emerald-500 text-white rounded-t-lg flex items-center justify-center" style="height:${b * 5}px">${b}</div><span>Tower 2</span></div><div class="px-3 py-2 rounded-lg bg-amber-50 border border-amber-300 text-amber-950">Gap (Difference) = ${a - b}</div></div>`;
+      }
+      if (type === 'even') {
+        const n = Number(payload);
+        const isEven = n % 2 === 0;
+        return `<div class="inline-block bg-white px-4 py-2 rounded-xl border border-amber-200 font-extrabold text-sm">${n} = ${isEven ? `${n / 2} + ${n / 2} (Equal pairs -> EVEN)` : `${Math.floor(n / 2)} + ${Math.floor(n / 2)} + 1 left over -> ODD`}</div>`;
+      }
+      return '';
+    }
+
+    function toggleManipulativeDrawer() {
+      manipOpen = !manipOpen;
+      const body = document.getElementById('manipulative-body');
+      const btn = document.getElementById('btn-toggle-manip');
+      if (manipOpen) {
+        body.classList.remove('hidden');
+        btn.textContent = 'Hide Interactive Tool';
+        renderManipulativePlayground(currentModule);
+      } else {
+        body.classList.add('hidden');
+        btn.textContent = 'Show Interactive Tool';
+      }
+    }
+
+    function renderManipulativePlayground(modNum) {
+      const box = document.getElementById('manipulative-body');
+      if (!box) return;
+      if (modNum === 2) {
+        const presets = [{ top: 10, a: 7, b: 3 }, { top: 10, a: 8, b: 2 }, { top: 20, a: 14, b: 6 }, { top: 9, a: 5, b: 4 }];
+        const p = presets[triPresetIdx % presets.length];
+        box.innerHTML = `<div class="flex flex-wrap items-center justify-between gap-4"><div class="space-y-2"><div class="flex flex-wrap gap-1.5">${presets.map((item, idx) => `<button onclick="setTriPreset(${idx})" class="px-3 py-1 rounded-lg text-xs font-extrabold ${triPresetIdx % presets.length === idx ? 'bg-slate-900 text-white' : 'bg-slate-100'}">(${item.top}, ${item.a}, ${item.b})</button>`).join('')}</div><div class="text-xs sm:text-sm font-bold bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-1"><div>&#10133; ${p.a} + ${p.b} = ${p.top} &nbsp;|&nbsp; ${p.b} + ${p.a} = ${p.top}</div><div>&#10134; ${p.top} − ${p.a} = ${p.b} &nbsp;|&nbsp; ${p.top} − ${p.b} = ${p.a}</div></div></div><div>${buildVisualDiagramHTML(`triangle:${p.top},${p.a},${p.b}`)}</div></div>`;
+      } else if (modNum === 3) {
+        const num = dienesTens * 10 + dienesOnes;
+        box.innerHTML = `<div class="flex flex-wrap items-center justify-between gap-4"><div class="space-y-2 text-xs font-extrabold"><div class="flex items-center gap-2"><span>Tens Rods:</span><button onclick="stepDienes('t', -1)" class="px-2.5 py-1 rounded bg-slate-200">−</button><span class="px-2.5 py-1 rounded bg-blue-600 text-white">${dienesTens}</span><button onclick="stepDienes('t', 1)" class="px-2.5 py-1 rounded bg-slate-200">+</button><span class="ml-2">Ones Cubes:</span><button onclick="stepDienes('o', -1)" class="px-2.5 py-1 rounded bg-slate-200">−</button><span class="px-2.5 py-1 rounded bg-amber-400 text-slate-950">${dienesOnes}</span><button onclick="stepDienes('o', 1)" class="px-2.5 py-1 rounded bg-slate-200">+</button></div><div class="text-sm font-black text-slate-900">${dienesTens} tens and ${dienesOnes} ones = <span class="text-indigo-700">${num}</span> &nbsp;|&nbsp; 10 More = ${num + 10}</div></div><div>${buildVisualDiagramHTML(`to:${dienesTens},${dienesOnes}`)}</div></div>`;
+      } else if (modNum === 4) {
+        const dec = Math.floor(decStart / 10) * 10, hop1 = decStart - dec, hop2 = decSub - hop1, ans = decStart - decSub;
+        box.innerHTML = `<div class="space-y-2"><div class="flex flex-wrap items-center gap-2 text-xs font-extrabold"><span>Quick Decade Jump-Back Presets:</span><button onclick="setDecPreset(43, 6)" class="px-3 py-1 rounded-lg bg-slate-900 text-white">43 − 6</button><button onclick="setDecPreset(40, 6)" class="px-3 py-1 rounded-lg bg-slate-100">40 − 6</button><button onclick="setDecPreset(32, 5)" class="px-3 py-1 rounded-lg bg-slate-100">32 − 5</button><button onclick="setDecPreset(54, 6)" class="px-3 py-1 rounded-lg bg-slate-100">54 − 6</button></div><div>${buildVisualDiagramHTML(hop1 > 0 ? `jumps:${ans},<-${hop2}- ${dec},<-${hop1}- ${decStart}` : `jumps:${ans},<-${decSub}- ${decStart}`)}</div></div>`;
+      } else if (modNum === 5) {
+        box.innerHTML = `<div class="flex flex-wrap items-center justify-between gap-4"><div class="space-y-2 text-xs font-extrabold"><div class="flex items-center gap-2"><span>Tower 1:</span>${[12, 14, 15, 18].map(v => `<button onclick="setTowers(${v}, ${towerB})" class="px-2.5 py-1 rounded ${towerA === v ? 'bg-indigo-600 text-white' : 'bg-slate-100'}">${v}</button>`).join('')}</div><div class="flex items-center gap-2"><span>Tower 2:</span>${[6, 8, 9, 11].map(v => `<button onclick="setTowers(${towerA}, ${v})" class="px-2.5 py-1 rounded ${towerB === v ? 'bg-emerald-600 text-white' : 'bg-slate-100'}">${v}</button>`).join('')}</div></div><div>${buildVisualDiagramHTML(`towers:${towerA},${towerB}`)}</div></div>`;
+      }
+    }
+
+    function setTriPreset(idx) { triPresetIdx = idx; renderManipulativePlayground(2); }
+    function stepDienes(which, delta) {
+      if (which === 't') dienesTens = Math.max(1, Math.min(9, dienesTens + delta));
+      else dienesOnes = Math.max(0, Math.min(9, dienesOnes + delta));
+      renderManipulativePlayground(3);
+    }
+    function setDecPreset(s, sub) { decStart = s; decSub = sub; renderManipulativePlayground(4); }
+    function setTowers(a, b) { towerA = a; towerB = b; renderManipulativePlayground(5); }
+
+    // 100-Q Bank Logic
+    function initBankUI() { setBankFilter('all'); }
+
+    function setBankFilter(topic) {
+      bankFilter = topic;
+      filteredBank = topic === 'all' ? [...BANK_QUESTIONS] : BANK_QUESTIONS.filter(item => item.topic === topic);
+      currentBankPos = 0;
+      document.querySelectorAll('.bank-filter-btn').forEach(btn => {
+        btn.className = btn.getAttribute('data-bank-filter') === topic
+          ? 'bank-filter-btn px-3 py-2 rounded-xl text-xs font-extrabold bg-slate-900 text-white border border-slate-900 transition'
+          : 'bank-filter-btn px-3 py-2 rounded-xl text-xs font-bold bg-slate-50 text-slate-700 border border-slate-200 hover:bg-slate-100 transition';
+      });
+      document.getElementById('bank-filtered-count').textContent = `Showing ${filteredBank.length} Questions`;
+      const select = document.getElementById('bank-jump-select');
+      select.innerHTML = filteredBank.map((qObj, idx) => `<option value="${idx}">#${qObj.id} — ${qObj.topic}</option>`).join('');
+      renderBankQuestion();
+    }
+
+    function resetBankReveals() {
+      bankReveals = { hint: false, working: false, answer: false };
+      document.getElementById('bank-panel-hint').classList.add('hidden');
+      document.getElementById('bank-panel-working').classList.add('hidden');
+      document.getElementById('bank-panel-answer').classList.add('hidden');
+      document.getElementById('btn-bank-hint').innerHTML = '<span>&#128161; Show Visual Hint</span>';
+      document.getElementById('btn-bank-working').innerHTML = '<span>&#129692; Show Step-by-Step Working</span>';
+      document.getElementById('btn-bank-answer').innerHTML = '<span>&#9989; Reveal Final Answer</span>';
+      document.getElementById('bank-pupil-input').value = '';
+      document.getElementById('bank-input-feedback').textContent = '';
+    }
+
+    function toggleBankReveal(type) {
+      bankReveals[type] = !bankReveals[type];
+      const panel = document.getElementById(`bank-panel-${type}`);
+      const btn = document.getElementById(`btn-bank-${type}`);
+      if (bankReveals[type]) {
+        panel.classList.remove('hidden');
+        if (type === 'hint') btn.innerHTML = '<span>&#128161; Hide Visual Hint</span>';
+        if (type === 'working') btn.innerHTML = '<span>&#129692; Hide Step-by-Step Working</span>';
+        if (type === 'answer') btn.innerHTML = '<span>&#9989; Hide Final Answer</span>';
+      } else {
+        panel.classList.add('hidden');
+        if (type === 'hint') btn.innerHTML = '<span>&#128161; Show Visual Hint</span>';
+        if (type === 'working') btn.innerHTML = '<span>&#129692; Show Step-by-Step Working</span>';
+        if (type === 'answer') btn.innerHTML = '<span>&#9989; Reveal Final Answer</span>';
+      }
+    }
+
+    function renderBankQuestion() {
+      resetBankReveals();
+      const item = filteredBank[currentBankPos];
+      if (!item) return;
+      document.getElementById('bank-q-number').textContent = `Question #${item.id}`;
+      document.getElementById('bank-q-topic').textContent = item.topic;
+      document.getElementById('bank-q-text').textContent = item.q;
+      document.getElementById('bank-hint-text').textContent = item.hint;
+      document.getElementById('bank-working-text').textContent = item.working;
+      document.getElementById('bank-answer-text').textContent = item.answer;
+      document.getElementById('bank-jump-select').value = String(currentBankPos);
+    }
+
+    function prevBankQuestion() { currentBankPos = (currentBankPos - 1 + filteredBank.length) % filteredBank.length; renderBankQuestion(); }
+    function nextBankQuestion() { currentBankPos = (currentBankPos + 1) % filteredBank.length; renderBankQuestion(); }
+    function jumpToBankQuestion(idx) { currentBankPos = parseInt(idx, 10) || 0; renderBankQuestion(); }
+    function randomBankQuestion() {
+      if (filteredBank.length <= 1) return;
+      let next = currentBankPos;
+      while (next === currentBankPos) next = Math.floor(Math.random() * filteredBank.length);
+      currentBankPos = next;
+      renderBankQuestion();
+    }
+
+    function checkPupilInput() {
+      const val = document.getElementById('bank-pupil-input').value.trim().toLowerCase();
+      const fb = document.getElementById('bank-input-feedback');
+      if (!val) { fb.textContent = 'Type an answer first!'; fb.className = 'text-xs font-bold mt-2 text-amber-700'; return; }
+      const item = filteredBank[currentBankPos];
+      const cleanAns = item.answer.toLowerCase();
+      if (cleanAns === val || cleanAns.startsWith(val + ' ') || cleanAns.startsWith(val + '(')) {
+        fb.textContent = 'Spot on! Great reasoning.';
+        fb.className = 'text-xs font-extrabold mt-2 text-emerald-700';
+      } else {
+        fb.textContent = 'Check again—use the whiteboard or reveal a hint!';
+        fb.className = 'text-xs font-extrabold mt-2 text-rose-600';
+      }
+    }
+
+    function markBankScore(isCorrect) {
+      bankScore.attempted += 1;
+      if (isCorrect) bankScore.correct += 1;
+      document.getElementById('bank-score-correct').textContent = bankScore.correct;
+      document.getElementById('bank-score-attempted').textContent = bankScore.attempted;
+    }
+
+    function resetBankScore() {
+      bankScore = { correct: 0, attempted: 0 };
+      document.getElementById('bank-score-correct').textContent = '0';
+      document.getElementById('bank-score-attempted').textContent = '0';
+    }
+
+    // Split/Fullscreen Scratchpad Whiteboard Engine
+    const canvas = document.getElementById('wb-canvas');
+    const ctx = canvas.getContext('2d');
+
+    function saveWbSnapshot() {
+      try { if (wbHistory.length > 15) wbHistory.shift(); wbHistory.push(canvas.toDataURL()); } catch (e) {}
+    }
+
+    function undoWbStroke() {
+      if (wbHistory.length === 0) return;
+      const lastData = wbHistory.pop();
+      const img = new Image();
+      img.onload = function () { ctx.clearRect(0, 0, canvas.width, canvas.height); ctx.drawImage(img, 0, 0); };
+      img.src = lastData;
+    }
+
+    function toggleWhiteboard() {
+      wbOpen = !wbOpen;
+      const wbPane = document.getElementById('whiteboard-pane');
+      const mainPane = document.getElementById('main-teaching-pane');
+      const label = document.getElementById('wb-toggle-label');
+      if (wbOpen) {
+        wbPane.classList.remove('hidden');
+        label.textContent = 'Close Whiteboard';
+        setTimeout(resizeCanvasKeepDrawing, 40);
+      } else {
+        wbPane.classList.add('hidden');
+        mainPane.classList.remove('hidden');
+        wbFullscreen = false;
+        document.getElementById('btn-wb-expand').textContent = 'Fullscreen';
+        wbPane.className = 'hidden lg:w-[46%] xl:w-[48%] bg-white border-t-4 lg:border-t-0 lg:border-l-4 border-slate-300 flex flex-col shadow-2xl z-30';
+        label.textContent = 'Open Whiteboard';
+      }
+    }
+
+    function toggleWbFullscreen() {
+      wbFullscreen = !wbFullscreen;
+      const wbPane = document.getElementById('whiteboard-pane');
+      const mainPane = document.getElementById('main-teaching-pane');
+      const btn = document.getElementById('btn-wb-expand');
+      if (wbFullscreen) {
+        mainPane.classList.add('hidden');
+        wbPane.className = 'w-full bg-white flex flex-col shadow-2xl z-30';
+        btn.textContent = 'Split Screen';
+      } else {
+        mainPane.classList.remove('hidden');
+        wbPane.className = 'lg:w-[46%] xl:w-[48%] bg-white border-t-4 lg:border-t-0 lg:border-l-4 border-slate-300 flex flex-col shadow-2xl z-30';
+        btn.textContent = 'Fullscreen';
+      }
+      setTimeout(resizeCanvasKeepDrawing, 40);
+    }
+
+    function setWbColor(color) {
+      wbTool = 'pen'; wbColor = color;
+      document.getElementById('btn-wb-eraser').classList.remove('bg-amber-400', 'text-slate-950');
+      document.querySelectorAll('.wb-color-btn').forEach(btn => {
+        if (btn.getAttribute('data-wb-color') === color) btn.classList.add('ring-2', 'ring-emerald-400');
+        else btn.classList.remove('ring-2', 'ring-emerald-400');
+      });
+    }
+
+    function setWbSize(size) {
+      wbTool = 'pen'; wbSize = size;
+      document.querySelectorAll('.wb-size-btn').forEach(btn => {
+        btn.className = parseInt(btn.getAttribute('data-wb-size'), 10) === size
+          ? 'wb-size-btn px-2 py-0.5 rounded text-xs font-bold bg-slate-700 text-white'
+          : 'wb-size-btn px-2 py-0.5 rounded text-xs font-bold text-slate-300 hover:text-white';
+      });
+    }
+
+    function setWbTool(tool) {
+      wbTool = tool;
+      const eraserBtn = document.getElementById('btn-wb-eraser');
+      if (tool === 'eraser') eraserBtn.classList.add('bg-amber-400', 'text-slate-950');
+      else eraserBtn.classList.remove('bg-amber-400', 'text-slate-950');
+    }
+
+    function setWbBackground(bgType) { wbBg = bgType; clearWhiteboard(); }
+
+    function drawWbTemplate() {
+      const w = canvas.width, h = canvas.height;
+      ctx.save(); ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, w, h);
+      if (wbBg === 'grid') {
+        ctx.strokeStyle = '#e2e8f0'; ctx.lineWidth = 1;
+        for (let x = 0; x < w; x += 28) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke(); }
+        for (let y = 0; y < h; y += 28) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke(); }
+      } else if (wbBg === 'numberline') {
+        const y = Math.round(h * 0.55), pad = 36;
+        ctx.strokeStyle = '#334155'; ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.moveTo(pad, y); ctx.lineTo(w - pad, y); ctx.stroke();
+        for (let i = 0; i <= 10; i++) {
+          const x = pad + ((w - pad * 2) * i) / 10;
+          ctx.beginPath(); ctx.moveTo(x, y - 10); ctx.lineTo(x, y + 10); ctx.stroke();
+        }
+      } else if (wbBg === 'to') {
+        const colW = w / 2;
+        ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(colW, 20); ctx.lineTo(colW, h - 20); ctx.moveTo(20, 64); ctx.lineTo(w - 20, 64); ctx.stroke();
+        ctx.font = '800 18px Inter, sans-serif'; ctx.textAlign = 'center';
+        ctx.fillStyle = '#1d4ed8'; ctx.fillText('Tens (T)', colW * 0.5, 48);
+        ctx.fillStyle = '#b45309'; ctx.fillText('Ones (O)', colW * 1.5, 48);
+      }
+      ctx.restore();
+    }
+
+    function clearWhiteboard() {
+      saveWbSnapshot();
+      const wrapper = document.getElementById('wb-canvas-wrapper');
+      canvas.width = wrapper.clientWidth || 500;
+      canvas.height = wrapper.clientHeight || 420;
+      drawWbTemplate();
+    }
+
+    function resizeCanvasKeepDrawing() {
+      const wrapper = document.getElementById('wb-canvas-wrapper');
+      if (!wrapper || wrapper.clientWidth === 0) return;
+      const temp = document.createElement('canvas');
+      temp.width = canvas.width; temp.height = canvas.height;
+      temp.getContext('2d').drawImage(canvas, 0, 0);
+      canvas.width = wrapper.clientWidth; canvas.height = wrapper.clientHeight;
+      drawWbTemplate(); ctx.drawImage(temp, 0, 0);
+    }
+
+    function getCanvasCoords(e) {
+      const rect = canvas.getBoundingClientRect();
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      return { x: clientX - rect.left, y: clientY - rect.top };
+    }
+
+    function startStroke(e) { saveWbSnapshot(); isDrawing = true; const pos = getCanvasCoords(e); lastX = pos.x; lastY = pos.y; }
+    function moveStroke(e) {
+      if (!isDrawing) return;
+      if (e.cancelable) e.preventDefault();
+      const pos = getCanvasCoords(e);
+      ctx.save(); ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+      if (wbTool === 'eraser') { ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 26; }
+      else { ctx.strokeStyle = wbColor; ctx.lineWidth = wbSize; }
+      ctx.beginPath(); ctx.moveTo(lastX, lastY); ctx.lineTo(pos.x, pos.y); ctx.stroke(); ctx.restore();
+      lastX = pos.x; lastY = pos.y;
+    }
+    function endStroke() { isDrawing = false; }
+
+    canvas.addEventListener('mousedown', startStroke);
+    canvas.addEventListener('mousemove', moveStroke);
+    window.addEventListener('mouseup', endStroke);
+    canvas.addEventListener('touchstart', startStroke, { passive: false });
+    canvas.addEventListener('touchmove', moveStroke, { passive: false });
+    window.addEventListener('touchend', endStroke);
+    window.addEventListener('resize', () => { if (wbOpen) resizeCanvasKeepDrawing(); });
+
+    window.onload = function () {
+      loadTrackerState();
+      initBankUI();
+      clearWhiteboard();
+      newBridgingProblem();
+      initScreenAnnotator();
+      updateProgressPill();
+      selectScheduledLesson(trackerState.activeLessonIdx || 0, false);
+      renderDockedTracker();
+    };
+  </script>
+</body>
+</html>
