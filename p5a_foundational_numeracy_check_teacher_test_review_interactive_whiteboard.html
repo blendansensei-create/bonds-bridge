@@ -1,0 +1,1772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P5A Foundational Numeracy Check: Teacher Test Review &amp; Interactive Whiteboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f8fafc;
+      color: #0f172a;
+      overflow-x: hidden;
+    }
+    .font-display {
+      font-family: 'Fredoka', 'Inter', sans-serif;
+    }
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #e2e8f0;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #94a3b8;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #64748b;
+    }
+    #wb-canvas {
+      touch-action: none;
+      cursor: crosshair;
+    }
+    .dienes-rod {
+      background-image: linear-gradient(to bottom, rgba(255,255,255,0.55) 1px, transparent 1px);
+      background-size: 100% 7px;
+    }
+    @keyframes revealPop {
+      0% { opacity: 0; transform: translateY(5px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    .animate-reveal {
+      animation: revealPop 0.18s ease-out forwards;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col select-none">
+
+  <!-- TOP PERSISTENT TEACHER HUB BAR -->
+  <header class="bg-slate-900 text-white shadow-lg border-b-4 border-indigo-600 sticky top-0 z-40">
+    <div class="max-w-[1680px] mx-auto px-3 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-2.5">
+      <!-- Left: Cohort Badge & Title -->
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-indigo-600 border border-indigo-400 text-white font-display font-bold text-sm flex items-center justify-center shadow-md shrink-0">
+          P5A
+        </div>
+        <div>
+          <h1 class="font-display text-base sm:text-xl font-bold tracking-wide leading-tight text-white">
+            P5A Foundational Numeracy Check &bull; Teacher Review Hub
+          </h1>
+          <p class="text-[11px] sm:text-xs text-indigo-200 font-medium">
+            Sofia (11/20) &bull; Mya (11/20) &bull; Orlaith-Louise (10/20) &mdash; 20-Question Diagnostic Walkthrough
+          </p>
+        </div>
+      </div>
+
+      <!-- Right: Quick Teacher Hub Controls -->
+      <div class="flex flex-wrap items-center gap-2">
+        <button id="btn-toggle-scoreboard" onclick="toggleTopDrawer('scoreboard')" class="flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white font-extrabold px-3 py-2 rounded-xl border border-indigo-400 shadow-sm transition text-xs sm:text-sm">
+          <span>&#128203;</span>
+          <span>Pupil Scoreboard &amp; Gaps</span>
+        </button>
+
+        <button id="btn-toggle-vocab" onclick="toggleTopDrawer('vocab')" class="flex items-center gap-1.5 bg-amber-400 hover:bg-amber-300 active:scale-95 text-slate-950 font-extrabold px-3 py-2 rounded-xl shadow-sm transition text-xs sm:text-sm">
+          <span>&#128214;</span>
+          <span>Vocab Bank</span>
+        </button>
+
+        <button id="btn-toggle-wb" onclick="toggleWhiteboard()" class="flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-extrabold px-3.5 py-2 rounded-xl border border-emerald-400 shadow-md transition text-xs sm:text-sm">
+          <span>&#128394;&#65039;</span>
+          <span id="wb-toggle-label">Whiteboard (Split / Full)</span>
+        </button>
+
+        <button onclick="resetAllReveals()" class="flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-200 font-extrabold px-3 py-2 rounded-xl border border-slate-600 transition text-xs sm:text-sm" title="Hide all open question panels">
+          <span>&#128260;</span>
+          <span class="hidden sm:inline">Reset Reveals</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- COLLAPSIBLE DRAWER 1: PUPIL SCOREBOARD & DIAGNOSTIC GAPS -->
+    <div id="drawer-scoreboard" class="hidden bg-slate-800 border-t border-slate-700 px-3 sm:px-6 py-4 animate-reveal">
+      <div class="max-w-[1680px] mx-auto space-y-3">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-extrabold uppercase tracking-wider text-indigo-300">
+            P5A November Foundational Check &bull; Individual Scores, Strengths &amp; Missed Questions
+          </span>
+          <button onclick="toggleTopDrawer('scoreboard')" class="text-xs font-bold text-slate-300 hover:text-white px-2.5 py-1 rounded-lg bg-slate-700">
+            Close &times;
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-3 text-xs">
+          <!-- Sofia -->
+          <div class="bg-slate-900 rounded-xl p-3.5 border border-slate-700 space-y-1.5">
+            <div class="flex items-center justify-between">
+              <span class="font-display text-base font-bold text-white">Sofia</span>
+              <span class="px-2.5 py-0.5 rounded-full bg-indigo-900 text-indigo-200 font-extrabold border border-indigo-700">11 / 20</span>
+            </div>
+            <p class="text-emerald-400 font-semibold">
+              <strong>Nailed (11):</strong> Q2 (3+7=10), Q5 (14+6=20), Q6 (Double 7=14), Q8 (52), Q9 (30), Q10 (39), Q11 (53), Q14 (9=5+4), Q18 (13), Q20 (9).
+            </p>
+            <p class="text-rose-300 font-medium leading-relaxed">
+              <strong>Missed (9):</strong> Q1 (blank), Q3 (wrote 3 for 10−8), Q4 (wrote 3+7=10 &amp; 3&divide;7=10), Q7 (4 tens &amp; 3 ones), Q12 (&gt;67), Q13 (wrote 4 instead of 14), Q15 (even 12), Q16 (8+5), Q17 (9+6), Q19 (wrote "85 an odd number" for Difference).
+            </p>
+          </div>
+
+          <!-- Mya -->
+          <div class="bg-slate-900 rounded-xl p-3.5 border border-slate-700 space-y-1.5">
+            <div class="flex items-center justify-between">
+              <span class="font-display text-base font-bold text-white">Mya</span>
+              <span class="px-2.5 py-0.5 rounded-full bg-purple-900 text-purple-200 font-extrabold border border-purple-700">11 / 20</span>
+            </div>
+            <p class="text-emerald-400 font-semibold">
+              <strong>Nailed (11):</strong> Q1 (4), Q2 (3), Q3 (2), Q5 (6), Q6 (14), Q7 (3 tens &amp; 4 ones), Q9 (30), Q12 (71), Q13 (14), Q14 (4), Q15 (12), Q18 (13).
+            </p>
+            <p class="text-rose-300 font-medium leading-relaxed">
+              <strong>Missed (9):</strong> Q4 (wrote 3+7=10 instead of subtraction), Q8 (wrote 15 for 52), Q10 (wrote 34 for 1 less than 40), Q11 (wrote 20 for 10 more than 43), Q16 (8+5), Q17 (9+6), Q19 (Difference 12 &amp; 8), Q20 (wrote 90 for 15−6).
+            </p>
+          </div>
+
+          <!-- Orlaith-Louise -->
+          <div class="bg-slate-900 rounded-xl p-3.5 border border-slate-700 space-y-1.5">
+            <div class="flex items-center justify-between">
+              <span class="font-display text-base font-bold text-white">Orlaith-Louise</span>
+              <span class="px-2.5 py-0.5 rounded-full bg-emerald-900 text-emerald-200 font-extrabold border border-emerald-700">10 / 20</span>
+            </div>
+            <p class="text-emerald-400 font-semibold">
+              <strong>Nailed (10):</strong> Q1 (4), Q2 (3), Q5 (6), Q6 (14), Q7 (3 tens &amp; 4 ones), Q9 (30), Q10 (39), Q17 (9+6=15), Q18 (13), Q20 (9).
+            </p>
+            <p class="text-rose-300 font-medium leading-relaxed">
+              <strong>Missed (10):</strong> Q3 (blank on 10−8), Q4 (blank on subtraction fact), Q8 (wrote 87 for 52), Q11 (wrote 50 for 10 more than 43), Q12 (picked 59 over 71), Q13 (wrote 1508 for 14), Q14 (wrote 2 for 9=5+?), Q15 (even 12), Q16 (8+5), Q19 (wrote 3 for Difference).
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COLLAPSIBLE DRAWER 2: P5A KEY VOCABULARY & STEM SENTENCE BANK -->
+    <div id="drawer-vocab" class="hidden bg-slate-800 border-t border-slate-700 px-3 sm:px-6 py-4 animate-reveal">
+      <div class="max-w-[1680px] mx-auto space-y-3">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-extrabold uppercase tracking-wider text-amber-300">
+            P5A Core Mathematical Vocabulary &amp; Spoken Stem Sentences (15 Terms)
+          </span>
+          <button onclick="toggleTopDrawer('vocab')" class="text-xs font-bold text-slate-300 hover:text-white px-2.5 py-1 rounded-lg bg-slate-700">
+            Close &times;
+          </button>
+        </div>
+
+        <div id="vocab-bank-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-2.5 text-xs">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN SPLIT-SCREEN WORKSPACE -->
+  <div id="workspace-wrapper" class="flex-1 flex flex-col lg:flex-row max-w-[1680px] w-full mx-auto">
+
+    <!-- LEFT / PRIMARY QUESTION REVIEW PANE -->
+    <main id="main-review-pane" class="flex-1 p-3 sm:p-5 space-y-4 overflow-y-auto">
+
+      <!-- TOP 20-QUESTION NAVIGATOR GRID & PART FILTERS -->
+      <section class="bg-white rounded-2xl p-3.5 sm:p-4 shadow-sm border border-slate-300 space-y-3">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div class="flex flex-wrap items-center gap-1.5">
+            <button onclick="setQuestionFilter('all')" data-filter="all" class="filter-tab-btn px-3 py-1.5 rounded-xl text-xs font-extrabold transition">
+              All 20 Questions
+            </button>
+            <button onclick="setQuestionFilter('part1')" data-filter="part1" class="filter-tab-btn px-3 py-1.5 rounded-xl text-xs font-extrabold transition">
+              Part 1: Bonds &amp; Facts (Q1–6)
+            </button>
+            <button onclick="setQuestionFilter('part2')" data-filter="part2" class="filter-tab-btn px-3 py-1.5 rounded-xl text-xs font-extrabold transition">
+              Part 2: Place Value (Q7–15)
+            </button>
+            <button onclick="setQuestionFilter('part3')" data-filter="part3" class="filter-tab-btn px-3 py-1.5 rounded-xl text-xs font-extrabold transition">
+              Part 3: Bridging 10 (Q16–17)
+            </button>
+            <button onclick="setQuestionFilter('part4')" data-filter="part4" class="filter-tab-btn px-3 py-1.5 rounded-xl text-xs font-extrabold transition">
+              Part 4: Maths Words (Q18–20)
+            </button>
+          </div>
+
+          <!-- Legend for Teacher Awareness -->
+          <div class="flex items-center gap-3 text-[11px] font-bold text-slate-600">
+            <span class="inline-flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> All 3 Secure</span>
+            <span class="inline-flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> 1–2 Missed</span>
+            <span class="inline-flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span> All 3 Missed</span>
+          </div>
+        </div>
+
+        <!-- Clickable Q1–Q20 Navigator Bar -->
+        <div id="question-nav-grid" class="grid grid-cols-10 sm:grid-cols-20 gap-1.5 pt-2 border-t border-slate-100">
+          <!-- Populated by JS -->
+        </div>
+      </section>
+
+      <!-- MAIN QUESTION CARD -->
+      <section class="bg-white rounded-3xl p-5 sm:p-7 shadow-md border border-slate-300 space-y-5">
+
+        <!-- Card Top Header Row -->
+        <div class="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-slate-200">
+          <div class="flex flex-wrap items-center gap-2">
+            <span id="q-number-badge" class="px-3.5 py-1.5 rounded-xl bg-slate-900 text-white font-display font-bold text-sm sm:text-base">
+              Q1 of 20
+            </span>
+            <span id="q-part-badge" class="px-3 py-1 rounded-full bg-indigo-50 text-indigo-900 border border-indigo-200 font-extrabold text-xs uppercase tracking-wide">
+              Part 1: Number Bonds &amp; Fact Families
+            </span>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button onclick="prevQuestion()" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-800 font-extrabold text-xs sm:text-sm border border-slate-300 transition">
+              &larr; Prev
+            </button>
+            <button onclick="speakCurrentQuestion()" class="px-3.5 py-2 rounded-xl bg-amber-100 hover:bg-amber-200 active:scale-95 text-amber-950 font-extrabold text-xs sm:text-sm border border-amber-300 transition flex items-center gap-1.5" title="Read Question Aloud">
+              <span>&#128264;</span>
+              <span>Read Aloud</span>
+            </button>
+            <button onclick="nextQuestion()" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-extrabold text-xs sm:text-sm shadow-sm transition">
+              Next &rarr;
+            </button>
+          </div>
+        </div>
+
+        <!-- Question Prompt + Key Maths Word Pill + Interactive Class Try-It Box -->
+        <div class="grid grid-cols-1 xl:grid-cols-12 gap-5 items-start">
+          <div class="xl:col-span-7 space-y-3">
+            <h2 id="q-prompt-text" class="font-display text-2xl sm:text-3xl lg:text-[34px] font-bold text-slate-900 leading-snug">
+              <!-- Populated by JS -->
+            </h2>
+
+            <!-- Key Maths Word(s) & Stem Sentence Pill -->
+            <div class="bg-indigo-50/90 border border-indigo-200 rounded-2xl p-3.5 space-y-1">
+              <div class="flex flex-wrap items-center gap-1.5">
+                <span class="text-[11px] font-black uppercase tracking-wider text-indigo-800">Key Maths Word(s):</span>
+                <span id="q-vocab-tag" class="px-2.5 py-0.5 rounded-full bg-indigo-600 text-white font-extrabold text-xs">
+                  Bond / Complement
+                </span>
+              </div>
+              <p id="q-stem-sentence" class="text-xs sm:text-sm font-bold text-slate-800 italic">
+                "4 goes with 6 to make 10."
+              </p>
+            </div>
+          </div>
+
+          <!-- Interactive Class Try-It Box -->
+          <div class="xl:col-span-5 bg-slate-50 rounded-2xl p-4 border-2 border-dashed border-slate-300 space-y-2.5">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-extrabold uppercase tracking-wider text-slate-600">Interactive Class Try-It</span>
+              <span class="text-[11px] font-bold text-indigo-700">Unlimited Tries</span>
+            </div>
+            <div id="class-tryit-controls">
+              <!-- Populated dynamically: text input + Check Class Answer OR clickable option pills -->
+            </div>
+            <p id="class-tryit-feedback" class="text-xs font-extrabold min-h-[1.25rem] leading-snug"></p>
+          </div>
+        </div>
+
+        <!-- 4 SEPARATE TEACHER REVEAL BUTTONS (ALL HIDDEN BY DEFAULT) -->
+        <div class="pt-4 border-t border-slate-200 flex flex-wrap items-center gap-2.5">
+          <button id="btn-reveal-pupils" onclick="toggleReveal('pupils')" class="px-4 py-3 rounded-xl font-extrabold text-xs sm:text-sm border-2 border-indigo-400 bg-indigo-50 hover:bg-indigo-100 active:scale-95 text-indigo-950 transition flex items-center gap-2 shadow-sm">
+            <span>&#128101; Who Got It Right / Wrong (Pupil Breakdown)</span>
+          </button>
+
+          <button id="btn-reveal-cpa" onclick="toggleReveal('cpa')" class="px-4 py-3 rounded-xl font-extrabold text-xs sm:text-sm border-2 border-amber-400 bg-amber-50 hover:bg-amber-100 active:scale-95 text-amber-950 transition flex items-center gap-2 shadow-sm">
+            <span>&#128161; Show Interactive CPA Visual Model</span>
+          </button>
+
+          <button id="btn-reveal-working" onclick="toggleReveal('working')" class="px-4 py-3 rounded-xl font-extrabold text-xs sm:text-sm border-2 border-blue-400 bg-blue-50 hover:bg-blue-100 active:scale-95 text-blue-950 transition flex items-center gap-2 shadow-sm">
+            <span>&#129692; Show Step-by-Step Working</span>
+          </button>
+
+          <button id="btn-reveal-answer" onclick="toggleReveal('answer')" class="px-4 py-3 rounded-xl font-extrabold text-xs sm:text-sm border-2 border-emerald-600 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white transition flex items-center gap-2 shadow-sm">
+            <span>&#9989; Reveal Final Answer</span>
+          </button>
+        </div>
+
+        <!-- REVEAL PANELS (ALL HIDDEN BY DEFAULT) -->
+        <div class="space-y-4">
+
+          <!-- PANEL 1: PUPIL DIAGNOSTIC BREAKDOWN (SOFIA, MYA, ORLAITH-LOUISE) -->
+          <div id="panel-pupils" class="hidden animate-reveal rounded-2xl bg-indigo-50/95 border-2 border-indigo-300 p-4 sm:p-5 space-y-3">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <span class="text-xs font-black uppercase tracking-wider text-indigo-950">
+                &#128101; P5A Pupil Diagnostic Breakdown (November Check-Up)
+              </span>
+              <button id="btn-hide-names" onclick="toggleHidePupilNames()" class="px-3 py-1 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs transition flex items-center gap-1.5">
+                <span>&#128374;&#65039;</span>
+                <span id="hide-names-label">Hide Names for Board</span>
+              </button>
+            </div>
+            <div id="content-pupils" class="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+
+          <!-- PANEL 2: INTERACTIVE CPA VISUAL MODEL -->
+          <div id="panel-cpa" class="hidden animate-reveal rounded-2xl bg-amber-50/95 border-2 border-amber-300 p-4 sm:p-5 space-y-3">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <span class="text-xs font-black uppercase tracking-wider text-amber-950">
+                &#128161; Concrete-Pictorial-Abstract (CPA) Visual Model
+              </span>
+              <span class="px-2.5 py-0.5 rounded-full bg-amber-200/80 text-amber-950 font-extrabold text-xs">
+                Model &amp; Discuss Together
+              </span>
+            </div>
+            <p id="content-cpa-caption" class="text-sm sm:text-base font-bold text-slate-800"></p>
+            <div id="content-cpa-visual" class="pt-1 flex justify-center">
+              <!-- Custom SVG/HTML CPA Diagram -->
+            </div>
+          </div>
+
+          <!-- PANEL 3: STEP-BY-STEP WORKING -->
+          <div id="panel-working" class="hidden animate-reveal rounded-2xl bg-blue-50/95 border-2 border-blue-300 p-4 sm:p-5 space-y-2">
+            <span class="text-xs font-black uppercase tracking-wider text-blue-950 block">
+              &#129692; Step-by-Step CPA Working &amp; Spoken Stem
+            </span>
+            <div id="content-working" class="space-y-1.5 text-sm sm:text-base font-semibold text-slate-800">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+
+          <!-- PANEL 4: FINAL ANSWER -->
+          <div id="panel-answer" class="hidden animate-reveal rounded-2xl bg-emerald-50 border-2 border-emerald-500 p-4 sm:p-5 flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <span class="text-xs font-black uppercase tracking-wider text-emerald-800 block">
+                &#9989; Exact Correct Answer
+              </span>
+              <span id="content-answer" class="font-display text-2xl sm:text-4xl font-bold text-emerald-950">
+                <!-- Populated by JS -->
+              </span>
+            </div>
+            <button onclick="nextQuestion()" class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm shadow-sm transition">
+              Next Question &rarr;
+            </button>
+          </div>
+
+        </div>
+      </section>
+    </main>
+
+    <!-- RIGHT / FULLSCREEN INTERACTIVE SURFACE PEN & TOUCH WHITEBOARD -->
+    <aside id="whiteboard-pane" class="hidden lg:w-[46%] xl:w-[48%] bg-white border-t-4 lg:border-t-0 lg:border-l-4 border-slate-300 flex flex-col shadow-2xl z-30">
+      <!-- Whiteboard Toolbar -->
+      <div class="bg-slate-800 text-white p-2.5 sm:p-3 flex flex-wrap items-center justify-between gap-2 border-b border-slate-700">
+        <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
+          <span class="font-display font-bold text-xs sm:text-sm tracking-wide text-emerald-400 mr-1">WHITEBOARD</span>
+
+          <!-- Pen Colours -->
+          <div class="flex items-center gap-1.5 bg-slate-900 px-2 py-1 rounded-xl border border-slate-700">
+            <button onclick="setWbPen('#0f172a')" data-wb-pen="#0f172a" class="wb-pen-btn w-6 h-6 rounded-full bg-slate-900 border-2 border-white ring-2 ring-emerald-400" title="Black Pen"></button>
+            <button onclick="setWbPen('#2563eb')" data-wb-pen="#2563eb" class="wb-pen-btn w-6 h-6 rounded-full bg-blue-600 border-2 border-white/60" title="Blue Pen"></button>
+            <button onclick="setWbPen('#dc2626')" data-wb-pen="#dc2626" class="wb-pen-btn w-6 h-6 rounded-full bg-red-600 border-2 border-white/60" title="Red Pen"></button>
+            <button onclick="setWbPen('#059669')" data-wb-pen="#059669" class="wb-pen-btn w-6 h-6 rounded-full bg-emerald-600 border-2 border-white/60" title="Emerald Pen"></button>
+            <button onclick="setWbPen('#ea580c')" data-wb-pen="#ea580c" class="wb-pen-btn w-6 h-6 rounded-full bg-orange-600 border-2 border-white/60" title="Orange Pen"></button>
+          </div>
+
+          <!-- Highlighter & Eraser -->
+          <div class="flex items-center gap-1 bg-slate-900 px-2 py-1 rounded-xl border border-slate-700">
+            <button onclick="setWbTool('highlighter')" id="btn-wb-highlighter" class="px-2 py-1 rounded-lg text-xs font-extrabold text-yellow-300 hover:bg-slate-700 transition" title="Yellow Highlighter">
+              Highlighter
+            </button>
+            <button onclick="setWbTool('eraser')" id="btn-wb-eraser" class="px-2 py-1 rounded-lg text-xs font-extrabold text-amber-200 hover:bg-slate-700 transition" title="Eraser">
+              Eraser
+            </button>
+          </div>
+        </div>
+
+        <!-- Maths Backgrounds & Board Controls -->
+        <div class="flex flex-wrap items-center gap-1.5">
+          <select id="wb-bg-select" onchange="setWbBackground(this.value)" class="bg-slate-900 text-white text-xs font-bold px-2.5 py-1.5 rounded-lg border border-slate-600 outline-none">
+            <option value="blank">Blank</option>
+            <option value="grid">Squared Maths Grid</option>
+            <option value="numberline">Empty Number Line</option>
+            <option value="to">Tens &amp; Ones Columns</option>
+            <option value="tenframes">Ten-Frames</option>
+          </select>
+
+          <button onclick="undoWbStroke()" class="px-2.5 py-1.5 rounded-lg bg-slate-700 hover:bg-slate-600 text-xs font-bold text-white transition">
+            Undo
+          </button>
+          <button onclick="toggleWbFullscreen()" id="btn-wb-fullscreen" class="px-2.5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-xs font-bold text-white transition">
+            Fullscreen
+          </button>
+          <button onclick="clearWhiteboard()" class="px-2.5 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-xs font-bold text-white transition">
+            Clear Board
+          </button>
+          <button onclick="toggleWhiteboard()" class="px-2.5 py-1.5 rounded-lg bg-slate-700 hover:bg-slate-600 text-xs font-bold text-slate-200 transition" title="Close Whiteboard">
+            &times;
+          </button>
+        </div>
+      </div>
+
+      <!-- Canvas Surface -->
+      <div id="wb-canvas-wrapper" class="relative flex-1 min-h-[420px] lg:min-h-[calc(100vh-96px)] bg-white overflow-hidden">
+        <canvas id="wb-canvas" class="block w-full h-full"></canvas>
+      </div>
+    </aside>
+  </div>
+
+  <script>
+    // =========================================================================
+    // 1. P5A KEY VOCABULARY & STEM SENTENCE BANK (15 ESSENTIAL TERMS)
+    // =========================================================================
+    const VOCAB_BANK = [
+      { term: 'Bond / Complement', stem: '"Two parts that join together to make a friendly whole (e.g., 6 and 4 make 10)."' },
+      { term: 'Fact Family', stem: '"Three connected numbers that make two addition facts and two subtraction facts."' },
+      { term: 'Inverse', stem: '"Addition and subtraction undo each other; use addition to check subtraction."' },
+      { term: 'Double', stem: '"Two equal groups of the same number added together (Double 7 = 7 + 7 = 14)."' },
+      { term: 'Tens & Ones', stem: '"The left digit counts groups of 10; the right digit counts single ones."' },
+      { term: 'Unitise', stem: '"Treat 10 ones as 1 single ten-rod (1 full ten-frame + 4 ones = 14)."' },
+      { term: 'Decade', stem: '"A friendly multiple of 10 on the number line (10, 20, 30, 40, 50...)."' },
+      { term: 'Greater Than (>)', stem: '"More than; compare the tens column first to see which number is larger."' },
+      { term: 'Ten-Frame', stem: '"A 5-by-2 grid holding 10 counters so we can subitise without counting by ones."' },
+      { term: 'Partition', stem: '"Split a whole number into two smaller parts (9 splits into 5 and 4)."' },
+      { term: 'Even', stem: '"Ends in 0, 2, 4, 6, or 8 and shares into neat pairs with 0 left over."' },
+      { term: 'Bridge Through 10', stem: '"Fill the friendly 10 first, then add the leftover part (8 + 2 + 3 = 13)."' },
+      { term: 'Altogether', stem: '"Combine both groups together to find the total (add)."' },
+      { term: 'Difference', stem: '"Compare two amounts and find the gap between them (subtract)."' },
+      { term: 'Remaining', stem: '"What is left over after taking some away (subtract)."' }
+    ];
+
+    // =========================================================================
+    // 2. ALL 20 EXACT QUESTIONS & SOFIA, MYA, ORLAITH-LOUISE RESULTS
+    // =========================================================================
+    const QUESTIONS_20 = [
+      {
+        num: 1,
+        part: 'part1',
+        partTitle: 'Part 1: Number Bonds & Fact Families',
+        prompt: 'What number goes with 6 to make 10?',
+        speech: 'Question 1. What number goes with 6 to make 10?',
+        vocab: 'Bond / Complement & Ten-Frame',
+        stem: '"6 and 4 are a number bond to 10; 4 empty spaces fill the ten-frame."',
+        inputMode: 'text',
+        answer: '4',
+        accepted: ['4'],
+        pupils: [
+          { name: 'Sofia', ok: false, note: 'Left blank / missed' },
+          { name: 'Mya', ok: true, note: '4' },
+          { name: 'Orlaith-Louise', ok: true, note: '4' }
+        ],
+        cpaCaption: '6 red counters are inside the 10-frame. Count the empty dashed slots needed to complete 10!',
+        cpaCode: 'tenframe10:6,red',
+        working: [
+          '1. Place 6 red counters in the 10-frame.',
+          '2. Count the empty slots to fill the top and bottom rows to 10: 4 slots.',
+          '3. Spoken stem: "6 and 4 make 10 (6 + 4 = 10)."'
+        ]
+      },
+      {
+        num: 2,
+        part: 'part1',
+        partTitle: 'Part 1: Number Bonds & Fact Families',
+        prompt: 'Find the missing number:   [   ] + 7 = 10',
+        speech: 'Question 2. Find the missing number: blank plus 7 equals 10.',
+        vocab: 'Bond / Complement',
+        stem: '"3 goes with 7 to make 10 (3 + 7 = 10)."',
+        inputMode: 'text',
+        answer: '3',
+        accepted: ['3'],
+        pupils: [
+          { name: 'Sofia', ok: true, note: '3' },
+          { name: 'Mya', ok: true, note: '3' },
+          { name: 'Orlaith-Louise', ok: true, note: '3' }
+        ],
+        cpaCaption: 'All 3 pupils nailed this! 7 blue counters fill 7 slots of the 10-frame, leaving 3 empty slots.',
+        cpaCode: 'tenframe10:7,blue',
+        working: [
+          '1. 7 counters are already in the 10-frame.',
+          '2. 3 more counters fill the frame to 10.',
+          '3. Spoken stem: "3 + 7 = 10."'
+        ]
+      },
+      {
+        num: 3,
+        part: 'part1',
+        partTitle: 'Part 1: Number Bonds & Fact Families',
+        prompt: 'Work out:   10 − 8 = [   ]',
+        speech: 'Question 3. Work out 10 minus 8.',
+        vocab: 'Inverse & Ten-Frame',
+        stem: '"Start with 10, take away 8, and 2 remain (because 8 + 2 = 10)."',
+        inputMode: 'text',
+        answer: '2',
+        accepted: ['2'],
+        pupils: [
+          { name: 'Sofia', ok: false, note: 'Wrote 3' },
+          { name: 'Mya', ok: true, note: '2' },
+          { name: 'Orlaith-Louise', ok: false, note: 'Left blank' }
+        ],
+        cpaCaption: 'Start with a full 10-frame of 10 counters and cross out 8 of them. How many counters remain?',
+        cpaCode: 'tenframe_sub10:8',
+        working: [
+          '1. Start with 10 counters in the 10-frame.',
+          '2. Cross out 8 counters.',
+          '3. 2 counters remain: 10 − 8 = 2 (Inverse check: 8 + 2 = 10).'
+        ]
+      },
+      {
+        num: 4,
+        part: 'part1',
+        partTitle: 'Part 1: Number Bonds & Fact Families',
+        prompt: 'Write one subtraction fact that belongs in the same fact family as   7 + 3 = 10',
+        speech: 'Question 4. Write one subtraction fact that belongs in the same fact family as 7 plus 3 equals 10.',
+        vocab: 'Fact Family & Inverse',
+        stem: '"In a subtraction fact, the Boss Number (10) goes at the front: 10 − 7 = 3 or 10 − 3 = 7."',
+        inputMode: 'text',
+        answer: '10 − 7 = 3  (or  10 − 3 = 7)',
+        accepted: ['10-7=3', '10−7=3', '10-3=7', '10−3=7', '3=10-7', '3=10−7', '7=10-3', '7=10−3'],
+        pupils: [
+          { name: 'Sofia', ok: false, note: 'Wrote 3 + 7 = 10 and 3 ÷ 7 = 10' },
+          { name: 'Mya', ok: false, note: 'Wrote 3 + 7 = 10 (addition swap)' },
+          { name: 'Orlaith-Louise', ok: false, note: 'Left blank / unclear' }
+        ],
+        cpaCaption: 'Look at the Fact Family Triangle: 10 is the whole at the top, and 7 and 3 are the parts at the bottom. Subtraction starts with 10!',
+        cpaCode: 'triangle:10,7,3',
+        working: [
+          '1. Do NOT write an addition swap (3 + 7 = 10) — the question asks for a SUBTRACTION (−) fact.',
+          '2. Put the Boss Number (10) at the front: 10 − 7 = 3  OR  10 − 3 = 7.'
+        ]
+      },
+      {
+        num: 5,
+        part: 'part1',
+        partTitle: 'Part 1: Number Bonds & Fact Families',
+        prompt: 'Find the missing number to make 20:   14 + [   ] = 20',
+        speech: 'Question 5. Find the missing number to make 20: 14 plus blank equals 20.',
+        vocab: 'Bond / Complement & Ten-Frame',
+        stem: '"4 goes with 6 to make 10, so 14 goes with 6 to make 20."',
+        inputMode: 'text',
+        answer: '6',
+        accepted: ['6'],
+        pupils: [
+          { name: 'Sofia', ok: true, note: '6' },
+          { name: 'Mya', ok: true, note: '6' },
+          { name: 'Orlaith-Louise', ok: true, note: '6' }
+        ],
+        cpaCaption: 'All 3 pupils nailed this! 1 full ten-frame (10) + 4 blue counters = 14. 6 empty slots fill the second ten-frame to 20.',
+        cpaCode: 'tenframe20:14',
+        working: [
+          '1. Use the bond to 10: 4 + 6 = 10.',
+          '2. Add 6 to 14 to complete the second ten: 14 + 6 = 20.'
+        ]
+      },
+      {
+        num: 6,
+        part: 'part1',
+        partTitle: 'Part 1: Number Bonds & Fact Families',
+        prompt: 'What is DOUBLE 7?',
+        speech: 'Question 6. What is double 7?',
+        vocab: 'Double',
+        stem: '"Double 7 means two equal rows of 7: 7 + 7 = 14."',
+        inputMode: 'text',
+        answer: '14',
+        accepted: ['14'],
+        pupils: [
+          { name: 'Sofia', ok: true, note: '14' },
+          { name: 'Mya', ok: true, note: '14' },
+          { name: 'Orlaith-Louise', ok: true, note: '14' }
+        ],
+        cpaCaption: 'All 3 pupils got Double 7 right! Two equal rows of 7 counters combine to make 14.',
+        cpaCode: 'double7',
+        working: [
+          '1. Double 7 = 7 + 7.',
+          '2. 7 + 3 = 10, plus 4 more = 14.'
+        ]
+      },
+      {
+        num: 7,
+        part: 'part2',
+        partTitle: 'Part 2: Place Value & Number Sense',
+        prompt: 'How many tens and ones are in the number 34?',
+        speech: 'Question 7. How many tens and ones are in the number 34?',
+        vocab: 'Tens & Ones & Unitise',
+        stem: '"34 is made of 3 tens (30) and 4 ones (4)."',
+        inputMode: 'text',
+        answer: '3 tens and 4 ones',
+        accepted: ['3tensand4ones', '3,4', '3and4', '3tens4ones'],
+        pupils: [
+          { name: 'Sofia', ok: false, note: 'Wrote 4 tens and 3 ones (swapped digits)' },
+          { name: 'Mya', ok: true, note: '3 tens and 4 ones' },
+          { name: 'Orlaith-Louise', ok: true, note: '3 tens and 4 ones' }
+        ],
+        cpaCaption: 'Look at the Base-10 Dienes blocks in the Tens and Ones columns: 3 blue tens-rods (30) and 4 yellow ones-cubes (4).',
+        cpaCode: 'dienes:3,4,34',
+        working: [
+          '1. The left digit (3) sits in the Tens column = 3 tens (30).',
+          '2. The right digit (4) sits in the Ones column = 4 ones (4).',
+          '3. Answer: 3 tens and 4 ones (not 4 tens and 3 ones!).'
+        ]
+      },
+      {
+        num: 8,
+        part: 'part2',
+        partTitle: 'Part 2: Place Value & Number Sense',
+        prompt: 'What number is made of 5 tens and 2 ones?',
+        speech: 'Question 8. What number is made of 5 tens and 2 ones?',
+        vocab: 'Tens & Ones & Unitise',
+        stem: '"5 tens is 50, and 2 ones is 2; 50 + 2 = 52."',
+        inputMode: 'text',
+        answer: '52',
+        accepted: ['52'],
+        pupils: [
+          { name: 'Sofia', ok: true, note: '52' },
+          { name: 'Mya', ok: false, note: 'Wrote 15' },
+          { name: 'Orlaith-Louise', ok: false, note: 'Wrote 87' }
+        ],
+        cpaCaption: 'Count the 5 blue tens-rods (10, 20, 30, 40, 50) and put 5 in the Tens column and 2 in the Ones column!',
+        cpaCode: 'dienes:5,2,52',
+        working: [
+          '1. 5 tens = 50.',
+          '2. 2 ones = 2.',
+          '3. Combine Tens and Ones: 50 + 2 = 52.'
+        ]
+      },
+      {
+        num: 9,
+        part: 'part2',
+        partTitle: 'Part 2: Place Value & Number Sense',
+        prompt: 'What is 1 MORE than 29?',
+        speech: 'Question 9. What is 1 more than 29?',
+        vocab: 'Decade',
+        stem: '"1 more than 29 crosses into the next friendly decade: 30."',
+        inputMode: 'text',
+        answer: '30',
+        accepted: ['30'],
+        pupils: [
+          { name: 'Sofia', ok: true, note: '30' },
+          { name: 'Mya', ok: true, note: '30' },
+          { name: 'Orlaith-Louise', ok: true, note: '30' }
+        ],
+        cpaCaption: 'All 3 pupils nailed this! Jumping +1 forward from 29 lands right on the friendly decade 30.',
+        cpaCode: 'nl_jump:27,28,29,30,31|forward',
+        working: [
+          '1. Count forward 1 step from 29: 29 + 1 = 30.'
+        ]
+      },
+      {
+        num: 10,
+        part: 'part2',
+        partTitle: 'Part 2: Place Value & Number Sense',
+        prompt: 'What is 1 LESS than 40?',
+        speech: 'Question 10. What is 1 less than 40?',
+        vocab: 'Decade',
+        stem: '"1 less than 40 steps backwards across the decade boundary into the thirties: 39."',
+        inputMode: 'text',
+        answer: '39',
+        accepted: ['39'],
+        pupils: [
+          { name: 'Sofia', ok: true, note: '39' },
+          { name: 'Mya', ok: false, note: 'Wrote 34 (decade boundary slip)' },
+          { name: 'Orlaith-Louise', ok: true, note: '39' }
+        ],
+        cpaCaption: 'Look at 40 on the number line: stepping 1 space BACKWARDS crosses the decade boundary onto 39!',
+        cpaCode: 'nl_jump:37,38,39,40,41|backward',
+        working: [
+          '1. 1 less means step backwards 1 space from 40.',
+          '2. 40 − 1 = 39 (right before 40).'
+        ]
+      },
+      {
+        num: 11,
+        part: 'part2',
+        partTitle: 'Part 2: Place Value & Number Sense',
+        prompt: 'What is 10 MORE than 43?',
+        speech: 'Question 11. What is 10 more than 43?',
+        vocab: 'Tens & Ones & Unitise',
+        stem: '"10 more adds 1 ten-rod (4 tens become 5 tens) while the 3 ones stay the same: 53."',
+        inputMode: 'text',
+        answer: '53',
+        accepted: ['53'],
+        pupils: [
+          { name: 'Sofia', ok: true, note: '53' },
+          { name: 'Mya', ok: false, note: 'Wrote 20' },
+          { name: 'Orlaith-Louise', ok: false, note: 'Wrote 50 (dropped the 3 ones)' }
+        ],
+        cpaCaption: '43 has 4 tens-rods and 3 ones-cubes. Add ONE green ten-rod (+10) — the 3 ones do not disappear!',
+        cpaCode: 'dienes_add10',
+        working: [
+          '1. Start with 43 (4 tens and 3 ones).',
+          '2. Add 1 more ten: 4 tens + 1 ten = 5 tens (50).',
+          '3. Keep the 3 ones: 50 + 3 = 53.'
+        ]
+      },
+      {
+        num: 12,
+        part: 'part2',
+        partTitle: 'Part 2: Place Value & Number Sense',
+        prompt: 'Circle/write a number that is GREATER than 67:   67,  59,  71,  48',
+        speech: 'Question 12. Pick the number that is greater than 67: 67, 59, 71, or 48.',
+        vocab: 'Greater Than (>)',
+        stem: '"71 is greater than 67 because 7 tens (70) is more than 6 tens (60)."',
+        inputMode: 'choice',
+        choices: ['67', '59', '71', '48'],
+        answer: '71',
+        accepted: ['71'],
+        pupils: [
+          { name: 'Sofia', ok: false, note: 'Missed' },
+          { name: 'Mya', ok: true, note: '71' },
+          { name: 'Orlaith-Louise', ok: false, note: 'Picked 59' }
+        ],
+        cpaCaption: 'Compare the numbers on the 0–100 number line: 71 sits to the RIGHT of 67 because 7 tens > 6 tens!',
+        cpaCode: 'nl_compare_67_71',
+        working: [
+          '1. Compare the tens column first: 48 has 4 tens, 59 has 5 tens, 67 has 6 tens.',
+          '2. 71 has 7 tens (70), so 71 > 67.'
+        ]
+      },
+      {
+        num: 13,
+        part: 'part2',
+        partTitle: 'Part 2: Place Value & Number Sense',
+        prompt: 'A ten-frame is full with 10 red counters, and there are 4 yellow counters next to it. How many counters are there in total?',
+        speech: 'Question 13. A ten-frame is full with 10 red counters, and there are 4 yellow counters next to it. How many counters are there in total?',
+        vocab: 'Ten-Frame & Unitise',
+        stem: '"1 full ten-frame is 10; 10 red + 4 yellow = 14 counters in total."',
+        inputMode: 'text',
+        answer: '14',
+        accepted: ['14', '14counters'],
+        pupils: [
+          { name: 'Sofia', ok: false, note: 'Wrote 4 (counted only the yellow counters)' },
+          { name: 'Mya', ok: true, note: '14' },
+          { name: 'Orlaith-Louise', ok: false, note: 'Wrote 1508' }
+        ],
+        cpaCaption: 'Do not forget the 10 red counters filling the ten-frame! 1 full ten (10) + 4 yellow ones = 14.',
+        cpaCode: 'tenframe_plus_4',
+        working: [
+          '1. Count the full ten-frame as 1 unit of 10.',
+          '2. Count on the 4 yellow counters: 10 + 4 = 14 counters in total.'
+        ]
+      },
+      {
+        num: 14,
+        part: 'part2',
+        partTitle: 'Part 2: Place Value & Number Sense',
+        prompt: 'If 9 is split into two parts and one part is 5, what is the other part?',
+        speech: 'Question 14. If 9 is split into two parts and one part is 5, what is the other part?',
+        vocab: 'Partition',
+        stem: '"9 splits into 5 and 4 (because 5 + 4 = 9 and 9 − 5 = 4)."',
+        inputMode: 'text',
+        answer: '4',
+        accepted: ['4'],
+        pupils: [
+          { name: 'Sofia', ok: true, note: '4' },
+          { name: 'Mya', ok: true, note: '4' },
+          { name: 'Orlaith-Louise', ok: false, note: 'Wrote 2' }
+        ],
+        cpaCaption: 'Look at the Cherry Part-Whole model: 9 is the whole at the top, and 5 is one part. How many more make 9?',
+        cpaCode: 'cherry9_5',
+        working: [
+          '1. 9 is the whole being partitioned into two parts.',
+          '2. 9 − 5 = 4 (Check: 5 + 4 = 9).'
+        ]
+      },
+      {
+        num: 15,
+        part: 'part2',
+        partTitle: 'Part 2: Place Value & Number Sense',
+        prompt: 'Circle the EVEN number:   7,  15,  12,  9',
+        speech: 'Question 15. Circle the even number: 7, 15, 12, 9.',
+        vocab: 'Even',
+        stem: '"12 is even because it ends in 2 and makes 6 equal pairs with 0 left over."',
+        inputMode: 'choice',
+        choices: ['7', '15', '12', '9'],
+        answer: '12',
+        accepted: ['12'],
+        pupils: [
+          { name: 'Sofia', ok: false, note: 'Missed' },
+          { name: 'Mya', ok: true, note: '12' },
+          { name: 'Orlaith-Louise', ok: false, note: 'Missed' }
+        ],
+        cpaCaption: 'Look at the 2-by-6 pair-up grid below: 12 counters form 6 neat pairs with 0 odd ones left over!',
+        cpaCode: 'even_grid_12',
+        working: [
+          '1. Even numbers end in 0, 2, 4, 6, or 8.',
+          '2. 12 splits into two equal groups of 6 (6 pairs) -> 12 is EVEN.'
+        ]
+      },
+      {
+        num: 16,
+        part: 'part3',
+        partTitle: 'Part 3: Bridging Through 10',
+        prompt: 'Use bridging through 10 to solve:   8 + 5 = [   ]',
+        speech: 'Question 16. Use bridging through 10 to solve 8 plus 5.',
+        vocab: 'Bridge Through 10 & Partition',
+        stem: '"Split 5 into 2 and 3; jump 8 + 2 = 10, then 10 + 3 = 13."',
+        inputMode: 'text',
+        answer: '13',
+        accepted: ['13'],
+        pupils: [
+          { name: 'Sofia', ok: false, note: 'Missed' },
+          { name: 'Mya', ok: false, note: 'Missed' },
+          { name: 'Orlaith-Louise', ok: false, note: 'Missed' }
+        ],
+        cpaCaption: 'Priority Group Target! Fill the 8-counter ten-frame by splitting 5 into 2 (to reach 10) and 3 left over, then take 2 hops on the number line!',
+        cpaCode: 'bridge_cpa:8,5,2,3',
+        working: [
+          '1. 8 needs 2 more to fill the ten-frame to 10.',
+          '2. Partition 5 into 2 and 3.',
+          '3. Hop 1: 8 + 2 = 10. Hop 2: 10 + 3 = 13.'
+        ]
+      },
+      {
+        num: 17,
+        part: 'part3',
+        partTitle: 'Part 3: Bridging Through 10',
+        prompt: 'Use bridging through 10 to solve:   9 + 6 = [   ]',
+        speech: 'Question 17. Use bridging through 10 to solve 9 plus 6.',
+        vocab: 'Bridge Through 10 & Partition',
+        stem: '"Split 6 into 1 and 5; jump 9 + 1 = 10, then 10 + 5 = 15."',
+        inputMode: 'text',
+        answer: '15',
+        accepted: ['15'],
+        pupils: [
+          { name: 'Sofia', ok: false, note: 'Missed' },
+          { name: 'Mya', ok: false, note: 'Missed' },
+          { name: 'Orlaith-Louise', ok: true, note: '15 (Great bridging!)' }
+        ],
+        cpaCaption: '9 needs just 1 more to fill the ten-frame to 10! Split 6 into 1 and 5, then jump 9 -> +1 -> 10 -> +5 -> 15.',
+        cpaCode: 'bridge_cpa:9,6,1,5',
+        working: [
+          '1. 9 needs 1 more to fill the ten-frame to 10.',
+          '2. Partition 6 into 1 and 5.',
+          '3. Hop 1: 9 + 1 = 10. Hop 2: 10 + 5 = 15.'
+        ]
+      },
+      {
+        num: 18,
+        part: 'part4',
+        partTitle: 'Part 4: Maths Words & Story Problems',
+        prompt: 'Jimmy has 8 stickers and Ariana has 5 stickers. How many stickers do they have ALTOGETHER?',
+        speech: 'Question 18. Jimmy has 8 stickers and Ariana has 5 stickers. How many stickers do they have altogether?',
+        vocab: 'Altogether & Bridge Through 10',
+        stem: '"Altogether means combine both bars: 8 + 5 = 13 stickers."',
+        inputMode: 'text',
+        answer: '13',
+        accepted: ['13', '13stickers'],
+        pupils: [
+          { name: 'Sofia', ok: true, note: '13' },
+          { name: 'Mya', ok: true, note: '13' },
+          { name: 'Orlaith-Louise', ok: true, note: '13' }
+        ],
+        cpaCaption: 'All 3 pupils nailed this! Notice how 8 + 5 in a story problem gives 13 — the exact same bridging calculation as Q16!',
+        cpaCode: 'bar_altogether:8,5',
+        working: [
+          '1. Altogether means add both parts: 8 + 5.',
+          '2. Bridge through 10: 8 + 2 = 10, plus 3 = 13 stickers altogether.'
+        ]
+      },
+      {
+        num: 19,
+        part: 'part4',
+        partTitle: 'Part 4: Maths Words & Story Problems',
+        prompt: 'What is the DIFFERENCE between 12 and 8?',
+        speech: 'Question 19. What is the difference between 12 and 8?',
+        vocab: 'Difference',
+        stem: '"Difference means compare two bars and find the gap between them: 12 − 8 = 4."',
+        inputMode: 'text',
+        answer: '4',
+        accepted: ['4'],
+        pupils: [
+          { name: 'Sofia', ok: false, note: 'Wrote "85 an odd number"' },
+          { name: 'Mya', ok: false, note: 'Missed' },
+          { name: 'Orlaith-Louise', ok: false, note: 'Wrote 3' }
+        ],
+        cpaCaption: 'Priority Group Target! Compare the 12-bar and the 8-bar side by side: how big is the gap between 8 and 12?',
+        cpaCode: 'bar_difference:12,8',
+        working: [
+          '1. Difference in maths means subtract (find the gap): 12 − 8.',
+          '2. Count up from 8 to 10 (+2), then 10 to 12 (+2) -> Gap = 4.'
+        ]
+      },
+      {
+        num: 20,
+        part: 'part4',
+        partTitle: 'Part 4: Maths Words & Story Problems',
+        prompt: 'Brooklyn has 15 grapes. She eats 6 of them. How many grapes are REMAINING?',
+        speech: 'Question 20. Brooklyn has 15 grapes. She eats 6 of them. How many grapes are remaining?',
+        vocab: 'Remaining',
+        stem: '"Remaining means what is left over after taking away: 15 − 6 = 9."',
+        inputMode: 'text',
+        answer: '9',
+        accepted: ['9', '9grapes'],
+        pupils: [
+          { name: 'Sofia', ok: true, note: '9' },
+          { name: 'Mya', ok: false, note: 'Wrote 90' },
+          { name: 'Orlaith-Louise', ok: true, note: '9' }
+        ],
+        cpaCaption: 'Remaining means what is LEFT OVER! Start with 15 grapes, take away 5 to land on 10, then take away 1 more.',
+        cpaCode: 'bar_remaining:15,6',
+        working: [
+          '1. Remaining means subtract: 15 − 6.',
+          '2. Bridge back through 10: 15 − 5 = 10, then 10 − 1 = 9 grapes remaining.'
+        ]
+      }
+    ];
+
+    // =========================================================================
+    // 3. STATE, FILTERING & STRICT TEACHER REVEAL CONTROLS
+    // =========================================================================
+    let activeFilter = 'all';
+    let visibleQuestions = [...QUESTIONS_20];
+    let currentIndex = 0;
+
+    let reveals = {
+      pupils: false,
+      cpa: false,
+      working: false,
+      answer: false
+    };
+
+    let hidePupilNames = false;
+
+    function toggleTopDrawer(which) {
+      const sb = document.getElementById('drawer-scoreboard');
+      const vb = document.getElementById('drawer-vocab');
+      if (which === 'scoreboard') {
+        vb.classList.add('hidden');
+        sb.classList.toggle('hidden');
+      } else {
+        sb.classList.add('hidden');
+        vb.classList.toggle('hidden');
+      }
+    }
+
+    function renderVocabBank() {
+      const grid = document.getElementById('vocab-bank-grid');
+      grid.innerHTML = VOCAB_BANK.map(item => `
+        <div class="bg-slate-900 rounded-xl p-2.5 border border-slate-700 space-y-1">
+          <span class="inline-block px-2 py-0.5 rounded bg-amber-400/20 text-amber-300 font-extrabold text-[11px]">${item.term}</span>
+          <p class="text-slate-200 font-medium leading-snug text-[11px]">${item.stem}</p>
+        </div>
+      `).join('');
+    }
+
+    function setQuestionFilter(filterKey) {
+      activeFilter = filterKey;
+      visibleQuestions = filterKey === 'all'
+        ? [...QUESTIONS_20]
+        : QUESTIONS_20.filter(q => q.part === filterKey);
+      currentIndex = 0;
+      renderFilterTabs();
+      renderQuestionNavGrid();
+      renderQuestion();
+    }
+
+    function renderFilterTabs() {
+      document.querySelectorAll('.filter-tab-btn').forEach(btn => {
+        const key = btn.getAttribute('data-filter');
+        if (key === activeFilter) {
+          btn.className = 'filter-tab-btn px-3 py-1.5 rounded-xl text-xs font-extrabold bg-slate-900 text-white shadow-sm transition';
+        } else {
+          btn.className = 'filter-tab-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 transition';
+        }
+      });
+    }
+
+    function renderQuestionNavGrid() {
+      const grid = document.getElementById('question-nav-grid');
+      const activeQ = visibleQuestions[currentIndex];
+      grid.innerHTML = QUESTIONS_20.map(qObj => {
+        const rightCount = qObj.pupils.filter(p => p.ok).length;
+        const isCurrent = activeQ && activeQ.num === qObj.num;
+
+        let borderDot = 'border-emerald-400';
+        let dotBg = 'bg-emerald-500';
+        if (rightCount === 0) {
+          borderDot = 'border-rose-400';
+          dotBg = 'bg-rose-500';
+        } else if (rightCount < 3) {
+          borderDot = 'border-amber-400';
+          dotBg = 'bg-amber-500';
+        }
+
+        const cls = isCurrent
+          ? 'h-9 rounded-xl font-extrabold text-xs flex flex-col items-center justify-center bg-indigo-600 text-white ring-2 ring-indigo-300 scale-105 shadow-sm transition cursor-pointer'
+          : `h-9 rounded-xl font-extrabold text-xs flex flex-col items-center justify-center bg-slate-50 hover:bg-slate-100 text-slate-800 border-2 ${borderDot} transition cursor-pointer`;
+
+        return `
+          <button type="button" onclick="jumpToQuestionNumber(${qObj.num})" class="${cls}" title="Q${qObj.num}: ${rightCount}/3 pupils right">
+            <span>Q${qObj.num}</span>
+            <span class="w-1.5 h-1.5 rounded-full ${isCurrent ? 'bg-white' : dotBg} mt-0.5"></span>
+          </button>
+        `;
+      }).join('');
+    }
+
+    function jumpToQuestionNumber(qNum) {
+      const inCurrent = visibleQuestions.findIndex(q => q.num === qNum);
+      if (inCurrent !== -1) {
+        currentIndex = inCurrent;
+      } else {
+        activeFilter = 'all';
+        visibleQuestions = [...QUESTIONS_20];
+        currentIndex = QUESTIONS_20.findIndex(q => q.num === qNum);
+        renderFilterTabs();
+      }
+      renderQuestionNavGrid();
+      renderQuestion();
+    }
+
+    function prevQuestion() {
+      currentIndex = (currentIndex - 1 + visibleQuestions.length) % visibleQuestions.length;
+      renderQuestionNavGrid();
+      renderQuestion();
+    }
+
+    function nextQuestion() {
+      currentIndex = (currentIndex + 1) % visibleQuestions.length;
+      renderQuestionNavGrid();
+      renderQuestion();
+    }
+
+    function resetAllReveals() {
+      reveals = { pupils: false, cpa: false, working: false, answer: false };
+
+      ['pupils', 'cpa', 'working', 'answer'].forEach(k => {
+        document.getElementById(`panel-${k}`).classList.add('hidden');
+      });
+
+      document.getElementById('btn-reveal-pupils').innerHTML = '<span>&#128101; Who Got It Right / Wrong (Pupil Breakdown)</span>';
+      document.getElementById('btn-reveal-cpa').innerHTML = '<span>&#128161; Show Interactive CPA Visual Model</span>';
+      document.getElementById('btn-reveal-working').innerHTML = '<span>&#129692; Show Step-by-Step Working</span>';
+      document.getElementById('btn-reveal-answer').innerHTML = '<span>&#9989; Reveal Final Answer</span>';
+
+      const inp = document.getElementById('class-tryit-input');
+      if (inp) inp.value = '';
+      document.getElementById('class-tryit-feedback').textContent = '';
+    }
+
+    function toggleReveal(key) {
+      reveals[key] = !reveals[key];
+      const panel = document.getElementById(`panel-${key}`);
+      const btn = document.getElementById(`btn-reveal-${key}`);
+
+      if (reveals[key]) {
+        panel.classList.remove('hidden');
+        if (key === 'pupils') btn.innerHTML = '<span>&#128101; Hide Pupil Breakdown</span>';
+        if (key === 'cpa') btn.innerHTML = '<span>&#128161; Hide Interactive CPA Visual Model</span>';
+        if (key === 'working') btn.innerHTML = '<span>&#129692; Hide Step-by-Step Working</span>';
+        if (key === 'answer') btn.innerHTML = '<span>&#9989; Hide Final Answer</span>';
+      } else {
+        panel.classList.add('hidden');
+        if (key === 'pupils') btn.innerHTML = '<span>&#128101; Who Got It Right / Wrong (Pupil Breakdown)</span>';
+        if (key === 'cpa') btn.innerHTML = '<span>&#128161; Show Interactive CPA Visual Model</span>';
+        if (key === 'working') btn.innerHTML = '<span>&#129692; Show Step-by-Step Working</span>';
+        if (key === 'answer') btn.innerHTML = '<span>&#9989; Reveal Final Answer</span>';
+      }
+    }
+
+    function toggleHidePupilNames() {
+      hidePupilNames = !hidePupilNames;
+      document.getElementById('hide-names-label').textContent = hidePupilNames ? 'Show Pupil Names' : 'Hide Names for Board';
+      renderPupilBreakdownCards();
+    }
+
+    function renderPupilBreakdownCards() {
+      const q = visibleQuestions[currentIndex];
+      if (!q) return;
+      const container = document.getElementById('content-pupils');
+      container.innerHTML = q.pupils.map((p, idx) => {
+        const displayName = hidePupilNames ? `Pupil ${idx + 1}` : p.name;
+        if (p.ok) {
+          return `
+            <div class="bg-white rounded-xl p-3.5 border-2 border-emerald-400 flex items-center justify-between gap-2 shadow-sm">
+              <div>
+                <span class="font-display text-base font-bold text-slate-900 block">${displayName}</span>
+                <span class="text-xs font-extrabold text-emerald-700">&#9989; Got it right (${p.note})</span>
+              </div>
+              <span class="px-2.5 py-1 rounded-lg bg-emerald-100 text-emerald-900 font-black text-xs">Secure</span>
+            </div>
+          `;
+        }
+        return `
+          <div class="bg-white rounded-xl p-3.5 border-2 border-rose-300 flex items-center justify-between gap-2 shadow-sm">
+            <div>
+              <span class="font-display text-base font-bold text-slate-900 block">${displayName}</span>
+              <span class="text-xs font-extrabold text-rose-700">&#10060; Missed &mdash; ${p.note}</span>
+            </div>
+            <span class="px-2.5 py-1 rounded-lg bg-rose-100 text-rose-900 font-black text-xs">Target</span>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderQuestion() {
+      resetAllReveals();
+      const q = visibleQuestions[currentIndex];
+      if (!q) return;
+
+      document.getElementById('q-number-badge').textContent = `Q${q.num} of 20`;
+      document.getElementById('q-part-badge').textContent = q.partTitle;
+      document.getElementById('q-prompt-text').textContent = q.prompt;
+      document.getElementById('q-vocab-tag').textContent = q.vocab;
+      document.getElementById('q-stem-sentence').textContent = q.stem;
+
+      // Build Interactive Class Try-It Controls
+      const tryBox = document.getElementById('class-tryit-controls');
+      if (q.inputMode === 'choice') {
+        tryBox.innerHTML = `
+          <div class="grid grid-cols-4 gap-2">
+            ${q.choices.map(ch => `
+              <button type="button" onclick="checkChoiceTryIt('${ch}')" class="py-2.5 rounded-xl bg-white hover:bg-indigo-50 active:scale-95 border-2 border-slate-300 hover:border-indigo-500 font-display text-xl font-bold text-slate-900 shadow-sm transition">
+                ${ch}
+              </button>
+            `).join('')}
+          </div>
+        `;
+      } else {
+        tryBox.innerHTML = `
+          <div class="flex items-center gap-2">
+            <input id="class-tryit-input" type="text" placeholder="Type class answer..." class="w-full bg-white border-2 border-slate-300 focus:border-indigo-500 rounded-xl px-3.5 py-2.5 text-lg font-extrabold text-slate-900 outline-none" onkeydown="if(event.key==='Enter') checkTextTryIt()" />
+            <button type="button" onclick="checkTextTryIt()" class="px-4 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 active:scale-95 text-white font-extrabold text-xs sm:text-sm transition shrink-0">
+              Check Class Answer
+            </button>
+          </div>
+        `;
+      }
+
+      renderPupilBreakdownCards();
+
+      document.getElementById('content-cpa-caption').textContent = q.cpaCaption;
+      document.getElementById('content-cpa-visual').innerHTML = buildCpaVisualHTML(q.cpaCode);
+
+      document.getElementById('content-working').innerHTML = q.working.map(step => `
+        <div class="flex items-start gap-2">
+          <span class="text-blue-600 font-black">&bull;</span>
+          <span>${step}</span>
+        </div>
+      `).join('');
+
+      document.getElementById('content-answer').textContent = q.answer;
+    }
+
+    function checkTextTryIt() {
+      const q = visibleQuestions[currentIndex];
+      const inp = document.getElementById('class-tryit-input');
+      const raw = (inp ? inp.value : '').trim().toLowerCase().replace(/\s+/g, '');
+      const fb = document.getElementById('class-tryit-feedback');
+
+      if (!raw) {
+        fb.textContent = 'Enter a class answer first, then click Check Class Answer!';
+        fb.className = 'text-xs font-extrabold min-h-[1.25rem] text-amber-700';
+        return;
+      }
+
+      const valid = q.accepted.map(a => a.toLowerCase().replace(/\s+/g, ''));
+      if (valid.includes(raw)) {
+        fb.textContent = 'Spot on! Brilliant reasoning — click Reveal Final Answer to confirm!';
+        fb.className = 'text-xs font-extrabold min-h-[1.25rem] text-emerald-700';
+      } else {
+        fb.textContent = 'Not quite — try again, or click Show Interactive CPA Visual Model for a clue!';
+        fb.className = 'text-xs font-extrabold min-h-[1.25rem] text-rose-600';
+      }
+    }
+
+    function checkChoiceTryIt(val) {
+      const q = visibleQuestions[currentIndex];
+      const fb = document.getElementById('class-tryit-feedback');
+      if (val === q.answer) {
+        fb.textContent = `Spot on! ${val} is correct — click Reveal Final Answer to confirm!`;
+        fb.className = 'text-xs font-extrabold min-h-[1.25rem] text-emerald-700';
+      } else {
+        fb.textContent = `Not ${val} — try another choice or open the CPA Visual Model!`;
+        fb.className = 'text-xs font-extrabold min-h-[1.25rem] text-rose-600';
+      }
+    }
+
+    function speakCurrentQuestion() {
+      if (!('speechSynthesis' in window)) return;
+      const q = visibleQuestions[currentIndex];
+      if (!q) return;
+      window.speechSynthesis.cancel();
+      const utter = new SpeechSynthesisUtterance(q.speech || q.prompt);
+      utter.rate = 0.92;
+      window.speechSynthesis.speak(utter);
+    }
+
+    // =========================================================================
+    // 3. CUSTOM SVG / HTML CPA VISUAL MODELS FOR EVERY QUESTION
+    // =========================================================================
+    function buildCpaVisualHTML(code) {
+      if (!code) return '';
+
+      if (code.startsWith('tenframe10:')) {
+        const [countStr, color] = code.split(':')[1].split(',');
+        const count = Number(countStr);
+        const fillClass = color === 'red' ? 'bg-rose-500 border-rose-700' : 'bg-blue-600 border-blue-800';
+        let cells = '';
+        for (let i = 0; i < 10; i++) {
+          cells += i < count
+            ? `<div class="w-8 h-8 rounded-lg ${fillClass} border-2 shadow-sm"></div>`
+            : `<div class="w-8 h-8 rounded-lg bg-white border-2 border-dashed border-amber-400 flex items-center justify-center text-xs font-black text-amber-600">?</div>`;
+        }
+        return `
+          <div class="bg-white p-4 rounded-2xl border border-amber-300 inline-flex flex-col items-center gap-2 shadow-sm">
+            <div class="grid grid-cols-5 gap-2 p-3 rounded-xl bg-slate-50 border-2 border-slate-400">${cells}</div>
+            <span class="text-xs font-extrabold text-slate-600">${count} filled counters + [ ? ] empty slots = 10</span>
+          </div>
+        `;
+      }
+
+      if (code.startsWith('tenframe_sub10:')) {
+        const taken = Number(code.split(':')[1]);
+        let cells = '';
+        for (let i = 0; i < 10; i++) {
+          const isCrossed = i >= 10 - taken;
+          cells += isCrossed
+            ? `<div class="w-8 h-8 rounded-lg bg-rose-100 border-2 border-rose-400 flex items-center justify-center font-black text-rose-700 text-base">&times;</div>`
+            : `<div class="w-8 h-8 rounded-lg bg-emerald-500 border-2 border-emerald-700 shadow-sm"></div>`;
+        }
+        return `
+          <div class="bg-white p-4 rounded-2xl border border-amber-300 inline-flex flex-col items-center gap-2 shadow-sm">
+            <div class="grid grid-cols-5 gap-2 p-3 rounded-xl bg-slate-50 border-2 border-slate-400">${cells}</div>
+            <span class="text-xs font-extrabold text-slate-600">10 counters with ${taken} crossed out &rarr; count the green counters left!</span>
+          </div>
+        `;
+      }
+
+      if (code.startsWith('tenframe20:')) {
+        const filled = Number(code.split(':')[1]);
+        const rem = filled - 10;
+        const f1 = Array(10).fill('<div class="w-6 h-6 rounded-md bg-blue-600 border border-blue-800"></div>').join('');
+        let f2 = '';
+        for (let i = 0; i < 10; i++) {
+          f2 += i < rem
+            ? '<div class="w-6 h-6 rounded-md bg-blue-600 border border-blue-800"></div>'
+            : '<div class="w-6 h-6 rounded-md bg-white border-2 border-dashed border-amber-400 flex items-center justify-center text-[10px] font-black text-amber-600">?</div>';
+        }
+        return `
+          <div class="bg-white p-4 rounded-2xl border border-amber-300 inline-flex flex-col items-center gap-2 shadow-sm">
+            <div class="flex flex-wrap items-center justify-center gap-3">
+              <div class="grid grid-cols-5 gap-1.5 p-2.5 rounded-xl bg-blue-50 border-2 border-blue-400">${f1}</div>
+              <div class="grid grid-cols-5 gap-1.5 p-2.5 rounded-xl bg-blue-50 border-2 border-blue-400">${f2}</div>
+            </div>
+            <span class="text-xs font-extrabold text-slate-600">14 filled counters + [ ? ] empty slots = 20</span>
+          </div>
+        `;
+      }
+
+      if (code.startsWith('triangle:')) {
+        const [top, a, b] = code.split(':')[1].split(',');
+        return `
+          <div class="bg-white p-4 rounded-2xl border border-amber-300 inline-flex flex-col items-center gap-1 shadow-sm">
+            <div class="px-5 py-1 rounded-xl bg-indigo-600 text-white font-display font-bold text-2xl shadow">${top}</div>
+            <svg class="w-28 h-6" viewBox="0 0 120 26">
+              <line x1="60" y1="0" x2="26" y2="26" stroke="#64748b" stroke-width="2.5" stroke-linecap="round"></line>
+              <line x1="60" y1="0" x2="94" y2="26" stroke="#64748b" stroke-width="2.5" stroke-linecap="round"></line>
+            </svg>
+            <div class="flex gap-8">
+              <div class="px-4 py-1 rounded-xl bg-emerald-100 border-2 border-emerald-500 font-display font-bold text-xl text-emerald-950">${a}</div>
+              <div class="px-4 py-1 rounded-xl bg-amber-100 border-2 border-amber-500 font-display font-bold text-xl text-amber-950">${b}</div>
+            </div>
+            <span class="text-xs font-extrabold text-slate-600 mt-1">Boss Number ${top} starts every subtraction fact!</span>
+          </div>
+        `;
+      }
+
+      if (code === 'double7') {
+        const row = Array(7).fill('<div class="w-7 h-7 rounded-full bg-indigo-600 border-2 border-indigo-800"></div>').join('');
+        return `
+          <div class="bg-white p-4 rounded-2xl border border-amber-300 inline-flex flex-col items-center gap-2 shadow-sm">
+            <div class="space-y-2">
+              <div class="flex items-center gap-1.5"><span class="text-xs font-extrabold text-slate-500 w-12">Group 1:</span>${row}</div>
+              <div class="flex items-center gap-1.5"><span class="text-xs font-extrabold text-slate-500 w-12">Group 2:</span>${row}</div>
+            </div>
+            <span class="text-xs font-extrabold text-slate-600">Double 7 = 7 + 7 = 14</span>
+          </div>
+        `;
+      }
+
+      if (code.startsWith('dienes:')) {
+        const [t, o, whole] = code.split(':')[1].split(',').map(Number);
+        const rods = Array(t).fill('<div class="w-3.5 h-14 bg-blue-600 border border-blue-800 rounded-sm dienes-rod"></div>').join('');
+        const cubes = Array(o).fill('<div class="w-4 h-4 bg-amber-400 border border-amber-600 rounded-sm"></div>').join('');
+        return `
+          <div class="bg-white p-4 rounded-2xl border border-amber-300 inline-flex flex-col items-center gap-2 shadow-sm">
+            <div class="grid grid-cols-2 gap-4 text-center">
+              <div class="bg-blue-50 border-2 border-blue-300 px-4 py-2.5 rounded-xl">
+                <div class="text-xs font-extrabold text-blue-900 mb-1.5">Tens (${t} tens = ${t * 10})</div>
+                <div class="flex justify-center gap-1.5">${rods}</div>
+              </div>
+              <div class="bg-amber-50 border-2 border-amber-300 px-4 py-2.5 rounded-xl">
+                <div class="text-xs font-extrabold text-amber-900 mb-1.5">Ones (${o} ones = ${o})</div>
+                <div class="flex flex-wrap justify-center gap-1.5 max-w-[90px] mx-auto pt-4">${cubes}</div>
+              </div>
+            </div>
+            <span class="text-xs font-extrabold text-slate-700">${t} tens (${t * 10}) + ${o} ones (${o}) = ${whole}</span>
+          </div>
+        `;
+      }
+
+      if (code === 'dienes_add10') {
+        const rods4 = Array(4).fill('<div class="w-3.5 h-14 bg-blue-600 border border-blue-800 rounded-sm dienes-rod"></div>').join('');
+        const cubes3 = Array(3).fill('<div class="w-4 h-4 bg-amber-400 border border-amber-600 rounded-sm"></div>').join('');
+        return `
+          <div class="bg-white p-4 rounded-2xl border border-amber-300 inline-flex flex-wrap items-center justify-center gap-4 shadow-sm">
+            <div class="bg-blue-50 border-2 border-blue-300 px-3.5 py-2 rounded-xl text-center">
+              <div class="text-[11px] font-extrabold text-blue-900 mb-1">43 (4 Tens, 3 Ones)</div>
+              <div class="flex items-center justify-center gap-2">
+                <div class="flex gap-1">${rods4}</div>
+                <div class="flex gap-1">${cubes3}</div>
+              </div>
+            </div>
+            <div class="text-center font-extrabold text-emerald-700 text-xs">
+              <div>+ 1 Ten Rod (+10)</div>
+              <div class="text-lg">&rarr;</div>
+            </div>
+            <div class="bg-emerald-50 border-2 border-emerald-400 px-3.5 py-2 rounded-xl text-center">
+              <div class="text-[11px] font-extrabold text-emerald-900 mb-1">5 Tens, 3 Ones</div>
+              <div class="flex items-center justify-center gap-2">
+                <div class="flex gap-1">${rods4}<div class="w-3.5 h-14 bg-emerald-500 border border-emerald-700 rounded-sm dienes-rod"></div></div>
+                <div class="flex gap-1">${cubes3}</div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      if (code.startsWith('nl_jump:')) {
+        const [numsPart, dir] = code.split(':')[1].split('|');
+        const nums = numsPart.split(',');
+        const label = dir === 'forward' ? 'Jump +1 forward from 29 &rarr; 30' : 'Jump −1 backward from 40 &rarr; 39';
+        return `
+          <div class="bg-white p-4 rounded-2xl border border-amber-300 inline-flex flex-col items-center gap-2 shadow-sm">
+            <div class="flex items-center gap-2 sm:gap-3 font-display font-bold text-lg sm:text-xl">
+              ${nums.map((n, i) => {
+                const highlight = (dir === 'forward' && i === 3) || (dir === 'backward' && i === 2);
+                const start = (dir === 'forward' && i === 2) || (dir === 'backward' && i === 3);
+                const cls = highlight
+                  ? 'bg-emerald-100 border-2 border-emerald-500 text-emerald-950'
+                  : start
+                    ? 'bg-blue-100 border-2 border-blue-400 text-blue-950'
+                    : 'bg-slate-100 border border-slate-300 text-slate-700';
+                return `<span class="px-3 py-1 rounded-xl ${cls}">${n}</span>`;
+              }).join('<span class="text-slate-400">&mdash;</span>')}
+            </div>
+            <span class="text-xs font-extrabold text-emerald-800">${label}</span>
+          </div>
+        `;
+      }
+
+      if (code === 'nl_compare_67_71') {
+        const marks = [48, 59, 67, 71];
+        return `
+          <div class="bg-white p-4 rounded-2xl border border-amber-300 inline-flex flex-col items-center gap-2.5 shadow-sm">
+            <div class="flex items-center gap-3 sm:gap-5 font-display font-bold text-base sm:text-xl">
+              ${marks.map(m => {
+                let cls = 'bg-slate-100 border border-slate-300 text-slate-700';
+                if (m === 67) cls = 'bg-blue-100 border-2 border-blue-400 text-blue-950';
+                if (m === 71) cls = 'bg-emerald-100 border-2 border-emerald-500 text-emerald-950';
+                return `<span class="px-3.5 py-1 rounded-xl ${cls}">${m}</span>`;
+              }).join('<span class="text-slate-400">&lt;</span>')}
+            </div>
+            <span class="text-xs font-extrabold text-slate-600">71 sits further right on the 0–100 number line (7 tens &gt; 6 tens)</span>
+          </div>
+        `;
+      }
+
+      if (code === 'tenframe_plus_4') {
+        const f1 = Array(10).fill('<div class="w-6 h-6 rounded-md bg-rose-500 border border-rose-700"></div>').join('');
+        const y4 = Array(4).fill('<div class="w-6 h-6 rounded-md bg-amber-400 border border-amber-600"></div>').join('');
+        return `
+          <div class="bg-white p-4 rounded-2xl border border-amber-300 inline-flex flex-col items-center gap-2 shadow-sm">
+            <div class="flex items-center gap-4">
+              <div class="grid grid-cols-5 gap-1.5 p-2.5 rounded-xl bg-rose-50 border-2 border-rose-400">${f1}</div>
+              <span class="font-black text-xl">+</span>
+              <div class="grid grid-cols-2 gap-1.5 p-2.5 rounded-xl bg-amber-50 border-2 border-amber-400">${y4}</div>
+            </div>
+            <span class="text-xs font-extrabold text-slate-600">1 full ten-frame (10) + 4 yellow counters = ?</span>
+          </div>
+        `;
+      }
+
+      if (code === 'cherry9_5') {
+        return `
+          <div class="bg-white p-4 rounded-2xl border border-amber-300 inline-flex flex-col items-center gap-1 shadow-sm">
+            <div class="w-12 h-10 rounded-full bg-indigo-600 text-white font-display font-bold text-xl flex items-center justify-center shadow">9</div>
+            <svg class="w-28 h-6" viewBox="0 0 120 26">
+              <line x1="60" y1="0" x2="26" y2="26" stroke="#64748b" stroke-width="2.5" stroke-linecap="round"></line>
+              <line x1="60" y1="0" x2="94" y2="26" stroke="#64748b" stroke-width="2.5" stroke-linecap="round"></line>
+            </svg>
+            <div class="flex gap-8">
+              <div class="w-11 h-10 rounded-full bg-emerald-100 border-2 border-emerald-500 font-display font-bold text-lg text-emerald-950 flex items-center justify-center">5</div>
+              <div class="w-11 h-10 rounded-full bg-amber-100 border-2 border-amber-500 font-display font-bold text-lg text-amber-950 flex items-center justify-center">?</div>
+            </div>
+            <span class="text-xs font-extrabold text-slate-600 mt-1">Whole = 9 | Part 1 = 5 | Part 2 = ? (5 + ? = 9)</span>
+          </div>
+        `;
+      }
+
+      if (code === 'even_grid_12') {
+        const pairs = Array(6).fill(`
+          <div class="flex flex-col gap-1.5 bg-emerald-50 p-1.5 rounded-lg border border-emerald-300">
+            <div class="w-5 h-5 rounded-full bg-emerald-600"></div>
+            <div class="w-5 h-5 rounded-full bg-emerald-600"></div>
+          </div>
+        `).join('');
+        return `
+          <div class="bg-white p-4 rounded-2xl border border-amber-300 inline-flex flex-col items-center gap-2 shadow-sm">
+            <div class="flex gap-2">${pairs}</div>
+            <span class="text-xs font-extrabold text-emerald-800">2-by-6 pair-up grid: 12 forms 6 equal pairs with 0 left over!</span>
+          </div>
+        `;
+      }
+
+      if (code.startsWith('bridge_cpa:')) {
+        const [start, add, toTen, rest] = code.split(':')[1].split(',').map(Number);
+        let tf = '';
+        for (let i = 0; i < 10; i++) {
+          tf += i < start
+            ? '<div class="w-6 h-6 rounded-md bg-blue-600 border border-blue-800"></div>'
+            : '<div class="w-6 h-6 rounded-md bg-amber-300 border border-amber-600"></div>';
+        }
+        return `
+          <div class="bg-white p-4 rounded-2xl border border-amber-300 inline-flex flex-wrap items-center justify-center gap-5 shadow-sm">
+            <!-- 10-Frame -->
+            <div class="grid grid-cols-5 gap-1 p-2 rounded-xl bg-blue-50 border-2 border-blue-400">${tf}</div>
+            <!-- Connected Cherry Partition -->
+            <div class="flex flex-col items-center">
+              <div class="w-9 h-8 rounded-full bg-amber-400 text-slate-950 font-display font-bold text-base flex items-center justify-center">${add}</div>
+              <svg class="w-20 h-5" viewBox="0 0 100 24">
+                <line x1="50" y1="0" x2="22" y2="24" stroke="#64748b" stroke-width="2.5" stroke-linecap="round"></line>
+                <line x1="50" y1="0" x2="78" y2="24" stroke="#64748b" stroke-width="2.5" stroke-linecap="round"></line>
+              </svg>
+              <div class="flex gap-5 font-display font-bold text-sm">
+                <span class="px-2.5 py-0.5 rounded-full bg-emerald-100 border border-emerald-500 text-emerald-950">${toTen}</span>
+                <span class="px-2.5 py-0.5 rounded-full bg-indigo-100 border border-indigo-500 text-indigo-950">${rest}</span>
+              </div>
+            </div>
+            <!-- 2-Hop Open Number Line -->
+            <div class="flex items-center gap-2 font-display font-bold text-base sm:text-lg">
+              <span class="px-3 py-1 rounded-xl bg-blue-100 border-2 border-blue-400 text-blue-950">${start}</span>
+              <span class="text-xs font-extrabold text-emerald-700">+${toTen} &rarr;</span>
+              <span class="px-3 py-1 rounded-xl bg-emerald-100 border-2 border-emerald-500 text-emerald-950">10</span>
+              <span class="text-xs font-extrabold text-indigo-700">+${rest} &rarr;</span>
+              <span class="px-3.5 py-1 rounded-xl bg-amber-200 border-2 border-amber-500 text-slate-950">?</span>
+            </div>
+          </div>
+        `;
+      }
+
+      if (code.startsWith('bar_altogether:')) {
+        const [a, b] = code.split(':')[1].split(',').map(Number);
+        return `
+          <div class="bg-white p-4 rounded-2xl border border-amber-300 w-full max-w-md space-y-2 text-xs font-extrabold text-center shadow-sm">
+            <div class="bg-slate-900 text-white py-1.5 rounded-lg">Total Stickers ALTOGETHER = ?</div>
+            <div class="flex gap-1.5">
+              <div class="bg-indigo-600 text-white py-2 rounded-lg" style="flex:${a}">Jimmy: ${a}</div>
+              <div class="bg-amber-400 text-slate-950 py-2 rounded-lg" style="flex:${b}">Ariana: ${b}</div>
+            </div>
+          </div>
+        `;
+      }
+
+      if (code.startsWith('bar_difference:')) {
+        const [a, b] = code.split(':')[1].split(',').map(Number);
+        return `
+          <div class="bg-white p-4 rounded-2xl border border-amber-300 w-full max-w-md space-y-2 text-xs font-extrabold shadow-sm">
+            <div class="flex items-center gap-2"><span class="w-12">12:</span><div class="bg-indigo-600 text-white py-1.5 px-3 rounded-lg" style="width:240px">12</div></div>
+            <div class="flex items-center gap-2"><span class="w-12">8:</span><div class="bg-emerald-500 text-white py-1.5 px-3 rounded-lg" style="width:160px">8</div><span class="text-amber-800 font-black">&larr; Gap (Difference) = ?</span></div>
+          </div>
+        `;
+      }
+
+      if (code === 'bar_remaining:15,6') {
+        return `
+          <div class="bg-white p-4 rounded-2xl border border-amber-300 w-full max-w-md space-y-2 text-xs font-extrabold text-center shadow-sm">
+            <div class="bg-slate-900 text-white py-1.5 rounded-lg">Whole = 15 Grapes</div>
+            <div class="flex gap-1.5">
+              <div class="bg-rose-200 text-rose-950 border border-rose-400 py-2 rounded-lg" style="flex:6">Eaten: 6</div>
+              <div class="bg-emerald-500 text-white py-2 rounded-lg" style="flex:9">REMAINING: ?</div>
+            </div>
+          </div>
+        `;
+      }
+
+      return '';
+    }
+
+    // =========================================================================
+    // 4. INTERACTIVE SPLIT-SCREEN / FULLSCREEN SURFACE PEN & TOUCH WHITEBOARD
+    // =========================================================================
+    let wbOpen = false;
+    let wbFullscreen = false;
+    let wbPenColor = '#0f172a';
+    let wbTool = 'pen'; // 'pen' | 'highlighter' | 'eraser'
+    let wbBg = 'blank';
+    let isDrawing = false;
+    let lastX = 0;
+    let lastY = 0;
+    let wbHistory = [];
+
+    const canvas = document.getElementById('wb-canvas');
+    const ctx = canvas.getContext('2d');
+
+    function saveWbSnapshot() {
+      try {
+        if (wbHistory.length > 18) wbHistory.shift();
+        wbHistory.push(canvas.toDataURL());
+      } catch (e) {}
+    }
+
+    function undoWbStroke() {
+      if (wbHistory.length === 0) return;
+      const last = wbHistory.pop();
+      const img = new Image();
+      img.onload = function () {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0);
+      };
+      img.src = last;
+    }
+
+    function toggleWhiteboard() {
+      wbOpen = !wbOpen;
+      const wbPane = document.getElementById('whiteboard-pane');
+      const mainPane = document.getElementById('main-review-pane');
+      const label = document.getElementById('wb-toggle-label');
+
+      if (wbOpen) {
+        wbPane.classList.remove('hidden');
+        label.textContent = 'Close Whiteboard';
+        setTimeout(resizeCanvasPreserveInk, 40);
+      } else {
+        wbPane.classList.add('hidden');
+        mainPane.classList.remove('hidden');
+        wbFullscreen = false;
+        document.getElementById('btn-wb-fullscreen').textContent = 'Fullscreen';
+        wbPane.className = 'hidden lg:w-[46%] xl:w-[48%] bg-white border-t-4 lg:border-t-0 lg:border-l-4 border-slate-300 flex flex-col shadow-2xl z-30';
+        label.textContent = 'Whiteboard (Split / Full)';
+      }
+    }
+
+    function toggleWbFullscreen() {
+      wbFullscreen = !wbFullscreen;
+      const wbPane = document.getElementById('whiteboard-pane');
+      const mainPane = document.getElementById('main-review-pane');
+      const btn = document.getElementById('btn-wb-fullscreen');
+
+      if (wbFullscreen) {
+        mainPane.classList.add('hidden');
+        wbPane.className = 'w-full bg-white flex flex-col shadow-2xl z-30';
+        btn.textContent = 'Split Screen';
+      } else {
+        mainPane.classList.remove('hidden');
+        wbPane.className = 'lg:w-[46%] xl:w-[48%] bg-white border-t-4 lg:border-t-0 lg:border-l-4 border-slate-300 flex flex-col shadow-2xl z-30';
+        btn.textContent = 'Fullscreen';
+      }
+      setTimeout(resizeCanvasPreserveInk, 40);
+    }
+
+    function setWbPen(color) {
+      wbTool = 'pen';
+      wbPenColor = color;
+      document.getElementById('btn-wb-highlighter').classList.remove('bg-yellow-400', 'text-slate-950');
+      document.getElementById('btn-wb-eraser').classList.remove('bg-amber-400', 'text-slate-950');
+
+      document.querySelectorAll('.wb-pen-btn').forEach(btn => {
+        if (btn.getAttribute('data-wb-pen') === color) {
+          btn.classList.add('ring-2', 'ring-emerald-400');
+        } else {
+          btn.classList.remove('ring-2', 'ring-emerald-400');
+        }
+      });
+    }
+
+    function setWbTool(tool) {
+      wbTool = tool;
+      const hiBtn = document.getElementById('btn-wb-highlighter');
+      const erBtn = document.getElementById('btn-wb-eraser');
+      hiBtn.classList.remove('bg-yellow-400', 'text-slate-950');
+      erBtn.classList.remove('bg-amber-400', 'text-slate-950');
+      document.querySelectorAll('.wb-pen-btn').forEach(b => b.classList.remove('ring-2', 'ring-emerald-400'));
+
+      if (tool === 'highlighter') {
+        hiBtn.classList.add('bg-yellow-400', 'text-slate-950');
+      } else if (tool === 'eraser') {
+        erBtn.classList.add('bg-amber-400', 'text-slate-950');
+      }
+    }
+
+    function setWbBackground(bgType) {
+      wbBg = bgType;
+      clearWhiteboard();
+    }
+
+    function drawWbTemplate() {
+      const w = canvas.width;
+      const h = canvas.height;
+      ctx.save();
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, w, h);
+
+      if (wbBg === 'grid') {
+        ctx.strokeStyle = '#e2e8f0';
+        ctx.lineWidth = 1;
+        const step = 28;
+        for (let x = 0; x < w; x += step) {
+          ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+        }
+        for (let y = 0; y < h; y += step) {
+          ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+        }
+      } else if (wbBg === 'numberline') {
+        const y = Math.round(h * 0.55);
+        const pad = 36;
+        ctx.strokeStyle = '#334155';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(pad, y);
+        ctx.lineTo(w - pad, y);
+        ctx.stroke();
+
+        for (let i = 0; i <= 10; i++) {
+          const x = pad + ((w - pad * 2) * i) / 10;
+          ctx.beginPath();
+          ctx.moveTo(x, y - 10);
+          ctx.lineTo(x, y + 10);
+          ctx.stroke();
+        }
+      } else if (wbBg === 'to') {
+        const colW = w / 2;
+        ctx.strokeStyle = '#94a3b8';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(colW, 20); ctx.lineTo(colW, h - 20);
+        ctx.moveTo(20, 64); ctx.lineTo(w - 20, 64);
+        ctx.stroke();
+
+        ctx.font = '800 18px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#1d4ed8'; ctx.fillText('Tens (T)', colW * 0.5, 48);
+        ctx.fillStyle = '#b45309'; ctx.fillText('Ones (O)', colW * 1.5, 48);
+      } else if (wbBg === 'tenframes') {
+        ctx.strokeStyle = '#64748b';
+        ctx.lineWidth = 2;
+        const frameW = Math.min(240, (w - 80) / 2);
+        const frameH = frameW * 0.4;
+        const cellW = frameW / 5;
+        const cellH = frameH / 2;
+        const startY = Math.max(40, (h - frameH) / 2);
+
+        [24, 24 + frameW + 24].forEach(startX => {
+          for (let r = 0; r < 2; r++) {
+            for (let c = 0; c < 5; c++) {
+              ctx.strokeRect(startX + c * cellW, startY + r * cellH, cellW, cellH);
+            }
+          }
+        });
+      }
+      ctx.restore();
+    }
+
+    function clearWhiteboard() {
+      saveWbSnapshot();
+      const wrapper = document.getElementById('wb-canvas-wrapper');
+      canvas.width = wrapper.clientWidth || 520;
+      canvas.height = wrapper.clientHeight || 440;
+      drawWbTemplate();
+    }
+
+    function resizeCanvasPreserveInk() {
+      const wrapper = document.getElementById('wb-canvas-wrapper');
+      if (!wrapper || wrapper.clientWidth === 0) return;
+      const temp = document.createElement('canvas');
+      temp.width = canvas.width;
+      temp.height = canvas.height;
+      temp.getContext('2d').drawImage(canvas, 0, 0);
+
+      canvas.width = wrapper.clientWidth;
+      canvas.height = wrapper.clientHeight;
+      drawWbTemplate();
+      ctx.drawImage(temp, 0, 0);
+    }
+
+    function getPointerPos(e) {
+      const rect = canvas.getBoundingClientRect();
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      return {
+        x: clientX - rect.left,
+        y: clientY - rect.top
+      };
+    }
+
+    function startStroke(e) {
+      saveWbSnapshot();
+      isDrawing = true;
+      const pos = getPointerPos(e);
+      lastX = pos.x;
+      lastY = pos.y;
+    }
+
+    function moveStroke(e) {
+      if (!isDrawing) return;
+      if (e.cancelable) e.preventDefault();
+      const pos = getPointerPos(e);
+
+      ctx.save();
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+
+      if (wbTool === 'eraser') {
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 28;
+      } else if (wbTool === 'highlighter') {
+        ctx.strokeStyle = 'rgba(250, 204, 21, 0.35)';
+        ctx.lineWidth = 20;
+      } else {
+        ctx.strokeStyle = wbPenColor;
+        ctx.lineWidth = 4;
+      }
+
+      ctx.beginPath();
+      ctx.moveTo(lastX, lastY);
+      ctx.lineTo(pos.x, pos.y);
+      ctx.stroke();
+      ctx.restore();
+
+      lastX = pos.x;
+      lastY = pos.y;
+    }
+
+    function endStroke() {
+      isDrawing = false;
+    }
+
+    canvas.addEventListener('mousedown', startStroke);
+    canvas.addEventListener('mousemove', moveStroke);
+    window.addEventListener('mouseup', endStroke);
+
+    canvas.addEventListener('touchstart', startStroke, { passive: false });
+    canvas.addEventListener('touchmove', moveStroke, { passive: false });
+    window.addEventListener('touchend', endStroke);
+
+    window.addEventListener('resize', () => {
+      if (wbOpen) resizeCanvasPreserveInk();
+    });
+
+    window.addEventListener('keydown', (e) => {
+      if (document.activeElement && document.activeElement.id === 'class-tryit-input') return;
+      if (e.key === 'ArrowRight') nextQuestion();
+      else if (e.key === 'ArrowLeft') prevQuestion();
+    });
+
+    window.onload = function () {
+      renderVocabBank();
+      setQuestionFilter('all');
+      clearWhiteboard();
+    };
+  </script>
+</body>
+</html>
