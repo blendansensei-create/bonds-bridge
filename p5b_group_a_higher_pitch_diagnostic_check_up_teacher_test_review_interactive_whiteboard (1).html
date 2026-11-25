@@ -1,0 +1,2798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P5B Group A Higher-Pitch Diagnostic Check-Up: Teacher Test Review &amp; Interactive Whiteboard</title>
+  <style>
+    :root {
+      --bg-page: #f1f5f9;
+      --ink: #0f172a;
+      --ink-soft: #475569;
+      --surface: #ffffff;
+      --surface-alt: #f8fafc;
+      --border: #cbd5e1;
+      --border-light: #e2e8f0;
+      --indigo: #4f46e5;
+      --indigo-dark: #3730a3;
+      --indigo-soft: #eef2ff;
+      --emerald: #059669;
+      --emerald-soft: #ecfdf5;
+      --amber: #d97706;
+      --amber-soft: #fffbeb;
+      --rose: #e11d48;
+      --rose-soft: #fff1f2;
+      --blue: #2563eb;
+      --blue-soft: #eff6ff;
+      --shadow-sm: 0 2px 6px rgba(15, 23, 42, 0.05);
+      --shadow-md: 0 10px 25px -5px rgba(15, 23, 42, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background-color: var(--bg-page);
+      color: var(--ink);
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      user-select: none;
+    }
+
+    .hidden { display: none !important; }
+
+    /* TOP PERSISTENT HEADER */
+    .topbar {
+      background: #0f172a;
+      color: #ffffff;
+      border-bottom: 4px solid var(--indigo);
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.22);
+    }
+
+    .topbar-inner {
+      max-width: 1680px;
+      margin: 0 auto;
+      padding: 10px 18px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-badge {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: var(--indigo);
+      border: 2px solid #818cf8;
+      color: #ffffff;
+      font-weight: 900;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .brand-title {
+      font-size: 17px;
+      font-weight: 900;
+      margin: 0;
+      letter-spacing: -0.01em;
+      line-height: 1.2;
+    }
+
+    .brand-sub {
+      font-size: 11.5px;
+      color: #c7d2fe;
+      font-weight: 600;
+      margin: 2px 0 0;
+    }
+
+    .toolbar-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-top {
+      border-radius: 11px;
+      padding: 8px 13px;
+      font-size: 12.5px;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: transform 0.1s, filter 0.15s;
+    }
+
+    .btn-top:active { transform: scale(0.96); }
+    .btn-top-indigo { background: var(--indigo); color: #fff; border: 1px solid #818cf8; }
+    .btn-top-amber { background: #fbbf24; color: #0f172a; border: 1px solid #fde68a; }
+    .btn-top-emerald { background: var(--emerald); color: #fff; border: 1px solid #34d399; }
+    .btn-top-slate { background: #1e293b; color: #e2e8f0; border: 1px solid #475569; }
+
+    /* DRAWERS (PUPIL SCOREBOARD & VOCAB BANK) */
+    .top-drawer {
+      background: #1e293b;
+      border-top: 1px solid #334155;
+      padding: 16px 18px;
+      animation: fadeSlide 0.18s ease-out;
+    }
+
+    .drawer-inner {
+      max-width: 1680px;
+      margin: 0 auto;
+    }
+
+    .drawer-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .drawer-title {
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #a5b4fc;
+    }
+
+    .btn-close-drawer {
+      background: #334155;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 5px 10px;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .pupil-profiles-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    @media (min-width: 768px) {
+      .pupil-profiles-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (min-width: 1280px) {
+      .pupil-profiles-grid { grid-template-columns: repeat(4, 1fr); }
+    }
+
+    .profile-box {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 14px;
+      padding: 12px 14px;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .profile-box-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+
+    .profile-name { font-size: 15px; font-weight: 900; color: #fff; }
+    .profile-pill {
+      font-size: 10.5px;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #312e81;
+      color: #c7d2fe;
+      border: 1px solid #4338ca;
+    }
+
+    .vocab-grid {
+      display: grid;
+      grid-template-columns: repeat(1, 1fr);
+      gap: 8px;
+    }
+
+    @media (min-width: 640px) {
+      .vocab-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (min-width: 1100px) {
+      .vocab-grid { grid-template-columns: repeat(4, 1fr); }
+    }
+
+    .vocab-card {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-size: 11.5px;
+    }
+
+    .vocab-term {
+      display: inline-block;
+      background: rgba(251, 191, 36, 0.18);
+      color: #fde047;
+      font-weight: 900;
+      padding: 2px 8px;
+      border-radius: 6px;
+      margin-bottom: 4px;
+    }
+
+    .vocab-def { color: #e2e8f0; margin: 0 0 4px; font-weight: 600; }
+    .vocab-stem { color: #93c5fd; margin: 0; font-style: italic; font-weight: 700; }
+
+    /* MAIN SPLIT-SCREEN LAYOUT */
+    .workspace {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      max-width: 1680px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    @media (min-width: 1024px) {
+      .workspace { flex-direction: row; }
+    }
+
+    .review-pane {
+      flex: 1;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      overflow-y: auto;
+    }
+
+    /* NAVIGATOR CARD */
+    .nav-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 14px 16px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .filter-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .filter-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .filter-btn {
+      padding: 6px 11px;
+      border-radius: 10px;
+      font-size: 11.5px;
+      font-weight: 800;
+      border: 1px solid var(--border);
+      background: var(--surface-alt);
+      color: var(--ink-soft);
+      cursor: pointer;
+    }
+
+    .filter-btn.active {
+      background: #0f172a;
+      color: #ffffff;
+      border-color: #0f172a;
+    }
+
+    .legend-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--ink-soft);
+    }
+
+    .dot {
+      display: inline-block;
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      margin-right: 3px;
+    }
+
+    .q-pills-grid {
+      display: grid;
+      grid-template-columns: repeat(10, 1fr);
+      gap: 6px;
+      padding-top: 10px;
+      border-top: 1px solid var(--border-light);
+    }
+
+    @media (min-width: 768px) {
+      .q-pills-grid { grid-template-columns: repeat(20, 1fr); }
+    }
+
+    .q-pill {
+      height: 36px;
+      border-radius: 10px;
+      font-size: 11.5px;
+      font-weight: 800;
+      background: var(--surface-alt);
+      color: var(--ink);
+      border: 2px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.1s;
+    }
+
+    .q-pill.status-green { border-color: #34d399; }
+    .q-pill.status-amber { border-color: #fbbf24; }
+    .q-pill.status-rose { border-color: #fb7185; }
+
+    .q-pill.active {
+      background: var(--indigo);
+      color: #ffffff;
+      border-color: var(--indigo-dark);
+      transform: scale(1.06);
+      box-shadow: 0 3px 8px rgba(79, 70, 229, 0.25);
+    }
+
+    .pill-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      margin-top: 2px;
+    }
+
+    /* MAIN QUESTION CARD */
+    .question-card {
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: 22px;
+      padding: 20px 22px;
+      box-shadow: var(--shadow-md);
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .card-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .card-badges {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .badge-qnum {
+      background: #0f172a;
+      color: #ffffff;
+      font-size: 14px;
+      font-weight: 900;
+      padding: 6px 13px;
+      border-radius: 11px;
+    }
+
+    .badge-part {
+      background: var(--indigo-soft);
+      color: var(--indigo-dark);
+      border: 1px solid #c7d2fe;
+      font-size: 11.5px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 5px 11px;
+      border-radius: 999px;
+    }
+
+    .nav-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .btn-nav {
+      padding: 8px 13px;
+      border-radius: 11px;
+      font-size: 12.5px;
+      font-weight: 800;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: var(--surface-alt);
+      color: var(--ink);
+    }
+
+    .btn-nav:hover { background: #e2e8f0; }
+    .btn-nav-speak { background: #fef3c7; border-color: #fcd34d; color: #78350f; }
+    .btn-nav-next { background: var(--indigo); border-color: var(--indigo-dark); color: #fff; }
+    .btn-nav-next:hover { background: #4338ca; }
+
+    /* QUESTION PROMPT + INTERACTIVE CLASS CHECK */
+    .prompt-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      align-items: start;
+    }
+
+    @media (min-width: 1150px) {
+      .prompt-grid { grid-template-columns: 7fr 5fr; }
+    }
+
+    .q-text {
+      font-size: 25px;
+      font-weight: 900;
+      color: var(--ink);
+      line-height: 1.3;
+      margin: 0 0 12px;
+      letter-spacing: -0.01em;
+    }
+
+    @media (min-width: 640px) {
+      .q-text { font-size: 30px; }
+    }
+
+    .stem-box {
+      background: var(--indigo-soft);
+      border: 1px solid #c7d2fe;
+      border-radius: 14px;
+      padding: 11px 14px;
+    }
+
+    .vocab-pill {
+      display: inline-block;
+      background: var(--indigo);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 2px 9px;
+      border-radius: 999px;
+      margin-left: 4px;
+    }
+
+    .stem-quote {
+      margin: 6px 0 0;
+      font-size: 13px;
+      font-weight: 700;
+      font-style: italic;
+      color: #1e1b4b;
+    }
+
+    /* TRY-IT BOX */
+    .tryit-box {
+      background: var(--surface-alt);
+      border: 2px dashed #94a3b8;
+      border-radius: 16px;
+      padding: 14px;
+    }
+
+    .tryit-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--ink-soft);
+      margin-bottom: 8px;
+    }
+
+    .tryit-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .tryit-input {
+      flex: 1;
+      min-width: 0;
+      background: #ffffff;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--ink);
+      outline: none;
+    }
+
+    .tryit-input:focus { border-color: var(--indigo); }
+
+    .btn-tryit {
+      background: #0f172a;
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: 10px 15px;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .factor-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+
+    .factor-chip {
+      padding: 7px 12px;
+      border-radius: 10px;
+      border: 2px solid var(--border);
+      background: #fff;
+      font-weight: 900;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .factor-chip.picked {
+      background: var(--indigo);
+      color: #fff;
+      border-color: var(--indigo-dark);
+    }
+
+    .tryit-fb {
+      margin: 8px 0 0;
+      font-size: 12.5px;
+      font-weight: 800;
+      min-height: 18px;
+    }
+
+    /* TEACHER REVEAL BUTTON BAR */
+    .reveal-bar {
+      padding-top: 14px;
+      border-top: 1px solid var(--border-light);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+    }
+
+    .btn-reveal {
+      padding: 11px 15px;
+      border-radius: 13px;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.1s;
+    }
+
+    .btn-reveal:active { transform: scale(0.97); }
+    .rev-pupils { background: var(--indigo-soft); border: 2px solid #818cf8; color: #1e1b4b; }
+    .rev-cpa { background: var(--amber-soft); border: 2px solid #fbbf24; color: #78350f; }
+    .rev-working { background: var(--blue-soft); border: 2px solid #60a5fa; color: #1e3a8a; }
+    .rev-answer { background: var(--emerald); border: 2px solid #047857; color: #ffffff; }
+
+    /* REVEAL PANELS */
+    .reveal-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .rev-panel {
+      border-radius: 16px;
+      padding: 16px 18px;
+      animation: fadeSlide 0.18s ease-out;
+    }
+
+    .panel-pupils { background: var(--indigo-soft); border: 2px solid #a5b4fc; }
+    .panel-cpa { background: var(--amber-soft); border: 2px solid #fcd34d; }
+    .panel-working { background: var(--blue-soft); border: 2px solid #93c5fd; }
+    .panel-answer {
+      background: var(--emerald-soft);
+      border: 2px solid #10b981;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .panel-head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .panel-label {
+      font-size: 11.5px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .btn-mask-names {
+      background: #0f172a;
+      color: #fff;
+      border: none;
+      border-radius: 9px;
+      padding: 5px 11px;
+      font-size: 11.5px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .pupils-cards {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+
+    @media (min-width: 768px) {
+      .pupils-cards { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    .pupil-status-card {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 10px 13px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .ps-ok { border: 2px solid #34d399; }
+    .ps-miss { border: 2px solid #fda4af; }
+    .ps-obs { border: 2px solid #93c5fd; }
+
+    .ps-name { font-size: 14px; font-weight: 900; color: var(--ink); display: block; }
+    .ps-note { font-size: 12px; font-weight: 700; }
+    .ps-badge {
+      font-size: 11px;
+      font-weight: 900;
+      padding: 3px 9px;
+      border-radius: 8px;
+      flex-shrink: 0;
+    }
+
+    .cpa-caption {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--ink);
+      margin: 0 0 12px;
+    }
+
+    .cpa-stage {
+      display: flex;
+      justify-content: center;
+      overflow-x: auto;
+    }
+
+    .working-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 14.5px;
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .answer-big {
+      font-size: 28px;
+      font-weight: 900;
+      color: #064e3b;
+      display: block;
+      margin-top: 2px;
+    }
+
+    /* CPA DIAGRAM STYLING */
+    .cpa-box {
+      background: #ffffff;
+      border: 1px solid #fcd34d;
+      border-radius: 14px;
+      padding: 14px 18px;
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .hop-strip {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-weight: 900;
+      font-size: 15px;
+    }
+
+    .hop-pill {
+      padding: 6px 12px;
+      border-radius: 10px;
+      border: 2px solid var(--border);
+      background: var(--surface-alt);
+    }
+
+    .hop-mid { background: #d1fae5; border-color: #10b981; color: #064e3b; }
+    .hop-end { background: #fef3c7; border-color: #f59e0b; color: #78350f; }
+
+    /* WHITEBOARD PANE */
+    .wb-pane {
+      background: #ffffff;
+      border-top: 4px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      box-shadow: -8px 0 24px rgba(15, 23, 42, 0.12);
+      z-index: 30;
+    }
+
+    @media (min-width: 1024px) {
+      .wb-pane {
+        width: 46%;
+        border-top: none;
+        border-left: 4px solid var(--border);
+      }
+      .wb-pane.fullscreen {
+        width: 100%;
+        border-left: none;
+      }
+    }
+
+    .wb-toolbar {
+      background: #1e293b;
+      color: #fff;
+      padding: 9px 12px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      border-bottom: 1px solid #334155;
+    }
+
+    .wb-group {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .pen-swatch {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.7);
+      cursor: pointer;
+    }
+
+    .pen-swatch.active {
+      box-shadow: 0 0 0 2px #0f172a, 0 0 0 4px #34d399;
+    }
+
+    .wb-btn {
+      background: #334155;
+      color: #fff;
+      border: 1px solid #475569;
+      border-radius: 8px;
+      padding: 5px 9px;
+      font-size: 11.5px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .wb-btn.active-tool {
+      background: #fbbf24;
+      color: #0f172a;
+      border-color: #fde68a;
+    }
+
+    .wb-select {
+      background: #0f172a;
+      color: #fff;
+      border: 1px solid #475569;
+      border-radius: 8px;
+      padding: 5px 8px;
+      font-size: 11.5px;
+      font-weight: 800;
+      outline: none;
+    }
+
+    .wb-canvas-wrap {
+      position: relative;
+      flex: 1;
+      min-height: 420px;
+      background: #ffffff;
+      overflow: hidden;
+    }
+
+    @media (min-width: 1024px) {
+      .wb-canvas-wrap { min-height: calc(100vh - 96px); }
+    }
+
+    /* 100 SQUARE INTERACTIVE GRID STYLES */
+    .sq100-panel {
+      background: #0f172a;
+      border: 2px solid #334155;
+      border-radius: 18px;
+      padding: 14px 16px;
+      color: #ffffff;
+    }
+
+    .sq100-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .sq100-btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sq-mode-btn {
+      padding: 6px 11px;
+      border-radius: 9px;
+      font-size: 12px;
+      font-weight: 800;
+      border: 1px solid #475569;
+      background: #1e293b;
+      color: #e2e8f0;
+      cursor: pointer;
+      transition: transform 0.1s, background 0.15s;
+    }
+
+    .sq-mode-btn:active { transform: scale(0.96); }
+    .sq-mode-btn.active-odd { background: #7c3aed; border-color: #c4b5fd; color: #ffffff; }
+    .sq-mode-btn.active-even { background: #059669; border-color: #6ee7b7; color: #ffffff; }
+    .sq-mode-btn.active-both { background: #4f46e5; border-color: #fde047; color: #ffffff; }
+    .sq-mode-btn.active-mult { background: #d97706; border-color: #fde68a; color: #ffffff; }
+
+    .sq100-layout {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      align-items: start;
+    }
+
+    @media (min-width: 960px) {
+      .sq100-layout { grid-template-columns: minmax(340px, 520px) 1fr; }
+    }
+
+    .sq100-grid {
+      display: grid;
+      grid-template-columns: repeat(10, 1fr);
+      gap: 4px;
+      background: #1e293b;
+      padding: 8px;
+      border-radius: 14px;
+      border: 2px solid #475569;
+    }
+
+    .sq100-cell {
+      aspect-ratio: 1 / 1;
+      min-height: 30px;
+      border-radius: 7px;
+      background: #f8fafc;
+      color: #0f172a;
+      font-weight: 900;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: transform 0.1s, background 0.15s, color 0.15s;
+    }
+
+    .sq100-cell:hover { transform: scale(1.07); z-index: 2; }
+    .sq100-cell.is-odd { background: #ede9fe; color: #4c1d95; border-color: #a78bfa; }
+    .sq100-cell.is-even { background: #d1fae5; color: #064e3b; border-color: #34d399; }
+    .sq100-cell.is-mult { background: #fef3c7; color: #78350f; border-color: #f59e0b; }
+    .sq100-cell.is-pinned {
+      background: #fbbf24 !important;
+      color: #0f172a !important;
+      border-color: #ffffff !important;
+      box-shadow: 0 0 0 2px #f59e0b;
+    }
+
+    .sq100-rule-card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 14px;
+      padding: 14px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOP PERSISTENT HEADER -->
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <div class="brand-badge">P5B</div>
+        <div>
+          <h1 class="brand-title">P5B Group A Higher-Pitch Diagnostic Check-Up: Teacher Review Hub</h1>
+          <p class="brand-sub">Paul Doherty (10/20) &bull; Julia Gibson (10/20) &bull; Nevaeh Cunningham-Carroll (6/20) &bull; Oisin Mervyn (Live Check)</p>
+        </div>
+      </div>
+
+      <div class="toolbar-actions">
+        <button type="button" class="btn-top btn-top-indigo" onclick="toggleTopDrawer('scoreboard')">
+          <span>&#128203;</span>
+          <span>Pupil Scoreboard &amp; Gaps</span>
+        </button>
+
+        <button type="button" class="btn-top btn-top-amber" onclick="toggleTopDrawer('vocab')">
+          <span>&#128214;</span>
+          <span>Vocab &amp; Stems (16)</span>
+        </button>
+
+        <button type="button" class="btn-top" style="background:#7c3aed;color:#fff;border:1px solid #c4b5fd;" onclick="toggleTopDrawer('sq100')">
+          <span>&#128290;</span>
+          <span>100 Square (Odd/Even)</span>
+        </button>
+
+        <button type="button" class="btn-top btn-top-emerald" onclick="toggleWhiteboard()">
+          <span>&#128394;&#65039;</span>
+          <span id="wb-toggle-label">Open Whiteboard</span>
+        </button>
+
+        <button type="button" class="btn-top btn-top-slate" onclick="resetAllReveals()" title="Hide all open question reveals">
+          <span>&#128260;</span>
+          <span>Reset All Reveals</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- COLLAPSIBLE DRAWER 1: PUPIL SCOREBOARD & DIAGNOSTIC GAPS -->
+    <div id="drawer-scoreboard" class="top-drawer hidden">
+      <div class="drawer-inner">
+        <div class="drawer-head">
+          <span class="drawer-title">P5B Group A ("Reasoning into Attainment") &bull; June 2026 PTM/CAT4 &amp; Nov 16–17 Check-Up Profiles</span>
+          <button type="button" class="btn-close-drawer" onclick="toggleTopDrawer('scoreboard')">Close &times;</button>
+        </div>
+
+        <div class="pupil-profiles-grid">
+          <!-- Paul Doherty -->
+          <div class="profile-box">
+            <div class="profile-box-top">
+              <span class="profile-name">Paul Doherty</span>
+              <span class="profile-pill">CAT4 108 / PTM 88 (−20) &bull; Nov: 10/20</span>
+            </div>
+            <p style="color:#34d399;margin:0 0 5px;font-weight:700;">
+              <strong>Nailed (10):</strong> Complements to 1,000 (Q1: 360, Q2: 650), Q6 (800), Q7 (180), Q9 (600), Q10 ordering, Q13 (3:15 pm), Q15 (£1.65), Q20 (Spot the Mistake: 65).
+            </p>
+            <p style="color:#fda4af;margin:0;font-weight:600;">
+              <strong>Missed (10):</strong> Q3 (502−147=33), Q4 ([ ]−35=48 &rarr; 13 subtracted!), Q5 (7&times;7=49), Q8 (46&times;10=40), Q11 (54&divide;6=2), Q12 (3/4 of 24=12), Q14 (Perimeter), Q16 (124−89=24), Q17 (marbles=26), Q18 (factors of 18: picked 12), Q19 (1/2=2/10).
+            </p>
+          </div>
+
+          <!-- Julia Gibson -->
+          <div class="profile-box">
+            <div class="profile-box-top">
+              <span class="profile-name">Julia Gibson</span>
+              <span class="profile-pill">CAT4 108 / PTM 95 (−13) &bull; Nov: 10/20</span>
+            </div>
+            <p style="color:#34d399;margin:0 0 5px;font-weight:700;">
+              <strong>Nailed (10):</strong> Q5 (56&divide;8=7), Q6 (800), Q8 (460), Q9 (600), Q10 ordering, Q11 (54&divide;6=9), Q13 (3:15 pm), Q16 (Difference=35), Q17 (marbles: 18+36=54!).
+            </p>
+            <p style="color:#fda4af;margin:0;font-weight:600;">
+              <strong>Missed (10):</strong> Q1 (460 — 1,100 trap), Q2 (750 — extra 100 trap), Q3 (502−147=465 reversal), Q4 ([ ]−35=48), Q7 (482=300+[ ]+2), Q12 (3/4 of 24), Q14 (11 cm — 2 sides only), Q15 (£2.65 — extra £1 trap), Q18 (factors of 18), Q19 (1/2=5/10), Q20.
+            </p>
+          </div>
+
+          <!-- Nevaeh Cunningham-Carroll -->
+          <div class="profile-box">
+            <div class="profile-box-top">
+              <span class="profile-name">Nevaeh Cunningham-Carroll</span>
+              <span class="profile-pill">CAT4 105 / PTM 85 (−20) &bull; Nov: 6/20</span>
+            </div>
+            <p style="color:#34d399;margin:0 0 5px;font-weight:700;">
+              <strong>Nailed (6):</strong> Q6 (800), Q7 (non-standard partition: 180!), Q8 (46&times;10=460), Q19 (equivalent fraction: 1/2=5/10!).
+            </p>
+            <p style="color:#fda4af;margin:0;font-weight:600;">
+              <strong>Missed (14):</strong> Q1 (460 — 1,100 trap), Q2 (blank), Q3 (502−147=343), Q4 ([ ]−35=48 &rarr; 8), Q5 (87−56), Q9 (650), Q10 ordering, Q11 (54&divide;6), Q12 (3/4 of 24), Q13 (3:15 pm), Q14 (Perimeter), Q15 (£1.65), Q16 (Difference=4), Q17 (marbles), Q18 (only listed 6).
+            </p>
+          </div>
+
+          <!-- Oisin Mervyn -->
+          <div class="profile-box">
+            <div class="profile-box-top">
+              <span class="profile-name">Oisin Mervyn</span>
+              <span class="profile-pill">CAT4 110 / PTM 90 (−20) &bull; Live Check Target</span>
+            </div>
+            <p style="color:#93c5fd;margin:0 0 5px;font-weight:700;">
+              <strong>Profile:</strong> Highest CAT4 Quantitative score in Group A (110, −20 PTM gap; absent during Nov 16–17 check-up).
+            </p>
+            <p style="color:#fde68a;margin:0;font-weight:600;">
+              <strong>Classroom Strategy:</strong> Use each question's <em>"Live Check for Oisin"</em> prompt in the Pupil Breakdown panel to probe his oral reasoning and bar-model setup live on mini-whiteboards!
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COLLAPSIBLE DRAWER 2: 16 VOCABULARY & SPOKEN STEM SENTENCES -->
+    <div id="drawer-vocab" class="top-drawer hidden">
+      <div class="drawer-inner">
+        <div class="drawer-head">
+          <span class="drawer-title">P5B Group A Core Vocabulary &amp; Spoken Stem Sentences (16 Essential Terms)</span>
+          <button type="button" class="btn-close-drawer" onclick="toggleTopDrawer('vocab')">Close &times;</button>
+        </div>
+        <div id="vocab-grid" class="vocab-grid"></div>
+      </div>
+    </div>
+
+    <!-- COLLAPSIBLE DRAWER 3: INTERACTIVE 100 SQUARE WITH ODD & EVEN HIGHLIGHTING -->
+    <div id="drawer-sq100" class="top-drawer hidden">
+      <div class="drawer-inner">
+        <div class="drawer-head">
+          <span class="drawer-title">&#128290; Interactive 100 Square (1–100) &bull; Odd &amp; Even Number Highlighting &amp; Multiples Explorer</span>
+          <button type="button" class="btn-close-drawer" onclick="toggleTopDrawer('sq100')">Close &times;</button>
+        </div>
+
+        <div class="sq100-panel">
+          <div class="sq100-toolbar">
+            <div class="sq100-btn-group">
+              <button type="button" id="sq-btn-odd" class="sq-mode-btn" onclick="setSq100Mode('odd')">&#128995; Highlight Odd</button>
+              <button type="button" id="sq-btn-even" class="sq-mode-btn" onclick="setSq100Mode('even')">&#128994; Highlight Even</button>
+              <button type="button" id="sq-btn-both" class="sq-mode-btn" onclick="setSq100Mode('both')">&#127763; Odd vs. Even Columns</button>
+              <button type="button" id="sq-btn-m2" class="sq-mode-btn" onclick="setSq100Mode('m2')">&times;2</button>
+              <button type="button" id="sq-btn-m5" class="sq-mode-btn" onclick="setSq100Mode('m5')">&times;5</button>
+              <button type="button" id="sq-btn-m6" class="sq-mode-btn" onclick="setSq100Mode('m6')">&times;6</button>
+              <button type="button" id="sq-btn-m10" class="sq-mode-btn" onclick="setSq100Mode('m10')">&times;10</button>
+            </div>
+
+            <div class="sq100-btn-group">
+              <button type="button" id="sq-btn-mystery" class="sq-mode-btn" onclick="toggleSq100Mystery()">&#128065;&#65039; Hide Numbers</button>
+              <button type="button" class="sq-mode-btn" style="background:#e11d48;border-color:#fda4af;color:#fff;" onclick="clearSq100Highlights()">Clear Highlights</button>
+            </div>
+          </div>
+
+          <div class="sq100-layout">
+            <div id="sq100-grid" class="sq100-grid"></div>
+
+            <div class="sq100-rule-card">
+              <div style="font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:0.05em;color:#fde047;margin-bottom:6px;">
+                Active Pattern &amp; Teaching Prompt
+              </div>
+              <p id="sq100-rule-text" style="margin:0 0 12px;font-weight:700;color:#f8fafc;">
+                Tap <strong>Highlight Odd</strong>, <strong>Highlight Even</strong>, or <strong>Odd vs. Even Columns</strong> above, or tap any tile on the 100 square to pin/circle it in amber!
+              </p>
+              <div style="background:#0f172a;border:1px solid #334155;border-radius:10px;padding:10px 12px;font-size:12px;color:#cbd5e1;space-y:4px;">
+                <div style="margin-bottom:5px;"><strong style="color:#c4b5fd;">&#128995; Odd Rule:</strong> Odd numbers always end in <strong>1, 3, 5, 7, or 9</strong> (cannot be shared equally into 2 whole groups).</div>
+                <div style="margin-bottom:5px;"><strong style="color:#6ee7b7;">&#128994; Even Rule:</strong> Even numbers always end in <strong>0, 2, 4, 6, or 8</strong> (every even &times; 5 ends in 0!).</div>
+                <div><strong style="color:#fde047;">&#128070; Tap-to-Pin:</strong> Tap any number tiles on the grid to highlight custom complements (e.g., 35 &amp; 65 = 100) or factors of 18!</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN WORKSPACE -->
+  <div class="workspace">
+
+    <!-- LEFT: QUESTION REVIEW STAGE -->
+    <main id="review-pane" class="review-pane">
+
+      <!-- TOP 20-QUESTION NAVIGATOR & PART FILTERS -->
+      <section class="nav-panel">
+        <div class="filter-row">
+          <div class="filter-tabs">
+            <button type="button" class="filter-btn active" data-filter="all" onclick="setFilter('all')">All 20 Questions</button>
+            <button type="button" class="filter-btn" data-filter="part1" onclick="setFilter('part1')">Part 1: Complements &amp; Inverse (Q1–5)</button>
+            <button type="button" class="filter-btn" data-filter="part2" onclick="setFilter('part2')">Part 2: Partitioning &amp; PV (Q6–10)</button>
+            <button type="button" class="filter-btn" data-filter="part3" onclick="setFilter('part3')">Part 3: Fractions &amp; Measures (Q11–15)</button>
+            <button type="button" class="filter-btn" data-filter="part4" onclick="setFilter('part4')">Part 4: Reasoning &amp; Vocab (Q16–20)</button>
+          </div>
+
+          <div class="legend-row">
+            <span><span class="dot" style="background:#10b981;"></span>2+ Secure</span>
+            <span><span class="dot" style="background:#f59e0b;"></span>1 Secure</span>
+            <span><span class="dot" style="background:#f43f5e;"></span>All 3 Missed</span>
+          </div>
+        </div>
+
+        <div id="q-pills-grid" class="q-pills-grid"></div>
+      </section>
+
+      <!-- MAIN QUESTION REVIEW CARD -->
+      <section class="question-card">
+
+        <!-- Header Row -->
+        <div class="card-header">
+          <div class="card-badges">
+            <span id="badge-qnum" class="badge-qnum">Q1 of 20</span>
+            <span id="badge-part" class="badge-part">Part 1: Higher Retrieval &amp; Inverse</span>
+          </div>
+
+          <div class="nav-controls">
+        <!-- Prompt + Interactive Class Try-It (100% Zero-Spoiler Default View) -->
+        <div class="prompt-grid">
+          <div>
+            <h2 id="q-text" class="q-text">Question text</h2>
+          </div>
+
+          <div class="tryit-box">
+            <div class="tryit-header">
+              <span>Interactive Class Check</span>
+              <span style="color:#4f46e5;">Zero-Spoiler Mode</span>
+            </div>
+            <div id="tryit-controls"></div>
+            <p id="tryit-fb" class="tryit-fb"></p>
+          </div>
+        </div>
+
+        <!-- 5 STRICT MANUAL TEACHER REVEAL BUTTONS (ALL LOCKED & HIDDEN BY DEFAULT) -->
+        <div class="reveal-bar">
+          <button type="button" id="btn-rev-trap" class="btn-reveal" style="background:var(--rose-soft);border:2px solid #fb7185;color:#881337;" onclick="toggleReveal('trap')">
+            <span>1. &#128269; Reveal Class Trap</span>
+          </button>
+
+          <button type="button" id="btn-rev-cpa" class="btn-reveal rev-cpa" onclick="toggleReveal('cpa')">
+            <span>2. &#128161; Reveal Visual Hint</span>
+          </button>
+
+          <button type="button" id="btn-rev-working" class="btn-reveal rev-working" onclick="toggleReveal('working')">
+            <span>3. &#129692; Reveal Step-by-Step</span>
+          </button>
+
+          <button type="button" id="btn-rev-answer" class="btn-reveal rev-answer" onclick="toggleReveal('answer')">
+            <span>4. &#9989; Reveal Answer</span>
+          </button>
+
+          <button type="button" id="btn-rev-pupils" class="btn-reveal rev-pupils" onclick="toggleReveal('pupils')">
+            <span>5. &#128101; Reveal Pupil Data</span>
+          </button>
+        </div>
+
+        <!-- HIDDEN-BY-DEFAULT REVEAL PANELS (ONLY RENDERED/SHOWN ON EXPLICIT CLICK) -->
+        <div class="reveal-stack">
+
+          <!-- 1. ANONYMOUS CLASS TRAP PANEL -->
+          <div id="panel-trap" class="rev-panel hidden" style="background:var(--rose-soft);border:2px solid #fda4af;">
+            <div class="panel-head">
+              <span class="panel-label" style="color:#881337;">&#128269; Anonymous Class Trap Spotlight</span>
+              <span style="font-size:11px;font-weight:800;color:#9f1239;">Spot the Mistake Before Solving</span>
+            </div>
+            <p id="trap-text" class="cpa-caption" style="margin:0;color:#881337;"></p>
+          </div>
+
+          <!-- 2. VISUAL CPA MODEL / HINT PANEL -->
+          <div id="panel-cpa" class="rev-panel panel-cpa hidden">
+            <div class="panel-head">
+              <span class="panel-label" style="color:#78350f;">&#128161; Concrete-Pictorial-Abstract (CPA) Visual Model</span>
+              <span style="font-size:11px;font-weight:800;color:#92400e;">Discuss Representation Before Answer</span>
+            </div>
+            <div id="cpa-stage" class="cpa-stage"></div>
+          </div>
+
+          <!-- 3. STEP-BY-STEP WORKING PANEL -->
+          <div id="panel-working" class="rev-panel panel-working hidden">
+            <div class="panel-head">
+              <span class="panel-label" style="color:#1e3a8a;">&#129692; Step-by-Step Working</span>
+            </div>
+            <div id="working-list" class="working-list"></div>
+          </div>
+
+          <!-- 4. FINAL ANSWER PANEL -->
+          <div id="panel-answer" class="rev-panel panel-answer hidden">
+            <div>
+              <span class="panel-label" style="color:#065f46;">&#9989; Verified Final Answer</span>
+              <span id="answer-big" class="answer-big"></span>
+            </div>
+            <button type="button" class="btn-nav btn-nav-next" style="padding:11px 18px;font-size:14px;" onclick="nextQuestion()">
+              Next Question &rarr;
+            </button>
+          </div>
+
+          <!-- 5. PUPIL BREAKDOWN PANEL -->
+          <div id="panel-pupils" class="rev-panel panel-pupils hidden">
+            <div class="panel-head">
+              <span class="panel-label" style="color:#1e1b4b;">&#128101; Group A Diagnostic Breakdown (Paul, Julia, Nevaeh &amp; Oisin)</span>
+              <button type="button" class="btn-mask-names" onclick="toggleHideNames()">
+                &#128374;&#65039; <span id="mask-names-label">Hide Names for Board</span>
+              </button>
+            </div>
+            <div id="pupils-cards" class="pupils-cards"></div>
+          </div>
+
+        </div>
+      </section>
+    </main>
+
+    <!-- RIGHT / FULLSCREEN INTERACTIVE SURFACE PEN WHITEBOARD -->
+    <aside id="wb-pane" class="wb-pane hidden">
+      <div class="wb-toolbar">
+        <div class="wb-group">
+          <span style="font-weight:900;font-size:12.5px;color:#34d399;margin-right:4px;">WHITEBOARD</span>
+          <button type="button" class="pen-swatch active" data-pen="#0f172a" style="background:#0f172a;" onclick="setWbPen('#0f172a')" title="Black Pen"></button>
+          <button type="button" class="pen-swatch" data-pen="#2563eb" style="background:#2563eb;" onclick="setWbPen('#2563eb')" title="Blue Pen"></button>
+          <button type="button" class="pen-swatch" data-pen="#dc2626" style="background:#dc2626;" onclick="setWbPen('#dc2626')" title="Red Pen"></button>
+          <button type="button" class="pen-swatch" data-pen="#059669" style="background:#059669;" onclick="setWbPen('#059669')" title="Emerald Pen"></button>
+          <button type="button" class="pen-swatch" data-pen="#ea580c" style="background:#ea580c;" onclick="setWbPen('#ea580c')" title="Orange Pen"></button>
+
+          <button type="button" id="btn-wb-hi" class="wb-btn" style="color:#fde047;" onclick="setWbTool('highlighter')">Highlighter</button>
+          <button type="button" id="btn-wb-er" class="wb-btn" style="color:#fed7aa;" onclick="setWbTool('eraser')">Eraser</button>
+        </div>
+
+        <div class="wb-group">
+          <select id="wb-bg" class="wb-select" onchange="setWbBg(this.value)">
+            <option value="blank">Blank</option>
+            <option value="grid">Squared Maths Grid</option>
+            <option value="numberline">Empty Number Line</option>
+            <option value="thhto">Th | H | T | O Columns</option>
+            <option value="barmodel">Bar Model Frame</option>
+            <option value="sq100_oddeven">100 Square (Odd / Even Columns)</option>
+          </select>
+
+          <button type="button" class="wb-btn" onclick="undoWb()">Undo</button>
+          <button type="button" id="btn-wb-full" class="wb-btn" style="background:#4f46e5;border-color:#6366f1;" onclick="toggleWbFull()">Fullscreen</button>
+          <button type="button" class="wb-btn" style="background:#e11d48;border-color:#f43f5e;" onclick="clearWb()">Clear</button>
+          <button type="button" class="wb-btn" onclick="toggleWhiteboard()">&times;</button>
+        </div>
+      </div>
+
+      <div id="wb-wrap" class="wb-canvas-wrap">
+        <canvas id="wb-canvas" style="display:block;width:100%;height:100%;"></canvas>
+      </div>
+    </aside>
+  </div>
+
+  <script>
+    // =========================================================================
+    // 1. 16 CORE VOCABULARY TERMS & SPOKEN STEM SENTENCES
+    // =========================================================================
+    const VOCAB_ITEMS = [
+      { term: 'Complement', def: 'Two numbers that join together to make a friendly landmark (10, 100, or 1,000).', stem: '"When the tens make 100, the hundreds make 900 (640 + 360 = 1,000)."' },
+      { term: 'Exchange', def: 'Trading 1 hundred for 10 tens (or 1 ten for 10 ones) when subtracting.', stem: '"Decompose 502 into 400 + 90 + 12 so every column can subtract."' },
+      { term: 'Non-Standard Partitioning', def: 'Splitting a number flexibly into different combinations of hundreds, tens, and ones.', stem: '"482 is 400 + 80 + 2, which is also 300 + 180 + 2."' },
+      { term: 'Inverse', def: 'The opposite operation that undoes a calculation (+ undoes −; × undoes ÷).', stem: '"To find a missing starting whole in [ ] − 35 = 48, add 48 + 35 = 83."' },
+      { term: 'Fact Family', def: 'Four connected multiplication and division equations built from three numbers.', stem: '"In a division fact, the Boss Number (56) goes at the front: 56 ÷ 8 = 7."' },
+      { term: 'Place Value Shift', def: 'Moving digits left when multiplying by 10/100 or right when dividing.', stem: '"Multiplying 46 by 10 shifts every digit one column left to 460."' },
+      { term: 'Rounding', def: 'Finding the nearest multiple of 10 or 100 using the halfway boundary.', stem: '"Look at the tens digit in 648: 4 tens is below 50, so round down to 600."' },
+      { term: 'Quotient', def: 'The result when one number is divided by another (54 ÷ 6 = 9).', stem: '"6 × 9 = 54, so 54 divided by 6 equals 9."' },
+      { term: 'Non-Unit Fraction', def: 'A fraction with a numerator greater than 1 (such as 3/4).', stem: '"Divide by the denominator (24 ÷ 4 = 6), then multiply by the numerator (6 × 3 = 18)."' },
+      { term: 'Bridging Time', def: 'Splitting a time interval at the o’clock (60-minute) boundary.', stem: '"2:40 pm + 20 mins = 3:00 pm, plus 15 mins = 3:15 pm."' },
+      { term: 'Perimeter', def: 'The total distance all the way around all FOUR outside edges of a shape.', stem: '"Perimeter walks all four sides: 8 cm + 3 cm + 8 cm + 3 cm = 22 cm."' },
+      { term: 'Difference', def: 'The gap between two numbers found by subtracting or counting up.', stem: '"Count up from 89 to 100 (+11), then 100 to 124 (+24) -> 35."' },
+      { term: 'Twice / Multiplicative', def: 'Two times as many as a starting amount (× 2).', stem: '"Oisin has 18; Nevaeh has twice as many (18 × 2 = 36); altogether = 18 + 36 = 54."' },
+      { term: 'Factor', def: 'A whole number that divides into another number exactly with no remainder.', stem: '"Factors come in pairs that multiply to make 18: 1×18, 2×9, 3×6."' },
+      { term: 'Equivalent Fractions', def: 'Different fractions that represent the exact same proportion of a whole.', stem: '"Multiply top and bottom by 5: 1/2 = 5/10."' },
+      { term: 'Error Analysis', def: 'Inspecting an incorrect answer to explain the trap and prove the fix.', stem: '"75 + 35 = 110 (too big!), so 100 − 35 must be 65."' }
+    ];
+
+    // =========================================================================
+    // 2. ALL 20 HIGHER-PITCH DIAGNOSTIC CHECK-UP QUESTIONS & PUPIL DATA
+    // =========================================================================
+    const QUESTIONS = [
+      // --- PART 1: PLACE VALUE, ROUNDING & ORDERING (Q1–Q5) ---
+      {
+        num: 1,
+        part: 'part1',
+        partTitle: 'Part 1: Place Value, Rounding & Ordering',
+        prompt: 'Write the number four thousand, and sixty-eight in figures.',
+        speech: 'Question 1. Write the number four thousand, and sixty-eight in figures.',
+        trapText: 'Common Class Traps: Writing 4,680 (putting the digits in the wrong columns) or 408 (forgetting the zero placeholder in the hundreds column!).',
+        inputType: 'text',
+        answer: '4,068',
+        accepted: ['4068', '4,068'],
+        pupils: [
+          { name: 'Paul Doherty', status: 'ok', note: '4,068' },
+          { name: 'Julia Gibson', status: 'miss', note: 'Wrote 4,680' },
+          { name: 'Nevaeh Cunningham-Carroll', status: 'miss', note: 'Wrote 408 (dropped the zero placeholder)' },
+          { name: 'Oisin Mervyn', status: 'obs', note: '👀 Live Check for Oisin: Ask why the 0 must sit in the Hundreds column.' }
+        ],
+        cpaCode: 'thhto:4,0,6,8|4 Thousands, 0 Hundreds (placeholder!), 6 Tens, 8 Ones',
+        working: [
+          '1. Set up 4 place value columns: Th | H | T | O.',
+          '2. Place 4 in Thousands, 0 in Hundreds (empty column placeholder), 6 in Tens, and 8 in Ones.',
+          '3. Answer: 4,068.'
+        ]
+      },
+      {
+        num: 2,
+        part: 'part1',
+        partTitle: 'Part 1: Place Value, Rounding & Ordering',
+        prompt: 'What is the value of the digit 7 in   3,742 ?',
+        speech: 'Question 2. What is the value of the digit 7 in 3,742?',
+        trapText: 'Common Class Trap: Writing 7 or 70 instead of checking the Hundreds column (700).',
+        inputType: 'text',
+        answer: '700',
+        accepted: ['700', '7hundreds'],
+        pupils: [
+          { name: 'Paul Doherty', status: 'ok', note: '700' },
+          { name: 'Julia Gibson', status: 'ok', note: '700' },
+          { name: 'Nevaeh Cunningham-Carroll', status: 'ok', note: '700' },
+          { name: 'Oisin Mervyn', status: 'obs', note: '👀 Live Check for Oisin: Partition 3,742 into all four parts (3,000 + 700 + 40 + 2).' }
+        ],
+        cpaCode: 'thhto:3,7,4,2|7 sits in the Hundreds (H) column = 700',
+        working: [
+          '1. Read columns from right to left: Ones (2), Tens (40), Hundreds (700), Thousands (3,000).',
+          '2. The value of 7 is 700.'
+        ]
+      },
+      {
+        num: 3,
+        part: 'part1',
+        partTitle: 'Part 1: Place Value, Rounding & Ordering',
+        prompt: 'What is 100 LESS than   1,045 ?',
+        speech: 'Question 3. What is 100 less than 1,045?',
+        trapText: 'Common Class Trap: Writing 1,040 or 955 — losing track when stepping backwards across the 1,000 boundary!',
+        inputType: 'text',
+        answer: '945',
+        accepted: ['945'],
+        pupils: [
+          { name: 'Paul Doherty', status: 'ok', note: '945' },
+          { name: 'Julia Gibson', status: 'miss', note: 'Wrote 1,040' },
+          { name: 'Nevaeh Cunningham-Carroll', status: 'miss', note: 'Wrote 955' },
+          { name: 'Oisin Mervyn', status: 'obs', note: '👀 Live Check for Oisin: Ask why the 45 stays unchanged when subtracting 100.' }
+        ],
+        cpaCode: 'jumps:945,−55 <- 1,000,−45 <- 1,045|Two-hop bridge across 1,000: 1,045 − 45 = 1,000, then 1,000 − 55 = 945',
+        working: [
+          '1. Jump back 45 from 1,045 to land on 1,000.',
+          '2. Jump back the remaining 55 from 1,000 to land on 945.',
+          '3. Check: 945 + 100 = 1,045.'
+        ]
+      },
+      {
+        num: 4,
+        part: 'part1',
+        partTitle: 'Part 1: Place Value, Rounding & Ordering',
+        prompt: 'Round   468   to the nearest 10.',
+        speech: 'Question 4. Round 468 to the nearest 10.',
+        trapText: 'Common Class Trap: Rounding to the nearest 100 (500) instead of the nearest 10 (470), or rounding down to 460.',
+        inputType: 'text',
+        answer: '470',
+        accepted: ['470'],
+        pupils: [
+          { name: 'Paul Doherty', status: 'ok', note: '470' },
+          { name: 'Julia Gibson', status: 'ok', note: '470' },
+          { name: 'Nevaeh Cunningham-Carroll', status: 'miss', note: 'Wrote 500 (rounded to nearest 100 instead of 10)' },
+          { name: 'Oisin Mervyn', status: 'obs', note: '👀 Live Check for Oisin: Ask what 465 rounds to when rounding to the nearest 10 (470!).' }
+        ],
+        cpaCode: 'jumps:460,— 465 (Halfway),468 -> 470|468 sits between 460 and 470; 8 ones >= 5 so round UP to 470',
+        working: [
+          '1. Find the two multiples of 10 around 468: 460 and 470.',
+          '2. Look at the ones digit (8): because 8 is 5 or more, round up to 470.'
+        ]
+      },
+      {
+        num: 5,
+        part: 'part1',
+        partTitle: 'Part 1: Place Value, Rounding & Ordering',
+        prompt: 'Order these numbers from SMALLEST to LARGEST:   4,409  |  4,091  |  4,901  |  4,190',
+        speech: 'Question 5. Order these numbers from smallest to largest: 4,409, 4,091, 4,901, 4,190.',
+        trapText: 'Common Class Trap: Mixing up 4,091 and 4,190 by ignoring the zero placeholder in the hundreds column.',
+        inputType: 'text',
+        answer: '4,091,  4,190,  4,409,  4,901',
+        accepted: ['4091,4190,4409,4901', '4,091,4,190,4,409,4,901', '4091419044094901'],
+        pupils: [
+          { name: 'Paul Doherty', status: 'ok', note: '4,091, 4,190, 4,409, 4,901' },
+          { name: 'Julia Gibson', status: 'ok', note: '4,091, 4,190, 4,409, 4,901' },
+          { name: 'Nevaeh Cunningham-Carroll', status: 'miss', note: 'Swapped 4,091 and 4,190' },
+          { name: 'Oisin Mervyn', status: 'obs', note: '👀 Live Check for Oisin: Explain why 4,091 is smaller than 4,190.' }
+        ],
+        cpaCode: 'orderTable4000',
+        working: [
+          '1. All four start with 4 Thousands, so compare the Hundreds column: 0 < 1 < 4 < 9.',
+          '2. Smallest to largest: 4,091, 4,190, 4,409, 4,901.'
+        ]
+      },
+
+      // --- PART 2: BONDS TO 100, SUBTRACTION & INVERSE (Q6–Q10) ---
+      {
+        num: 6,
+        part: 'part2',
+        partTitle: 'Part 2: Bonds to 100, Subtraction & Inverse',
+        prompt: 'Find the missing number:   64 + [   ] = 100',
+        speech: 'Question 6. Find the missing number: 64 plus blank equals 100.',
+        trapText: 'The "110 Trap": Writing 46 (making 60 + 40 = 100 AND 4 + 6 = 10, which adds up to 110 instead of 100!).',
+        inputType: 'text',
+        answer: '36',
+        accepted: ['36'],
+        pupils: [
+          { name: 'Paul Doherty', status: 'ok', note: '36' },
+          { name: 'Julia Gibson', status: 'miss', note: 'Wrote 46 (110 trap: 64 + 46 = 110!)' },
+          { name: 'Nevaeh Cunningham-Carroll', status: 'miss', note: 'Wrote 46 (110 trap)' },
+          { name: 'Oisin Mervyn', status: 'obs', note: '👀 Live Check for Oisin: Prove why 64 + 46 = 110 is 10 too big.' }
+        ],
+        cpaCode: 'jumps:64,+6 -> 70,+30 -> 100|Add both jumps: 6 + 30 = 36 (When ones make 10, tens make 90!)',
+        working: [
+          '1. Jump from 64 to the next ten (70): + 6.',
+          '2. Jump from 70 to 100: + 30.',
+          '3. Combine: 6 + 30 = 36 (Check: 64 + 36 = 100).'
+        ]
+      },
+      {
+        num: 7,
+        part: 'part2',
+        partTitle: 'Part 2: Bonds to 100, Subtraction & Inverse',
+        prompt: 'Work out:   100 − 38 = [   ]',
+        speech: 'Question 7. Work out 100 minus 38.',
+        trapText: 'The "110 Trap": Writing 72 (72 + 38 = 110 — 10 too big!).',
+        inputType: 'text',
+        answer: '62',
+        accepted: ['62'],
+        pupils: [
+          { name: 'Paul Doherty', status: 'ok', note: '62' },
+          { name: 'Julia Gibson', status: 'miss', note: 'Wrote 72 (110 trap: 72 + 38 = 110!)' },
+          { name: 'Nevaeh Cunningham-Carroll', status: 'miss', note: 'Wrote 72' },
+          { name: 'Oisin Mervyn', status: 'obs', note: '👀 Live Check for Oisin: Check 62 + 38 = 100.' }
+        ],
+        cpaCode: 'jumps:100,−30 -> 70,−8 -> 62|100 − 30 = 70, then 70 − 8 = 62',
+        working: [
+          '1. Subtract the tens first: 100 − 30 = 70.',
+          '2. Subtract the ones next: 70 − 8 = 62.',
+          '3. Inverse check: 62 + 38 = 100.'
+        ]
+      },
+      {
+        num: 8,
+        part: 'part2',
+        partTitle: 'Part 2: Bonds to 100, Subtraction & Inverse',
+        prompt: 'Calculate the DIFFERENCE between   503   and   268.',
+        speech: 'Question 8. Calculate the difference between 503 and 268.',
+        trapText: 'Common Class Traps: Adding instead of subtracting (503 + 268 = 771) or reversing digits across the zero (365).',
+        inputType: 'text',
+        answer: '235',
+        accepted: ['235'],
+        pupils: [
+          { name: 'Paul Doherty', status: 'miss', note: 'Wrote 365 (reversed digits across the zero)' },
+          { name: 'Julia Gibson', status: 'miss', note: 'Wrote 365' },
+          { name: 'Nevaeh Cunningham-Carroll', status: 'miss', note: 'Added 503 + 268 = 771' },
+          { name: 'Oisin Mervyn', status: 'obs', note: '👀 Live Check for Oisin: Decompose 503 into 400 + 90 + 13.' }
+        ],
+        cpaCode: 'decomp503',
+        working: [
+          '1. Difference means subtract: 503 − 268.',
+          '2. Decompose 503 across the zero into 400 + 90 + 13.',
+          '3. 400 − 200 = 200; 90 − 60 = 30; 13 − 8 = 5 -> 235 (Check: 235 + 268 = 503).'
+        ]
+      },
+      {
+        num: 9,
+        part: 'part2',
+        partTitle: 'Part 2: Bonds to 100, Subtraction & Inverse',
+        prompt: 'Working backwards:   [   ] − 25 = 48',
+        speech: 'Question 9. Working backwards: blank minus 25 equals 48.',
+        trapText: 'Common Class Traps: Subtracting 48 − 25 = 23 instead of adding, or slipping by 10 when adding (63 instead of 73).',
+        inputType: 'text',
+        answer: '73',
+        accepted: ['73'],
+        pupils: [
+          { name: 'Paul Doherty', status: 'miss', note: 'Wrote 23 (subtracted 48 − 25)' },
+          { name: 'Julia Gibson', status: 'miss', note: 'Wrote 63 (10-slip when adding 48 + 25)' },
+          { name: 'Nevaeh Cunningham-Carroll', status: 'miss', note: 'Wrote 23' },
+          { name: 'Oisin Mervyn', status: 'obs', note: '👀 Live Check for Oisin: Draw a Part-Whole Bar Model showing why the starting whole is largest.' }
+        ],
+        cpaCode: 'bar_inverse:?,25,48',
+        working: [
+          '1. To find the missing starting whole, use the inverse (+) of − 25.',
+          '2. Add both parts: 48 + 20 = 68, + 5 = 73.',
+          '3. Verify: 73 − 25 = 48.'
+        ]
+      },
+      {
+        num: 10,
+        part: 'part2',
+        partTitle: 'Part 2: Bonds to 100, Subtraction & Inverse',
+        prompt: 'Work out mentally:   346 + 29 = [   ]',
+        speech: 'Question 10. Work out mentally: 346 plus 29.',
+        trapText: 'Common Class Trap: Adding 30 (376) and forgetting to subtract 1 back off (375).',
+        inputType: 'text',
+        answer: '375',
+        accepted: ['375'],
+        pupils: [
+          { name: 'Paul Doherty', status: 'ok', note: '375' },
+          { name: 'Julia Gibson', status: 'ok', note: '375' },
+          { name: 'Nevaeh Cunningham-Carroll', status: 'miss', note: 'Wrote 365' },
+          { name: 'Oisin Mervyn', status: 'obs', note: '👀 Live Check for Oisin: Explain the +30 − 1 compensation shortcut.' }
+        ],
+        cpaCode: 'jumps:346,+30 -> 376,−1 -> 375|Mental compensation: +29 is the same as +30, then −1',
+        working: [
+          '1. Round 29 up to a friendly 30: 346 + 30 = 376.',
+          '2. Adjust by subtracting the extra 1: 376 − 1 = 375.'
+        ]
+      },
+
+      // --- PART 3: TABLES, FACT FAMILIES & PARTITIONING (Q11–Q14) ---
+      {
+        num: 11,
+        part: 'part3',
+        partTitle: 'Part 3: Tables, Fact Families & Partitioning',
+        prompt: 'Work out:   7 × 8 = [   ]',
+        speech: 'Question 11. Work out 7 times 8.',
+        trapText: 'Common Class Trap: Confusing 7 × 8 = 56 with 6 × 8 = 48 or 6 × 9 = 54.',
+        inputType: 'text',
+        answer: '56',
+        accepted: ['56'],
+        pupils: [
+          { name: 'Paul Doherty', status: 'miss', note: 'Wrote 48' },
+          { name: 'Julia Gibson', status: 'ok', note: '56' },
+          { name: 'Nevaeh Cunningham-Carroll', status: 'miss', note: 'Wrote 54' },
+          { name: 'Oisin Mervyn', status: 'obs', note: '👀 Live Check for Oisin: Double 7 × 4 (28) to prove 7 × 8 = 56.' }
+        ],
+        cpaCode: 'triangle:56,7,8',
+        working: [
+          '1. Anchor from 7 × 4 = 28, then double it: 28 + 28 = 56.',
+          '2. Memory rhyme: "5, 6, 7, 8 — 56 is 7 × 8!"'
+        ]
+      },
+      {
+        num: 12,
+        part: 'part3',
+        partTitle: 'Part 3: Tables, Fact Families & Partitioning',
+        prompt: 'Work out:   54 ÷ 6 = [   ]',
+        speech: 'Question 12. Work out 54 divided by 6.',
+        trapText: 'Common Class Trap: Guessing 8 or 7 instead of using 10 × 6 = 60 minus 1 group of 6.',
+        inputType: 'text',
+        answer: '9',
+        accepted: ['9'],
+        pupils: [
+          { name: 'Paul Doherty', status: 'miss', note: 'Wrote 8' },
+          { name: 'Julia Gibson', status: 'ok', note: '9' },
+          { name: 'Nevaeh Cunningham-Carroll', status: 'miss', note: 'Missed' },
+          { name: 'Oisin Mervyn', status: 'obs', note: '👀 Live Check for Oisin: Derive 9 × 6 = 54 from 10 × 6 = 60.' }
+        ],
+        cpaCode: 'triangle:54,6,9',
+        working: [
+          '1. Use 10 × 6 = 60 as a friendly anchor.',
+          '2. Subtract one group of 6: 60 − 6 = 54, which is 9 groups of 6.',
+          '3. Therefore, 54 ÷ 6 = 9.'
+        ]
+      },
+      {
+        num: 13,
+        part: 'part3',
+        partTitle: 'Part 3: Tables, Fact Families & Partitioning',
+        prompt: 'Write ONE division fact from   6 × 9 = 54.',
+        speech: 'Question 13. Write one division fact from 6 times 9 equals 54.',
+        trapText: 'Common Class Trap: Writing 6 ÷ 9 = 54 (putting a small factor at the front instead of the Boss Number 54!).',
+        inputType: 'text',
+        answer: '54 ÷ 6 = 9  (or  54 ÷ 9 = 6)',
+        accepted: ['54÷6=9', '54/6=9', '54÷9=6', '54/9=6', '9=54÷6', '6=54÷9'],
+        pupils: [
+          { name: 'Paul Doherty', status: 'miss', note: 'Wrote 6 ÷ 9 = 54' },
+          { name: 'Julia Gibson', status: 'ok', note: '54 ÷ 6 = 9' },
+          { name: 'Nevaeh Cunningham-Carroll', status: 'miss', note: 'Wrote 9 × 6 = 54 (multiplication instead of division)' },
+          { name: 'Oisin Mervyn', status: 'obs', note: '👀 Live Check for Oisin: Ask for BOTH division facts from (54, 6, 9).' }
+        ],
+        cpaCode: 'triangle:54,6,9',
+        working: [
+          '1. In a division equation, the largest product (54) MUST go at the front.',
+          '2. Valid division facts: 54 ÷ 6 = 9  OR  54 ÷ 9 = 6.'
+        ]
+      },
+      {
+        num: 14,
+        part: 'part3',
+        partTitle: 'Part 3: Tables, Fact Families & Partitioning',
+        prompt: 'Complete this non-standard partitioning:   482 = 300 + [   ] + 2',
+        speech: 'Question 14. Complete this non-standard partitioning: 482 equals 300 plus blank plus 2.',
+        trapText: 'Common Class Trap: Writing 80 (forgetting that dropping 400 to 300 moves 100 into the tens column to make 180!).',
+        inputType: 'text',
+        answer: '180',
+        accepted: ['180'],
+        pupils: [
+          { name: 'Paul Doherty', status: 'ok', note: '180' },
+          { name: 'Julia Gibson', status: 'miss', note: 'Wrote 80' },
+          { name: 'Nevaeh Cunningham-Carroll', status: 'ok', note: '180' },
+          { name: 'Oisin Mervyn', status: 'obs', note: '👀 Live Check for Oisin: Partition 482 as 200 + [ ? ] + 2.' }
+        ],
+        cpaCode: 'nonstd482',
+        working: [
+          '1. Standard partition: 482 = 400 + 80 + 2.',
+          '2. Trade 100 from 400 into the tens: 300 + 180 + 2.'
+        ]
+      },
+
+      // --- PART 4: FRACTIONS, DECIMALS, MEASURES & REASONING (Q15–Q20) ---
+      {
+        num: 15,
+        part: 'part4',
+        partTitle: 'Part 4: Fractions, Decimals, Measures & Reasoning',
+        prompt: 'Find   3/4   of   36.',
+        speech: 'Question 15. Find three quarters of 36.',
+        trapText: 'Common Class Trap: Finding only 1/4 (9) and stopping before multiplying by 3 to get 27.',
+        inputType: 'text',
+        answer: '27',
+        accepted: ['27'],
+        pupils: [
+          { name: 'Paul Doherty', status: 'miss', note: 'Wrote 9 (found 1/4 only)' },
+          { name: 'Julia Gibson', status: 'miss', note: 'Wrote 18 (found 1/2 instead of 3/4)' },
+          { name: 'Nevaeh Cunningham-Carroll', status: 'miss', note: 'Missed' },
+          { name: 'Oisin Mervyn', status: 'obs', note: '👀 Live Check for Oisin: Draw a 4-part fraction bar for 36.' }
+        ],
+        cpaCode: 'fracbar36',
+        working: [
+          '1. Divide by the denominator to find 1/4: 36 ÷ 4 = 9.',
+          '2. Multiply by the numerator to find 3/4: 9 × 3 = 27.'
+        ]
+      },
+      {
+        num: 16,
+        part: 'part4',
+        partTitle: 'Part 4: Fractions, Decimals, Measures & Reasoning',
+        prompt: 'Which decimal is LARGER:   0.4   or   0.35 ?',
+        speech: 'Question 16. Which decimal is larger: 0.4 or 0.35?',
+        trapText: 'Common Class Trap: Picking 0.35 because "35 is bigger than 4" — forgetting to pad 0.4 to 0.40!',
+        inputType: 'text',
+        answer: '0.4',
+        accepted: ['0.4', '0.40'],
+        pupils: [
+          { name: 'Paul Doherty', status: 'miss', note: 'Picked 0.35' },
+          { name: 'Julia Gibson', status: 'miss', note: 'Picked 0.35' },
+          { name: 'Nevaeh Cunningham-Carroll', status: 'miss', note: 'Picked 0.35' },
+          { name: 'Oisin Mervyn', status: 'obs', note: '👀 Live Check for Oisin: Explain why 4 tenths (0.40) is larger than 35 hundredths (0.35).' }
+        ],
+        cpaCode: 'dec04_035',
+        working: [
+          '1. Pad 0.4 with a zero placeholder so both have two decimal places: 0.40 vs 0.35.',
+          '2. 40 hundredths (4 tenths) is greater than 35 hundredths -> 0.4 is larger.'
+        ]
+      },
+      {
+        num: 17,
+        part: 'part4',
+        partTitle: 'Part 4: Fractions, Decimals, Measures & Reasoning',
+        prompt: 'A film starts at 2:35 pm and lasts for 40 minutes. What time does it finish?',
+        speech: 'Question 17. A film starts at 2:35 pm and lasts for 40 minutes. What time does it finish?',
+        trapText: 'Common Class Trap: Adding 35 + 40 = 75 to write 2:75 pm instead of bridging through 3:00 pm!',
+        inputType: 'text',
+        answer: '3:15 pm',
+        accepted: ['3:15', '3:15pm', '3.15', '3.15pm'],
+        pupils: [
+          { name: 'Paul Doherty', status: 'ok', note: '3:15 pm' },
+          { name: 'Julia Gibson', status: 'miss', note: 'Wrote 2:75 pm' },
+          { name: 'Nevaeh Cunningham-Carroll', status: 'miss', note: 'Missed' },
+          { name: 'Oisin Mervyn', status: 'obs', note: '👀 Live Check for Oisin: Ask how many minutes from 2:35 pm to 3:00 pm (+25 mins).' }
+        ],
+        cpaCode: 'jumps:2:35 pm,+25 mins -> 3:00 pm,+15 mins -> 3:15 pm|40 minutes = 25 minutes (to o’clock) + 15 minutes',
+        working: [
+          '1. Bridge to 3:00 pm first: 2:35 pm + 25 mins = 3:00 pm.',
+          '2. Add the remaining 15 mins (40 − 25 = 15): 3:00 pm + 15 mins = 3:15 pm.'
+        ]
+      },
+      {
+        num: 18,
+        part: 'part4',
+        partTitle: 'Part 4: Fractions, Decimals, Measures & Reasoning',
+        prompt: 'A rectangle has a length of 7 cm and a width of 4 cm. What is its PERIMETER?',
+        speech: 'Question 18. A rectangle has a length of 7 centimetres and a width of 4 centimetres. What is its perimeter?',
+        trapText: 'Common Class Trap: Adding only 2 sides (7 + 4 = 11 cm) instead of walking all FOUR sides around the outside (22 cm)!',
+        inputType: 'text',
+        answer: '22 cm',
+        accepted: ['22', '22cm'],
+        pupils: [
+          { name: 'Paul Doherty', status: 'miss', note: 'Wrote 11 cm (added only 2 sides)' },
+          { name: 'Julia Gibson', status: 'miss', note: 'Wrote 11 cm' },
+          { name: 'Nevaeh Cunningham-Carroll', status: 'miss', note: 'Wrote 28 cm (calculated Area instead of Perimeter)' },
+          { name: 'Oisin Mervyn', status: 'obs', note: '👀 Live Check for Oisin: Contrast Perimeter (22 cm) vs Area (28 cm²).' }
+        ],
+        cpaCode: 'rect7x4',
+        working: [
+          '1. Label all 4 sides of the rectangle: 7 cm, 4 cm, 7 cm, and 4 cm.',
+          '2. Add all four sides: 7 + 4 + 7 + 4 = 22 cm.'
+        ]
+      },
+      {
+        num: 19,
+        part: 'part4',
+        partTitle: 'Part 4: Fractions, Decimals, Measures & Reasoning',
+        prompt: 'Select ALL the FACTORS of 12 from this list:   1  |  2  |  3  |  4  |  6  |  8  |  12',
+        speech: 'Question 19. Select all the factors of 12 from 1, 2, 3, 4, 6, 8, 12.',
+        trapText: 'Common Class Trap: Including 8 (a multiple of 4, NOT a factor of 12!) or missing the outer pair 1 and 12.',
+        inputType: 'factors',
+        answer: '1, 2, 3, 4, 6, 12',
+        accepted: ['1,2,3,4,6,12'],
+        pupils: [
+          { name: 'Paul Doherty', status: 'miss', note: 'Circled 8 and missed 1' },
+          { name: 'Julia Gibson', status: 'miss', note: 'Circled 8' },
+          { name: 'Nevaeh Cunningham-Carroll', status: 'miss', note: 'Only listed 6 and 2' },
+          { name: 'Oisin Mervyn', status: 'obs', note: '👀 Live Check for Oisin: Prove why 8 cannot divide evenly into 12.' }
+        ],
+        cpaCode: 'rainbow12',
+        working: [
+          '1. Find every factor pair that multiplies to make 12: 1 × 12, 2 × 6, and 3 × 4.',
+          '2. All 6 factors of 12: 1, 2, 3, 4, 6, 12 (8 is NOT a factor).'
+        ]
+      },
+      {
+        num: 20,
+        part: 'part4',
+        partTitle: 'Part 4: Fractions, Decimals, Measures & Reasoning',
+        prompt: 'Spot the Mistake: Sam wrote   100 − 45 = 65.   What is the correct answer?',
+        speech: 'Question 20. Spot the mistake: Sam wrote 100 minus 45 equals 65. What is the correct answer?',
+        trapText: 'The "110 Trap": Sam added 60 + 40 = 100 AND 5 + 5 = 10 (65 + 45 = 110 — 10 too big!).',
+        inputType: 'text',
+        answer: '55',
+        accepted: ['55'],
+        pupils: [
+          { name: 'Paul Doherty', status: 'ok', note: '55 (Spotted the 110 trap!)' },
+          { name: 'Julia Gibson', status: 'miss', note: 'Missed' },
+          { name: 'Nevaeh Cunningham-Carroll', status: 'miss', note: 'Missed' },
+          { name: 'Oisin Mervyn', status: 'obs', note: '👀 Live Check for Oisin: Prove why 65 is wrong using addition (65 + 45 = 110).' }
+        ],
+        cpaCode: 'jumps:100,−40 -> 60,−5 -> 55|65 + 45 = 110 (Wrong!)  |  55 + 45 = 100 (Correct!)',
+        working: [
+          '1. Check Sam’s answer with addition: 65 + 45 = 110 (10 too big!).',
+          '2. Subtract properly: 100 − 40 = 60, then 60 − 5 = 55.'
+        ]
+      }
+    ];
+
+    // =========================================================================
+    // 3. STATE, FILTERING & STRICT TEACHER REVEAL CONTROLS
+    // =========================================================================
+    let activeFilter = 'all';
+    let visibleQuestions = [...QUESTIONS];
+    let currentIndex = 0;
+
+    let reveals = {
+      pupils: false,
+      cpa: false,
+      working: false,
+      answer: false
+    };
+
+    let hideNames = false;
+    let pickedFactors = new Set();
+
+    // Interactive 100 Square State
+    let sq100Mode = 'none'; // 'none' | 'odd' | 'even' | 'both' | 'm2' | 'm5' | 'm6' | 'm10'
+    let sq100Pinned = new Set();
+    let sq100Mystery = false;
+
+    function toggleTopDrawer(which) {
+      const sb = document.getElementById('drawer-scoreboard');
+      const vb = document.getElementById('drawer-vocab');
+      const sq = document.getElementById('drawer-sq100');
+
+      const map = { scoreboard: sb, vocab: vb, sq100: sq };
+      Object.keys(map).forEach(k => {
+        if (k === which) {
+          map[k].classList.toggle('hidden');
+        } else {
+          map[k].classList.add('hidden');
+        }
+      });
+
+      if (which === 'sq100' && !sq.classList.contains('hidden')) {
+        renderSq100();
+      }
+    }
+
+    function setSq100Mode(mode) {
+      sq100Mode = (sq100Mode === mode) ? 'none' : mode;
+      renderSq100();
+    }
+
+    function toggleSq100Tile(num) {
+      if (sq100Pinned.has(num)) sq100Pinned.delete(num);
+      else sq100Pinned.add(num);
+      renderSq100();
+    }
+
+    function toggleSq100Mystery() {
+      sq100Mystery = !sq100Mystery;
+      document.getElementById('sq-btn-mystery').classList.toggle('active-mult', sq100Mystery);
+      document.getElementById('sq-btn-mystery').innerHTML = sq100Mystery ? '&#128065;&#65039; Show Numbers' : '&#128065;&#65039; Hide Numbers';
+      renderSq100();
+    }
+
+    function clearSq100Highlights() {
+      sq100Mode = 'none';
+      sq100Pinned.clear();
+      sq100Mystery = false;
+      document.getElementById('sq-btn-mystery').classList.remove('active-mult');
+      document.getElementById('sq-btn-mystery').innerHTML = '&#128065;&#65039; Hide Numbers';
+      renderSq100();
+    }
+
+    function renderSq100() {
+      const grid = document.getElementById('sq100-grid');
+      if (!grid) return;
+
+      // Sync toolbar button active states
+      const btnMap = {
+        odd: ['sq-btn-odd', 'active-odd'],
+        even: ['sq-btn-even', 'active-even'],
+        both: ['sq-btn-both', 'active-both'],
+        m2: ['sq-btn-m2', 'active-mult'],
+        m5: ['sq-btn-m5', 'active-mult'],
+        m6: ['sq-btn-m6', 'active-mult'],
+        m10: ['sq-btn-m10', 'active-mult']
+      };
+      Object.keys(btnMap).forEach(k => {
+        const [id, cls] = btnMap[k];
+        const el = document.getElementById(id);
+        if (el) el.classList.toggle(cls, sq100Mode === k);
+      });
+
+      const ruleText = document.getElementById('sq100-rule-text');
+      const messages = {
+        none: 'Tap <strong>Highlight Odd</strong>, <strong>Highlight Even</strong>, or <strong>Odd vs. Even Columns</strong> above, or tap any tile on the 100 square to pin/circle it in amber!',
+        odd: '<span style="color:#c4b5fd;">Odd Numbers Highlighted (Purple):</span> Look down the 1st, 3rd, 5th, 7th, and 9th columns — every odd number ends in <strong>1, 3, 5, 7, or 9</strong>!',
+        even: '<span style="color:#6ee7b7;">Even Numbers Highlighted (Emerald):</span> Look down the 2nd, 4th, 6th, 8th, and 10th columns — every even number ends in <strong>0, 2, 4, 6, or 8</strong>!',
+        both: '<span style="color:#fde047;">Odd (Purple) vs. Even (Emerald) Columns:</span> Notice how Odd and Even alternate every single step across every row and down every column!',
+        m2: '<span style="color:#fde68a;">Multiples of 2 (&times;2):</span> Every multiple of 2 is an <strong>EVEN</strong> number ending in 0, 2, 4, 6, or 8!',
+        m5: '<span style="color:#fde68a;">Multiples of 5 (&times;5):</span> Every multiple of 5 ends in <strong>5 (Odd)</strong> or <strong>0 (Even)</strong> — proving why Even &times; 5 always ends in 0!',
+        m6: '<span style="color:#fde68a;">Multiples of 6 (&times;6):</span> Skip-counting in 6s (6, 12, 18, 24, 30, 36, 42, 48, 54, 60...) — every multiple of 6 is also even!',
+        m10: '<span style="color:#fde68a;">Multiples of 10 (&times;10):</span> Look down the far-right decade column (10, 20, 30... 100) — every multiple of 10 ends in <strong>0</strong>!'
+      };
+      if (ruleText) ruleText.innerHTML = messages[sq100Mode] || messages.none;
+
+      let html = '';
+      for (let n = 1; n <= 100; n++) {
+        const isOdd = n % 2 !== 0;
+        const isPinned = sq100Pinned.has(n);
+        let cls = 'sq100-cell';
+
+        if (sq100Mode === 'odd' && isOdd) cls += ' is-odd';
+        else if (sq100Mode === 'even' && !isOdd) cls += ' is-even';
+        else if (sq100Mode === 'both') cls += isOdd ? ' is-odd' : ' is-even';
+        else if (sq100Mode === 'm2' && n % 2 === 0) cls += ' is-mult';
+        else if (sq100Mode === 'm5' && n % 5 === 0) cls += ' is-mult';
+        else if (sq100Mode === 'm6' && n % 6 === 0) cls += ' is-mult';
+        else if (sq100Mode === 'm10' && n % 10 === 0) cls += ' is-mult';
+
+        if (isPinned) cls += ' is-pinned';
+
+        const label = (sq100Mystery && !isPinned) ? '?' : n;
+        html += `<div class="${cls}" onclick="toggleSq100Tile(${n})" title="Tap to pin/unpin ${n}">${label}</div>`;
+      }
+      grid.innerHTML = html;
+    }
+
+    function renderVocabGrid() {
+      document.getElementById('vocab-grid').innerHTML = VOCAB_ITEMS.map(v => `
+        <div class="vocab-card">
+          <span class="vocab-term">${v.term}</span>
+          <p class="vocab-def">${v.def}</p>
+          <p class="vocab-stem">${v.stem}</p>
+        </div>
+      `).join('');
+    }
+
+    function setFilter(key) {
+      activeFilter = key;
+      visibleQuestions = key === 'all'
+        ? [...QUESTIONS]
+        : QUESTIONS.filter(q => q.part === key);
+      currentIndex = 0;
+
+      document.querySelectorAll('.filter-btn').forEach(b => {
+        b.classList.toggle('active', b.getAttribute('data-filter') === key);
+      });
+
+      renderPills();
+      renderQuestion();
+    }
+
+    function renderPills() {
+      const grid = document.getElementById('q-pills-grid');
+      const activeQ = visibleQuestions[currentIndex];
+      grid.innerHTML = QUESTIONS.map(qObj => {
+        const okCount = qObj.pupils.filter(p => p.status === 'ok').length;
+        const isCurrent = activeQ && activeQ.num === qObj.num;
+
+        let statusClass = 'status-amber';
+        let dotColor = '#f59e0b';
+        if (okCount >= 2) {
+          statusClass = 'status-green';
+          dotColor = '#10b981';
+        } else if (okCount === 0) {
+          statusClass = 'status-rose';
+          dotColor = '#f43f5e';
+        }
+
+        return `
+          <button type="button" class="q-pill ${statusClass} ${isCurrent ? 'active' : ''}" onclick="jumpToQ(${qObj.num})" title="Q${qObj.num}">
+            <span>Q${qObj.num}</span>
+            <span class="pill-dot" style="background:${isCurrent ? '#fff' : dotColor};"></span>
+          </button>
+        `;
+      }).join('');
+    }
+
+    function jumpToQ(qNum) {
+      const idx = visibleQuestions.findIndex(q => q.num === qNum);
+      if (idx !== -1) {
+        currentIndex = idx;
+      } else {
+        activeFilter = 'all';
+        visibleQuestions = [...QUESTIONS];
+        currentIndex = QUESTIONS.findIndex(q => q.num === qNum);
+        document.querySelectorAll('.filter-btn').forEach(b => {
+          b.classList.toggle('active', b.getAttribute('data-filter') === 'all');
+        });
+      }
+      renderPills();
+      renderQuestion();
+    }
+
+    function prevQuestion() {
+      currentIndex = (currentIndex - 1 + visibleQuestions.length) % visibleQuestions.length;
+      renderPills();
+      renderQuestion();
+    }
+
+    function nextQuestion() {
+      currentIndex = (currentIndex + 1) % visibleQuestions.length;
+      renderPills();
+      renderQuestion();
+    }
+
+    function resetAllReveals() {
+      reveals = { trap: false, pupils: false, cpa: false, working: false, answer: false };
+      ['trap', 'pupils', 'cpa', 'working', 'answer'].forEach(k => {
+        document.getElementById(`panel-${k}`).classList.add('hidden');
+      });
+
+      document.getElementById('btn-rev-trap').innerHTML = '<span>1. &#128269; Reveal Class Trap</span>';
+      document.getElementById('btn-rev-cpa').innerHTML = '<span>2. &#128161; Reveal Visual Hint</span>';
+      document.getElementById('btn-rev-working').innerHTML = '<span>3. &#129692; Reveal Step-by-Step</span>';
+      document.getElementById('btn-rev-answer').innerHTML = '<span>4. &#9989; Reveal Answer</span>';
+      document.getElementById('btn-rev-pupils').innerHTML = '<span>5. &#128101; Reveal Pupil Data</span>';
+
+      pickedFactors.clear();
+      const inp = document.getElementById('tryit-input');
+      if (inp) inp.value = '';
+      document.querySelectorAll('.factor-chip').forEach(c => c.classList.remove('picked'));
+      document.getElementById('tryit-fb').textContent = '';
+    }
+
+    function toggleReveal(key) {
+      reveals[key] = !reveals[key];
+      const panel = document.getElementById(`panel-${key}`);
+      const btn = document.getElementById(`btn-rev-${key}`);
+
+      if (reveals[key]) {
+        panel.classList.remove('hidden');
+        if (key === 'trap') btn.innerHTML = '<span>1. &#128269; Hide Class Trap</span>';
+        if (key === 'cpa') btn.innerHTML = '<span>2. &#128161; Hide Visual Hint</span>';
+        if (key === 'working') btn.innerHTML = '<span>3. &#129692; Hide Step-by-Step</span>';
+        if (key === 'answer') btn.innerHTML = '<span>4. &#9989; Hide Answer</span>';
+        if (key === 'pupils') btn.innerHTML = '<span>5. &#128101; Hide Pupil Data</span>';
+      } else {
+        panel.classList.add('hidden');
+        if (key === 'trap') btn.innerHTML = '<span>1. &#128269; Reveal Class Trap</span>';
+        if (key === 'cpa') btn.innerHTML = '<span>2. &#128161; Reveal Visual Hint</span>';
+        if (key === 'working') btn.innerHTML = '<span>3. &#129692; Reveal Step-by-Step</span>';
+        if (key === 'answer') btn.innerHTML = '<span>4. &#9989; Reveal Answer</span>';
+        if (key === 'pupils') btn.innerHTML = '<span>5. &#128101; Reveal Pupil Data</span>';
+      }
+    }
+
+    function toggleHideNames() {
+      hideNames = !hideNames;
+      document.getElementById('mask-names-label').textContent = hideNames ? 'Show Pupil Names' : 'Hide Names for Board';
+      renderPupilCards();
+    }
+
+    function renderPupilCards() {
+      const q = visibleQuestions[currentIndex];
+      if (!q) return;
+      document.getElementById('pupils-cards').innerHTML = q.pupils.map((p, idx) => {
+        const displayName = hideNames ? `Pupil ${idx + 1}` : p.name;
+        if (p.status === 'ok') {
+          return `
+            <div class="pupil-status-card ps-ok">
+              <div>
+                <span class="ps-name">${displayName}</span>
+                <span class="ps-note" style="color:#047857;">&#9989; Secure (${p.note})</span>
+              </div>
+              <span class="ps-badge" style="background:#d1fae5;color:#065f46;">Right</span>
+            </div>
+          `;
+        }
+        if (p.status === 'obs') {
+          return `
+            <div class="pupil-status-card ps-obs">
+              <div>
+                <span class="ps-name">${displayName}</span>
+                <span class="ps-note" style="color:#1e40af;">${p.note}</span>
+              </div>
+              <span class="ps-badge" style="background:#dbeafe;color:#1e3a8a;">Live Check</span>
+            </div>
+          `;
+        }
+        return `
+          <div class="pupil-status-card ps-miss">
+            <div>
+              <span class="ps-name">${displayName}</span>
+              <span class="ps-note" style="color:#be123c;">&#10060; ${p.note}</span>
+            </div>
+            <span class="ps-badge" style="background:#ffe4e6;color:#9f1239;">Target</span>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderQuestion() {
+      resetAllReveals();
+      const q = visibleQuestions[currentIndex];
+      if (!q) return;
+
+      document.getElementById('badge-qnum').textContent = `Q${q.num} of 20`;
+      document.getElementById('badge-part').textContent = q.partTitle;
+      document.getElementById('q-text').textContent = q.prompt;
+      document.getElementById('trap-text').textContent = q.trapText;
+
+      const ctrl = document.getElementById('tryit-controls');
+      if (q.inputType === 'factors') {
+        const opts = [1, 2, 3, 4, 6, 8, 12];
+        ctrl.innerHTML = `
+          <div class="factor-chips">
+            ${opts.map(n => `<button type="button" class="factor-chip" onclick="toggleFactorChip(this, ${n})">${n}</button>`).join('')}
+          </div>
+          <div class="tryit-row">
+            <button type="button" class="btn-tryit" style="flex:1;" onclick="checkFactorSelection()">Check Answer</button>
+            <button type="button" class="btn-nav" onclick="resetTryIt()">Try Again</button>
+          </div>
+        `;
+      } else {
+        ctrl.innerHTML = `
+          <div class="tryit-row">
+            <input id="tryit-input" class="tryit-input" type="text" placeholder="Enter class answer..." onkeydown="if(event.key==='Enter') checkTextTryIt()" />
+            <button type="button" class="btn-tryit" onclick="checkTextTryIt()">Check Answer</button>
+            <button type="button" class="btn-nav" onclick="resetTryIt()">Try Again</button>
+          </div>
+        `;
+      }
+
+      renderPupilCards();
+      document.getElementById('cpa-stage').innerHTML = buildCpaVisual(q.cpaCode);
+      document.getElementById('working-list').innerHTML = q.working.map(s => `<div>&bull; ${s}</div>`).join('');
+      document.getElementById('answer-big').textContent = q.answer;
+    }
+
+    function resetTryIt() {
+      pickedFactors.clear();
+      const inp = document.getElementById('tryit-input');
+      if (inp) {
+        inp.value = '';
+        inp.focus();
+      }
+      document.querySelectorAll('.factor-chip').forEach(c => c.classList.remove('picked'));
+      document.getElementById('tryit-fb').textContent = '';
+    }
+
+    function toggleFactorChip(el, num) {
+      if (pickedFactors.has(num)) {
+        pickedFactors.delete(num);
+        el.classList.remove('picked');
+      } else {
+        pickedFactors.add(num);
+        el.classList.add('picked');
+      }
+    }
+
+    function checkFactorSelection() {
+      const sorted = Array.from(pickedFactors).sort((a, b) => a - b).join(',');
+      const fb = document.getElementById('tryit-fb');
+      if (sorted === '1,2,3,4,6,12') {
+        fb.textContent = '✅ Correct!';
+        fb.style.color = '#059669';
+      } else {
+        fb.textContent = '❌ Not quite — try again!';
+        fb.style.color = '#e11d48';
+      }
+    }
+
+    function checkTextTryIt() {
+      const q = visibleQuestions[currentIndex];
+      const inp = document.getElementById('tryit-input');
+      const raw = (inp ? inp.value : '').trim().toLowerCase().replace(/\s+/g, '');
+      const fb = document.getElementById('tryit-fb');
+
+      if (!raw) {
+        fb.textContent = 'Enter an answer first!';
+        fb.style.color = '#b45309';
+        return;
+      }
+
+      const valid = q.accepted.map(a => a.toLowerCase().replace(/\s+/g, ''));
+      if (valid.includes(raw)) {
+        fb.textContent = '✅ Correct!';
+        fb.style.color = '#059669';
+      } else {
+        fb.textContent = '❌ Not quite — try again!';
+        fb.style.color = '#e11d48';
+      }
+    }
+      if (code === 'decomp503') {
+        return `
+          <div class="cpa-box">
+            <div style="font-size:12px;font-weight:900;color:#1e1b4b;">Expanded Zero-Exchange Decomposition: 503 − 268</div>
+            <table style="border-collapse:collapse;text-align:center;font-weight:800;font-size:13px;">
+              <tr style="background:#f1f5f9;">
+                <th style="padding:6px 12px;border:1px solid #cbd5e1;">Hundreds</th>
+                <th style="padding:6px 12px;border:1px solid #cbd5e1;">Tens</th>
+                <th style="padding:6px 12px;border:1px solid #cbd5e1;">Ones</th>
+              </tr>
+              <tr>
+                <td style="padding:6px 12px;border:1px solid #cbd5e1;color:#1d4ed8;">400</td>
+                <td style="padding:6px 12px;border:1px solid #cbd5e1;color:#047857;">90</td>
+                <td style="padding:6px 12px;border:1px solid #cbd5e1;color:#b45309;">13</td>
+              </tr>
+              <tr>
+                <td style="padding:6px 12px;border:1px solid #cbd5e1;">− 200</td>
+                <td style="padding:6px 12px;border:1px solid #cbd5e1;">− 60</td>
+                <td style="padding:6px 12px;border:1px solid #cbd5e1;">− 8</td>
+              </tr>
+              <tr style="background:#ecfdf5;font-weight:900;color:#065f46;">
+                <td style="padding:6px 12px;border:1px solid #10b981;">200</td>
+                <td style="padding:6px 12px;border:1px solid #10b981;">30</td>
+                <td style="padding:6px 12px;border:1px solid #10b981;">5</td>
+              </tr>
+            </table>
+            <span style="font-size:11.5px;font-weight:800;color:#475569;">503 = 400 + 90 + 13 (no digit-reversal!)</span>
+          </div>
+        `;
+      }
+
+      if (code === 'orderTable4000') {
+        const nums = [
+          { n: '4,091', th: 4, h: 0, t: 9, o: 1 },
+          { n: '4,190', th: 4, h: 1, t: 9, o: 0 },
+          { n: '4,409', th: 4, h: 4, t: 0, o: 9 },
+          { n: '4,901', th: 4, h: 9, t: 0, o: 1 }
+        ];
+        return `
+          <div class="cpa-box">
+            <table style="border-collapse:collapse;text-align:center;font-weight:800;font-size:12.5px;">
+              <tr style="background:#f1f5f9;">
+                <th style="padding:5px 10px;border:1px solid #cbd5e1;">Order</th>
+                <th style="padding:5px 10px;border:1px solid #cbd5e1;">Th</th>
+                <th style="padding:5px 10px;border:1px solid #cbd5e1;color:#1d4ed8;">H</th>
+                <th style="padding:5px 10px;border:1px solid #cbd5e1;color:#047857;">T</th>
+                <th style="padding:5px 10px;border:1px solid #cbd5e1;">O</th>
+              </tr>
+              ${nums.map((r, i) => `
+                <tr>
+                  <td style="padding:5px 10px;border:1px solid #cbd5e1;font-weight:900;">#${i + 1}: ${r.n}</td>
+                  <td style="padding:5px 10px;border:1px solid #cbd5e1;">${r.th}</td>
+                  <td style="padding:5px 10px;border:1px solid #cbd5e1;background:#eff6ff;">${r.h}</td>
+                  <td style="padding:5px 10px;border:1px solid #cbd5e1;background:#ecfdf5;">${r.t}</td>
+                  <td style="padding:5px 10px;border:1px solid #cbd5e1;">${r.o}</td>
+                </tr>
+              `).join('')}
+            </table>
+          </div>
+        `;
+      }
+
+      if (code === 'fracbar36') {
+        return `
+          <div class="cpa-box" style="width:100%;max-width:400px;">
+            <div style="width:100%;background:#0f172a;color:#fff;padding:6px;border-radius:8px;text-align:center;font-weight:900;font-size:13px;">Whole = 36 (Split into 4 Quarters)</div>
+            <div style="width:100%;display:grid;grid-template-columns:repeat(4,1fr);gap:6px;text-align:center;font-weight:900;font-size:15px;">
+              <div style="background:#4f46e5;color:#fff;padding:10px 4px;border-radius:10px;">9</div>
+              <div style="background:#4f46e5;color:#fff;padding:10px 4px;border-radius:10px;">9</div>
+              <div style="background:#4f46e5;color:#fff;padding:10px 4px;border-radius:10px;">9</div>
+              <div style="background:#f1f5f9;color:#64748b;border:2px dashed #94a3b8;padding:10px 4px;border-radius:10px;">9</div>
+            </div>
+            <span style="font-size:11.5px;font-weight:800;color:#3730a3;">3 shaded quarters = 9 + 9 + 9 = 27</span>
+          </div>
+        `;
+      }
+
+      if (code === 'dec04_035') {
+        return `
+          <div class="cpa-box">
+            <table style="border-collapse:collapse;text-align:center;font-weight:900;font-size:14px;">
+              <tr style="background:#f1f5f9;font-size:11px;">
+                <th style="padding:5px 12px;border:1px solid #cbd5e1;">Ones</th>
+                <th style="padding:5px 8px;border:1px solid #cbd5e1;">.</th>
+                <th style="padding:5px 12px;border:1px solid #cbd5e1;color:#1d4ed8;">Tenths</th>
+                <th style="padding:5px 12px;border:1px solid #cbd5e1;color:#047857;">Hundredths</th>
+              </tr>
+              <tr style="background:#ecfdf5;color:#065f46;">
+                <td style="padding:6px 12px;border:1px solid #10b981;">0</td>
+                <td style="padding:6px 8px;border:1px solid #10b981;">.</td>
+                <td style="padding:6px 12px;border:1px solid #10b981;">4</td>
+                <td style="padding:6px 12px;border:1px solid #10b981;background:#fef3c7;color:#92400e;">0</td>
+              </tr>
+              <tr>
+                <td style="padding:6px 12px;border:1px solid #cbd5e1;">0</td>
+                <td style="padding:6px 8px;border:1px solid #cbd5e1;">.</td>
+                <td style="padding:6px 12px;border:1px solid #cbd5e1;">3</td>
+                <td style="padding:6px 12px;border:1px solid #cbd5e1;">5</td>
+              </tr>
+            </table>
+            <span style="font-size:11.5px;font-weight:800;color:#475569;">Pad 0.4 to 0.40: 40 hundredths &gt; 35 hundredths!</span>
+          </div>
+        `;
+      }
+
+      if (code === 'rect7x4') {
+        return `
+          <div class="cpa-box">
+            <div style="font-size:12px;font-weight:900;color:#065f46;">7 cm (Top)</div>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <span style="font-size:12px;font-weight:900;color:#1d4ed8;">4 cm</span>
+              <div style="width:170px;height:68px;border:4px solid #059669;background:#ecfdf5;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:13px;color:#064e3b;">
+                Walk all 4 edges!
+              </div>
+              <span style="font-size:12px;font-weight:900;color:#1d4ed8;">4 cm</span>
+            </div>
+            <div style="font-size:12px;font-weight:900;color:#065f46;">7 cm (Bottom)</div>
+          </div>
+        `;
+      }
+
+      if (code === 'rainbow12') {
+        return `
+          <div class="cpa-box">
+            <div style="font-size:12px;font-weight:900;color:#1e1b4b;">Factor Pairs of 12</div>
+            <div style="display:flex;gap:8px;font-weight:900;font-size:14px;">
+              <span class="hop-pill" style="background:#eef2ff;border-color:#6366f1;">1</span>
+              <span class="hop-pill" style="background:#ecfdf5;border-color:#10b981;">2</span>
+              <span class="hop-pill" style="background:#fffbeb;border-color:#f59e0b;">3</span>
+              <span class="hop-pill" style="background:#fffbeb;border-color:#f59e0b;">4</span>
+              <span class="hop-pill" style="background:#ecfdf5;border-color:#10b981;">6</span>
+              <span class="hop-pill" style="background:#eef2ff;border-color:#6366f1;">12</span>
+            </div>
+            <span style="font-size:11.5px;font-weight:800;color:#475569;">1 &times; 12 = 12 &nbsp;|&nbsp; 2 &times; 6 = 12 &nbsp;|&nbsp; 3 &times; 4 = 12 (8 is NOT a factor!)</span>
+          </div>
+        `;
+      }
+
+      if (code === 'nonstd482') {
+        return `
+          <div class="cpa-box" style="width:100%;max-width:440px;">
+            <div style="width:100%;background:#0f172a;color:#fff;padding:6px;border-radius:8px;text-align:center;font-weight:900;font-size:13px;">Whole = 482</div>
+            <div style="width:100%;display:flex;gap:4px;font-size:12px;font-weight:800;text-align:center;">
+              <div style="flex:4;background:#dbeafe;border:1px solid #60a5fa;padding:6px;border-radius:8px;">400</div>
+              <div style="flex:2;background:#d1fae5;border:1px solid #34d399;padding:6px;border-radius:8px;">80</div>
+              <div style="flex:1;background:#fef3c7;border:1px solid #fbbf24;padding:6px;border-radius:8px;">2</div>
+            </div>
+            <div style="width:100%;display:flex;gap:4px;font-size:12px;font-weight:900;text-align:center;">
+              <div style="flex:3;background:#bfdbfe;border:2px solid #2563eb;padding:6px;border-radius:8px;">300</div>
+              <div style="flex:3;background:#a7f3d0;border:2px solid #059669;padding:6px;border-radius:8px;">100 + 80 = 180</div>
+              <div style="flex:1;background:#fde68a;border:2px solid #d97706;padding:6px;border-radius:8px;">2</div>
+            </div>
+          </div>
+        `;
+      }
+
+      if (code === 'shift46') {
+        return `
+          <div class="cpa-box">
+            <table style="border-collapse:collapse;text-align:center;font-weight:900;font-size:14px;">
+              <tr style="background:#f1f5f9;font-size:11px;">
+                <th style="padding:5px 14px;border:1px solid #cbd5e1;">Hundreds</th>
+                <th style="padding:5px 14px;border:1px solid #cbd5e1;">Tens</th>
+                <th style="padding:5px 14px;border:1px solid #cbd5e1;">Ones</th>
+              </tr>
+              <tr>
+                <td style="padding:6px 14px;border:1px solid #cbd5e1;color:#94a3b8;">—</td>
+                <td style="padding:6px 14px;border:1px solid #cbd5e1;">4</td>
+                <td style="padding:6px 14px;border:1px solid #cbd5e1;">6</td>
+              </tr>
+              <tr style="background:#eef2ff;color:#3730a3;">
+                <td style="padding:6px 14px;border:1px solid #818cf8;">4</td>
+                <td style="padding:6px 14px;border:1px solid #818cf8;">6</td>
+                <td style="padding:6px 14px;border:1px solid #818cf8;background:#fef3c7;color:#92400e;">0</td>
+              </tr>
+            </table>
+            <span style="font-size:11.5px;font-weight:800;color:#475569;">Every digit shifts 1 column LEFT (&times; 10) &rarr; 460</span>
+          </div>
+        `;
+      }
+
+      if (code === 'round648') {
+        return `
+          <div class="cpa-box">
+            <div class="hop-strip">
+              <span class="hop-pill hop-mid">600</span>
+              <span style="font-size:12px;color:#059669;">&larr; 648</span>
+              <span class="hop-pill" style="border-style:dashed;">650 (Halfway)</span>
+              <span style="color:#94a3b8;">&mdash;</span>
+              <span class="hop-pill">700</span>
+            </div>
+            <span style="font-size:11.5px;font-weight:800;color:#475569;">648 is before the 650 halfway mark, so it rounds down to 600.</span>
+          </div>
+        `;
+      }
+
+      if (code === 'orderTable') {
+        const nums = [
+          { n: '2,045', th: 2, h: 0, t: 4, o: 5 },
+          { n: '2,405', th: 2, h: 4, t: 0, o: 5 },
+          { n: '2,450', th: 2, h: 4, t: 5, o: 0 },
+          { n: '2,540', th: 2, h: 5, t: 4, o: 0 }
+        ];
+        return `
+          <div class="cpa-box">
+            <table style="border-collapse:collapse;text-align:center;font-weight:800;font-size:12.5px;">
+              <tr style="background:#f1f5f9;">
+                <th style="padding:5px 10px;border:1px solid #cbd5e1;">Order</th>
+                <th style="padding:5px 10px;border:1px solid #cbd5e1;">Th</th>
+                <th style="padding:5px 10px;border:1px solid #cbd5e1;color:#1d4ed8;">H</th>
+                <th style="padding:5px 10px;border:1px solid #cbd5e1;color:#047857;">T</th>
+                <th style="padding:5px 10px;border:1px solid #cbd5e1;">O</th>
+              </tr>
+              ${nums.map((r, i) => `
+                <tr>
+                  <td style="padding:5px 10px;border:1px solid #cbd5e1;font-weight:900;">#${i + 1}: ${r.n}</td>
+                  <td style="padding:5px 10px;border:1px solid #cbd5e1;">${r.th}</td>
+                  <td style="padding:5px 10px;border:1px solid #cbd5e1;background:#eff6ff;">${r.h}</td>
+                  <td style="padding:5px 10px;border:1px solid #cbd5e1;background:#ecfdf5;">${r.t}</td>
+                  <td style="padding:5px 10px;border:1px solid #cbd5e1;">${r.o}</td>
+                </tr>
+              `).join('')}
+            </table>
+          </div>
+        `;
+      }
+
+      if (code === 'fracbar24') {
+        return `
+          <div class="cpa-box" style="width:100%;max-width:400px;">
+            <div style="width:100%;background:#0f172a;color:#fff;padding:6px;border-radius:8px;text-align:center;font-weight:900;font-size:13px;">Whole = 24 (Split into 4 Quarters)</div>
+            <div style="width:100%;display:grid;grid-template-columns:repeat(4,1fr);gap:6px;text-align:center;font-weight:900;font-size:15px;">
+              <div style="background:#4f46e5;color:#fff;padding:10px 4px;border-radius:10px;">6</div>
+              <div style="background:#4f46e5;color:#fff;padding:10px 4px;border-radius:10px;">6</div>
+              <div style="background:#4f46e5;color:#fff;padding:10px 4px;border-radius:10px;">6</div>
+              <div style="background:#f1f5f9;color:#64748b;border:2px dashed #94a3b8;padding:10px 4px;border-radius:10px;">6</div>
+            </div>
+            <span style="font-size:11.5px;font-weight:800;color:#3730a3;">3 shaded quarters = 6 + 6 + 6 = 18</span>
+          </div>
+        `;
+      }
+
+      if (code === 'rect8x3') {
+        return `
+          <div class="cpa-box">
+            <div style="font-size:12px;font-weight:900;color:#065f46;">8 cm (Top)</div>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <span style="font-size:12px;font-weight:900;color:#1d4ed8;">3 cm</span>
+              <div style="width:180px;height:68px;border:4px solid #059669;background:#ecfdf5;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:13px;color:#064e3b;">
+                Walk all 4 edges!
+              </div>
+              <span style="font-size:12px;font-weight:900;color:#1d4ed8;">3 cm</span>
+            </div>
+            <div style="font-size:12px;font-weight:900;color:#065f46;">8 cm (Bottom)</div>
+          </div>
+        `;
+      }
+
+      if (code === 'diff124_89') {
+        return `
+          <div class="cpa-box">
+            <div class="hop-strip">
+              <span class="hop-pill">89</span>
+              <span style="font-size:12px;color:#059669;">+11 &rarr;</span>
+              <span class="hop-pill hop-mid">100</span>
+              <span style="font-size:12px;color:#4f46e5;">+24 &rarr;</span>
+              <span class="hop-pill hop-end">124</span>
+            </div>
+            <span style="font-size:11.5px;font-weight:800;color:#475569;">Bridge through 100: 11 + 24 = 35</span>
+          </div>
+        `;
+      }
+
+      if (code === 'marbles54') {
+        return `
+          <div class="cpa-box" style="width:100%;max-width:420px;font-size:12px;font-weight:900;">
+            <div style="width:100%;display:flex;align-items:center;gap:8px;">
+              <span style="width:72px;">Oisin:</span>
+              <div style="background:#2563eb;color:#fff;padding:6px 14px;border-radius:8px;">18</div>
+            </div>
+            <div style="width:100%;display:flex;align-items:center;gap:8px;">
+              <span style="width:72px;">Nevaeh:</span>
+              <div style="background:#059669;color:#fff;padding:6px 14px;border-radius:8px;">18</div>
+              <div style="background:#059669;color:#fff;padding:6px 14px;border-radius:8px;">18</div>
+              <span style="color:#065f46;">(= 36)</span>
+            </div>
+            <div style="font-size:11.5px;color:#475569;">Altogether = 18 + 36 = 54 marbles</div>
+          </div>
+        `;
+      }
+
+      if (code === 'rainbow18') {
+        return `
+          <div class="cpa-box">
+            <div style="font-size:12px;font-weight:900;color:#1e1b4b;">Factor Pairs of 18</div>
+            <div style="display:flex;gap:8px;font-weight:900;font-size:14px;">
+              <span class="hop-pill" style="background:#eef2ff;border-color:#6366f1;">1</span>
+              <span class="hop-pill" style="background:#ecfdf5;border-color:#10b981;">2</span>
+              <span class="hop-pill" style="background:#fffbeb;border-color:#f59e0b;">3</span>
+              <span class="hop-pill" style="background:#fffbeb;border-color:#f59e0b;">6</span>
+              <span class="hop-pill" style="background:#ecfdf5;border-color:#10b981;">9</span>
+              <span class="hop-pill" style="background:#eef2ff;border-color:#6366f1;">18</span>
+            </div>
+            <span style="font-size:11.5px;font-weight:800;color:#475569;">1 &times; 18 = 18 &nbsp;|&nbsp; 2 &times; 9 = 18 &nbsp;|&nbsp; 3 &times; 6 = 18</span>
+          </div>
+        `;
+      }
+
+      if (code === 'fracwall_half') {
+        const tenths = Array.from({ length: 10 }, (_, i) =>
+          `<div style="flex:1;padding:6px 0;border:1px solid #64748b;background:${i < 5 ? '#10b981' : '#f8fafc'};color:${i < 5 ? '#fff' : '#64748b'};font-size:10px;font-weight:900;">1/10</div>`
+        ).join('');
+        return `
+          <div class="cpa-box" style="width:100%;max-width:400px;text-align:center;">
+            <div style="width:100%;display:flex;">
+              <div style="flex:1;padding:7px 0;background:#4f46e5;color:#fff;font-weight:900;font-size:12px;border:1px solid #312e81;">1/2</div>
+              <div style="flex:1;padding:7px 0;background:#f8fafc;color:#64748b;font-weight:900;font-size:12px;border:1px solid #94a3b8;">1/2</div>
+            </div>
+            <div style="width:100%;display:flex;">${tenths}</div>
+            <span style="font-size:11.5px;font-weight:800;color:#065f46;">5 tenths cover the exact same half as 1/2!</span>
+          </div>
+        `;
+      }
+
+      const idx = code.indexOf(':');
+      const type = code.slice(0, idx);
+      const payload = code.slice(idx + 1);
+
+      if (type === 'jumps') {
+        const [nodesStr, cap] = payload.split('|');
+        const nodes = nodesStr.split(',');
+        return `
+          <div class="cpa-box">
+            <div class="hop-strip">
+              ${nodes.map((n, i) => {
+                const c = i === 0 ? '' : (i === nodes.length - 1 ? 'hop-end' : 'hop-mid');
+                return `<span class="hop-pill ${c}">${n}</span>`;
+              }).join('<span>&rarr;</span>')}
+            </div>
+            ${cap ? `<span style="font-size:11.5px;font-weight:800;color:#475569;">${cap}</span>` : ''}
+          </div>
+        `;
+      }
+
+      if (type === 'bar_inverse') {
+        const [whole, p1, p2] = payload.split(',');
+        return `
+          <div class="cpa-box" style="width:100%;max-width:380px;text-align:center;font-weight:900;">
+            <div style="width:100%;background:#0f172a;color:#fff;padding:7px;border-radius:9px;font-size:14px;">Starting Whole = ${whole}</div>
+            <div style="width:100%;display:flex;gap:6px;font-size:13px;">
+              <div style="flex:25;background:#fecdd3;border:2px solid #f43f5e;color:#881337;padding:7px;border-radius:9px;">Subtracted: ${p1}</div>
+              <div style="flex:48;background:#d1fae5;border:2px solid #10b981;color:#064e3b;padding:7px;border-radius:9px;">Result: ${p2}</div>
+            </div>
+            <span style="font-size:11.5px;color:#475569;">Add both parts to find the starting whole: ${p2} + ${p1} = 73</span>
+          </div>
+        `;
+      }
+
+      if (type === 'triangle') {
+        const [top, a, b] = payload.split(',');
+        return `
+          <div class="cpa-box">
+            <div style="background:#4f46e5;color:#fff;font-weight:900;font-size:20px;padding:6px 18px;border-radius:11px;">${top}</div>
+            <div style="font-size:11px;font-weight:900;color:#64748b;">&times; / &divide;</div>
+            <div style="display:flex;gap:20px;font-weight:900;font-size:18px;">
+              <span class="hop-pill hop-mid">${a}</span>
+              <span class="hop-pill hop-end">${b}</span>
+            </div>
+            <span style="font-size:11.5px;font-weight:800;color:#475569;">Division always starts with Boss Number ${top} at the front!</span>
+          </div>
+        `;
+      }
+
+      if (type === 'thhto') {
+        const [colsStr, cap] = payload.split('|');
+        const cols = colsStr.split(',');
+        const labels = ['Th', 'H', 'T', 'O'];
+        return `
+          <div class="cpa-box">
+            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;text-align:center;">
+              ${cols.map((val, i) => `
+                <div style="padding:6px 14px;border-radius:10px;border:2px solid ${i === 1 ? '#2563eb' : '#cbd5e1'};background:${i === 1 ? '#eff6ff' : '#f8fafc'};">
+                  <div style="font-size:10px;font-weight:900;color:#475569;">${labels[i]}</div>
+                  <div style="font-size:20px;font-weight:900;">${val}</div>
+                </div>
+              `).join('')}
+            </div>
+            ${cap ? `<span style="font-size:11.5px;font-weight:800;color:#475569;">${cap}</span>` : ''}
+          </div>
+        `;
+      }
+
+      return '';
+    }
+
+    // =========================================================================
+    // 4. INTERACTIVE SPLIT-SCREEN / FULLSCREEN SURFACE PEN WHITEBOARD
+    // =========================================================================
+    let wbOpen = false;
+    let wbFull = false;
+    let wbColor = '#0f172a';
+    let wbTool = 'pen';
+    let wbBg = 'blank';
+    let drawing = false;
+    let lx = 0;
+    let ly = 0;
+    let wbStack = [];
+
+    const canvas = document.getElementById('wb-canvas');
+    const ctx = canvas.getContext('2d');
+
+    function pushWbHistory() {
+      try {
+        if (wbStack.length > 18) wbStack.shift();
+        wbStack.push(canvas.toDataURL());
+      } catch (e) {}
+    }
+
+    function undoWb() {
+      if (!wbStack.length) return;
+      const img = new Image();
+      img.onload = () => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0);
+      };
+      img.src = wbStack.pop();
+    }
+
+    function toggleWhiteboard() {
+      wbOpen = !wbOpen;
+      const pane = document.getElementById('wb-pane');
+      const rev = document.getElementById('review-pane');
+      const lbl = document.getElementById('wb-toggle-label');
+
+      if (wbOpen) {
+        pane.classList.remove('hidden');
+        lbl.textContent = 'Close Whiteboard';
+        setTimeout(resizeWbKeepInk, 40);
+      } else {
+        pane.classList.add('hidden');
+        pane.classList.remove('fullscreen');
+        rev.classList.remove('hidden');
+        wbFull = false;
+        document.getElementById('btn-wb-full').textContent = 'Fullscreen';
+        lbl.textContent = 'Open Whiteboard';
+      }
+    }
+
+    function toggleWbFull() {
+      wbFull = !wbFull;
+      const pane = document.getElementById('wb-pane');
+      const rev = document.getElementById('review-pane');
+      const btn = document.getElementById('btn-wb-full');
+
+      if (wbFull) {
+        rev.classList.add('hidden');
+        pane.classList.add('fullscreen');
+        btn.textContent = 'Split Screen';
+      } else {
+        rev.classList.remove('hidden');
+        pane.classList.remove('fullscreen');
+        btn.textContent = 'Fullscreen';
+      }
+      setTimeout(resizeWbKeepInk, 40);
+    }
+
+    function setWbPen(hex) {
+      wbTool = 'pen';
+      wbColor = hex;
+      document.getElementById('btn-wb-hi').classList.remove('active-tool');
+      document.getElementById('btn-wb-er').classList.remove('active-tool');
+      document.querySelectorAll('.pen-swatch').forEach(s => {
+        s.classList.toggle('active', s.getAttribute('data-pen') === hex);
+      });
+    }
+
+    function setWbTool(t) {
+      wbTool = t;
+      document.querySelectorAll('.pen-swatch').forEach(s => s.classList.remove('active'));
+      document.getElementById('btn-wb-hi').classList.toggle('active-tool', t === 'highlighter');
+      document.getElementById('btn-wb-er').classList.toggle('active-tool', t === 'eraser');
+    }
+
+    function setWbBg(bg) {
+      wbBg = bg;
+      clearWb();
+    }
+
+    function paintWbTemplate() {
+      const w = canvas.width;
+      const h = canvas.height;
+      ctx.save();
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, w, h);
+
+      if (wbBg === 'grid') {
+        ctx.strokeStyle = '#e2e8f0';
+        ctx.lineWidth = 1;
+        for (let x = 0; x < w; x += 28) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke(); }
+        for (let y = 0; y < h; y += 28) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke(); }
+      } else if (wbBg === 'numberline') {
+        const y = Math.round(h * 0.55);
+        ctx.strokeStyle = '#334155';
+        ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.moveTo(36, y); ctx.lineTo(w - 36, y); ctx.stroke();
+        for (let i = 0; i <= 10; i++) {
+          const x = 36 + ((w - 72) * i) / 10;
+          ctx.beginPath(); ctx.moveTo(x, y - 10); ctx.lineTo(x, y + 10); ctx.stroke();
+        }
+      } else if (wbBg === 'thhto') {
+        const cw = w / 4;
+        ctx.strokeStyle = '#94a3b8';
+        ctx.lineWidth = 2;
+        [1, 2, 3].forEach(i => { ctx.beginPath(); ctx.moveTo(cw * i, 20); ctx.lineTo(cw * i, h - 20); ctx.stroke(); });
+        ctx.beginPath(); ctx.moveTo(20, 60); ctx.lineTo(w - 20, 60); ctx.stroke();
+        ctx.font = '900 16px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#1e293b';
+        ['Th', 'H', 'T', 'O'].forEach((lbl, i) => ctx.fillText(lbl, cw * (i + 0.5), 45));
+      } else if (wbBg === 'barmodel') {
+        const bx = 48;
+        const bw = w - 96;
+        const by = Math.round(h * 0.35);
+        ctx.strokeStyle = '#334155';
+        ctx.lineWidth = 3;
+        ctx.strokeRect(bx, by, bw, 54);
+        ctx.strokeRect(bx, by + 62, bw * 0.5, 54);
+        ctx.strokeRect(bx + bw * 0.5, by + 62, bw * 0.5, 54);
+      } else if (wbBg === 'sq100_oddeven') {
+        const pad = 22;
+        const size = Math.min(w - pad * 2, h - pad * 2);
+        const startX = (w - size) / 2;
+        const startY = (h - size) / 2;
+        const cell = size / 10;
+
+        ctx.font = `800 ${Math.max(10, Math.floor(cell * 0.36))}px sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+
+        for (let r = 0; r < 10; r++) {
+          for (let c = 0; c < 10; c++) {
+            const num = r * 10 + c + 1;
+            const isOdd = num % 2 !== 0;
+            const cx = startX + c * cell;
+            const cy = startY + r * cell;
+
+            ctx.fillStyle = isOdd ? '#f3e8ff' : '#d1fae5';
+            ctx.fillRect(cx, cy, cell, cell);
+            ctx.strokeStyle = '#94a3b8';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(cx, cy, cell, cell);
+
+            ctx.fillStyle = isOdd ? '#5b21b6' : '#065f46';
+            ctx.fillText(String(num), cx + cell / 2, cy + cell / 2);
+          }
+        }
+      }
+      ctx.restore();
+    }
+
+    function clearWb() {
+      pushWbHistory();
+      const wrap = document.getElementById('wb-wrap');
+      canvas.width = wrap.clientWidth || 500;
+      canvas.height = wrap.clientHeight || 420;
+      paintWbTemplate();
+    }
+
+    function resizeWbKeepInk() {
+      const wrap = document.getElementById('wb-wrap');
+      if (!wrap || wrap.clientWidth === 0) return;
+      const snap = document.createElement('canvas');
+      snap.width = canvas.width;
+      snap.height = canvas.height;
+      snap.getContext('2d').drawImage(canvas, 0, 0);
+
+      canvas.width = wrap.clientWidth;
+      canvas.height = wrap.clientHeight;
+      paintWbTemplate();
+      ctx.drawImage(snap, 0, 0);
+    }
+
+    function getPos(e) {
+      const r = canvas.getBoundingClientRect();
+      const cx = e.touches ? e.touches[0].clientX : e.clientX;
+      const cy = e.touches ? e.touches[0].clientY : e.clientY;
+      return { x: cx - r.left, y: cy - r.top };
+    }
+
+    canvas.addEventListener('mousedown', e => { pushWbHistory(); drawing = true; const p = getPos(e); lx = p.x; ly = p.y; });
+    canvas.addEventListener('mousemove', e => {
+      if (!drawing) return;
+      const p = getPos(e);
+      ctx.save();
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      if (wbTool === 'eraser') { ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 28; }
+      else if (wbTool === 'highlighter') { ctx.strokeStyle = 'rgba(250, 204, 21, 0.35)'; ctx.lineWidth = 20; }
+      else { ctx.strokeStyle = wbColor; ctx.lineWidth = 4; }
+      ctx.beginPath(); ctx.moveTo(lx, ly); ctx.lineTo(p.x, p.y); ctx.stroke();
+      ctx.restore();
+      lx = p.x; ly = p.y;
+    });
+    window.addEventListener('mouseup', () => { drawing = false; });
+
+    canvas.addEventListener('touchstart', e => { pushWbHistory(); drawing = true; const p = getPos(e); lx = p.x; ly = p.y; }, { passive: false });
+    canvas.addEventListener('touchmove', e => {
+      if (!drawing) return;
+      if (e.cancelable) e.preventDefault();
+      const p = getPos(e);
+      ctx.save();
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      if (wbTool === 'eraser') { ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 28; }
+      else if (wbTool === 'highlighter') { ctx.strokeStyle = 'rgba(250, 204, 21, 0.35)'; ctx.lineWidth = 20; }
+      else { ctx.strokeStyle = wbColor; ctx.lineWidth = 4; }
+      ctx.beginPath(); ctx.moveTo(lx, ly); ctx.lineTo(p.x, p.y); ctx.stroke();
+      ctx.restore();
+      lx = p.x; ly = p.y;
+    }, { passive: false });
+    window.addEventListener('touchend', () => { drawing = false; });
+
+    window.addEventListener('resize', () => { if (wbOpen) resizeWbKeepInk(); });
+    window.addEventListener('keydown', e => {
+      if (document.activeElement && document.activeElement.id === 'tryit-input') return;
+      if (e.key === 'ArrowRight') nextQuestion();
+      else if (e.key === 'ArrowLeft') prevQuestion();
+    });
+
+    window.onload = function () {
+      renderVocabGrid();
+      renderSq100();
+      setFilter('all');
+      clearWb();
+    };
+  </script>
+</body>
+</html>
