@@ -1,0 +1,2739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P5B Group A Higher-Pitch Diagnostic Check-Up: Teacher Test Review &amp; Interactive Whiteboard</title>
+  <style>
+    :root {
+      --bg-page: #f1f5f9;
+      --ink: #0f172a;
+      --ink-soft: #475569;
+      --surface: #ffffff;
+      --surface-alt: #f8fafc;
+      --border: #cbd5e1;
+      --border-light: #e2e8f0;
+      --indigo: #4f46e5;
+      --indigo-dark: #3730a3;
+      --indigo-soft: #eef2ff;
+      --emerald: #059669;
+      --emerald-soft: #ecfdf5;
+      --amber: #d97706;
+      --amber-soft: #fffbeb;
+      --rose: #e11d48;
+      --rose-soft: #fff1f2;
+      --blue: #2563eb;
+      --blue-soft: #eff6ff;
+      --shadow-sm: 0 2px 6px rgba(15, 23, 42, 0.05);
+      --shadow-md: 0 10px 25px -5px rgba(15, 23, 42, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background-color: var(--bg-page);
+      color: var(--ink);
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      user-select: none;
+    }
+
+    .hidden { display: none !important; }
+
+    /* TOP PERSISTENT HEADER */
+    .topbar {
+      background: #0f172a;
+      color: #ffffff;
+      border-bottom: 4px solid var(--indigo);
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.22);
+    }
+
+    .topbar-inner {
+      max-width: 1680px;
+      margin: 0 auto;
+      padding: 10px 18px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-badge {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: var(--indigo);
+      border: 2px solid #818cf8;
+      color: #ffffff;
+      font-weight: 900;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .brand-title {
+      font-size: 17px;
+      font-weight: 900;
+      margin: 0;
+      letter-spacing: -0.01em;
+      line-height: 1.2;
+    }
+
+    .brand-sub {
+      font-size: 11.5px;
+      color: #c7d2fe;
+      font-weight: 600;
+      margin: 2px 0 0;
+    }
+
+    .toolbar-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-top {
+      border-radius: 11px;
+      padding: 8px 13px;
+      font-size: 12.5px;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: transform 0.1s, filter 0.15s;
+    }
+
+    .btn-top:active { transform: scale(0.96); }
+    .btn-top-indigo { background: var(--indigo); color: #fff; border: 1px solid #818cf8; }
+    .btn-top-amber { background: #fbbf24; color: #0f172a; border: 1px solid #fde68a; }
+    .btn-top-emerald { background: var(--emerald); color: #fff; border: 1px solid #34d399; }
+    .btn-top-slate { background: #1e293b; color: #e2e8f0; border: 1px solid #475569; }
+
+    /* DRAWERS (PUPIL SCOREBOARD & VOCAB BANK) */
+    .top-drawer {
+      background: #1e293b;
+      border-top: 1px solid #334155;
+      padding: 16px 18px;
+      animation: fadeSlide 0.18s ease-out;
+    }
+
+    .drawer-inner {
+      max-width: 1680px;
+      margin: 0 auto;
+    }
+
+    .drawer-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .drawer-title {
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #a5b4fc;
+    }
+
+    .btn-close-drawer {
+      background: #334155;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 5px 10px;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .pupil-profiles-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    @media (min-width: 768px) {
+      .pupil-profiles-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (min-width: 1280px) {
+      .pupil-profiles-grid { grid-template-columns: repeat(4, 1fr); }
+    }
+
+    .profile-box {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 14px;
+      padding: 12px 14px;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .profile-box-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+
+    .profile-name { font-size: 15px; font-weight: 900; color: #fff; }
+    .profile-pill {
+      font-size: 10.5px;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #312e81;
+      color: #c7d2fe;
+      border: 1px solid #4338ca;
+    }
+
+    .vocab-grid {
+      display: grid;
+      grid-template-columns: repeat(1, 1fr);
+      gap: 8px;
+    }
+
+    @media (min-width: 640px) {
+      .vocab-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (min-width: 1100px) {
+      .vocab-grid { grid-template-columns: repeat(4, 1fr); }
+    }
+
+    .vocab-card {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-size: 11.5px;
+    }
+
+    .vocab-term {
+      display: inline-block;
+      background: rgba(251, 191, 36, 0.18);
+      color: #fde047;
+      font-weight: 900;
+      padding: 2px 8px;
+      border-radius: 6px;
+      margin-bottom: 4px;
+    }
+
+    .vocab-def { color: #e2e8f0; margin: 0 0 4px; font-weight: 600; }
+    .vocab-stem { color: #93c5fd; margin: 0; font-style: italic; font-weight: 700; }
+
+    /* MAIN SPLIT-SCREEN LAYOUT */
+    .workspace {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      max-width: 1680px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    @media (min-width: 1024px) {
+      .workspace { flex-direction: row; }
+    }
+
+    .review-pane {
+      flex: 1;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      overflow-y: auto;
+    }
+
+    /* NAVIGATOR CARD */
+    .nav-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 14px 16px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .filter-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .filter-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .filter-btn {
+      padding: 6px 11px;
+      border-radius: 10px;
+      font-size: 11.5px;
+      font-weight: 800;
+      border: 1px solid var(--border);
+      background: var(--surface-alt);
+      color: var(--ink-soft);
+      cursor: pointer;
+    }
+
+    .filter-btn.active {
+      background: #0f172a;
+      color: #ffffff;
+      border-color: #0f172a;
+    }
+
+    .legend-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--ink-soft);
+    }
+
+    .dot {
+      display: inline-block;
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      margin-right: 3px;
+    }
+
+    .q-pills-grid {
+      display: grid;
+      grid-template-columns: repeat(10, 1fr);
+      gap: 6px;
+      padding-top: 10px;
+      border-top: 1px solid var(--border-light);
+    }
+
+    @media (min-width: 768px) {
+      .q-pills-grid { grid-template-columns: repeat(20, 1fr); }
+    }
+
+    .q-pill {
+      height: 36px;
+      border-radius: 10px;
+      font-size: 11.5px;
+      font-weight: 800;
+      background: var(--surface-alt);
+      color: var(--ink);
+      border: 2px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.1s;
+    }
+
+    .q-pill.status-green { border-color: #34d399; }
+    .q-pill.status-amber { border-color: #fbbf24; }
+    .q-pill.status-rose { border-color: #fb7185; }
+
+    .q-pill.active {
+      background: var(--indigo);
+      color: #ffffff;
+      border-color: var(--indigo-dark);
+      transform: scale(1.06);
+      box-shadow: 0 3px 8px rgba(79, 70, 229, 0.25);
+    }
+
+    .pill-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      margin-top: 2px;
+    }
+
+    /* MAIN QUESTION CARD */
+    .question-card {
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: 22px;
+      padding: 20px 22px;
+      box-shadow: var(--shadow-md);
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .card-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .card-badges {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .badge-qnum {
+      background: #0f172a;
+      color: #ffffff;
+      font-size: 14px;
+      font-weight: 900;
+      padding: 6px 13px;
+      border-radius: 11px;
+    }
+
+    .badge-part {
+      background: var(--indigo-soft);
+      color: var(--indigo-dark);
+      border: 1px solid #c7d2fe;
+      font-size: 11.5px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 5px 11px;
+      border-radius: 999px;
+    }
+
+    .nav-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .btn-nav {
+      padding: 8px 13px;
+      border-radius: 11px;
+      font-size: 12.5px;
+      font-weight: 800;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: var(--surface-alt);
+      color: var(--ink);
+    }
+
+    .btn-nav:hover { background: #e2e8f0; }
+    .btn-nav-speak { background: #fef3c7; border-color: #fcd34d; color: #78350f; }
+    .btn-nav-next { background: var(--indigo); border-color: var(--indigo-dark); color: #fff; }
+    .btn-nav-next:hover { background: #4338ca; }
+
+    /* QUESTION PROMPT + INTERACTIVE CLASS CHECK */
+    .prompt-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      align-items: start;
+    }
+
+    @media (min-width: 1150px) {
+      .prompt-grid { grid-template-columns: 7fr 5fr; }
+    }
+
+    .q-text {
+      font-size: 25px;
+      font-weight: 900;
+      color: var(--ink);
+      line-height: 1.3;
+      margin: 0 0 12px;
+      letter-spacing: -0.01em;
+    }
+
+    @media (min-width: 640px) {
+      .q-text { font-size: 30px; }
+    }
+
+    .stem-box {
+      background: var(--indigo-soft);
+      border: 1px solid #c7d2fe;
+      border-radius: 14px;
+      padding: 11px 14px;
+    }
+
+    .vocab-pill {
+      display: inline-block;
+      background: var(--indigo);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 2px 9px;
+      border-radius: 999px;
+      margin-left: 4px;
+    }
+
+    .stem-quote {
+      margin: 6px 0 0;
+      font-size: 13px;
+      font-weight: 700;
+      font-style: italic;
+      color: #1e1b4b;
+    }
+
+    /* TRY-IT BOX */
+    .tryit-box {
+      background: var(--surface-alt);
+      border: 2px dashed #94a3b8;
+      border-radius: 16px;
+      padding: 14px;
+    }
+
+    .tryit-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--ink-soft);
+      margin-bottom: 8px;
+    }
+
+    .tryit-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .tryit-input {
+      flex: 1;
+      min-width: 0;
+      background: #ffffff;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--ink);
+      outline: none;
+    }
+
+    .tryit-input:focus { border-color: var(--indigo); }
+
+    .btn-tryit {
+      background: #0f172a;
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: 10px 15px;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .factor-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+
+    .factor-chip {
+      padding: 7px 12px;
+      border-radius: 10px;
+      border: 2px solid var(--border);
+      background: #fff;
+      font-weight: 900;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .factor-chip.picked {
+      background: var(--indigo);
+      color: #fff;
+      border-color: var(--indigo-dark);
+    }
+
+    .tryit-fb {
+      margin: 8px 0 0;
+      font-size: 12.5px;
+      font-weight: 800;
+      min-height: 18px;
+    }
+
+    /* TEACHER REVEAL BUTTON BAR */
+    .reveal-bar {
+      padding-top: 14px;
+      border-top: 1px solid var(--border-light);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+    }
+
+    .btn-reveal {
+      padding: 11px 15px;
+      border-radius: 13px;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.1s;
+    }
+
+    .btn-reveal:active { transform: scale(0.97); }
+    .rev-pupils { background: var(--indigo-soft); border: 2px solid #818cf8; color: #1e1b4b; }
+    .rev-cpa { background: var(--amber-soft); border: 2px solid #fbbf24; color: #78350f; }
+    .rev-working { background: var(--blue-soft); border: 2px solid #60a5fa; color: #1e3a8a; }
+    .rev-answer { background: var(--emerald); border: 2px solid #047857; color: #ffffff; }
+
+    /* REVEAL PANELS */
+    .reveal-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .rev-panel {
+      border-radius: 16px;
+      padding: 16px 18px;
+      animation: fadeSlide 0.18s ease-out;
+    }
+
+    .panel-pupils { background: var(--indigo-soft); border: 2px solid #a5b4fc; }
+    .panel-cpa { background: var(--amber-soft); border: 2px solid #fcd34d; }
+    .panel-working { background: var(--blue-soft); border: 2px solid #93c5fd; }
+    .panel-answer {
+      background: var(--emerald-soft);
+      border: 2px solid #10b981;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .panel-head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .panel-label {
+      font-size: 11.5px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .btn-mask-names {
+      background: #0f172a;
+      color: #fff;
+      border: none;
+      border-radius: 9px;
+      padding: 5px 11px;
+      font-size: 11.5px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .pupils-cards {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+
+    @media (min-width: 768px) {
+      .pupils-cards { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    .pupil-status-card {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 10px 13px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .ps-ok { border: 2px solid #34d399; }
+    .ps-miss { border: 2px solid #fda4af; }
+    .ps-obs { border: 2px solid #93c5fd; }
+
+    .ps-name { font-size: 14px; font-weight: 900; color: var(--ink); display: block; }
+    .ps-note { font-size: 12px; font-weight: 700; }
+    .ps-badge {
+      font-size: 11px;
+      font-weight: 900;
+      padding: 3px 9px;
+      border-radius: 8px;
+      flex-shrink: 0;
+    }
+
+    .cpa-caption {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--ink);
+      margin: 0 0 12px;
+    }
+
+    .cpa-stage {
+      display: flex;
+      justify-content: center;
+      overflow-x: auto;
+    }
+
+    .working-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 14.5px;
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .answer-big {
+      font-size: 28px;
+      font-weight: 900;
+      color: #064e3b;
+      display: block;
+      margin-top: 2px;
+    }
+
+    /* CPA DIAGRAM STYLING */
+    .cpa-box {
+      background: #ffffff;
+      border: 1px solid #fcd34d;
+      border-radius: 14px;
+      padding: 14px 18px;
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .hop-strip {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-weight: 900;
+      font-size: 15px;
+    }
+
+    .hop-pill {
+      padding: 6px 12px;
+      border-radius: 10px;
+      border: 2px solid var(--border);
+      background: var(--surface-alt);
+    }
+
+    .hop-mid { background: #d1fae5; border-color: #10b981; color: #064e3b; }
+    .hop-end { background: #fef3c7; border-color: #f59e0b; color: #78350f; }
+
+    /* WHITEBOARD PANE */
+    .wb-pane {
+      background: #ffffff;
+      border-top: 4px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      box-shadow: -8px 0 24px rgba(15, 23, 42, 0.12);
+      z-index: 30;
+    }
+
+    @media (min-width: 1024px) {
+      .wb-pane {
+        width: 46%;
+        border-top: none;
+        border-left: 4px solid var(--border);
+      }
+      .wb-pane.fullscreen {
+        width: 100%;
+        border-left: none;
+      }
+    }
+
+    .wb-toolbar {
+      background: #1e293b;
+      color: #fff;
+      padding: 9px 12px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      border-bottom: 1px solid #334155;
+    }
+
+    .wb-group {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .pen-swatch {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.7);
+      cursor: pointer;
+    }
+
+    .pen-swatch.active {
+      box-shadow: 0 0 0 2px #0f172a, 0 0 0 4px #34d399;
+    }
+
+    .wb-btn {
+      background: #334155;
+      color: #fff;
+      border: 1px solid #475569;
+      border-radius: 8px;
+      padding: 5px 9px;
+      font-size: 11.5px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .wb-btn.active-tool {
+      background: #fbbf24;
+      color: #0f172a;
+      border-color: #fde68a;
+    }
+
+    .wb-select {
+      background: #0f172a;
+      color: #fff;
+      border: 1px solid #475569;
+      border-radius: 8px;
+      padding: 5px 8px;
+      font-size: 11.5px;
+      font-weight: 800;
+      outline: none;
+    }
+
+    .wb-canvas-wrap {
+      position: relative;
+      flex: 1;
+      min-height: 420px;
+      background: #ffffff;
+      overflow: hidden;
+    }
+
+    @media (min-width: 1024px) {
+      .wb-canvas-wrap { min-height: calc(100vh - 96px); }
+    }
+
+    /* 100 SQUARE INTERACTIVE GRID STYLES */
+    .sq100-panel {
+      background: #0f172a;
+      border: 2px solid #334155;
+      border-radius: 18px;
+      padding: 14px 16px;
+      color: #ffffff;
+    }
+
+    .sq100-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .sq100-btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sq-mode-btn {
+      padding: 6px 11px;
+      border-radius: 9px;
+      font-size: 12px;
+      font-weight: 800;
+      border: 1px solid #475569;
+      background: #1e293b;
+      color: #e2e8f0;
+      cursor: pointer;
+      transition: transform 0.1s, background 0.15s;
+    }
+
+    .sq-mode-btn:active { transform: scale(0.96); }
+    .sq-mode-btn.active-odd { background: #7c3aed; border-color: #c4b5fd; color: #ffffff; }
+    .sq-mode-btn.active-even { background: #059669; border-color: #6ee7b7; color: #ffffff; }
+    .sq-mode-btn.active-both { background: #4f46e5; border-color: #fde047; color: #ffffff; }
+    .sq-mode-btn.active-mult { background: #d97706; border-color: #fde68a; color: #ffffff; }
+
+    .sq100-layout {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      align-items: start;
+    }
+
+    @media (min-width: 960px) {
+      .sq100-layout { grid-template-columns: minmax(340px, 520px) 1fr; }
+    }
+
+    .sq100-grid {
+      display: grid;
+      grid-template-columns: repeat(10, 1fr);
+      gap: 4px;
+      background: #1e293b;
+      padding: 8px;
+      border-radius: 14px;
+      border: 2px solid #475569;
+    }
+
+    .sq100-cell {
+      aspect-ratio: 1 / 1;
+      min-height: 30px;
+      border-radius: 7px;
+      background: #f8fafc;
+      color: #0f172a;
+      font-weight: 900;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: transform 0.1s, background 0.15s, color 0.15s;
+    }
+
+    .sq100-cell:hover { transform: scale(1.07); z-index: 2; }
+    .sq100-cell.is-odd { background: #ede9fe; color: #4c1d95; border-color: #a78bfa; }
+    .sq100-cell.is-even { background: #d1fae5; color: #064e3b; border-color: #34d399; }
+    .sq100-cell.is-mult { background: #fef3c7; color: #78350f; border-color: #f59e0b; }
+    .sq100-cell.is-pinned {
+      background: #fbbf24 !important;
+      color: #0f172a !important;
+      border-color: #ffffff !important;
+      box-shadow: 0 0 0 2px #f59e0b;
+    }
+
+    .sq100-rule-card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 14px;
+      padding: 14px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOP PERSISTENT HEADER -->
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <div class="brand-badge">P5B</div>
+        <div>
+          <h1 class="brand-title">P5B Group A Higher-Pitch Diagnostic Check-Up: Teacher Review Hub</h1>
+          <p class="brand-sub">Paul Doherty (10/20) &bull; Julia Gibson (10/20) &bull; Nevaeh Cunningham-Carroll (6/20) &bull; Oisin Mervyn (Live Check)</p>
+        </div>
+      </div>
+
+      <div class="toolbar-actions">
+        <button type="button" class="btn-top btn-top-indigo" onclick="toggleTopDrawer('scoreboard')">
+          <span>&#128203;</span>
+          <span>Pupil Scoreboard &amp; Gaps</span>
+        </button>
+
+        <button type="button" class="btn-top btn-top-amber" onclick="toggleTopDrawer('vocab')">
+          <span>&#128214;</span>
+          <span>Vocab &amp; Stems (16)</span>
+        </button>
+
+        <button type="button" class="btn-top" style="background:#7c3aed;color:#fff;border:1px solid #c4b5fd;" onclick="toggleTopDrawer('sq100')">
+          <span>&#128290;</span>
+          <span>100 Square (Odd/Even)</span>
+        </button>
+
+        <button type="button" class="btn-top btn-top-emerald" onclick="toggleWhiteboard()">
+          <span>&#128394;&#65039;</span>
+          <span id="wb-toggle-label">Open Whiteboard</span>
+        </button>
+
+        <button type="button" class="btn-top btn-top-slate" onclick="resetAllReveals()" title="Hide all open question reveals">
+          <span>&#128260;</span>
+          <span>Reset All Reveals</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- COLLAPSIBLE DRAWER 1: PUPIL SCOREBOARD & DIAGNOSTIC GAPS -->
+    <div id="drawer-scoreboard" class="top-drawer hidden">
+      <div class="drawer-inner">
+        <div class="drawer-head">
+          <span class="drawer-title">P5B Group A ("Reasoning into Attainment") &bull; June 2026 PTM/CAT4 &amp; Nov 16–17 Check-Up Profiles</span>
+          <button type="button" class="btn-close-drawer" onclick="toggleTopDrawer('scoreboard')">Close &times;</button>
+        </div>
+
+        <div class="pupil-profiles-grid">
+          <!-- Paul Doherty -->
+          <div class="profile-box">
+            <div class="profile-box-top">
+              <span class="profile-name">Paul Doherty</span>
+              <span class="profile-pill">CAT4 108 / PTM 88 (−20) &bull; Nov: 10/20</span>
+            </div>
+            <p style="color:#34d399;margin:0 0 5px;font-weight:700;">
+              <strong>Nailed (10):</strong> Complements to 1,000 (Q1: 360, Q2: 650), Q6 (800), Q7 (180), Q9 (600), Q10 ordering, Q13 (3:15 pm), Q15 (£1.65), Q20 (Spot the Mistake: 65).
+            </p>
+            <p style="color:#fda4af;margin:0;font-weight:600;">
+              <strong>Missed (10):</strong> Q3 (502−147=33), Q4 ([ ]−35=48 &rarr; 13 subtracted!), Q5 (7&times;7=49), Q8 (46&times;10=40), Q11 (54&divide;6=2), Q12 (3/4 of 24=12), Q14 (Perimeter), Q16 (124−89=24), Q17 (marbles=26), Q18 (factors of 18: picked 12), Q19 (1/2=2/10).
+            </p>
+          </div>
+
+          <!-- Julia Gibson -->
+          <div class="profile-box">
+            <div class="profile-box-top">
+              <span class="profile-name">Julia Gibson</span>
+              <span class="profile-pill">CAT4 108 / PTM 95 (−13) &bull; Nov: 10/20</span>
+            </div>
+            <p style="color:#34d399;margin:0 0 5px;font-weight:700;">
+              <strong>Nailed (10):</strong> Q5 (56&divide;8=7), Q6 (800), Q8 (460), Q9 (600), Q10 ordering, Q11 (54&divide;6=9), Q13 (3:15 pm), Q16 (Difference=35), Q17 (marbles: 18+36=54!).
+            </p>
+            <p style="color:#fda4af;margin:0;font-weight:600;">
+              <strong>Missed (10):</strong> Q1 (460 — 1,100 trap), Q2 (750 — extra 100 trap), Q3 (502−147=465 reversal), Q4 ([ ]−35=48), Q7 (482=300+[ ]+2), Q12 (3/4 of 24), Q14 (11 cm — 2 sides only), Q15 (£2.65 — extra £1 trap), Q18 (factors of 18), Q19 (1/2=5/10), Q20.
+            </p>
+          </div>
+
+          <!-- Nevaeh Cunningham-Carroll -->
+          <div class="profile-box">
+            <div class="profile-box-top">
+              <span class="profile-name">Nevaeh Cunningham-Carroll</span>
+              <span class="profile-pill">CAT4 105 / PTM 85 (−20) &bull; Nov: 6/20</span>
+            </div>
+            <p style="color:#34d399;margin:0 0 5px;font-weight:700;">
+              <strong>Nailed (6):</strong> Q6 (800), Q7 (non-standard partition: 180!), Q8 (46&times;10=460), Q19 (equivalent fraction: 1/2=5/10!).
+            </p>
+            <p style="color:#fda4af;margin:0;font-weight:600;">
+              <strong>Missed (14):</strong> Q1 (460 — 1,100 trap), Q2 (blank), Q3 (502−147=343), Q4 ([ ]−35=48 &rarr; 8), Q5 (87−56), Q9 (650), Q10 ordering, Q11 (54&divide;6), Q12 (3/4 of 24), Q13 (3:15 pm), Q14 (Perimeter), Q15 (£1.65), Q16 (Difference=4), Q17 (marbles), Q18 (only listed 6).
+            </p>
+          </div>
+
+          <!-- Oisin Mervyn -->
+          <div class="profile-box">
+            <div class="profile-box-top">
+              <span class="profile-name">Oisin Mervyn</span>
+              <span class="profile-pill">CAT4 110 / PTM 90 (−20) &bull; Live Check Target</span>
+            </div>
+            <p style="color:#93c5fd;margin:0 0 5px;font-weight:700;">
+              <strong>Profile:</strong> Highest CAT4 Quantitative score in Group A (110, −20 PTM gap; absent during Nov 16–17 check-up).
+            </p>
+            <p style="color:#fde68a;margin:0;font-weight:600;">
+              <strong>Classroom Strategy:</strong> Use each question's <em>"Live Check for Oisin"</em> prompt in the Pupil Breakdown panel to probe his oral reasoning and bar-model setup live on mini-whiteboards!
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COLLAPSIBLE DRAWER 2: 16 VOCABULARY & SPOKEN STEM SENTENCES -->
+    <div id="drawer-vocab" class="top-drawer hidden">
+      <div class="drawer-inner">
+        <div class="drawer-head">
+          <span class="drawer-title">P5B Group A Core Vocabulary &amp; Spoken Stem Sentences (16 Essential Terms)</span>
+          <button type="button" class="btn-close-drawer" onclick="toggleTopDrawer('vocab')">Close &times;</button>
+        </div>
+        <div id="vocab-grid" class="vocab-grid"></div>
+      </div>
+    </div>
+
+    <!-- COLLAPSIBLE DRAWER 3: INTERACTIVE 100 SQUARE WITH ODD & EVEN HIGHLIGHTING -->
+    <div id="drawer-sq100" class="top-drawer hidden">
+      <div class="drawer-inner">
+        <div class="drawer-head">
+          <span class="drawer-title">&#128290; Interactive 100 Square (1–100) &bull; Odd &amp; Even Number Highlighting &amp; Multiples Explorer</span>
+          <button type="button" class="btn-close-drawer" onclick="toggleTopDrawer('sq100')">Close &times;</button>
+        </div>
+
+        <div class="sq100-panel">
+          <div class="sq100-toolbar">
+            <div class="sq100-btn-group">
+              <button type="button" id="sq-btn-odd" class="sq-mode-btn" onclick="setSq100Mode('odd')">&#128995; Highlight Odd</button>
+              <button type="button" id="sq-btn-even" class="sq-mode-btn" onclick="setSq100Mode('even')">&#128994; Highlight Even</button>
+              <button type="button" id="sq-btn-both" class="sq-mode-btn" onclick="setSq100Mode('both')">&#127763; Odd vs. Even Columns</button>
+              <button type="button" id="sq-btn-m2" class="sq-mode-btn" onclick="setSq100Mode('m2')">&times;2</button>
+              <button type="button" id="sq-btn-m5" class="sq-mode-btn" onclick="setSq100Mode('m5')">&times;5</button>
+              <button type="button" id="sq-btn-m6" class="sq-mode-btn" onclick="setSq100Mode('m6')">&times;6</button>
+              <button type="button" id="sq-btn-m10" class="sq-mode-btn" onclick="setSq100Mode('m10')">&times;10</button>
+            </div>
+
+            <div class="sq100-btn-group">
+              <button type="button" id="sq-btn-mystery" class="sq-mode-btn" onclick="toggleSq100Mystery()">&#128065;&#65039; Hide Numbers</button>
+              <button type="button" class="sq-mode-btn" style="background:#e11d48;border-color:#fda4af;color:#fff;" onclick="clearSq100Highlights()">Clear Highlights</button>
+            </div>
+          </div>
+
+          <div class="sq100-layout">
+            <div id="sq100-grid" class="sq100-grid"></div>
+
+            <div class="sq100-rule-card">
+              <div style="font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:0.05em;color:#fde047;margin-bottom:6px;">
+                Active Pattern &amp; Teaching Prompt
+              </div>
+              <p id="sq100-rule-text" style="margin:0 0 12px;font-weight:700;color:#f8fafc;">
+                Tap <strong>Highlight Odd</strong>, <strong>Highlight Even</strong>, or <strong>Odd vs. Even Columns</strong> above, or tap any tile on the 100 square to pin/circle it in amber!
+              </p>
+              <div style="background:#0f172a;border:1px solid #334155;border-radius:10px;padding:10px 12px;font-size:12px;color:#cbd5e1;space-y:4px;">
+                <div style="margin-bottom:5px;"><strong style="color:#c4b5fd;">&#128995; Odd Rule:</strong> Odd numbers always end in <strong>1, 3, 5, 7, or 9</strong> (cannot be shared equally into 2 whole groups).</div>
+                <div style="margin-bottom:5px;"><strong style="color:#6ee7b7;">&#128994; Even Rule:</strong> Even numbers always end in <strong>0, 2, 4, 6, or 8</strong> (every even &times; 5 ends in 0!).</div>
+                <div><strong style="color:#fde047;">&#128070; Tap-to-Pin:</strong> Tap any number tiles on the grid to highlight custom complements (e.g., 35 &amp; 65 = 100) or factors of 18!</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN WORKSPACE -->
+  <div class="workspace">
+
+    <!-- LEFT: QUESTION REVIEW STAGE -->
+    <main id="review-pane" class="review-pane">
+
+      <!-- TOP 20-QUESTION NAVIGATOR & PART FILTERS -->
+      <section class="nav-panel">
+        <div class="filter-row">
+          <div class="filter-tabs">
+            <button type="button" class="filter-btn active" data-filter="all" onclick="setFilter('all')">All 20 Questions</button>
+            <button type="button" class="filter-btn" data-filter="part1" onclick="setFilter('part1')">Part 1: Complements &amp; Inverse (Q1–5)</button>
+            <button type="button" class="filter-btn" data-filter="part2" onclick="setFilter('part2')">Part 2: Partitioning &amp; PV (Q6–10)</button>
+            <button type="button" class="filter-btn" data-filter="part3" onclick="setFilter('part3')">Part 3: Fractions &amp; Measures (Q11–15)</button>
+            <button type="button" class="filter-btn" data-filter="part4" onclick="setFilter('part4')">Part 4: Reasoning &amp; Vocab (Q16–20)</button>
+          </div>
+
+          <div class="legend-row">
+            <span><span class="dot" style="background:#10b981;"></span>2+ Secure</span>
+            <span><span class="dot" style="background:#f59e0b;"></span>1 Secure</span>
+            <span><span class="dot" style="background:#f43f5e;"></span>All 3 Missed</span>
+          </div>
+        </div>
+
+        <div id="q-pills-grid" class="q-pills-grid"></div>
+      </section>
+
+      <!-- MAIN QUESTION REVIEW CARD -->
+      <section class="question-card">
+
+        <!-- Header Row -->
+        <div class="card-header">
+          <div class="card-badges">
+            <span id="badge-qnum" class="badge-qnum">Q1 of 20</span>
+            <span id="badge-part" class="badge-part">Part 1: Higher Retrieval &amp; Inverse</span>
+          </div>
+
+          <div class="nav-controls">
+            <button type="button" class="btn-nav" onclick="prevQuestion()">&larr; Prev</button>
+            <button type="button" class="btn-nav btn-nav-speak" onclick="speakQuestion()" title="Read Question Aloud">&#128264; Read Question Aloud</button>
+            <button type="button" class="btn-nav btn-nav-next" onclick="nextQuestion()">Next &rarr;</button>
+          </div>
+        </div>
+
+        <!-- Prompt + Key Vocab Stem + Interactive Class Try-It -->
+        <div class="prompt-grid">
+          <div>
+            <h2 id="q-text" class="q-text">Question text</h2>
+            <div class="stem-box">
+              <div style="font-size:11px;font-weight:900;text-transform:uppercase;color:#3730a3;">
+                Key Maths Word(s): <span id="q-vocab-pill" class="vocab-pill">Complement</span>
+              </div>
+              <p id="q-stem" class="stem-quote">"Spoken stem sentence"</p>
+            </div>
+          </div>
+
+          <div class="tryit-box">
+            <div class="tryit-header">
+              <span>Interactive Class Check</span>
+              <span style="color:#4f46e5;">Unlimited Retries</span>
+            </div>
+            <div id="tryit-controls"></div>
+            <p id="tryit-fb" class="tryit-fb"></p>
+          </div>
+        </div>
+
+        <!-- 4 STRICT MANUAL TEACHER REVEAL BUTTONS -->
+        <div class="reveal-bar">
+          <button type="button" id="btn-rev-pupils" class="btn-reveal rev-pupils" onclick="toggleReveal('pupils')">
+            <span>&#128101; Reveal Pupil Breakdown</span>
+          </button>
+
+          <button type="button" id="btn-rev-cpa" class="btn-reveal rev-cpa" onclick="toggleReveal('cpa')">
+            <span>&#128161; Show Visual CPA Model / Hint</span>
+          </button>
+
+          <button type="button" id="btn-rev-working" class="btn-reveal rev-working" onclick="toggleReveal('working')">
+            <span>&#129692; Show Step-by-Step Working</span>
+          </button>
+
+          <button type="button" id="btn-rev-answer" class="btn-reveal rev-answer" onclick="toggleReveal('answer')">
+            <span>&#9989; Reveal Final Answer</span>
+          </button>
+        </div>
+
+        <!-- HIDDEN-BY-DEFAULT REVEAL PANELS -->
+        <div class="reveal-stack">
+
+          <!-- 1. PUPIL BREAKDOWN PANEL -->
+          <div id="panel-pupils" class="rev-panel panel-pupils hidden">
+            <div class="panel-head">
+              <span class="panel-label" style="color:#1e1b4b;">&#128101; Group A Diagnostic Breakdown (Paul, Julia, Nevaeh &amp; Oisin)</span>
+              <button type="button" class="btn-mask-names" onclick="toggleHideNames()">
+                &#128374;&#65039; <span id="mask-names-label">Hide Names for Board</span>
+              </button>
+            </div>
+            <div id="pupils-cards" class="pupils-cards"></div>
+          </div>
+
+          <!-- 2. VISUAL CPA MODEL / HINT PANEL -->
+          <div id="panel-cpa" class="rev-panel panel-cpa hidden">
+            <div class="panel-head">
+              <span class="panel-label" style="color:#78350f;">&#128161; Concrete-Pictorial-Abstract (CPA) Visual Model</span>
+              <span style="font-size:11px;font-weight:800;color:#92400e;">Discuss Representation Before Answer</span>
+            </div>
+            <p id="cpa-caption" class="cpa-caption"></p>
+            <div id="cpa-stage" class="cpa-stage"></div>
+          </div>
+
+          <!-- 3. STEP-BY-STEP WORKING PANEL -->
+          <div id="panel-working" class="rev-panel panel-working hidden">
+            <div class="panel-head">
+              <span class="panel-label" style="color:#1e3a8a;">&#129692; Step-by-Step Reasoning &amp; Spoken Stem</span>
+            </div>
+            <div id="working-list" class="working-list"></div>
+          </div>
+
+          <!-- 4. FINAL ANSWER PANEL -->
+          <div id="panel-answer" class="rev-panel panel-answer hidden">
+            <div>
+              <span class="panel-label" style="color:#065f46;">&#9989; Verified Final Answer</span>
+              <span id="answer-big" class="answer-big"></span>
+            </div>
+            <button type="button" class="btn-nav btn-nav-next" style="padding:11px 18px;font-size:14px;" onclick="nextQuestion()">
+              Next Question &rarr;
+            </button>
+          </div>
+
+        </div>
+      </section>
+    </main>
+
+    <!-- RIGHT / FULLSCREEN INTERACTIVE SURFACE PEN WHITEBOARD -->
+    <aside id="wb-pane" class="wb-pane hidden">
+      <div class="wb-toolbar">
+        <div class="wb-group">
+          <span style="font-weight:900;font-size:12.5px;color:#34d399;margin-right:4px;">WHITEBOARD</span>
+          <button type="button" class="pen-swatch active" data-pen="#0f172a" style="background:#0f172a;" onclick="setWbPen('#0f172a')" title="Black Pen"></button>
+          <button type="button" class="pen-swatch" data-pen="#2563eb" style="background:#2563eb;" onclick="setWbPen('#2563eb')" title="Blue Pen"></button>
+          <button type="button" class="pen-swatch" data-pen="#dc2626" style="background:#dc2626;" onclick="setWbPen('#dc2626')" title="Red Pen"></button>
+          <button type="button" class="pen-swatch" data-pen="#059669" style="background:#059669;" onclick="setWbPen('#059669')" title="Emerald Pen"></button>
+          <button type="button" class="pen-swatch" data-pen="#ea580c" style="background:#ea580c;" onclick="setWbPen('#ea580c')" title="Orange Pen"></button>
+
+          <button type="button" id="btn-wb-hi" class="wb-btn" style="color:#fde047;" onclick="setWbTool('highlighter')">Highlighter</button>
+          <button type="button" id="btn-wb-er" class="wb-btn" style="color:#fed7aa;" onclick="setWbTool('eraser')">Eraser</button>
+        </div>
+
+        <div class="wb-group">
+          <select id="wb-bg" class="wb-select" onchange="setWbBg(this.value)">
+            <option value="blank">Blank</option>
+            <option value="grid">Squared Maths Grid</option>
+            <option value="numberline">Empty Number Line</option>
+            <option value="thhto">Th | H | T | O Columns</option>
+            <option value="barmodel">Bar Model Frame</option>
+            <option value="sq100_oddeven">100 Square (Odd / Even Columns)</option>
+          </select>
+
+          <button type="button" class="wb-btn" onclick="undoWb()">Undo</button>
+          <button type="button" id="btn-wb-full" class="wb-btn" style="background:#4f46e5;border-color:#6366f1;" onclick="toggleWbFull()">Fullscreen</button>
+          <button type="button" class="wb-btn" style="background:#e11d48;border-color:#f43f5e;" onclick="clearWb()">Clear</button>
+          <button type="button" class="wb-btn" onclick="toggleWhiteboard()">&times;</button>
+        </div>
+      </div>
+
+      <div id="wb-wrap" class="wb-canvas-wrap">
+        <canvas id="wb-canvas" style="display:block;width:100%;height:100%;"></canvas>
+      </div>
+    </aside>
+  </div>
+
+  <script>
+    // =========================================================================
+    // 1. 16 CORE VOCABULARY TERMS & SPOKEN STEM SENTENCES
+    // =========================================================================
+    const VOCAB_ITEMS = [
+      { term: 'Complement', def: 'Two numbers that join together to make a friendly landmark (10, 100, or 1,000).', stem: '"When the tens make 100, the hundreds make 900 (640 + 360 = 1,000)."' },
+      { term: 'Exchange', def: 'Trading 1 hundred for 10 tens (or 1 ten for 10 ones) when subtracting.', stem: '"Decompose 502 into 400 + 90 + 12 so every column can subtract."' },
+      { term: 'Non-Standard Partitioning', def: 'Splitting a number flexibly into different combinations of hundreds, tens, and ones.', stem: '"482 is 400 + 80 + 2, which is also 300 + 180 + 2."' },
+      { term: 'Inverse', def: 'The opposite operation that undoes a calculation (+ undoes −; × undoes ÷).', stem: '"To find a missing starting whole in [ ] − 35 = 48, add 48 + 35 = 83."' },
+      { term: 'Fact Family', def: 'Four connected multiplication and division equations built from three numbers.', stem: '"In a division fact, the Boss Number (56) goes at the front: 56 ÷ 8 = 7."' },
+      { term: 'Place Value Shift', def: 'Moving digits left when multiplying by 10/100 or right when dividing.', stem: '"Multiplying 46 by 10 shifts every digit one column left to 460."' },
+      { term: 'Rounding', def: 'Finding the nearest multiple of 10 or 100 using the halfway boundary.', stem: '"Look at the tens digit in 648: 4 tens is below 50, so round down to 600."' },
+      { term: 'Quotient', def: 'The result when one number is divided by another (54 ÷ 6 = 9).', stem: '"6 × 9 = 54, so 54 divided by 6 equals 9."' },
+      { term: 'Non-Unit Fraction', def: 'A fraction with a numerator greater than 1 (such as 3/4).', stem: '"Divide by the denominator (24 ÷ 4 = 6), then multiply by the numerator (6 × 3 = 18)."' },
+      { term: 'Bridging Time', def: 'Splitting a time interval at the o’clock (60-minute) boundary.', stem: '"2:40 pm + 20 mins = 3:00 pm, plus 15 mins = 3:15 pm."' },
+      { term: 'Perimeter', def: 'The total distance all the way around all FOUR outside edges of a shape.', stem: '"Perimeter walks all four sides: 8 cm + 3 cm + 8 cm + 3 cm = 22 cm."' },
+      { term: 'Difference', def: 'The gap between two numbers found by subtracting or counting up.', stem: '"Count up from 89 to 100 (+11), then 100 to 124 (+24) -> 35."' },
+      { term: 'Twice / Multiplicative', def: 'Two times as many as a starting amount (× 2).', stem: '"Oisin has 18; Nevaeh has twice as many (18 × 2 = 36); altogether = 18 + 36 = 54."' },
+      { term: 'Factor', def: 'A whole number that divides into another number exactly with no remainder.', stem: '"Factors come in pairs that multiply to make 18: 1×18, 2×9, 3×6."' },
+      { term: 'Equivalent Fractions', def: 'Different fractions that represent the exact same proportion of a whole.', stem: '"Multiply top and bottom by 5: 1/2 = 5/10."' },
+      { term: 'Error Analysis', def: 'Inspecting an incorrect answer to explain the trap and prove the fix.', stem: '"75 + 35 = 110 (too big!), so 100 − 35 must be 65."' }
+    ];
+
+    // =========================================================================
+    // 2. ALL 20 HIGHER-PITCH DIAGNOSTIC CHECK-UP QUESTIONS & PUPIL DATA
+    // =========================================================================
+    const QUESTIONS = [
+      // --- PART 1: HIGHER RETRIEVAL, COMPLEMENTS TO 1,000 & INVERSE (Q1–Q5) ---
+      {
+        num: 1,
+        part: 'part1',
+        partTitle: 'Part 1: Complements to 1,000 & Inverse Operations',
+        prompt: 'Find the missing number to make 1,000:   640 + [   ] = 1,000',
+        speech: 'Question 1. Find the missing number to make 1,000: 640 plus blank equals 1,000.',
+        vocab: 'Complement',
+        stem: '"When the tens make 100 (40 + 60), the hundreds make 900 (600 + 300) -> 360."',
+        inputType: 'text',
+        answer: '360',
+        accepted: ['360'],
+        pupils: [
+          { name: 'Paul Doherty', status: 'ok', note: '360' },
+          { name: 'Julia Gibson', status: 'miss', note: 'Wrote 460 (1,100 trap: 600+400=1,000 & 40+60=100)' },
+          { name: 'Nevaeh Cunningham-Carroll', status: 'miss', note: 'Wrote 460 (1,100 trap)' },
+          { name: 'Oisin Mervyn', status: 'obs', note: '👀 Live Check for Oisin: Ask him to verify 640 + 360 vs 640 + 460.' }
+        ],
+        cpaCaption: 'Defeating the 1,100 Trap! Jump from 640 to the next hundred (700 = +60), then from 700 to 1,000 (+300).',
+        cpaCode: 'jumps:640,+60 -> 700,+300 -> 1,000|Combine both jumps: 60 + 300 = 360 (whereas 640 + 460 = 1,100!)',
+        working: [
+          '1. Jump from 640 to 700: + 60.',
+          '2. Jump from 700 to 1,000: + 300.',
+          '3. Add both jumps: 60 + 300 = 360 (Check: 640 + 360 = 1,000).'
+        ]
+      },
+      {
+        num: 2,
+        part: 'part1',
+        partTitle: 'Part 1: Complements to 1,000 & Inverse Operations',
+        prompt: 'Work out:   1,000 − 350 = [   ]',
+        speech: 'Question 2. Work out 1,000 minus 350.',
+        vocab: 'Complement & Inverse',
+        stem: '"Subtract 300 first (1,000 − 300 = 700), then subtract 50 more -> 650."',
+        inputType: 'text',
+        answer: '650',
+        accepted: ['650'],
+        pupils: [
+          { name: 'Paul Doherty', status: 'ok', note: '650' },
+          { name: 'Julia Gibson', status: 'miss', note: 'Wrote 750 (extra hundred trap: 750 + 350 = 1,100!)' },
+          { name: 'Nevaeh Cunningham-Carroll', status: 'miss', note: 'Left blank' },
+          { name: 'Oisin Mervyn', status: 'obs', note: '👀 Live Check for Oisin: Ask why 750 + 350 proves 750 is 100 too big.' }
+        ],
+        cpaCaption: 'Look at the 1,000-bar split into 350 taken away and [ ? ] remaining: 1,000 − 300 = 700, then 700 − 50 = 650!',
+        cpaCode: 'jumps:1,000,−300 -> 700,−50 -> 650|Inverse proof: 650 + 350 = 1,000',
+        working: [
+          '1. Subtract the hundreds first: 1,000 − 300 = 700.',
+          '2. Subtract the tens next: 700 − 50 = 650.',
+          '3. Inverse check: 650 + 350 = 1,000.'
+        ]
+      },
+      {
+        num: 3,
+        part: 'part1',
+        partTitle: 'Part 1: Complements to 1,000 & Inverse Operations',
+        prompt: 'Calculate:   502 − 147 = [   ]',
+        speech: 'Question 3. Calculate 502 minus 147.',
+        vocab: 'Exchange',
+        stem: '"Decompose 502 into 400 + 90 + 12 so every column can subtract without reversing digits."',
+        inputType: 'text',
+        answer: '355',
+        accepted: ['355'],
+        pupils: [
+          { name: 'Paul Doherty', status: 'miss', note: 'Wrote 33 (lost the hundreds column during exchange)' },
+          { name: 'Julia Gibson', status: 'miss', note: 'Wrote 465 (digit-reversal trap: 7−2=5, 4−0=4, 5−1=4)' },
+          { name: 'Nevaeh Cunningham-Carroll', status: 'miss', note: 'Wrote 343' },
+          { name: 'Oisin Mervyn', status: 'obs', note: '👀 Live Check for Oisin: Model decomposing 502 into 400 + 90 + 12 before subtracting.' }
+        ],
+        cpaCaption: 'Zero-Exchange Decomposition: Trade 1 hundred from 500 -> 400 + 100, then trade 1 ten -> 400 + 90 + 12!',
+        cpaCode: 'decomp502',
+        working: [
+          '1. Decompose 502 across the zero: 502 = 400 + 90 + 12.',
+          '2. Subtract each column: 400 − 100 = 300; 90 − 40 = 50; 12 − 7 = 5.',
+          '3. Combine: 300 + 50 + 5 = 355 (Inverse check: 355 + 147 = 502).'
+        ]
+      },
+      {
+        num: 4,
+        part: 'part1',
+        partTitle: 'Part 1: Complements to 1,000 & Inverse Operations',
+        prompt: 'Find the missing starting number:   [   ] − 35 = 48',
+        speech: 'Question 4. Find the missing starting number: blank minus 35 equals 48.',
+        vocab: 'Inverse',
+        stem: '"The missing starting number is the whole at the top of the bar model: 48 + 35 = 83."',
+        inputType: 'text',
+        answer: '83',
+        accepted: ['83'],
+        pupils: [
+          { name: 'Paul Doherty', status: 'miss', note: 'Wrote 13 (subtracted 48 − 35 = 13 instead of adding!)' },
+          { name: 'Julia Gibson', status: 'miss', note: 'Missed / left blank' },
+          { name: 'Nevaeh Cunningham-Carroll', status: 'miss', note: 'Wrote 8' },
+          { name: 'Oisin Mervyn', status: 'obs', note: '👀 Live Check for Oisin: Ask if the missing number at the front must be bigger or smaller than 48.' }
+        ],
+        cpaCaption: 'Part-Whole Bar Model: Because 35 was subtracted to leave 48, the starting whole must be BOTH parts combined (48 + 35)!',
+        cpaCode: 'bar_inverse:?,35,48',
+        working: [
+          '1. Draw a Part-Whole Bar Model: the two parts are 35 and 48.',
+          '2. Add both parts to find the starting whole: 48 + 30 = 78, + 5 = 83.',
+          '3. Verify by plugging 83 back in: 83 − 35 = 48.'
+        ]
+      },
+      {
+        num: 5,
+        part: 'part1',
+        partTitle: 'Part 1: Complements to 1,000 & Inverse Operations',
+        prompt: 'Write ONE division fact in the same fact family as   7 × 8 = 56.',
+        speech: 'Question 5. Write one division fact in the same fact family as 7 times 8 equals 56.',
+        vocab: 'Fact Family & Inverse',
+        stem: '"In a division fact, the Boss Number (56) goes at the front: 56 ÷ 7 = 8 or 56 ÷ 8 = 7."',
+        inputType: 'text',
+        answer: '56 ÷ 7 = 8  (or  56 ÷ 8 = 7)',
+        accepted: ['56÷7=8', '56/7=8', '56÷8=7', '56/8=7', '8=56÷7', '7=56÷8'],
+        pupils: [
+          { name: 'Paul Doherty', status: 'miss', note: 'Wrote 7 × 7 = 49 (wrote a multiplication fact instead)' },
+          { name: 'Julia Gibson', status: 'ok', note: '56 ÷ 8 = 7' },
+          { name: 'Nevaeh Cunningham-Carroll', status: 'miss', note: 'Wrote 87 − 56' },
+          { name: 'Oisin Mervyn', status: 'obs', note: '👀 Live Check for Oisin: Ask him to give BOTH division facts from the (56, 7, 8) triangle.' }
+        ],
+        cpaCaption: 'Fact Family Roof Triangle: The product (56) sits at the peak and ALWAYS leads a division fact!',
+        cpaCode: 'triangle:56,7,8',
+        working: [
+          '1. Identify the product (Boss Number 56) and the two factors (7 and 8).',
+          '2. Start the division equation with 56: 56 ÷ 7 = 8  OR  56 ÷ 8 = 7.'
+        ]
+      },
+
+      // --- PART 2: NON-STANDARD PARTITIONING, PLACE VALUE & SCALING (Q6–Q10) ---
+      {
+        num: 6,
+        part: 'part2',
+        partTitle: 'Part 2: Non-Standard Partitioning, Place Value & Scaling',
+        prompt: 'What is the value of the underlined digit 8 in   4,829 ?',
+        speech: 'Question 6. What is the value of the digit 8 in 4,829?',
+        vocab: 'Place Value Shift',
+        stem: '"The digit 8 sits in the Hundreds column, so its value is 8 hundreds = 800."',
+        inputType: 'text',
+        answer: '800',
+        accepted: ['800', '8hundreds'],
+        pupils: [
+          { name: 'Paul Doherty', status: 'ok', note: '800' },
+          { name: 'Julia Gibson', status: 'ok', note: '800' },
+          { name: 'Nevaeh Cunningham-Carroll', status: 'ok', note: '800' },
+          { name: 'Oisin Mervyn', status: 'obs', note: '👀 Live Check for Oisin: Ask for the value of every digit in 4,829 (4,000 + 800 + 20 + 9).' }
+        ],
+        cpaCaption: 'All 3 assessed pupils got this right! Place 4,829 into the Th | H | T | O Place Value Grid.',
+        cpaCode: 'thhto:4,8,2,9|8 sits in the Hundreds (H) column = 800',
+        working: [
+          '1. Read the columns from right to left: Ones (9), Tens (20), Hundreds (800), Thousands (4,000).',
+          '2. The value of 8 is 800.'
+        ]
+      },
+      {
+        num: 7,
+        part: 'part2',
+        partTitle: 'Part 2: Non-Standard Partitioning, Place Value & Scaling',
+        prompt: 'Complete this non-standard partitioning:   482 = 300 + [   ] + 2',
+        speech: 'Question 7. Complete this non-standard partitioning: 482 equals 300 plus blank plus 2.',
+        vocab: 'Non-Standard Partitioning',
+        stem: '"482 is 400 + 80 + 2; if we move 100 into the tens, it becomes 300 + 180 + 2."',
+        inputType: 'text',
+        answer: '180',
+        accepted: ['180'],
+        pupils: [
+          { name: 'Paul Doherty', status: 'ok', note: '180' },
+          { name: 'Julia Gibson', status: 'miss', note: 'Wrote 80 (missed the extra 100 traded from 400 -> 300)' },
+          { name: 'Nevaeh Cunningham-Carroll', status: 'ok', note: '180 (Strong flexible partitioning!)' },
+          { name: 'Oisin Mervyn', status: 'obs', note: '👀 Live Check for Oisin: Ask him to partition 482 another way (e.g., 200 + 280 + 2).' }
+        ],
+        cpaCaption: 'Flexible Partitioning Bar: Standard is 400 + 80 + 2. When 400 drops to 300, that 100 joins the 80 to make 180!',
+        cpaCode: 'nonstd482',
+        working: [
+          '1. Standard partition: 482 = 400 + 80 + 2.',
+          '2. Subtract 300 and 2 from 482: 482 − 302 = 180.',
+          '3. Check: 300 + 180 + 2 = 482.'
+        ]
+      },
+      {
+        num: 8,
+        part: 'part2',
+        partTitle: 'Part 2: Non-Standard Partitioning, Place Value & Scaling',
+        prompt: 'Work out:   46 × 10 = [   ]',
+        speech: 'Question 8. Work out 46 times 10.',
+        vocab: 'Place Value Shift',
+        stem: '"Multiplying by 10 shifts every digit one column to the left, putting 0 as a placeholder: 460."',
+        inputType: 'text',
+        answer: '460',
+        accepted: ['460'],
+        pupils: [
+          { name: 'Paul Doherty', status: 'miss', note: 'Wrote 40 (dropped the 6 ones when shifting)' },
+          { name: 'Julia Gibson', status: 'ok', note: '460' },
+          { name: 'Nevaeh Cunningham-Carroll', status: 'ok', note: '460' },
+          { name: 'Oisin Mervyn', status: 'obs', note: '👀 Live Check for Oisin: Extend to 46 × 100 = 4,600.' }
+        ],
+        cpaCaption: 'Place Value Shifter: 4 tens and 6 ones shift ONE column left to become 4 hundreds, 6 tens, and 0 ones (460).',
+        cpaCode: 'shift46',
+        working: [
+          '1. Shift 4 tens left -> 4 hundreds (400).',
+          '2. Shift 6 ones left -> 6 tens (60).',
+          '3. Place 0 in the empty Ones column -> 460.'
+        ]
+      },
+      {
+        num: 9,
+        part: 'part2',
+        partTitle: 'Part 2: Non-Standard Partitioning, Place Value & Scaling',
+        prompt: 'Round 648 to the nearest 100.',
+        speech: 'Question 9. Round 648 to the nearest 100.',
+        vocab: 'Rounding',
+        stem: '"648 sits between 600 and 700; because 48 is less than the halfway mark (650), round down to 600."',
+        inputType: 'text',
+        answer: '600',
+        accepted: ['600'],
+        pupils: [
+          { name: 'Paul Doherty', status: 'ok', note: '600' },
+          { name: 'Julia Gibson', status: 'ok', note: '600' },
+          { name: 'Nevaeh Cunningham-Carroll', status: 'miss', note: 'Wrote 650 (rounded to the nearest 10 instead of nearest 100)' },
+          { name: 'Oisin Mervyn', status: 'obs', note: '👀 Live Check for Oisin: Ask what 650 itself rounds to when rounding to the nearest 100 (700!).' }
+        ],
+        cpaCaption: 'Open Rounding Line (600 to 700): Halfway is 650. Where does 648 sit?',
+        cpaCode: 'round648',
+        working: [
+          '1. Identify the two hundreds boundaries around 648: 600 and 700.',
+          '2. Look at the tens digit (4 in 648): 48 is below the 650 midpoint.',
+          '3. Round down to 600.'
+        ]
+      },
+      {
+        num: 10,
+        part: 'part2',
+        partTitle: 'Part 2: Non-Standard Partitioning, Place Value & Scaling',
+        prompt: 'Order these numbers from SMALLEST to LARGEST:   2,405  |  2,045  |  2,540  |  2,450',
+        speech: 'Question 10. Order these numbers from smallest to largest: 2,405, 2,045, 2,540, 2,450.',
+        vocab: 'Place Value Shift',
+        stem: '"Compare column by column from left to right: Thousands first, then Hundreds, then Tens."',
+        inputType: 'text',
+        answer: '2,045,  2,405,  2,450,  2,540',
+        accepted: ['2045,2405,2450,2540', '2,045,2,405,2,450,2,540', '2045240524502540'],
+        pupils: [
+          { name: 'Paul Doherty', status: 'ok', note: '2,045, 2,405, 2,450, 2,540' },
+          { name: 'Julia Gibson', status: 'ok', note: '2,045, 2,405, 2,450, 2,540' },
+          { name: 'Nevaeh Cunningham-Carroll', status: 'miss', note: 'Mixed up 2,405 and 2,450' },
+          { name: 'Oisin Mervyn', status: 'obs', note: '👀 Live Check for Oisin: Ask him to explain why 2,405 is smaller than 2,450.' }
+        ],
+        cpaCaption: 'Column-by-Column Comparison Table: All four start with 2,000, so compare Hundreds (0 < 4 < 5) and then Tens (0 < 5)!',
+        cpaCode: 'orderTable',
+        working: [
+          '1. Smallest Hundreds digit is 0 -> 2,045 comes first.',
+          '2. Two numbers have 4 Hundreds (2,405 and 2,450) -> compare Tens (0 tens < 5 tens), so 2,405 comes before 2,450.',
+          '3. Largest Hundreds digit is 5 -> 2,540 comes last.'
+        ]
+      },
+
+      // --- PART 3: MULTIPLICATIVE REASONING, FRACTIONS & MEASURES (Q11–Q15) ---
+      {
+        num: 11,
+        part: 'part3',
+        partTitle: 'Part 3: Multiplicative Reasoning, Fractions & Measures',
+        prompt: 'Work out:   54 ÷ 6 = [   ]',
+        speech: 'Question 11. Work out 54 divided by 6.',
+        vocab: 'Quotient & Fact Family',
+        stem: '"Use the inverse multiplication fact: 6 × 9 = 54, so 54 ÷ 6 = 9."',
+        inputType: 'text',
+        answer: '9',
+        accepted: ['9'],
+        pupils: [
+          { name: 'Paul Doherty', status: 'miss', note: 'Wrote 2' },
+          { name: 'Julia Gibson', status: 'ok', note: '9' },
+          { name: 'Nevaeh Cunningham-Carroll', status: 'miss', note: 'Missed' },
+          { name: 'Oisin Mervyn', status: 'obs', note: '👀 Live Check for Oisin: Ask him to use 10 × 6 = 60 to derive 9 × 6 = 54.' }
+        ],
+        cpaCaption: 'Fact Family Triangle (54, 6, 9): 10 groups of 6 = 60, minus 1 group of 6 = 54 (9 groups of 6)!',
+        cpaCode: 'triangle:54,6,9',
+        working: [
+          '1. Think: "How many 6s make 54?"',
+          '2. Use a friendly anchor: 10 × 6 = 60 -> 9 × 6 = 54.',
+          '3. Therefore, 54 ÷ 6 = 9.'
+        ]
+      },
+      {
+        num: 12,
+        part: 'part3',
+        partTitle: 'Part 3: Multiplicative Reasoning, Fractions & Measures',
+        prompt: 'Find   3/4   of   24.',
+        speech: 'Question 12. Find three quarters of 24.',
+        vocab: 'Non-Unit Fraction',
+        stem: '"Divide by the denominator (24 ÷ 4 = 6), then multiply by the numerator (6 × 3 = 18)."',
+        inputType: 'text',
+        answer: '18',
+        accepted: ['18'],
+        pupils: [
+          { name: 'Paul Doherty', status: 'miss', note: 'Wrote 12 (found 1/2 instead of 3/4)' },
+          { name: 'Julia Gibson', status: 'miss', note: 'Missed' },
+          { name: 'Nevaeh Cunningham-Carroll', status: 'miss', note: 'Missed' },
+          { name: 'Oisin Mervyn', status: 'obs', note: '👀 Live Check for Oisin: Have him draw a 4-part fraction bar for 24.' }
+        ],
+        cpaCaption: '4-Part Fraction Bar Model: Share 24 equally into 4 quarters (6 in each box), then shade 3 of the 4 boxes!',
+        cpaCode: 'fracbar24',
+        working: [
+          '1. Find 1/4 of 24 by dividing by 4: 24 ÷ 4 = 6.',
+          '2. Find 3/4 by multiplying 1/4 by 3: 6 × 3 = 18.'
+        ]
+      },
+      {
+        num: 13,
+        part: 'part3',
+        partTitle: 'Part 3: Multiplicative Reasoning, Fractions & Measures',
+        prompt: 'A film starts at 2:40 pm and lasts for 35 minutes. What time does it finish?',
+        speech: 'Question 13. A film starts at 2:40 pm and lasts for 35 minutes. What time does it finish?',
+        vocab: 'Bridging Time',
+        stem: '"60 minutes make 1 hour: jump 20 minutes from 2:40 pm to 3:00 pm, then add 15 minutes -> 3:15 pm."',
+        inputType: 'text',
+        answer: '3:15 pm',
+        accepted: ['3:15', '3:15pm', '3.15', '3.15pm'],
+        pupils: [
+          { name: 'Paul Doherty', status: 'ok', note: '3:15 pm' },
+          { name: 'Julia Gibson', status: 'ok', note: '3:15 pm' },
+          { name: 'Nevaeh Cunningham-Carroll', status: 'miss', note: 'Missed' },
+          { name: 'Oisin Mervyn', status: 'obs', note: '👀 Live Check for Oisin: Ask why a clock cannot show 2:75 pm.' }
+        ],
+        cpaCaption: '2-Hop Open Time Line: Bridge to the 3:00 pm o’clock landmark first (+20 mins), then add the remaining +15 mins!',
+        cpaCode: 'jumps:2:40 pm,+20 mins -> 3:00 pm,+15 mins -> 3:15 pm|35 minutes = 20 minutes + 15 minutes',
+        working: [
+          '1. Find minutes to the next hour (3:00 pm): 2:40 pm + 20 mins = 3:00 pm.',
+          '2. Subtract 20 from 35: 35 − 20 = 15 minutes left.',
+          '3. Add to 3:00 pm: 3:00 pm + 15 mins = 3:15 pm.'
+        ]
+      },
+      {
+        num: 14,
+        part: 'part3',
+        partTitle: 'Part 3: Multiplicative Reasoning, Fractions & Measures',
+        prompt: 'A rectangle has a length of 8 cm and a width of 3 cm. What is its PERIMETER?',
+        speech: 'Question 14. A rectangle has a length of 8 centimetres and a width of 3 centimetres. What is its perimeter?',
+        vocab: 'Perimeter',
+        stem: '"Perimeter walks all FOUR outside edges: 8 cm + 3 cm + 8 cm + 3 cm = 22 cm."',
+        inputType: 'text',
+        answer: '22 cm',
+        accepted: ['22', '22cm'],
+        pupils: [
+          { name: 'Paul Doherty', status: 'miss', note: 'Missed' },
+          { name: 'Julia Gibson', status: 'miss', note: 'Wrote 11 cm (added only 2 sides: 8 + 3 = 11!)' },
+          { name: 'Nevaeh Cunningham-Carroll', status: 'miss', note: 'Missed' },
+          { name: 'Oisin Mervyn', status: 'obs', note: '👀 Live Check for Oisin: Contrast Perimeter (22 cm) with Area (8 × 3 = 24 cm²).' }
+        ],
+        cpaCaption: 'All-4-Side Rectangle Diagram: Label the two hidden opposite sides (8 cm and 3 cm) before adding all 4 edges!',
+        cpaCode: 'rect8x3',
+        working: [
+          '1. Label all 4 sides of the rectangle: 8 cm, 3 cm, 8 cm, and 3 cm.',
+          '2. Add two adjacent sides and double: 8 + 3 = 11 cm -> 11 × 2 = 22 cm.'
+        ]
+      },
+      {
+        num: 15,
+        part: 'part3',
+        partTitle: 'Part 3: Multiplicative Reasoning, Fractions & Measures',
+        prompt: 'A book costs £3.35. You pay with a £5.00 note. How much change do you get?',
+        speech: 'Question 15. A book costs 3 pounds 35. You pay with a 5 pound note. How much change do you get?',
+        vocab: 'Complement & Bridging Time',
+        stem: '"Count up from £3.35 to £4.00 (+65p), then from £4.00 to £5.00 (+£1.00) -> £1.65."',
+        inputType: 'text',
+        answer: '£1.65',
+        accepted: ['£1.65', '1.65', '165p'],
+        pupils: [
+          { name: 'Paul Doherty', status: 'ok', note: '£1.65' },
+          { name: 'Julia Gibson', status: 'miss', note: 'Wrote £2.65 (extra pound trap: £3.35 + £2.65 = £6.00!)' },
+          { name: 'Nevaeh Cunningham-Carroll', status: 'miss', note: 'Missed' },
+          { name: 'Oisin Mervyn', status: 'obs', note: '👀 Live Check for Oisin: Prove why £3.35 + £2.65 = £6.00 is £1.00 too high.' }
+        ],
+        cpaCaption: 'Defeating the Extra-Pound Trap: Jump +65p from £3.35 to reach £4.00, then +£1.00 to reach £5.00!',
+        cpaCode: 'jumps:£3.35,+65p -> £4.00,+£1.00 -> £5.00|Total change = £1.00 + 65p = £1.65',
+        working: [
+          '1. Count up from £3.35 to the next whole pound (£4.00): + 65p.',
+          '2. Count up from £4.00 to £5.00: + £1.00.',
+          '3. Combine both jumps: £1.65 (Check: £3.35 + £1.65 = £5.00).'
+        ]
+      },
+
+      // --- PART 4: MATHEMATICAL LANGUAGE, MULTI-STEP PROBLEMS & ERROR ANALYSIS (Q16–Q20) ---
+      {
+        num: 16,
+        part: 'part4',
+        partTitle: 'Part 4: Mathematical Language, Multi-Step & Error Analysis',
+        prompt: 'What is the DIFFERENCE between 124 and 89?',
+        speech: 'Question 16. What is the difference between 124 and 89?',
+        vocab: 'Difference',
+        stem: '"Difference means compare two bars and count up across 100: 89 -> +11 -> 100 -> +24 -> 124 (35)."',
+        inputType: 'text',
+        answer: '35',
+        accepted: ['35'],
+        pupils: [
+          { name: 'Paul Doherty', status: 'miss', note: 'Wrote 24 (counted from 100 to 124 and forgot +11 from 89 to 100)' },
+          { name: 'Julia Gibson', status: 'ok', note: '35 (Great reasoning!)' },
+          { name: 'Nevaeh Cunningham-Carroll', status: 'miss', note: 'Wrote 4' },
+          { name: 'Oisin Mervyn', status: 'obs', note: '👀 Live Check for Oisin: Ask him to solve 124 − 89 using the 100 bridge.' }
+        ],
+        cpaCaption: 'Comparison Bar Model & 100 Bridge: Jump +11 from 89 to 100, then +24 from 100 to 124!',
+        cpaCode: 'diff124_89',
+        working: [
+          '1. Difference means find the gap between 89 and 124 (124 − 89).',
+          '2. Bridge through 100: 89 + 11 = 100, then 100 + 24 = 124.',
+          '3. Add both hops: 11 + 24 = 35.'
+        ]
+      },
+      {
+        num: 17,
+        part: 'part4',
+        partTitle: 'Part 4: Mathematical Language, Multi-Step & Error Analysis',
+        prompt: 'Oisin has 18 marbles. Nevaeh has TWICE as many marbles as Oisin. How many marbles do they have ALTOGETHER?',
+        speech: 'Question 17. Oisin has 18 marbles. Nevaeh has twice as many marbles as Oisin. How many marbles do they have altogether?',
+        vocab: 'Twice / Multiplicative',
+        stem: '"Step 1: Find Nevaeh’s marbles (18 × 2 = 36). Step 2: Combine both bars altogether (18 + 36 = 54)."',
+        inputType: 'text',
+        answer: '54',
+        accepted: ['54', '54marbles'],
+        pupils: [
+          { name: 'Paul Doherty', status: 'miss', note: 'Wrote 26' },
+          { name: 'Julia Gibson', status: 'ok', note: '54 (Solved both steps cleanly!)' },
+          { name: 'Nevaeh Cunningham-Carroll', status: 'miss', note: 'Missed' },
+          { name: 'Oisin Mervyn', status: 'obs', note: '👀 Live Check for Oisin: Point out that 18 + 18 + 18 is 3 groups of 18 = 54!' }
+        ],
+        cpaCaption: 'Two-Step Multiplicative Comparison Bar: Oisin = 1 box (18); Nevaeh = 2 boxes (18 + 18 = 36). Total = 3 boxes of 18!',
+        cpaCode: 'marbles54',
+        working: [
+          '1. Step 1 (Twice as many): Nevaeh = 18 × 2 = 36 marbles.',
+          '2. Step 2 (Altogether): 18 + 36 = 54 marbles.'
+        ]
+      },
+      {
+        num: 18,
+        part: 'part4',
+        partTitle: 'Part 4: Mathematical Language, Multi-Step & Error Analysis',
+        prompt: 'Circle ALL the FACTORS of 18 from this list:   1  |  2  |  3  |  4  |  6  |  9  |  12  |  18',
+        speech: 'Question 18. Select all the factors of 18 from 1, 2, 3, 4, 6, 9, 12, 18.',
+        vocab: 'Factor',
+        stem: '"Factors come in pairs that multiply to make 18: (1 × 18), (2 × 9), and (3 × 6)."',
+        inputType: 'factors',
+        answer: '1, 2, 3, 6, 9, 18',
+        accepted: ['1,2,3,6,9,18'],
+        pupils: [
+          { name: 'Paul Doherty', status: 'miss', note: 'Circled 12 (confusing multiples/factors) and missed pairs' },
+          { name: 'Julia Gibson', status: 'miss', note: 'Missed some factor pairs' },
+          { name: 'Nevaeh Cunningham-Carroll', status: 'miss', note: 'Only listed 6' },
+          { name: 'Oisin Mervyn', status: 'obs', note: '👀 Live Check for Oisin: Ask why 4 and 12 cannot be factors of 18.' }
+        ],
+        cpaCaption: 'Factor Rainbow for 18: Link every factor pair from the outside in (1 & 18, 2 & 9, 3 & 6) — 4 and 12 do not divide into 18!',
+        cpaCode: 'rainbow18',
+        working: [
+          '1. Test pairs from 1 upwards: 1 × 18 = 18 (1 and 18).',
+          '2. 2 × 9 = 18 (2 and 9).',
+          '3. 3 × 6 = 18 (3 and 6). 4 and 12 leave remainders -> 1, 2, 3, 6, 9, 18.'
+        ]
+      },
+      {
+        num: 19,
+        part: 'part4',
+        partTitle: 'Part 4: Mathematical Language, Multi-Step & Error Analysis',
+        prompt: 'Write the missing number to make these fractions EQUIVALENT:   1/2 = [   ] / 10',
+        speech: 'Question 19. Write the missing number to make these fractions equivalent: one half equals blank tenths.',
+        vocab: 'Equivalent Fractions',
+        stem: '"Multiply numerator and denominator by the same factor (× 5): 1/2 = 5/10."',
+        inputType: 'text',
+        answer: '5',
+        accepted: ['5', '5/10'],
+        pupils: [
+          { name: 'Paul Doherty', status: 'miss', note: 'Wrote 2 (copied the denominator 2 instead of finding half of 10)' },
+          { name: 'Julia Gibson', status: 'miss', note: 'Missed' },
+          { name: 'Nevaeh Cunningham-Carroll', status: 'ok', note: '5 (Great fraction equivalence!)' },
+          { name: 'Oisin Mervyn', status: 'obs', note: '👀 Live Check for Oisin: Ask for two more fractions equivalent to 1/2 (e.g., 3/6, 4/8).' }
+        ],
+        cpaCaption: 'Fraction Wall Equivalence: Line up 1/2 directly above tenths — 5 tenths match the exact same length as 1/2!',
+        cpaCode: 'fracwall_half',
+        working: [
+          '1. Look at the denominators: 2 × 5 = 10.',
+          '2. Multiply the numerator by the same number: 1 × 5 = 5.',
+          '3. Therefore, 1/2 = 5/10.'
+        ]
+      },
+      {
+        num: 20,
+        part: 'part4',
+        partTitle: 'Part 4: Mathematical Language, Multi-Step & Error Analysis',
+        prompt: 'Spot the Mistake: A pupil wrote   100 − 35 = 75.   Explain why 75 is wrong and give the correct answer.',
+        speech: 'Question 20. Spot the mistake: A pupil wrote 100 minus 35 equals 75. Explain why 75 is wrong and give the correct answer.',
+        vocab: 'Error Analysis & Inverse',
+        stem: '"75 + 35 = 110 (the extra ten trap!); when the ones make 10, the tens make 90 -> 65."',
+        inputType: 'text',
+        answer: '65  (because 75 + 35 = 110 — 10 too big!)',
+        accepted: ['65'],
+        pupils: [
+          { name: 'Paul Doherty', status: 'ok', note: '65 (Spotted the error and corrected it!)' },
+          { name: 'Julia Gibson', status: 'miss', note: 'Missed' },
+          { name: 'Nevaeh Cunningham-Carroll', status: 'miss', note: 'Missed' },
+          { name: 'Oisin Mervyn', status: 'obs', note: '👀 Live Check for Oisin: Ask him to prove why 75 is wrong using addition.' }
+        ],
+        cpaCaption: 'Inverse Proof: Adding 75 + 35 gives 110 (10 too big!). Subtracting 100 − 30 = 70, then 70 − 5 = 65.',
+        cpaCode: 'jumps:100,−30 -> 70,−5 -> 65|75 + 35 = 110 (Wrong)  |  65 + 35 = 100 (Correct!)',
+        working: [
+          '1. Error explanation: The pupil made 70 + 30 = 100 AND 5 + 5 = 10, giving 110 instead of 100.',
+          '2. Correct calculation: 100 − 30 = 70, then 70 − 5 = 65.'
+        ]
+      }
+    ];
+
+    // =========================================================================
+    // 3. STATE, FILTERING & STRICT TEACHER REVEAL CONTROLS
+    // =========================================================================
+    let activeFilter = 'all';
+    let visibleQuestions = [...QUESTIONS];
+    let currentIndex = 0;
+
+    let reveals = {
+      pupils: false,
+      cpa: false,
+      working: false,
+      answer: false
+    };
+
+    let hideNames = false;
+    let pickedFactors = new Set();
+
+    // Interactive 100 Square State
+    let sq100Mode = 'none'; // 'none' | 'odd' | 'even' | 'both' | 'm2' | 'm5' | 'm6' | 'm10'
+    let sq100Pinned = new Set();
+    let sq100Mystery = false;
+
+    function toggleTopDrawer(which) {
+      const sb = document.getElementById('drawer-scoreboard');
+      const vb = document.getElementById('drawer-vocab');
+      const sq = document.getElementById('drawer-sq100');
+
+      const map = { scoreboard: sb, vocab: vb, sq100: sq };
+      Object.keys(map).forEach(k => {
+        if (k === which) {
+          map[k].classList.toggle('hidden');
+        } else {
+          map[k].classList.add('hidden');
+        }
+      });
+
+      if (which === 'sq100' && !sq.classList.contains('hidden')) {
+        renderSq100();
+      }
+    }
+
+    function setSq100Mode(mode) {
+      sq100Mode = (sq100Mode === mode) ? 'none' : mode;
+      renderSq100();
+    }
+
+    function toggleSq100Tile(num) {
+      if (sq100Pinned.has(num)) sq100Pinned.delete(num);
+      else sq100Pinned.add(num);
+      renderSq100();
+    }
+
+    function toggleSq100Mystery() {
+      sq100Mystery = !sq100Mystery;
+      document.getElementById('sq-btn-mystery').classList.toggle('active-mult', sq100Mystery);
+      document.getElementById('sq-btn-mystery').innerHTML = sq100Mystery ? '&#128065;&#65039; Show Numbers' : '&#128065;&#65039; Hide Numbers';
+      renderSq100();
+    }
+
+    function clearSq100Highlights() {
+      sq100Mode = 'none';
+      sq100Pinned.clear();
+      sq100Mystery = false;
+      document.getElementById('sq-btn-mystery').classList.remove('active-mult');
+      document.getElementById('sq-btn-mystery').innerHTML = '&#128065;&#65039; Hide Numbers';
+      renderSq100();
+    }
+
+    function renderSq100() {
+      const grid = document.getElementById('sq100-grid');
+      if (!grid) return;
+
+      // Sync toolbar button active states
+      const btnMap = {
+        odd: ['sq-btn-odd', 'active-odd'],
+        even: ['sq-btn-even', 'active-even'],
+        both: ['sq-btn-both', 'active-both'],
+        m2: ['sq-btn-m2', 'active-mult'],
+        m5: ['sq-btn-m5', 'active-mult'],
+        m6: ['sq-btn-m6', 'active-mult'],
+        m10: ['sq-btn-m10', 'active-mult']
+      };
+      Object.keys(btnMap).forEach(k => {
+        const [id, cls] = btnMap[k];
+        const el = document.getElementById(id);
+        if (el) el.classList.toggle(cls, sq100Mode === k);
+      });
+
+      const ruleText = document.getElementById('sq100-rule-text');
+      const messages = {
+        none: 'Tap <strong>Highlight Odd</strong>, <strong>Highlight Even</strong>, or <strong>Odd vs. Even Columns</strong> above, or tap any tile on the 100 square to pin/circle it in amber!',
+        odd: '<span style="color:#c4b5fd;">Odd Numbers Highlighted (Purple):</span> Look down the 1st, 3rd, 5th, 7th, and 9th columns — every odd number ends in <strong>1, 3, 5, 7, or 9</strong>!',
+        even: '<span style="color:#6ee7b7;">Even Numbers Highlighted (Emerald):</span> Look down the 2nd, 4th, 6th, 8th, and 10th columns — every even number ends in <strong>0, 2, 4, 6, or 8</strong>!',
+        both: '<span style="color:#fde047;">Odd (Purple) vs. Even (Emerald) Columns:</span> Notice how Odd and Even alternate every single step across every row and down every column!',
+        m2: '<span style="color:#fde68a;">Multiples of 2 (&times;2):</span> Every multiple of 2 is an <strong>EVEN</strong> number ending in 0, 2, 4, 6, or 8!',
+        m5: '<span style="color:#fde68a;">Multiples of 5 (&times;5):</span> Every multiple of 5 ends in <strong>5 (Odd)</strong> or <strong>0 (Even)</strong> — proving why Even &times; 5 always ends in 0!',
+        m6: '<span style="color:#fde68a;">Multiples of 6 (&times;6):</span> Skip-counting in 6s (6, 12, 18, 24, 30, 36, 42, 48, 54, 60...) — every multiple of 6 is also even!',
+        m10: '<span style="color:#fde68a;">Multiples of 10 (&times;10):</span> Look down the far-right decade column (10, 20, 30... 100) — every multiple of 10 ends in <strong>0</strong>!'
+      };
+      if (ruleText) ruleText.innerHTML = messages[sq100Mode] || messages.none;
+
+      let html = '';
+      for (let n = 1; n <= 100; n++) {
+        const isOdd = n % 2 !== 0;
+        const isPinned = sq100Pinned.has(n);
+        let cls = 'sq100-cell';
+
+        if (sq100Mode === 'odd' && isOdd) cls += ' is-odd';
+        else if (sq100Mode === 'even' && !isOdd) cls += ' is-even';
+        else if (sq100Mode === 'both') cls += isOdd ? ' is-odd' : ' is-even';
+        else if (sq100Mode === 'm2' && n % 2 === 0) cls += ' is-mult';
+        else if (sq100Mode === 'm5' && n % 5 === 0) cls += ' is-mult';
+        else if (sq100Mode === 'm6' && n % 6 === 0) cls += ' is-mult';
+        else if (sq100Mode === 'm10' && n % 10 === 0) cls += ' is-mult';
+
+        if (isPinned) cls += ' is-pinned';
+
+        const label = (sq100Mystery && !isPinned) ? '?' : n;
+        html += `<div class="${cls}" onclick="toggleSq100Tile(${n})" title="Tap to pin/unpin ${n}">${label}</div>`;
+      }
+      grid.innerHTML = html;
+    }
+
+    function renderVocabGrid() {
+      document.getElementById('vocab-grid').innerHTML = VOCAB_ITEMS.map(v => `
+        <div class="vocab-card">
+          <span class="vocab-term">${v.term}</span>
+          <p class="vocab-def">${v.def}</p>
+          <p class="vocab-stem">${v.stem}</p>
+        </div>
+      `).join('');
+    }
+
+    function setFilter(key) {
+      activeFilter = key;
+      visibleQuestions = key === 'all'
+        ? [...QUESTIONS]
+        : QUESTIONS.filter(q => q.part === key);
+      currentIndex = 0;
+
+      document.querySelectorAll('.filter-btn').forEach(b => {
+        b.classList.toggle('active', b.getAttribute('data-filter') === key);
+      });
+
+      renderPills();
+      renderQuestion();
+    }
+
+    function renderPills() {
+      const grid = document.getElementById('q-pills-grid');
+      const activeQ = visibleQuestions[currentIndex];
+      grid.innerHTML = QUESTIONS.map(qObj => {
+        const okCount = qObj.pupils.filter(p => p.status === 'ok').length;
+        const isCurrent = activeQ && activeQ.num === qObj.num;
+
+        let statusClass = 'status-amber';
+        let dotColor = '#f59e0b';
+        if (okCount >= 2) {
+          statusClass = 'status-green';
+          dotColor = '#10b981';
+        } else if (okCount === 0) {
+          statusClass = 'status-rose';
+          dotColor = '#f43f5e';
+        }
+
+        return `
+          <button type="button" class="q-pill ${statusClass} ${isCurrent ? 'active' : ''}" onclick="jumpToQ(${qObj.num})" title="Q${qObj.num}">
+            <span>Q${qObj.num}</span>
+            <span class="pill-dot" style="background:${isCurrent ? '#fff' : dotColor};"></span>
+          </button>
+        `;
+      }).join('');
+    }
+
+    function jumpToQ(qNum) {
+      const idx = visibleQuestions.findIndex(q => q.num === qNum);
+      if (idx !== -1) {
+        currentIndex = idx;
+      } else {
+        activeFilter = 'all';
+        visibleQuestions = [...QUESTIONS];
+        currentIndex = QUESTIONS.findIndex(q => q.num === qNum);
+        document.querySelectorAll('.filter-btn').forEach(b => {
+          b.classList.toggle('active', b.getAttribute('data-filter') === 'all');
+        });
+      }
+      renderPills();
+      renderQuestion();
+    }
+
+    function prevQuestion() {
+      currentIndex = (currentIndex - 1 + visibleQuestions.length) % visibleQuestions.length;
+      renderPills();
+      renderQuestion();
+    }
+
+    function nextQuestion() {
+      currentIndex = (currentIndex + 1) % visibleQuestions.length;
+      renderPills();
+      renderQuestion();
+    }
+
+    function resetAllReveals() {
+      reveals = { pupils: false, cpa: false, working: false, answer: false };
+      ['pupils', 'cpa', 'working', 'answer'].forEach(k => {
+        document.getElementById(`panel-${k}`).classList.add('hidden');
+      });
+
+      document.getElementById('btn-rev-pupils').innerHTML = '<span>&#128101; Reveal Pupil Breakdown</span>';
+      document.getElementById('btn-rev-cpa').innerHTML = '<span>&#128161; Show Visual CPA Model / Hint</span>';
+      document.getElementById('btn-rev-working').innerHTML = '<span>&#129692; Show Step-by-Step Working</span>';
+      document.getElementById('btn-rev-answer').innerHTML = '<span>&#9989; Reveal Final Answer</span>';
+
+      pickedFactors.clear();
+      const inp = document.getElementById('tryit-input');
+      if (inp) inp.value = '';
+      document.querySelectorAll('.factor-chip').forEach(c => c.classList.remove('picked'));
+      document.getElementById('tryit-fb').textContent = '';
+    }
+
+    function toggleReveal(key) {
+      reveals[key] = !reveals[key];
+      const panel = document.getElementById(`panel-${key}`);
+      const btn = document.getElementById(`btn-rev-${key}`);
+
+      if (reveals[key]) {
+        panel.classList.remove('hidden');
+        if (key === 'pupils') btn.innerHTML = '<span>&#128101; Hide Pupil Breakdown</span>';
+        if (key === 'cpa') btn.innerHTML = '<span>&#128161; Hide Visual CPA Model / Hint</span>';
+        if (key === 'working') btn.innerHTML = '<span>&#129692; Hide Step-by-Step Working</span>';
+        if (key === 'answer') btn.innerHTML = '<span>&#9989; Hide Final Answer</span>';
+      } else {
+        panel.classList.add('hidden');
+        if (key === 'pupils') btn.innerHTML = '<span>&#128101; Reveal Pupil Breakdown</span>';
+        if (key === 'cpa') btn.innerHTML = '<span>&#128161; Show Visual CPA Model / Hint</span>';
+        if (key === 'working') btn.innerHTML = '<span>&#129692; Show Step-by-Step Working</span>';
+        if (key === 'answer') btn.innerHTML = '<span>&#9989; Reveal Final Answer</span>';
+      }
+    }
+
+    function toggleHideNames() {
+      hideNames = !hideNames;
+      document.getElementById('mask-names-label').textContent = hideNames ? 'Show Pupil Names' : 'Hide Names for Board';
+      renderPupilCards();
+    }
+
+    function renderPupilCards() {
+      const q = visibleQuestions[currentIndex];
+      if (!q) return;
+      document.getElementById('pupils-cards').innerHTML = q.pupils.map((p, idx) => {
+        const displayName = hideNames ? `Pupil ${idx + 1}` : p.name;
+        if (p.status === 'ok') {
+          return `
+            <div class="pupil-status-card ps-ok">
+              <div>
+                <span class="ps-name">${displayName}</span>
+                <span class="ps-note" style="color:#047857;">&#9989; Secure (${p.note})</span>
+              </div>
+              <span class="ps-badge" style="background:#d1fae5;color:#065f46;">Right</span>
+            </div>
+          `;
+        }
+        if (p.status === 'obs') {
+          return `
+            <div class="pupil-status-card ps-obs">
+              <div>
+                <span class="ps-name">${displayName}</span>
+                <span class="ps-note" style="color:#1e40af;">${p.note}</span>
+              </div>
+              <span class="ps-badge" style="background:#dbeafe;color:#1e3a8a;">Live Check</span>
+            </div>
+          `;
+        }
+        return `
+          <div class="pupil-status-card ps-miss">
+            <div>
+              <span class="ps-name">${displayName}</span>
+              <span class="ps-note" style="color:#be123c;">&#10060; ${p.note}</span>
+            </div>
+            <span class="ps-badge" style="background:#ffe4e6;color:#9f1239;">Target</span>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderQuestion() {
+      resetAllReveals();
+      const q = visibleQuestions[currentIndex];
+      if (!q) return;
+
+      document.getElementById('badge-qnum').textContent = `Q${q.num} of 20`;
+      document.getElementById('badge-part').textContent = q.partTitle;
+      document.getElementById('q-text').textContent = q.prompt;
+      document.getElementById('q-vocab-pill').textContent = q.vocab;
+      document.getElementById('q-stem').textContent = q.stem;
+
+      const ctrl = document.getElementById('tryit-controls');
+      if (q.inputType === 'factors') {
+        const opts = [1, 2, 3, 4, 6, 9, 12, 18];
+        ctrl.innerHTML = `
+          <div class="factor-chips">
+            ${opts.map(n => `<button type="button" class="factor-chip" onclick="toggleFactorChip(this, ${n})">${n}</button>`).join('')}
+          </div>
+          <button type="button" class="btn-tryit" style="width:100%;" onclick="checkFactorSelection()">Check Selected Factors</button>
+        `;
+      } else {
+        ctrl.innerHTML = `
+          <div class="tryit-row">
+            <input id="tryit-input" class="tryit-input" type="text" placeholder="Type class guess..." onkeydown="if(event.key==='Enter') checkTextTryIt()" />
+            <button type="button" class="btn-tryit" onclick="checkTextTryIt()">Check</button>
+          </div>
+        `;
+      }
+
+      renderPupilCards();
+      document.getElementById('cpa-caption').textContent = q.cpaCaption;
+      document.getElementById('cpa-stage').innerHTML = buildCpaVisual(q.cpaCode);
+      document.getElementById('working-list').innerHTML = q.working.map(s => `<div>&bull; ${s}</div>`).join('');
+      document.getElementById('answer-big').textContent = q.answer;
+    }
+
+    function toggleFactorChip(el, num) {
+      if (pickedFactors.has(num)) {
+        pickedFactors.delete(num);
+        el.classList.remove('picked');
+      } else {
+        pickedFactors.add(num);
+        el.classList.add('picked');
+      }
+    }
+
+    function checkFactorSelection() {
+      const sorted = Array.from(pickedFactors).sort((a, b) => a - b).join(',');
+      const fb = document.getElementById('tryit-fb');
+      if (sorted === '1,2,3,6,9,18') {
+        fb.textContent = 'Spot on! All 6 factors of 18 found (1×18, 2×9, 3×6)!';
+        fb.style.color = '#059669';
+      } else {
+        fb.textContent = 'Not quite — check factor pairs that multiply to make 18, or open the Factor Rainbow!';
+        fb.style.color = '#e11d48';
+      }
+    }
+
+    function checkTextTryIt() {
+      const q = visibleQuestions[currentIndex];
+      const inp = document.getElementById('tryit-input');
+      const raw = (inp ? inp.value : '').trim().toLowerCase().replace(/\s+/g, '');
+      const fb = document.getElementById('tryit-fb');
+
+      if (!raw) {
+        fb.textContent = 'Type a class guess first, then click Check!';
+        fb.style.color = '#b45309';
+        return;
+      }
+
+      const valid = q.accepted.map(a => a.toLowerCase().replace(/\s+/g, ''));
+      if (valid.includes(raw)) {
+        fb.textContent = 'Spot on! Brilliant reasoning — click Reveal Final Answer to confirm!';
+        fb.style.color = '#059669';
+      } else {
+        fb.textContent = 'Not quite — try again or open the Visual CPA Model for a clue!';
+        fb.style.color = '#e11d48';
+      }
+    }
+
+    function speakQuestion() {
+      if (!('speechSynthesis' in window)) return;
+      const q = visibleQuestions[currentIndex];
+      if (!q) return;
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(q.speech || q.prompt);
+      u.rate = 0.94;
+      window.speechSynthesis.speak(u);
+    }
+
+    // =========================================================================
+    // 3. CUSTOM SVG / HTML CPA VISUAL DIAGRAM BUILDERS
+    // =========================================================================
+    function buildCpaVisual(code) {
+      if (!code) return '';
+
+      if (code === 'decomp502') {
+        return `
+          <div class="cpa-box">
+            <div style="font-size:12px;font-weight:900;color:#1e1b4b;">Expanded Zero-Exchange Decomposition: 502 − 147</div>
+            <table style="border-collapse:collapse;text-align:center;font-weight:800;font-size:13px;">
+              <tr style="background:#f1f5f9;">
+                <th style="padding:6px 12px;border:1px solid #cbd5e1;">Hundreds</th>
+                <th style="padding:6px 12px;border:1px solid #cbd5e1;">Tens</th>
+                <th style="padding:6px 12px;border:1px solid #cbd5e1;">Ones</th>
+              </tr>
+              <tr>
+                <td style="padding:6px 12px;border:1px solid #cbd5e1;color:#1d4ed8;">400</td>
+                <td style="padding:6px 12px;border:1px solid #cbd5e1;color:#047857;">90</td>
+                <td style="padding:6px 12px;border:1px solid #cbd5e1;color:#b45309;">12</td>
+              </tr>
+              <tr>
+                <td style="padding:6px 12px;border:1px solid #cbd5e1;">− 100</td>
+                <td style="padding:6px 12px;border:1px solid #cbd5e1;">− 40</td>
+                <td style="padding:6px 12px;border:1px solid #cbd5e1;">− 7</td>
+              </tr>
+              <tr style="background:#ecfdf5;font-weight:900;color:#065f46;">
+                <td style="padding:6px 12px;border:1px solid #10b981;">300</td>
+                <td style="padding:6px 12px;border:1px solid #10b981;">50</td>
+                <td style="padding:6px 12px;border:1px solid #10b981;">5</td>
+              </tr>
+            </table>
+            <span style="font-size:11.5px;font-weight:800;color:#475569;">502 = 400 + 90 + 12 (no digit-reversal!)</span>
+          </div>
+        `;
+      }
+
+      if (code === 'nonstd482') {
+        return `
+          <div class="cpa-box" style="width:100%;max-width:440px;">
+            <div style="width:100%;background:#0f172a;color:#fff;padding:6px;border-radius:8px;text-align:center;font-weight:900;font-size:13px;">Whole = 482</div>
+            <div style="width:100%;display:flex;gap:4px;font-size:12px;font-weight:800;text-align:center;">
+              <div style="flex:4;background:#dbeafe;border:1px solid #60a5fa;padding:6px;border-radius:8px;">400</div>
+              <div style="flex:2;background:#d1fae5;border:1px solid #34d399;padding:6px;border-radius:8px;">80</div>
+              <div style="flex:1;background:#fef3c7;border:1px solid #fbbf24;padding:6px;border-radius:8px;">2</div>
+            </div>
+            <div style="width:100%;display:flex;gap:4px;font-size:12px;font-weight:900;text-align:center;">
+              <div style="flex:3;background:#bfdbfe;border:2px solid #2563eb;padding:6px;border-radius:8px;">300</div>
+              <div style="flex:3;background:#a7f3d0;border:2px solid #059669;padding:6px;border-radius:8px;">100 + 80 = 180</div>
+              <div style="flex:1;background:#fde68a;border:2px solid #d97706;padding:6px;border-radius:8px;">2</div>
+            </div>
+          </div>
+        `;
+      }
+
+      if (code === 'shift46') {
+        return `
+          <div class="cpa-box">
+            <table style="border-collapse:collapse;text-align:center;font-weight:900;font-size:14px;">
+              <tr style="background:#f1f5f9;font-size:11px;">
+                <th style="padding:5px 14px;border:1px solid #cbd5e1;">Hundreds</th>
+                <th style="padding:5px 14px;border:1px solid #cbd5e1;">Tens</th>
+                <th style="padding:5px 14px;border:1px solid #cbd5e1;">Ones</th>
+              </tr>
+              <tr>
+                <td style="padding:6px 14px;border:1px solid #cbd5e1;color:#94a3b8;">—</td>
+                <td style="padding:6px 14px;border:1px solid #cbd5e1;">4</td>
+                <td style="padding:6px 14px;border:1px solid #cbd5e1;">6</td>
+              </tr>
+              <tr style="background:#eef2ff;color:#3730a3;">
+                <td style="padding:6px 14px;border:1px solid #818cf8;">4</td>
+                <td style="padding:6px 14px;border:1px solid #818cf8;">6</td>
+                <td style="padding:6px 14px;border:1px solid #818cf8;background:#fef3c7;color:#92400e;">0</td>
+              </tr>
+            </table>
+            <span style="font-size:11.5px;font-weight:800;color:#475569;">Every digit shifts 1 column LEFT (&times; 10) &rarr; 460</span>
+          </div>
+        `;
+      }
+
+      if (code === 'round648') {
+        return `
+          <div class="cpa-box">
+            <div class="hop-strip">
+              <span class="hop-pill hop-mid">600</span>
+              <span style="font-size:12px;color:#059669;">&larr; 648</span>
+              <span class="hop-pill" style="border-style:dashed;">650 (Halfway)</span>
+              <span style="color:#94a3b8;">&mdash;</span>
+              <span class="hop-pill">700</span>
+            </div>
+            <span style="font-size:11.5px;font-weight:800;color:#475569;">648 is before the 650 halfway mark, so it rounds down to 600.</span>
+          </div>
+        `;
+      }
+
+      if (code === 'orderTable') {
+        const nums = [
+          { n: '2,045', th: 2, h: 0, t: 4, o: 5 },
+          { n: '2,405', th: 2, h: 4, t: 0, o: 5 },
+          { n: '2,450', th: 2, h: 4, t: 5, o: 0 },
+          { n: '2,540', th: 2, h: 5, t: 4, o: 0 }
+        ];
+        return `
+          <div class="cpa-box">
+            <table style="border-collapse:collapse;text-align:center;font-weight:800;font-size:12.5px;">
+              <tr style="background:#f1f5f9;">
+                <th style="padding:5px 10px;border:1px solid #cbd5e1;">Order</th>
+                <th style="padding:5px 10px;border:1px solid #cbd5e1;">Th</th>
+                <th style="padding:5px 10px;border:1px solid #cbd5e1;color:#1d4ed8;">H</th>
+                <th style="padding:5px 10px;border:1px solid #cbd5e1;color:#047857;">T</th>
+                <th style="padding:5px 10px;border:1px solid #cbd5e1;">O</th>
+              </tr>
+              ${nums.map((r, i) => `
+                <tr>
+                  <td style="padding:5px 10px;border:1px solid #cbd5e1;font-weight:900;">#${i + 1}: ${r.n}</td>
+                  <td style="padding:5px 10px;border:1px solid #cbd5e1;">${r.th}</td>
+                  <td style="padding:5px 10px;border:1px solid #cbd5e1;background:#eff6ff;">${r.h}</td>
+                  <td style="padding:5px 10px;border:1px solid #cbd5e1;background:#ecfdf5;">${r.t}</td>
+                  <td style="padding:5px 10px;border:1px solid #cbd5e1;">${r.o}</td>
+                </tr>
+              `).join('')}
+            </table>
+          </div>
+        `;
+      }
+
+      if (code === 'fracbar24') {
+        return `
+          <div class="cpa-box" style="width:100%;max-width:400px;">
+            <div style="width:100%;background:#0f172a;color:#fff;padding:6px;border-radius:8px;text-align:center;font-weight:900;font-size:13px;">Whole = 24 (Split into 4 Quarters)</div>
+            <div style="width:100%;display:grid;grid-template-columns:repeat(4,1fr);gap:6px;text-align:center;font-weight:900;font-size:15px;">
+              <div style="background:#4f46e5;color:#fff;padding:10px 4px;border-radius:10px;">6</div>
+              <div style="background:#4f46e5;color:#fff;padding:10px 4px;border-radius:10px;">6</div>
+              <div style="background:#4f46e5;color:#fff;padding:10px 4px;border-radius:10px;">6</div>
+              <div style="background:#f1f5f9;color:#64748b;border:2px dashed #94a3b8;padding:10px 4px;border-radius:10px;">6</div>
+            </div>
+            <span style="font-size:11.5px;font-weight:800;color:#3730a3;">3 shaded quarters = 6 + 6 + 6 = 18</span>
+          </div>
+        `;
+      }
+
+      if (code === 'rect8x3') {
+        return `
+          <div class="cpa-box">
+            <div style="font-size:12px;font-weight:900;color:#065f46;">8 cm (Top)</div>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <span style="font-size:12px;font-weight:900;color:#1d4ed8;">3 cm</span>
+              <div style="width:180px;height:68px;border:4px solid #059669;background:#ecfdf5;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:13px;color:#064e3b;">
+                Walk all 4 edges!
+              </div>
+              <span style="font-size:12px;font-weight:900;color:#1d4ed8;">3 cm</span>
+            </div>
+            <div style="font-size:12px;font-weight:900;color:#065f46;">8 cm (Bottom)</div>
+          </div>
+        `;
+      }
+
+      if (code === 'diff124_89') {
+        return `
+          <div class="cpa-box">
+            <div class="hop-strip">
+              <span class="hop-pill">89</span>
+              <span style="font-size:12px;color:#059669;">+11 &rarr;</span>
+              <span class="hop-pill hop-mid">100</span>
+              <span style="font-size:12px;color:#4f46e5;">+24 &rarr;</span>
+              <span class="hop-pill hop-end">124</span>
+            </div>
+            <span style="font-size:11.5px;font-weight:800;color:#475569;">Bridge through 100: 11 + 24 = 35</span>
+          </div>
+        `;
+      }
+
+      if (code === 'marbles54') {
+        return `
+          <div class="cpa-box" style="width:100%;max-width:420px;font-size:12px;font-weight:900;">
+            <div style="width:100%;display:flex;align-items:center;gap:8px;">
+              <span style="width:72px;">Oisin:</span>
+              <div style="background:#2563eb;color:#fff;padding:6px 14px;border-radius:8px;">18</div>
+            </div>
+            <div style="width:100%;display:flex;align-items:center;gap:8px;">
+              <span style="width:72px;">Nevaeh:</span>
+              <div style="background:#059669;color:#fff;padding:6px 14px;border-radius:8px;">18</div>
+              <div style="background:#059669;color:#fff;padding:6px 14px;border-radius:8px;">18</div>
+              <span style="color:#065f46;">(= 36)</span>
+            </div>
+            <div style="font-size:11.5px;color:#475569;">Altogether = 18 + 36 = 54 marbles</div>
+          </div>
+        `;
+      }
+
+      if (code === 'rainbow18') {
+        return `
+          <div class="cpa-box">
+            <div style="font-size:12px;font-weight:900;color:#1e1b4b;">Factor Pairs of 18</div>
+            <div style="display:flex;gap:8px;font-weight:900;font-size:14px;">
+              <span class="hop-pill" style="background:#eef2ff;border-color:#6366f1;">1</span>
+              <span class="hop-pill" style="background:#ecfdf5;border-color:#10b981;">2</span>
+              <span class="hop-pill" style="background:#fffbeb;border-color:#f59e0b;">3</span>
+              <span class="hop-pill" style="background:#fffbeb;border-color:#f59e0b;">6</span>
+              <span class="hop-pill" style="background:#ecfdf5;border-color:#10b981;">9</span>
+              <span class="hop-pill" style="background:#eef2ff;border-color:#6366f1;">18</span>
+            </div>
+            <span style="font-size:11.5px;font-weight:800;color:#475569;">1 &times; 18 = 18 &nbsp;|&nbsp; 2 &times; 9 = 18 &nbsp;|&nbsp; 3 &times; 6 = 18</span>
+          </div>
+        `;
+      }
+
+      if (code === 'fracwall_half') {
+        const tenths = Array.from({ length: 10 }, (_, i) =>
+          `<div style="flex:1;padding:6px 0;border:1px solid #64748b;background:${i < 5 ? '#10b981' : '#f8fafc'};color:${i < 5 ? '#fff' : '#64748b'};font-size:10px;font-weight:900;">1/10</div>`
+        ).join('');
+        return `
+          <div class="cpa-box" style="width:100%;max-width:400px;text-align:center;">
+            <div style="width:100%;display:flex;">
+              <div style="flex:1;padding:7px 0;background:#4f46e5;color:#fff;font-weight:900;font-size:12px;border:1px solid #312e81;">1/2</div>
+              <div style="flex:1;padding:7px 0;background:#f8fafc;color:#64748b;font-weight:900;font-size:12px;border:1px solid #94a3b8;">1/2</div>
+            </div>
+            <div style="width:100%;display:flex;">${tenths}</div>
+            <span style="font-size:11.5px;font-weight:800;color:#065f46;">5 tenths cover the exact same half as 1/2!</span>
+          </div>
+        `;
+      }
+
+      const idx = code.indexOf(':');
+      const type = code.slice(0, idx);
+      const payload = code.slice(idx + 1);
+
+      if (type === 'jumps') {
+        const [nodesStr, cap] = payload.split('|');
+        const nodes = nodesStr.split(',');
+        return `
+          <div class="cpa-box">
+            <div class="hop-strip">
+              ${nodes.map((n, i) => {
+                const c = i === 0 ? '' : (i === nodes.length - 1 ? 'hop-end' : 'hop-mid');
+                return `<span class="hop-pill ${c}">${n}</span>`;
+              }).join('<span>&rarr;</span>')}
+            </div>
+            ${cap ? `<span style="font-size:11.5px;font-weight:800;color:#475569;">${cap}</span>` : ''}
+          </div>
+        `;
+      }
+
+      if (type === 'bar_inverse') {
+        const [whole, p1, p2] = payload.split(',');
+        return `
+          <div class="cpa-box" style="width:100%;max-width:380px;text-align:center;font-weight:900;">
+            <div style="width:100%;background:#0f172a;color:#fff;padding:7px;border-radius:9px;font-size:14px;">Starting Whole = ${whole}</div>
+            <div style="width:100%;display:flex;gap:6px;font-size:13px;">
+              <div style="flex:35;background:#fecdd3;border:2px solid #f43f5e;color:#881337;padding:7px;border-radius:9px;">Subtracted: ${p1}</div>
+              <div style="flex:48;background:#d1fae5;border:2px solid #10b981;color:#064e3b;padding:7px;border-radius:9px;">Result: ${p2}</div>
+            </div>
+            <span style="font-size:11.5px;color:#475569;">Add both parts to find the starting whole: ${p2} + ${p1} = 83</span>
+          </div>
+        `;
+      }
+
+      if (type === 'triangle') {
+        const [top, a, b] = payload.split(',');
+        return `
+          <div class="cpa-box">
+            <div style="background:#4f46e5;color:#fff;font-weight:900;font-size:20px;padding:6px 18px;border-radius:11px;">${top}</div>
+            <div style="font-size:11px;font-weight:900;color:#64748b;">&times; / &divide;</div>
+            <div style="display:flex;gap:20px;font-weight:900;font-size:18px;">
+              <span class="hop-pill hop-mid">${a}</span>
+              <span class="hop-pill hop-end">${b}</span>
+            </div>
+            <span style="font-size:11.5px;font-weight:800;color:#475569;">Division always starts with Boss Number ${top} at the front!</span>
+          </div>
+        `;
+      }
+
+      if (type === 'thhto') {
+        const [colsStr, cap] = payload.split('|');
+        const cols = colsStr.split(',');
+        const labels = ['Th', 'H', 'T', 'O'];
+        return `
+          <div class="cpa-box">
+            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;text-align:center;">
+              ${cols.map((val, i) => `
+                <div style="padding:6px 14px;border-radius:10px;border:2px solid ${i === 1 ? '#2563eb' : '#cbd5e1'};background:${i === 1 ? '#eff6ff' : '#f8fafc'};">
+                  <div style="font-size:10px;font-weight:900;color:#475569;">${labels[i]}</div>
+                  <div style="font-size:20px;font-weight:900;">${val}</div>
+                </div>
+              `).join('')}
+            </div>
+            ${cap ? `<span style="font-size:11.5px;font-weight:800;color:#475569;">${cap}</span>` : ''}
+          </div>
+        `;
+      }
+
+      return '';
+    }
+
+    // =========================================================================
+    // 4. INTERACTIVE SPLIT-SCREEN / FULLSCREEN SURFACE PEN WHITEBOARD
+    // =========================================================================
+    let wbOpen = false;
+    let wbFull = false;
+    let wbColor = '#0f172a';
+    let wbTool = 'pen';
+    let wbBg = 'blank';
+    let drawing = false;
+    let lx = 0;
+    let ly = 0;
+    let wbStack = [];
+
+    const canvas = document.getElementById('wb-canvas');
+    const ctx = canvas.getContext('2d');
+
+    function pushWbHistory() {
+      try {
+        if (wbStack.length > 18) wbStack.shift();
+        wbStack.push(canvas.toDataURL());
+      } catch (e) {}
+    }
+
+    function undoWb() {
+      if (!wbStack.length) return;
+      const img = new Image();
+      img.onload = () => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0);
+      };
+      img.src = wbStack.pop();
+    }
+
+    function toggleWhiteboard() {
+      wbOpen = !wbOpen;
+      const pane = document.getElementById('wb-pane');
+      const rev = document.getElementById('review-pane');
+      const lbl = document.getElementById('wb-toggle-label');
+
+      if (wbOpen) {
+        pane.classList.remove('hidden');
+        lbl.textContent = 'Close Whiteboard';
+        setTimeout(resizeWbKeepInk, 40);
+      } else {
+        pane.classList.add('hidden');
+        pane.classList.remove('fullscreen');
+        rev.classList.remove('hidden');
+        wbFull = false;
+        document.getElementById('btn-wb-full').textContent = 'Fullscreen';
+        lbl.textContent = 'Open Whiteboard';
+      }
+    }
+
+    function toggleWbFull() {
+      wbFull = !wbFull;
+      const pane = document.getElementById('wb-pane');
+      const rev = document.getElementById('review-pane');
+      const btn = document.getElementById('btn-wb-full');
+
+      if (wbFull) {
+        rev.classList.add('hidden');
+        pane.classList.add('fullscreen');
+        btn.textContent = 'Split Screen';
+      } else {
+        rev.classList.remove('hidden');
+        pane.classList.remove('fullscreen');
+        btn.textContent = 'Fullscreen';
+      }
+      setTimeout(resizeWbKeepInk, 40);
+    }
+
+    function setWbPen(hex) {
+      wbTool = 'pen';
+      wbColor = hex;
+      document.getElementById('btn-wb-hi').classList.remove('active-tool');
+      document.getElementById('btn-wb-er').classList.remove('active-tool');
+      document.querySelectorAll('.pen-swatch').forEach(s => {
+        s.classList.toggle('active', s.getAttribute('data-pen') === hex);
+      });
+    }
+
+    function setWbTool(t) {
+      wbTool = t;
+      document.querySelectorAll('.pen-swatch').forEach(s => s.classList.remove('active'));
+      document.getElementById('btn-wb-hi').classList.toggle('active-tool', t === 'highlighter');
+      document.getElementById('btn-wb-er').classList.toggle('active-tool', t === 'eraser');
+    }
+
+    function setWbBg(bg) {
+      wbBg = bg;
+      clearWb();
+    }
+
+    function paintWbTemplate() {
+      const w = canvas.width;
+      const h = canvas.height;
+      ctx.save();
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, w, h);
+
+      if (wbBg === 'grid') {
+        ctx.strokeStyle = '#e2e8f0';
+        ctx.lineWidth = 1;
+        for (let x = 0; x < w; x += 28) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke(); }
+        for (let y = 0; y < h; y += 28) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke(); }
+      } else if (wbBg === 'numberline') {
+        const y = Math.round(h * 0.55);
+        ctx.strokeStyle = '#334155';
+        ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.moveTo(36, y); ctx.lineTo(w - 36, y); ctx.stroke();
+        for (let i = 0; i <= 10; i++) {
+          const x = 36 + ((w - 72) * i) / 10;
+          ctx.beginPath(); ctx.moveTo(x, y - 10); ctx.lineTo(x, y + 10); ctx.stroke();
+        }
+      } else if (wbBg === 'thhto') {
+        const cw = w / 4;
+        ctx.strokeStyle = '#94a3b8';
+        ctx.lineWidth = 2;
+        [1, 2, 3].forEach(i => { ctx.beginPath(); ctx.moveTo(cw * i, 20); ctx.lineTo(cw * i, h - 20); ctx.stroke(); });
+        ctx.beginPath(); ctx.moveTo(20, 60); ctx.lineTo(w - 20, 60); ctx.stroke();
+        ctx.font = '900 16px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#1e293b';
+        ['Th', 'H', 'T', 'O'].forEach((lbl, i) => ctx.fillText(lbl, cw * (i + 0.5), 45));
+      } else if (wbBg === 'barmodel') {
+        const bx = 48;
+        const bw = w - 96;
+        const by = Math.round(h * 0.35);
+        ctx.strokeStyle = '#334155';
+        ctx.lineWidth = 3;
+        ctx.strokeRect(bx, by, bw, 54);
+        ctx.strokeRect(bx, by + 62, bw * 0.5, 54);
+        ctx.strokeRect(bx + bw * 0.5, by + 62, bw * 0.5, 54);
+      } else if (wbBg === 'sq100_oddeven') {
+        const pad = 22;
+        const size = Math.min(w - pad * 2, h - pad * 2);
+        const startX = (w - size) / 2;
+        const startY = (h - size) / 2;
+        const cell = size / 10;
+
+        ctx.font = `800 ${Math.max(10, Math.floor(cell * 0.36))}px sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+
+        for (let r = 0; r < 10; r++) {
+          for (let c = 0; c < 10; c++) {
+            const num = r * 10 + c + 1;
+            const isOdd = num % 2 !== 0;
+            const cx = startX + c * cell;
+            const cy = startY + r * cell;
+
+            ctx.fillStyle = isOdd ? '#f3e8ff' : '#d1fae5';
+            ctx.fillRect(cx, cy, cell, cell);
+            ctx.strokeStyle = '#94a3b8';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(cx, cy, cell, cell);
+
+            ctx.fillStyle = isOdd ? '#5b21b6' : '#065f46';
+            ctx.fillText(String(num), cx + cell / 2, cy + cell / 2);
+          }
+        }
+      }
+      ctx.restore();
+    }
+
+    function clearWb() {
+      pushWbHistory();
+      const wrap = document.getElementById('wb-wrap');
+      canvas.width = wrap.clientWidth || 500;
+      canvas.height = wrap.clientHeight || 420;
+      paintWbTemplate();
+    }
+
+    function resizeWbKeepInk() {
+      const wrap = document.getElementById('wb-wrap');
+      if (!wrap || wrap.clientWidth === 0) return;
+      const snap = document.createElement('canvas');
+      snap.width = canvas.width;
+      snap.height = canvas.height;
+      snap.getContext('2d').drawImage(canvas, 0, 0);
+
+      canvas.width = wrap.clientWidth;
+      canvas.height = wrap.clientHeight;
+      paintWbTemplate();
+      ctx.drawImage(snap, 0, 0);
+    }
+
+    function getPos(e) {
+      const r = canvas.getBoundingClientRect();
+      const cx = e.touches ? e.touches[0].clientX : e.clientX;
+      const cy = e.touches ? e.touches[0].clientY : e.clientY;
+      return { x: cx - r.left, y: cy - r.top };
+    }
+
+    canvas.addEventListener('mousedown', e => { pushWbHistory(); drawing = true; const p = getPos(e); lx = p.x; ly = p.y; });
+    canvas.addEventListener('mousemove', e => {
+      if (!drawing) return;
+      const p = getPos(e);
+      ctx.save();
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      if (wbTool === 'eraser') { ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 28; }
+      else if (wbTool === 'highlighter') { ctx.strokeStyle = 'rgba(250, 204, 21, 0.35)'; ctx.lineWidth = 20; }
+      else { ctx.strokeStyle = wbColor; ctx.lineWidth = 4; }
+      ctx.beginPath(); ctx.moveTo(lx, ly); ctx.lineTo(p.x, p.y); ctx.stroke();
+      ctx.restore();
+      lx = p.x; ly = p.y;
+    });
+    window.addEventListener('mouseup', () => { drawing = false; });
+
+    canvas.addEventListener('touchstart', e => { pushWbHistory(); drawing = true; const p = getPos(e); lx = p.x; ly = p.y; }, { passive: false });
+    canvas.addEventListener('touchmove', e => {
+      if (!drawing) return;
+      if (e.cancelable) e.preventDefault();
+      const p = getPos(e);
+      ctx.save();
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      if (wbTool === 'eraser') { ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 28; }
+      else if (wbTool === 'highlighter') { ctx.strokeStyle = 'rgba(250, 204, 21, 0.35)'; ctx.lineWidth = 20; }
+      else { ctx.strokeStyle = wbColor; ctx.lineWidth = 4; }
+      ctx.beginPath(); ctx.moveTo(lx, ly); ctx.lineTo(p.x, p.y); ctx.stroke();
+      ctx.restore();
+      lx = p.x; ly = p.y;
+    }, { passive: false });
+    window.addEventListener('touchend', () => { drawing = false; });
+
+    window.addEventListener('resize', () => { if (wbOpen) resizeWbKeepInk(); });
+    window.addEventListener('keydown', e => {
+      if (document.activeElement && document.activeElement.id === 'tryit-input') return;
+      if (e.key === 'ArrowRight') nextQuestion();
+      else if (e.key === 'ArrowLeft') prevQuestion();
+    });
+
+    window.onload = function () {
+      renderVocabGrid();
+      renderSq100();
+      setFilter('all');
+      clearWb();
+    };
+  </script>
+</body>
+</html>
